@@ -1,14 +1,15 @@
-<?php require_once __DIR__ . '/../config/conexion.php'; ?>
+<?php
+require_once __DIR__ . '/../config/conexion.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Sistema</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
+<div class="top-actions flex justify-between items-center">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/theme.css">
 
-<!-- Tema sin parpadeo -->
+<!-- Aplicar tema SIN parpadeo -->
 <script>
 if(localStorage.getItem("theme") === "dark"){
   document.documentElement.classList.add("dark");
@@ -21,8 +22,10 @@ if(localStorage.getItem("theme") === "dark"){
 
 <body>
 
+<!-- BOTÓN DARK MODE -->
 <button id="themeToggle">🌙</button>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
   <a href="<?= BASE_URL ?>/views/dashboard.php">🏠 <span>Dashboard</span></a>
   <a href="<?= BASE_URL ?>/views/jovenes/index.php">👤 <span>Jóvenes</span></a>
@@ -32,4 +35,5 @@ if(localStorage.getItem("theme") === "dark"){
   <a href="<?= BASE_URL ?>/logout.php">🚪 <span>Salir</span></a>
 </div>
 
+<!-- CONTENIDO -->
 <div class="main">

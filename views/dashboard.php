@@ -1,58 +1,16 @@
 <?php
-
-date_default_timezone_set('America/Bogota');
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
-
 $data = require __DIR__ . '/../controllers/dashboardController.php';
 extract($data);
 
 include __DIR__ . '/../includes/header.php';
-
-/* =========================
-   USUARIO / SALUDO
-========================= */
-$nombre = $_SESSION['usuario_nombre'] ?? 'Usuario';
-$rol = $_SESSION['rol'] ?? null;
-
-$saludo = match($rol){
-  'ADMIN' => 'Administradora',
-  'LIDER' => 'Líder',
-  default => 'Usuario'
-};
-
-$hora = date('H');
-
-$momento = match(true){
-  $hora < 12 => 'Buenos días',
-  $hora < 18 => 'Buenas tardes',
-  default => 'Buenas noches'
-};
 ?>
 
-<div class="header-dashboard">
-
-<h2 class="titulo-dashboard"
-style="
-  font-size: 30px;
-  color:white;
-  -webkit-text-stroke: 1px black;
-  text-shadow: 0 0 20px black;
-"
-    ">
-  👋 <?= $momento ?><?= $saludo ? ", $saludo" : "" ?>
-</h2>
-
-  <p class="text-muted">
-    Rol: <?= $rol ?: 'N/A' ?>
-  </p>
-
-</div>
+<h2>Bienvenido, <?= $_SESSION['usuario_nombre'] ?? 'Usuario' ?></h2>
+<p class="text-center text-muted">
+  Rol: <?= $_SESSION['rol'] ?? 'N/A' ?>
+</p>
 
 <hr>
-<br>
-<br>
 
 <h3>🟩 Resumen</h3>
 
@@ -65,7 +23,7 @@ style="
     ["Inactivos", $inactivos],
     ["Servidores", $totalServidores],
     ["Reuniones", $totalReuniones],
-    ["Asistencia", $porcentajeGeneral . "%"]
+    ["% Asistencia", $porcentajeGeneral . "%"]
   ];
 
   foreach($cards as [$titulo, $valor]): ?>
@@ -79,11 +37,7 @@ style="
 
 <hr style="margin-top:40px;">
 
-
 <h3>📈 Estadísticas</h3>
-
-<br>
-<br>
 
 <div class="reporte-grid">
   <div class="reporte-card">
@@ -115,9 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const isDark = document.documentElement.classList.contains("dark");
 
   const color = isDark ? "#17e1fc" : "#007bff";
-  const textColor = isDark ? "#ffffff" : "#000000";
 
-  /* ===== GRAFICA BARRAS ===== */
   new Chart(document.getElementById('graficaMensual'), {
     type: 'bar',
     data: {
@@ -126,19 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
         data: dataMes,
         backgroundColor: color
       }]
-    },
-    options: {
-      plugins:{
-        legend:{ labels:{ color:textColor } }
-      },
-      scales:{
-        x:{ ticks:{ color:textColor } },
-        y:{ ticks:{ color:textColor } }
-      }
     }
   });
 
-  /* ===== GRAFICA PIE ===== */
   new Chart(document.getElementById('graficaTipos'), {
     type: 'pie',
     data: {
@@ -146,11 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
       datasets: [{
         data: dataTipo
       }]
-    },
-    options: {
-      plugins:{
-        legend:{ labels:{ color:textColor } }
-      }
     }
   });
 
