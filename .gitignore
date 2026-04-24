@@ -1,3 +1,80 @@
-vendor/
-node_modules/
+# =========================
+# 🔐 CONFIGURACIÓN SENSIBLE
+# =========================
 .env
+.env.*
+config.local.php
+config.dev.php
+config/db.php
+
+# =========================
+# 🧠 DEPENDENCIAS
+# =========================
+/vendor/
+/node_modules/
+
+# =========================
+# 🧾 LOGS Y DEBUG
+# =========================
+*.log
+logs/
+debug.log
+error_log
+
+# =========================
+# 🗂️ TEMPORALES / CACHE
+# =========================
+tmp/
+temp/
+cache/
+storage/cache/
+storage/tmp/
+
+# =========================
+# 📂 SESIONES (si usas archivos)
+# =========================
+sessions/
+
+# =========================
+# 🖼️ SUBIDAS DINÁMICAS (opcional)
+# =========================
+public/uploads/
+uploads/
+
+# 👉 Pero permite la carpeta vacía con un .gitkeep
+!public/uploads/.gitkeep
+!uploads/.gitkeep
+
+# =========================
+# 🏗️ ARCHIVOS GENERADOS
+# =========================
+dist/
+build/
+
+# =========================
+# 🧪 BACKUPS / BASES DE DATOS
+# =========================
+*.sql
+*.bak
+*.zip
+
+# =========================
+# 💻 EDITORES / IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# 🖥️ SISTEMA
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 🔥 XAMPP (por si hay rutas raras)
+# =========================
+xampp/
+apache/
+mysql/
+php/
