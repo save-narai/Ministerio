@@ -1,0 +1,135 @@
+
+
+/* =========================
+   HEADER
+========================= */
+.dashboard__header{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.dashboard__title{
+  font-size:32px;
+  font-weight:700;
+  background: linear-gradient(90deg,#22c1c3,#3b82f6);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.dashboard__user{
+  opacity:.7;
+  margin-top:8px;
+}
+
+/* =========================
+   SECCIONES
+========================= */
+.dashboard__section-title{
+  margin:30px 0 15px;
+  font-weight:600;
+  position:relative;
+}
+
+.dashboard__section-title::after{
+  content:"";
+  width:40px;
+  height:3px;
+  background:var(--primary);
+  display:block;
+  margin-top:5px;
+  border-radius:10px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.dashboard__cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:20px;
+}
+
+.dashboard__card{
+  padding:18px;
+  border-radius:16px;
+  background:var(--card-bg);
+  color:#fff;
+  box-shadow:var(--shadow);
+  transition:var(--transition);
+  position:relative;
+  overflow:hidden;
+}
+.dashboard__card{
+  background: var(--card-bg);
+}
+.dashboard__card:hover{
+  transform:translateY(-5px) scale(1.02);
+}
+
+/* brillo */
+.dashboard__card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,0.2),transparent);
+  opacity:0;
+  transition:var(--transition);
+}
+
+.dashboard__card:hover::before{
+  opacity:1;
+}
+
+.dashboard__card-title{
+  font-size:14px;
+  opacity:.9;
+}
+
+.dashboard__card-value{
+  font-size:26px;
+  font-weight:bold;
+}
+
+/* =========================
+   GRAFICAS
+========================= */
+.dashboard__grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.dashboard__chart{
+  background:var(--container);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+/* Evita que canvas se desborde */
+.dashboard__chart canvas{
+  width:100% !important;
+  height:300px !important;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.dashboard__footer{
+  margin-top:20px;
+  text-align:right;
+}
+
+/* =========================
+   ANIMACION
+========================= */
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
