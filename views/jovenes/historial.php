@@ -84,27 +84,5 @@ $historial = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <br>
 <a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn-report">⬅ Volver</a>
 
-<!-- SCRIPT SOLO PARA ESTA TABLA -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    if (typeof $ !== "undefined" && $('#tablaHistorial').length) {
-        $('#tablaHistorial').DataTable({
-            pageLength: 8,
-            order: [[1, "desc"]],
-            language: {
-                search: "🔍 Buscar:",
-                lengthMenu: "Mostrar _MENU_",
-                info: "_START_ a _END_ de _TOTAL_",
-                paginate: {
-                    next: "➡",
-                    previous: "⬅"
-                }
-            }
-        });
-    }
-
-});
-</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

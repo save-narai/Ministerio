@@ -1,0 +1,458 @@
+/* =========================
+   HEADER FIX
+========================= */
+
+.jovenes__header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* =========================
+   BOTONES TOP
+========================= */
+
+.top-actions{
+  display:flex;
+  gap:14px;
+
+  margin-left:auto;
+
+  margin-right:70px; /* evita choque con dark mode */
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+.jovenes__btn{
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  background:var(--card-gradient);
+
+  color:#fff;
+
+  border:none;
+
+  padding:10px 18px;
+
+  border-radius:12px;
+
+  font-size:14px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:var(--transition);
+
+  box-shadow:var(--shadow);
+}
+
+.jovenes__btn:hover{
+  transform:translateY(-3px) scale(1.03);
+}
+
+/* =========================
+   FILTROS FIX
+========================= */
+
+.jovenes__filters{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.jovenes__filters a{
+  text-decoration:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+/* =========================
+   BUSCADOR PRO
+========================= */
+
+.buscador{
+
+  width:280px;
+  max-width:100%;
+
+  padding:12px 16px;
+
+  border-radius:14px;
+
+  border:1px solid rgba(255,255,255,.08);
+
+  outline:none;
+
+  background:var(--container);
+
+  color:var(--text);
+
+  box-shadow:var(--shadow);
+
+  transition:var(--transition);
+
+  margin-bottom:20px;
+}
+
+.buscador:focus{
+
+  transform:scale(1.02);
+
+  box-shadow:
+    0 0 0 3px rgba(0,229,255,.25);
+}
+
+/* =========================
+   TABLA SAAS PREMIUM
+========================= */
+
+.jovenes__table{
+
+  width:100%;
+
+  overflow:hidden;
+
+  border-radius:22px;
+
+  background:var(--container);
+
+  box-shadow:var(--shadow);
+
+  backdrop-filter:blur(12px);
+
+  padding:8px;
+}
+
+/* TABLA */
+.jovenes__table table{
+
+  width:100%;
+
+  border-collapse:separate;
+
+  border-spacing:0 8px;
+
+  table-layout:auto;
+}
+
+/* HEADER */
+.jovenes__table thead th{
+
+  padding:16px;
+
+  font-size:13px;
+
+  font-weight:700;
+
+  text-transform:uppercase;
+
+  letter-spacing:.5px;
+
+  color:#fff;
+
+  background:var(--card-gradient);
+
+  border:none;
+}
+
+/* esquinas header */
+.jovenes__table thead th:first-child{
+  border-radius:14px 0 0 14px;
+}
+
+.jovenes__table thead th:last-child{
+  border-radius:0 14px 14px 0;
+}
+
+/* FILAS */
+.jovenes__table tbody tr{
+
+  background:rgba(255,255,255,.02);
+
+  transition:all .28s ease;
+}
+
+/* DARK */
+html.dark .jovenes__table tbody tr{
+
+  background:rgba(255,255,255,.025);
+}
+
+/* HOVER */
+.jovenes__table tbody tr:hover{
+
+  transform:translateY(-2px);
+
+  background:rgba(0,0,0,.03);
+}
+
+html.dark .jovenes__table tbody tr:hover{
+
+  background:rgba(255,255,255,.045);
+}
+
+/* CELDAS */
+.jovenes__table td{
+
+  padding:16px 14px;
+
+  border:none;
+
+  vertical-align:middle;
+}
+
+/* esquinas filas */
+.jovenes__table td:first-child{
+  border-radius:14px 0 0 14px;
+}
+
+.jovenes__table td:last-child{
+  border-radius:0 14px 14px 0;
+}
+
+/* =========================
+   AJUSTE COLUMNAS
+========================= */
+
+/* NOMBRE */
+.jovenes__table th:nth-child(1),
+.jovenes__table td:nth-child(1){
+  width:24%;
+}
+
+/* EDAD */
+.jovenes__table th:nth-child(2),
+.jovenes__table td:nth-child(2){
+  width:8%;
+  text-align:center;
+}
+
+/* ESPIRITUAL */
+.jovenes__table th:nth-child(3),
+.jovenes__table td:nth-child(3){
+
+  width:18%;
+
+  text-align:center;
+}
+
+/* ACTIVIDAD */
+.jovenes__table th:nth-child(4),
+.jovenes__table td:nth-child(4){
+
+  width:10%;
+
+  text-align:center;
+
+  vertical-align:middle;
+}
+
+/* CONEXION */
+.jovenes__table th:nth-child(5),
+.jovenes__table td:nth-child(5){
+  width:10%;
+  text-align:center;
+}
+
+/* TIEMPO */
+.jovenes__table th:nth-child(6),
+.jovenes__table td:nth-child(6){
+  width:12%;
+  text-align:center;
+}
+
+/* ACCIONES */
+.jovenes__table th:nth-child(7),
+.jovenes__table td:nth-child(7){
+
+  width:16%;
+
+  text-align:center;
+
+  white-space:nowrap;
+
+  padding-left:45px;
+}
+/* =========================
+   ACCIONES PRO
+========================= */
+
+.acciones{
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:14px;
+
+  transform:translateX(-1x);
+}
+
+/* BOTONES */
+.btn-icon{
+
+  width:40px;
+  height:40px;
+
+  min-width:40px;
+  min-height:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:none;
+
+  border-radius:12px;
+
+  text-decoration:none;
+
+  background:rgba(255,255,255,.06);
+
+  backdrop-filter:blur(8px);
+
+  color:#333;
+
+  cursor:pointer;
+
+  transition:all .25s ease;
+}
+
+/* SVG */
+.btn-icon svg{
+
+  width:18px;
+  height:18px;
+
+  fill:currentColor;
+}
+
+/* DARK MODE */
+html.dark .btn-icon{
+
+  background:rgba(255,255,255,.08);
+
+  color:#fff;
+}
+
+/* HOVER */
+.btn-icon:hover{
+
+  transform:
+    translateY(-2px)
+    scale(1.08);
+}
+
+/* VER */
+.btn-icon.ver:hover{
+  background:#00e5ff;
+  color:#fff;
+}
+
+/* EDITAR */
+.btn-icon.editar:hover{
+  background:#00ff88;
+  color:#fff;
+}
+
+/* ELIMINAR */
+.btn-icon.eliminar:hover{
+  background:#ff4d6d;
+  color:#fff;
+}
+
+.btn-icon{
+
+  width:42px;
+  height:42px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:12px;
+
+  background:rgba(255,255,255,.06);
+
+  backdrop-filter:blur(10px);
+
+  border:none;
+
+  cursor:pointer;
+
+  transition:all .25s ease;
+}
+
+/* SVG */
+.btn-icon svg{
+
+  width:18px;
+  height:18px;
+
+  fill:currentColor;
+}
+
+/* MODO CLARO */
+.btn-icon{
+  color:#333;
+}
+
+/* MODO OSCURO */
+html.dark .btn-icon{
+  color:#fff;
+  background:rgba(255,255,255,.08);
+}
+
+/* HOVER GENERAL */
+.btn-icon:hover{
+  transform:translateY(-2px) scale(1.08);
+}
+
+/* COLORES POR ACCION */
+.btn-icon.ver:hover{
+  background:#00e5ff;
+  color:#fff;
+}
+
+.btn-icon.editar:hover{
+  background:#00ff88;
+  color:#fff;
+}
+
+.btn-icon.eliminar:hover{
+  background:#ff4d6d;
+  color:#fff;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+  .top-actions{
+    margin-right:0;
+  }
+
+  .buscador{
+    width:100%;
+  }
+
+  .jovenes__table{
+    overflow-x:auto;
+  }
+
+}

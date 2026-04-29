@@ -94,16 +94,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =========================
-       BUSCADOR
-    ========================= */
-    const input = document.getElementById("buscador");
+   BUSCADOR
+========================= */
 
-    if(input && typeof $ !== "undefined" && $.fn.DataTable){
-        const tabla = $('#tablaJovenes').DataTable();
+const input = document.getElementById("buscador");
+const tablaElement = document.getElementById("tablaJovenes");
 
-        input.addEventListener("keyup", function(){
-            tabla.search(this.value).draw();
-        });
-    }
+if (
+    input &&
+    tablaElement &&
+    typeof $ !== "undefined" &&
+    $.fn.DataTable
+){
 
-});
+    const tabla = $('#tablaJovenes').DataTable({
+        pageLength: 8
+    });
+
+    input.addEventListener("keyup", function(){
+
+        tabla.search(this.value).draw();
+
+    });
+
+}
+
+/* =========================
+   SIDEBAR EXPANDIBLE
+========================= */
+
+const sidebar = document.getElementById("sidebar");
+const main = document.getElementById("mainContent");
+
+if(sidebar){
+
+    sidebar.addEventListener("mouseenter", () => {
+        sidebar.classList.add("expand");
+
+        if(main){
+            main.classList.add("expand");
+        }
+    });
+
+    sidebar.addEventListener("mouseleave", () => {
+        sidebar.classList.remove("expand");
+
+        if(main){
+            main.classList.remove("expand");
+        }
+    });
+
+}

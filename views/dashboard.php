@@ -60,7 +60,7 @@ $cards = [
   ["Inactivos", $resumen['inactivos'] ?? 0],
   ["Servidores", $resumen['servidores'] ?? 0],
   ["Reuniones", $resumen['reuniones'] ?? 0],
-  ["% Asistencia", ($resumen['asistencia'] ?? 0) . "%"]
+  ["Asistencia", ($resumen['asistencia'] ?? 0) . "%"]
 ];
 
 foreach($cards as [$titulo, $valor]): ?>
