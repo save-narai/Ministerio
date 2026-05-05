@@ -5,143 +5,233 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================
        DARK MODE
     ========================= */
+
     if (btn) {
-        const isDarkSaved = localStorage.getItem("theme") === "dark";
+
+        const isDarkSaved =
+            localStorage.getItem("theme") === "dark";
 
         if (isDarkSaved) {
+
             document.documentElement.classList.add("dark");
             btn.innerText = "☀️";
+
         } else {
+
             btn.innerText = "🌙";
+
         }
 
         btn.onclick = () => {
-            const dark = document.documentElement.classList.toggle("dark");
-            localStorage.setItem("theme", dark ? "dark" : "light");
+
+            const dark =
+                document.documentElement.classList.toggle("dark");
+
+            localStorage.setItem(
+                "theme",
+                dark ? "dark" : "light"
+            );
+
             btn.innerText = dark ? "☀️" : "🌙";
 
-            location.reload(); // 🔥 asegura que gráficas se actualicen correctamente
+            location.reload();
+
         };
+
     }
 
     /* =========================
-       GRÁFICAS SEGURAS
+       GRAFICAS
     ========================= */
-    const grafica1 = document.getElementById('graficaMensual');
-    const grafica2 = document.getElementById('graficaTipos');
 
-    const isDark = document.documentElement.classList.contains("dark");
-    const colorText = isDark ? "#ffffff" : "#333";
-    const colorGrid = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+    const grafica1 =
+        document.getElementById("graficaMensual");
 
-    // 🔥 SOLO si existen datos válidos
+    const grafica2 =
+        document.getElementById("graficaTipos");
+
+    const isDark =
+        document.documentElement.classList.contains("dark");
+
+    const colorText =
+        isDark ? "#ffffff" : "#333";
+
+    const colorGrid =
+        isDark
+        ? "rgba(255,255,255,0.1)"
+        : "rgba(0,0,0,0.1)";
+
     if (
         grafica1 &&
         typeof Chart !== "undefined" &&
-        typeof labelsMes !== "undefined" &&
-        Array.isArray(labelsMes) &&
-        labelsMes.length
+        typeof labelsMes !== "undefined"
     ) {
+
         new Chart(grafica1, {
-            type: 'bar',
+
+            type: "bar",
+
             data: {
+
                 labels: labelsMes,
+
                 datasets: [{
-                    label: 'Asistencia',
-                    data: typeof dataMes !== "undefined" ? dataMes : [],
-                    backgroundColor: isDark ? '#17e1fc' : '#007bff',
+
+                    label: "Asistencia",
+
+                    data: dataMes,
+
+                    backgroundColor:
+                        isDark ? "#17e1fc" : "#007bff",
+
                     borderRadius: 8
+
                 }]
+
             },
+
             options: {
+
                 responsive: true,
+
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false }},
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
                 scales: {
-                    x: { ticks: { color: colorText }, grid: { color: colorGrid }},
-                    y: { ticks: { color: colorText }, grid: { color: colorGrid }, beginAtZero: true }
+
+                    x: {
+                        ticks: { color: colorText },
+                        grid: { color: colorGrid }
+                    },
+
+                    y: {
+                        ticks: { color: colorText },
+                        grid: { color: colorGrid },
+                        beginAtZero: true
+                    }
+
                 }
+
             }
+
         });
+
     }
 
     if (
         grafica2 &&
         typeof Chart !== "undefined" &&
-        typeof labelsTipo !== "undefined" &&
-        Array.isArray(labelsTipo) &&
-        labelsTipo.length
+        typeof labelsTipo !== "undefined"
     ) {
+
         new Chart(grafica2, {
-            type: 'pie',
+
+            type: "pie",
+
             data: {
+
                 labels: labelsTipo,
+
                 datasets: [{
-                    data: typeof dataTipo !== "undefined" ? dataTipo : [],
+
+                    data: dataTipo,
+
                     backgroundColor: isDark
                         ? ['#17e1fc','#ff00ff','#00ff88','#ffaa00']
                         : ['#007bff','#ff6384','#28a745','#ffc107']
+
                 }]
+
             },
+
             options: {
+
                 responsive: true,
+
                 maintainAspectRatio: false,
+
                 plugins: {
-                    legend: { labels: { color: colorText }}
+
+                    legend: {
+                        labels: {
+                            color: colorText
+                        }
+                    }
+
                 }
+
             }
+
+        });
+
+    }
+
+
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const main =
+        document.getElementById("mainContent");
+
+    if (sidebar) {
+
+        sidebar.addEventListener("mouseenter", () => {
+
+            sidebar.classList.add("expand");
+
+            if (main) {
+                main.classList.add("expand");
+            }
+
+        });
+
+        sidebar.addEventListener("mouseleave", () => {
+
+            sidebar.classList.remove("expand");
+
+            if (main) {
+                main.classList.remove("expand");
+            }
+
+        });
+
+    }
+
+});
+
+
+/* =========================
+       formulario
+    ========================= */
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const nombre = document.getElementById("nombre");
+    const telefono = document.getElementById("telefono");
+
+    // 🔥 MAYÚSCULAS AUTOMÁTICAS
+    if(nombre){
+        nombre.addEventListener("input", () => {
+            nombre.value = nombre.value.toUpperCase();
         });
     }
 
-    /* =========================
-   BUSCADOR
-========================= */
+    // 🔥 SOLO NÚMEROS EN TELÉFONO
+    if(telefono){
+        telefono.addEventListener("input", () => {
+            telefono.value = telefono.value.replace(/\D/g, "");
+        });
+    }
 
-const input = document.getElementById("buscador");
-const tablaElement = document.getElementById("tablaJovenes");
-
-if (
-    input &&
-    tablaElement &&
-    typeof $ !== "undefined" &&
-    $.fn.DataTable
-){
-
-    const tabla = $('#tablaJovenes').DataTable({
-        pageLength: 8
-    });
-
-    input.addEventListener("keyup", function(){
-
-        tabla.search(this.value).draw();
-
-    });
-
-}
-
-/* =========================
-   SIDEBAR EXPANDIBLE
-========================= */
-
-const sidebar = document.getElementById("sidebar");
-const main = document.getElementById("mainContent");
-
-if(sidebar){
-
-    sidebar.addEventListener("mouseenter", () => {
-        sidebar.classList.add("expand");
-
-        if(main){
-            main.classList.add("expand");
-        }
-    });
-
-    sidebar.addEventListener("mouseleave", () => {
-        sidebar.classList.remove("expand");
-
-        if(main){
-            main.classList.remove("expand");
-        }
-    });
-
-}
+});

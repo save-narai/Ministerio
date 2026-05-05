@@ -1,0 +1,230 @@
+/* =========================
+   CARD EDITAR
+========================= */
+
+.card{
+    max-width: 480px;
+    margin: 60px auto;
+    padding: 30px;
+    border-radius: 20px;
+
+    position: relative;
+    z-index: 1;
+
+    background: rgba(15,23,42,.85);
+    backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+
+/* ☀️ LIGHT */
+html:not(.dark) .card{
+    background: rgba(255,255,255,.95);
+    border: 1px solid #e5e7eb;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.card form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* GRID */
+.form-row{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media(max-width:600px){
+    .form-row{
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   FORM GROUP (CLAVE)
+========================= */
+
+.form-group{
+    position: relative;
+    transition: .25s ease;
+}
+
+/* =========================
+   LABELS
+========================= */
+
+.card label{
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    transition: .25s;
+}
+
+html:not(.dark) .card label{
+    color: #111;
+}
+
+/* 🔥 label activo */
+.form-group:focus-within label{
+    color: #00e5ff;
+}
+
+html:not(.dark) .form-group:focus-within label{
+    color: #ff4b2b;
+}
+
+/* =========================
+   INPUTS / SELECT / TEXTAREA
+========================= */
+
+.card input,
+.card select,
+.card textarea{
+    width: 100%;
+    padding: 12px 14px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.05);
+    color: #fff;
+
+    font-size: 14px;
+
+    transition: all .25s ease;
+}
+
+/* ☀️ LIGHT */
+html:not(.dark) .card input,
+html:not(.dark) .card select,
+html:not(.dark) .card textarea{
+    background: #fff;
+    color: #111;
+    border: 1px solid #d1d5db;
+}
+
+/* =========================
+   🔥 FOCUS INTELIGENTE REAL
+========================= */
+
+.card input:focus,
+.card select:focus,
+.card textarea:focus{
+    border-color: #00e5ff;
+
+    box-shadow:
+        0 0 0 3px rgba(0,229,255,.2),
+        0 8px 20px rgba(0,229,255,.08);
+
+    transform: translateY(-1px) scale(1.01);
+}
+
+/* ☀️ LIGHT FOCUS */
+html:not(.dark) .card input:focus,
+html:not(.dark) .card select:focus,
+html:not(.dark) .card textarea:focus{
+    border-color: #ff9a44;
+
+    box-shadow:
+        0 0 0 3px rgba(255,154,68,.25),
+        0 8px 20px rgba(255,154,68,.12);
+}
+
+/* =========================
+   SELECT FIX (IMPORTANTE)
+========================= */
+
+.card select option{
+    background: #020617;
+    color: #fff;
+}
+
+html:not(.dark) .card select option{
+    background: #fff;
+    color: #111;
+}
+
+/* =========================
+   BOTÓN
+========================= */
+
+.card button{
+    margin-top: 14px;
+    padding: 13px;
+
+    border-radius: 14px;
+    border: none;
+
+    background: linear-gradient(90deg, #00e5ff, #00ff88);
+    color: #000;
+
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+/* ☀️ LIGHT */
+html:not(.dark) .card button{
+    background: linear-gradient(90deg, #ff9a44, #ff4b2b, #ff416c);
+    color: #fff;
+}
+
+.card button:hover{
+    transform: translateY(-2px);
+}
+
+/* =========================
+   VOLVER
+========================= */
+
+.btn-volver{
+    margin-top: 18px;
+    padding: 10px 16px;
+
+    border-radius: 10px;
+    border: none;
+
+    background: transparent;
+    color: #cbd5e1;
+    cursor: pointer;
+}
+
+.btn-volver:hover{
+    color: #00e5ff;
+}
+
+html:not(.dark) .btn-volver{
+    color: #444;
+}
+
+html:not(.dark) .btn-volver:hover{
+    color: #ff4b2b;
+}
+
+/* =========================
+   TITULO
+========================= */
+
+.card h2{
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 700;
+
+    color: #00e5ff;
+}
+
+/* ☀️ LIGHT */
+html:not(.dark) .card h2{
+    background: linear-gradient(90deg, #ff9a44, #ff4b2b, #ff416c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

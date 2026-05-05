@@ -2,8 +2,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Sistema</title>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/theme.css">
@@ -11,19 +13,32 @@
 <script>
 (function() {
   const theme = localStorage.getItem("theme");
+
   if (theme === "dark") {
     document.documentElement.classList.add("dark");
   }
 })();
 </script>
 
+<!-- CHART -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/theme.js"></script>
 
 <?php
-// ✅ CARGA CSS EXTRA (dashboard)
 if(isset($extraCSS)) echo $extraCSS;
 ?>
+
+<!-- jQuery -->
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet"
+href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<script defer
+src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- THEME -->
+<script defer src="<?= BASE_URL ?>/assets/js/theme.js"></script>
 
 </head>
 

@@ -53,7 +53,7 @@ $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* CSS */
 $extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes.css">
+<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/jovenes.css">
 ';
 
 require_once __DIR__ . "/../../includes/header.php";
@@ -123,8 +123,8 @@ require_once __DIR__ . "/../../includes/header.php";
     <!-- TABLA -->
     <div class="jovenes__table">
 
-        <table id="tablaJovenes">
-
+<table id="tablaJovenes">
+    
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -289,7 +289,18 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <script>
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
+
+    // VALIDAR LIBRERÍAS
+    if (typeof $ === "undefined" || !$.fn.DataTable) {
+        console.error("DataTables no está disponible");
+        return;
+    }
+
+    // EVITAR DOBLE INICIALIZACIÓN
+    if ($.fn.DataTable.isDataTable('#tablaJovenes')) {
+        return;
+    }
 
     // TABLA
     const tabla = $('#tablaJovenes').DataTable({
@@ -297,29 +308,25 @@ $(document).ready(function () {
         pageLength: 8,
 
         language: {
-
-            search: "",
-
-            lengthMenu: "Mostrar _MENU_ registros",
-
             info: "Mostrando _START_ a _END_ de _TOTAL_ jóvenes",
-
+            infoFiltered: "",
             paginate: {
                 previous: "←",
                 next: "→"
             }
-
         },
 
         dom: 't<"datatable-footer"ip>'
     });
 
     // BUSCADOR
-    $('#buscador').on('keyup', function () {
+    const buscador = document.getElementById("buscador");
 
-        tabla.search(this.value).draw();
-
-    });
+    if (buscador) {
+        buscador.addEventListener("keyup", function () {
+            tabla.search(this.value).draw();
+        });
+    }
 
 });
 

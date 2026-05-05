@@ -5,15 +5,31 @@ require_once "../middleware/auth.php";
 require_once "../middleware/permiso.php";
 require_once "../config/conexion.php";
 
-if (empty($_SESSION["user_id"])) {
-    header("Location: ../index.php");
-    exit;
+/* ============================
+   🔧 FUNCIÓN REUTILIZABLE
+============================ */
+function limpiarNombre($nombre) {
+
+    $nombre = trim($nombre);
+    $nombre = preg_replace('/\s+/', ' ', $nombre);
+
+    if (!preg_match('/^[\p{L} ]+$/u', $nombre)) {
+        return [false, "El nombre solo puede contener letras y espacios"];
+    }
+
+    if (mb_strlen($nombre) < 3) {
+        return [false, "El nombre es demasiado corto"];
+    }
+
+    $nombre = mb_convert_case($nombre, MB_CASE_TITLE, "UTF-8");
+
+    return [true, $nombre];
 }
 
 try {
 
     /* ============================
-       CREAR JOVEN
+       🟢 CREAR JOVEN
     ============================ */
     if (isset($_POST["crear_joven"])) {
 
@@ -21,29 +37,59 @@ try {
             die("Acceso denegado.");
         }
 
-        $nombre = trim($_POST["nombre_completo"] ?? '');
+        [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
+
+        if (!$ok) {
+            $_SESSION["error"] = $nombre;
+            header("Location: ../views/jovenes/crear.php");
+            exit();
+        }
+
         $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? null;
         $fecha_ingreso = $_POST["fecha_ingreso"] ?? null;
         $telefono = trim($_POST["telefono"] ?? '');
+        $genero = $_POST["genero"] ?? null;
+        $estado = $_POST["estado_espiritual"] ?? null;
         $es_servidor = isset($_POST["es_servidor"]) ? (int) $_POST["es_servidor"] : 0;
 
         if (empty($nombre) || empty($fecha_nacimiento) || empty($fecha_ingreso)) {
-            die("Nombre, fecha de nacimiento y fecha de ingreso son obligatorios.");
+            $_SESSION["error"] = "Campos obligatorios incompletos";
+            header("Location: ../views/jovenes/crear.php");
+            exit();
+        }
+
+        // duplicados
+        $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM jovenes WHERE nombre_completo = :nombre");
+        $stmtCheck->execute(["nombre" => $nombre]);
+
+        if ($stmtCheck->fetchColumn() > 0) {
+            $_SESSION["error"] = "Este joven ya está registrado";
+            header("Location: ../views/jovenes/crear.php");
+            exit();
+        }
+
+        // teléfono
+        if (!empty($telefono) && !preg_match('/^3[0-9]{9}$/', $telefono)) {
+            $_SESSION["error"] = "Teléfono inválido";
+            header("Location: ../views/jovenes/crear.php");
+            exit();
         }
 
         $stmt = $pdo->prepare("
             INSERT INTO jovenes
-            (nombre_completo, fecha_nacimiento, fecha_ingreso, telefono, es_servidor, estado_actividad)
+            (nombre_completo, fecha_nacimiento, fecha_ingreso, telefono, es_servidor, genero, estado_espiritual, estado_actividad)
             VALUES
-            (:nombre, :fecha_nacimiento, :fecha_ingreso, :telefono, :servidor, 'ACTIVO')
+            (:nombre, :fn, :fi, :tel, :servidor, :genero, :estado, 'ACTIVO')
         ");
 
         $stmt->execute([
             "nombre" => $nombre,
-            "fecha_nacimiento" => $fecha_nacimiento,
-            "fecha_ingreso" => $fecha_ingreso,
-            "telefono" => $telefono ?: null,
-            "servidor" => $es_servidor
+            "fn" => $fecha_nacimiento,
+            "fi" => $fecha_ingreso,
+            "tel" => $telefono ?: null,
+            "servidor" => $es_servidor,
+            "genero" => $genero,
+            "estado" => $estado
         ]);
 
         header("Location: ../views/jovenes/index.php");
@@ -51,7 +97,7 @@ try {
     }
 
     /* ============================
-       EDITAR JOVEN
+       🟡 EDITAR JOVEN
     ============================ */
     if (isset($_POST["editar_joven"])) {
 
@@ -59,32 +105,64 @@ try {
             die("Acceso denegado.");
         }
 
-        $id = (int) ($_POST["id"] ?? 0);
+        $id = (int)($_POST["id"] ?? 0);
 
         if ($id <= 0) {
             die("ID inválido.");
+        }
+
+        [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
+
+        if (!$ok) {
+            $_SESSION["error"] = $nombre;
+            header("Location: ../views/jovenes/editar.php?id=" . $id);
+            exit();
+        }
+
+        $telefono = trim($_POST["telefono"] ?? '');
+
+        if (!empty($telefono) && !preg_match('/^3[0-9]{9}$/', $telefono)) {
+            $_SESSION["error"] = "Teléfono inválido";
+            header("Location: ../views/jovenes/editar.php?id=" . $id);
+            exit();
+        }
+
+        // evitar duplicados (excepto el mismo)
+        $stmtCheck = $pdo->prepare("
+            SELECT COUNT(*) FROM jovenes 
+            WHERE nombre_completo = :nombre AND id != :id
+        ");
+        $stmtCheck->execute([
+            "nombre" => $nombre,
+            "id" => $id
+        ]);
+
+        if ($stmtCheck->fetchColumn() > 0) {
+            $_SESSION["error"] = "Ya existe otro joven con ese nombre";
+            header("Location: ../views/jovenes/editar.php?id=" . $id);
+            exit();
         }
 
         $stmt = $pdo->prepare("
             UPDATE jovenes
             SET nombre_completo = :nombre,
                 telefono = :telefono,
-                fecha_nacimiento = :fecha_nacimiento,
-                fecha_ingreso = :fecha_ingreso,
+                fecha_nacimiento = :fn,
+                fecha_ingreso = :fi,
                 genero = :genero,
                 estado_espiritual = :estado,
-                observaciones = :observaciones
+                observaciones = :obs
             WHERE id = :id
         ");
 
         $stmt->execute([
-            "nombre" => trim($_POST["nombre_completo"]),
-            "telefono" => trim($_POST["telefono"]) ?: null,
-            "fecha_nacimiento" => $_POST["fecha_nacimiento"] ?: null,
-            "fecha_ingreso" => $_POST["fecha_ingreso"] ?: null,
+            "nombre" => $nombre,
+            "telefono" => $telefono ?: null,
+            "fn" => $_POST["fecha_nacimiento"] ?: null,
+            "fi" => $_POST["fecha_ingreso"] ?: null,
             "genero" => $_POST["genero"] ?: null,
             "estado" => $_POST["estado_espiritual"] ?: null,
-            "observaciones" => trim($_POST["observaciones"]) ?: null,
+            "obs" => trim($_POST["observaciones"]) ?: null,
             "id" => $id
         ]);
 
@@ -93,7 +171,7 @@ try {
     }
 
     /* ============================
-       ELIMINAR JOVEN
+       🔴 ELIMINAR JOVEN
     ============================ */
     if (isset($_POST["eliminar_joven"])) {
 
@@ -101,7 +179,7 @@ try {
             die("Acceso denegado.");
         }
 
-        $id = (int) ($_POST["id"] ?? 0);
+        $id = (int)($_POST["id"] ?? 0);
 
         if ($id <= 0) {
             die("ID inválido.");
@@ -115,7 +193,6 @@ try {
     }
 
 } catch (PDOException $e) {
-
     error_log($e->getMessage());
-    die("Ocurrió un error en la base de datos.");
+    die("Error en base de datos.");
 }

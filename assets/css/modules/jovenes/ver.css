@@ -1,0 +1,380 @@
+/* =========================
+   BASE
+========================= */
+body{
+    font-family: system-ui, sans-serif;
+}
+
+/* =========================
+   PERFIL CARD
+========================= */
+.perfil-card{
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 22px;
+
+    color: #fff;
+
+    position: relative;
+    overflow: hidden;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+
+    animation: fadeIn .6s ease;
+}
+
+/* =========================
+   🎨 CHICO (AZUL + ROJO)
+========================= */
+.perfil-chico{
+    background: linear-gradient(135deg, #475068, #ef4444);
+}
+
+/* glow */
+.perfil-chico::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(circle at 20% 30%, rgba(96,165,250,.25), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(239,68,68,.25), transparent 40%);
+}
+
+/* =========================
+   🌸 CHICA (MORADO + ROSA)
+========================= */
+.perfil-chica{
+    background: linear-gradient(135deg, #9333ea, #ec4899);
+}
+
+.perfil-chica::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(circle at 20% 30%, rgba(168,85,247,.25), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(244,114,182,.25), transparent 40%);
+}
+
+/* =========================
+   HEADER
+========================= */
+.perfil-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.perfil-header h2{
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* =========================
+   GRID INFO
+========================= */
+.perfil-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+@media(max-width:600px){
+    .perfil-grid{
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   STATS
+========================= */
+.perfil-stats{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   OBS
+========================= */
+.perfil-obs{
+    background: rgba(255,255,255,.12);
+    padding: 15px;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge-activo,
+.badge-inactivo,
+.badge-presente,
+.badge-ausente{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* colores */
+.badge-activo{ color: #22c55e; background: rgba(34,197,94,.15); }
+.badge-inactivo{ color: #ef4444; background: rgba(239,68,68,.15); }
+.badge-presente{ color: #22c55e; background: rgba(34,197,94,.15); }
+.badge-ausente{ color: #ef4444; background: rgba(239,68,68,.15); }
+
+/* =========================
+   ICONOS SVG
+========================= */
+.icon{
+    width: 16px;
+    height: 16px;
+}
+
+.meta-item{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 10px;
+}
+/* =========================
+   CARD FORM / TIMELINE (NEUTRO)
+========================= */
+.card{
+    max-width: 750px;
+    margin: 25px auto;
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background: rgba(15,23,42,.85);
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+
+    animation: fadeIn .5s ease;
+}
+
+/* 🔥 LIGHT MODE (IMPORTANTE) */
+html:not(.dark) .card{
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+
+/* =========================
+   FORM (NEUTRO)
+========================= */
+.card input,
+.card select,
+.card textarea{
+    width: 100%;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    padding: 10px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.05);
+    color: #fff;
+
+    transition: .25s;
+}
+
+/* LIGHT */
+html:not(.dark) .card input,
+html:not(.dark) .card select,
+html:not(.dark) .card textarea{
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    color: #111;
+}
+
+/* FOCUS DARK */
+.card input:focus,
+.card select:focus,
+.card textarea:focus{
+    border-color: #00e5ff;
+    box-shadow: 0 0 0 3px rgba(0,229,255,.2);
+}
+
+/* FOCUS LIGHT */
+html:not(.dark) .card input:focus,
+html:not(.dark) .card select:focus,
+html:not(.dark) .card textarea:focus{
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+}
+
+/* =========================
+   BOTÓN FORM (NEUTRO)
+========================= */
+.card button{
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+
+    background: linear-gradient(90deg, #00e5ff, #00ff88);
+    color: #000;
+
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.card button:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,255,136,.3);
+}
+
+/* LIGHT BUTTON */
+html:not(.dark) .card button{
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    color: #fff;
+}
+
+html:not(.dark) .card button:hover{
+    box-shadow: 0 10px 25px rgba(37,99,235,.3);
+}
+
+/* =========================
+   TIMELINE (NEUTRO 🔥)
+========================= */
+.timeline{
+    position: relative;
+    margin-top: 20px;
+    padding-left: 30px;
+}
+
+/* línea */
+.timeline::before{
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,.2);
+}
+
+/* LIGHT línea */
+html:not(.dark) .timeline::before{
+    background: #d1d5db;
+}
+
+/* item */
+.timeline-item{
+    position: relative;
+    margin-bottom: 25px;
+}
+
+/* 🔥 DOT NEUTRO (QUITAMOS GÉNERO AQUÍ) */
+.timeline-dot{
+    position: absolute;
+    left: -2px;
+    top: 6px;
+
+    width: 12px;
+    height: 12px;
+
+    border-radius: 50%;
+    background: #00e5ff;
+}
+
+/* LIGHT DOT */
+html:not(.dark) .timeline-dot{
+    background: #3b82f6;
+}
+
+/* contenido */
+.timeline-content{
+    background: rgba(255,255,255,.08);
+    padding: 15px;
+    border-radius: 14px;
+
+    backdrop-filter: blur(6px);
+    transition: .25s;
+}
+
+/* LIGHT CONTENT */
+html:not(.dark) .timeline-content{
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+
+.timeline-content:hover{
+    transform: translateY(-2px);
+}
+
+/* header */
+.timeline-header{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+/* meta */
+.timeline-meta{
+    font-size: 12px;
+    opacity: .8;
+    margin-bottom: 8px;
+}
+
+/* =========================
+   ESTADOS
+========================= */
+.estado{
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.estado.pendiente{ background: #f59e0b; }
+.estado.en_proceso{ background: #3b82f6; }
+.estado.finalizado{ background: #22c55e; }
+
+/* =========================
+   BOTONES FINALES
+========================= */
+.btn{
+    background: #334155;
+    color: #fff;
+}
+
+html:not(.dark) .btn{
+    background: #e5e7eb;
+    color: #111;
+}
+
+.btn-primary{
+    background: linear-gradient(90deg, #9333ea, #ec4899);
+    color: #fff;
+}
+
+/* =========================
+   ANIMACIÓN
+========================= */
+@keyframes fadeIn{
+    from{
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

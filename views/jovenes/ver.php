@@ -13,10 +13,14 @@ if ($id <= 0) {
     die("ID inválido.");
 }
 
-/* =============================== */
-/* DATOS */
-/* =============================== */
+/* ✅ CSS */
+$extraCSS = '
+<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/ver.css">
+';
 
+/* ===============================
+   DATOS
+=============================== */
 $stmt = $pdo->prepare("SELECT * FROM jovenes WHERE id = :id");
 $stmt->execute(["id" => $id]);
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,12 +29,18 @@ if (!$joven) {
     die("Joven no encontrado.");
 }
 
-/* =============================== */
-/* RESUMEN */
-/* =============================== */
+/* ===============================
+   CLASE POR GÉNERO 🔥
+=============================== */
+$claseGenero = ($joven["genero"] === "FEMENINO") 
+    ? "perfil-chica" 
+    : "perfil-chico";
 
+/* ===============================
+   RESUMEN
+=============================== */
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         SUM(asistio = 1) AS presentes,
         SUM(asistio = 0) AS ausentes
     FROM asistencia
@@ -42,19 +52,17 @@ $resumen = $stmt->fetch(PDO::FETCH_ASSOC);
 $presentes = $resumen["presentes"] ?? 0;
 $ausentes  = $resumen["ausentes"] ?? 0;
 
-/* =============================== */
-/* EDAD */
-/* =============================== */
-
+/* ===============================
+   EDAD
+=============================== */
 $edad = "—";
 if (!empty($joven["fecha_nacimiento"])) {
     $edad = (new DateTime($joven["fecha_nacimiento"]))->diff(new DateTime())->y;
 }
 
-/* =============================== */
-/* SEGUIMIENTOS */
-/* =============================== */
-
+/* ===============================
+   SEGUIMIENTOS
+=============================== */
 $stmt = $pdo->prepare("
     SELECT s.*, u.nombre AS responsable_nombre
     FROM seguimientos s
@@ -72,37 +80,68 @@ $responsables = $pdo->query("
 ?>
 
 <?php require_once __DIR__ . "/../../includes/header.php"; ?>
+<!-- =========================
+     PERFIL
+========================= -->
+<div class="perfil-card <?= $claseGenero ?>">
 
-<h2>👤 Perfil del Joven</h2>
+    <div class="perfil-header">
+        <h2><?= htmlspecialchars($joven["nombre_completo"]) ?></h2>
 
-<div class="card">
+        <?php if($joven["estado_actividad"] === "ACTIVO"): ?>
+            <span class="badge-activo">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="6" fill="currentColor"/>
+                </svg>
+                ACTIVO
+            </span>
+        <?php else: ?>
+            <span class="badge-inactivo">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="6" fill="currentColor"/>
+                </svg>
+                INACTIVO
+            </span>
+        <?php endif; ?>
 
-<h3>📌 Información General</h3>
+    </div>
 
-<p><strong>Nombre:</strong> <?= htmlspecialchars($joven["nombre_completo"]) ?></p>
-<p><strong>Edad:</strong> <?= $edad ?></p>
-<p><strong>Género:</strong> <?= htmlspecialchars($joven["genero"] ?? "—") ?></p>
-<p><strong>Teléfono:</strong> <?= htmlspecialchars($joven["telefono"] ?? "—") ?></p>
-<p><strong>Estado espiritual:</strong> <?= htmlspecialchars($joven["estado_espiritual"] ?? "—") ?></p>
+    <div class="perfil-grid">
+        <div><strong>Edad:</strong> <?= $edad ?></div>
+        <div><strong>Género:</strong> <?= htmlspecialchars($joven["genero"] ?? "—") ?></div>
+        <div><strong>Teléfono:</strong> <?= htmlspecialchars($joven["telefono"] ?? "—") ?></div>
+        <div><strong>Estado:</strong> <?= htmlspecialchars($joven["estado_espiritual"] ?? "—") ?></div>
+    </div>
 
-<p><strong>Estado actividad:</strong>
-<?= $joven["estado_actividad"] === "INACTIVO"
-    ? "<span class='badge-inactivo'>🔴 INACTIVO</span>"
-    : "<span class='badge-activo'>🟢 ACTIVO</span>" ?>
-</p>
+    <div class="perfil-stats">
 
-<p><strong>Asistencias:</strong>
-<span class="badge-presente">✅ <?= $presentes ?></span> |
-<span class="badge-ausente">❌ <?= $ausentes ?></span>
-</p>
+        <!-- ✅ PRESENTES -->
+        <span class="badge-presente">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <?= $presentes ?>
+        </span>
 
-<p><strong>Observaciones:</strong><br>
-<?= nl2br(htmlspecialchars($joven["observaciones"] ?? "—")) ?>
-</p>
+        <!-- ❌ AUSENTES -->
+        <span class="badge-ausente">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <?= $ausentes ?>
+        </span>
+
+    </div>
+
+    <div class="perfil-obs">
+        <strong>Observaciones:</strong>
+        <p><?= nl2br(htmlspecialchars($joven["observaciones"] ?? "—")) ?></p>
+    </div>
 
 </div>
-
-
+<!-- =========================
+     FORM SEGUIMIENTO
+========================= -->
 <div class="card">
 <h3>📞 Registrar Seguimiento</h3>
 
@@ -148,34 +187,64 @@ Guardar Seguimiento
 </form>
 </div>
 
-
+<!-- =========================
+     TIMELINE 🔥
+========================= -->
 <div class="card">
 <h3>📋 Historial de Seguimiento</h3>
 
 <?php if(count($seguimientos) > 0): ?>
 
-<table class="tabla">
-<tr>
-<th>Mes</th>
-<th>Fecha</th>
-<th>Modalidad</th>
-<th>Estado</th>
-<th>Responsable</th>
-<th>Observaciones</th>
-</tr>
+<div class="timeline">
 
 <?php foreach($seguimientos as $s): ?>
-<tr>
-<td><?= htmlspecialchars($s["mes"]) ?></td>
-<td><?= htmlspecialchars($s["fecha_contacto"]) ?></td>
-<td><?= htmlspecialchars($s["modalidad_contacto"]) ?></td>
-<td><?= htmlspecialchars($s["estado_proceso"]) ?></td>
-<td><?= htmlspecialchars($s["responsable_nombre"]) ?></td>
-<td><?= htmlspecialchars($s["observaciones"] ?? "-") ?></td>
-</tr>
+
+<div class="timeline-item">
+
+    <div class="timeline-dot"></div>
+
+    <div class="timeline-content">
+
+        <div class="timeline-header">
+            <strong><?= htmlspecialchars($s["modalidad_contacto"]) ?></strong>
+
+            <span class="estado <?= strtolower($s["estado_proceso"]) ?>">
+                <?= htmlspecialchars($s["estado_proceso"]) ?>
+            </span>
+        </div>
+
+        <!-- ✅ META PRO (SIN EMOJIS) -->
+        <div class="timeline-meta">
+
+            <span class="meta-item">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" fill="none"/>
+                    <path d="M3 10h18" stroke="currentColor"/>
+                </svg>
+                <?= htmlspecialchars($s["fecha_contacto"]) ?>
+            </span>
+
+            <span class="meta-item">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" fill="none"/>
+                    <path d="M4 20c2-4 6-6 8-6s6 2 8 6" stroke="currentColor" fill="none"/>
+                </svg>
+                <?= htmlspecialchars($s["responsable_nombre"] ?? "—") ?>
+            </span>
+
+        </div>
+
+        <div class="timeline-body">
+            <?= nl2br(htmlspecialchars($s["observaciones"] ?? "Sin observaciones")) ?>
+        </div>
+
+    </div>
+
+</div>
+
 <?php endforeach; ?>
 
-</table>
+</div>
 
 <?php else: ?>
 <p class="text-center">No hay seguimientos registrados.</p>
@@ -183,10 +252,7 @@ Guardar Seguimiento
 
 </div>
 
-
-<br>
-
-<a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn">⬅ Volver</a>
+<a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn"> Volver</a>
 
 <a href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $joven['id'] ?>"
    target="_blank"
