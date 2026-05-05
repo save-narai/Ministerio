@@ -14,7 +14,6 @@ if (!tienePermiso('gestionar_jovenes')) {
 /* =========================
    VALIDAR ID
 ========================= */
-
 if (!isset($_GET["id"])) {
     die("ID no especificado");
 }
@@ -24,9 +23,8 @@ $id = intval($_GET["id"]);
 /* =========================
    CONSULTAR JOVEN
 ========================= */
-
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         nombre_completo,
         documento,
         TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad,
@@ -38,7 +36,6 @@ $stmt = $pdo->prepare("
     FROM jovenes
     WHERE id = ?
 ");
-
 $stmt->execute([$id]);
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -49,9 +46,8 @@ if (!$joven) {
 /* =========================
    CONSULTAR SEGUIMIENTOS
 ========================= */
-
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         s.modalidad_contacto,
         s.estado_proceso,
         s.observaciones,
@@ -62,14 +58,12 @@ $stmt = $pdo->prepare("
     WHERE s.joven_id = ?
     ORDER BY s.fecha_contacto DESC
 ");
-
 $stmt->execute([$id]);
 $seguimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =========================
    RESUMEN
 ========================= */
-
 $totalSeguimientos = count($seguimientos);
 $totalFinalizados = 0;
 $totalEnProceso = 0;
@@ -83,9 +77,8 @@ foreach ($seguimientos as $s) {
 }
 
 /* =========================
-   FUNCIONES SEGURAS
+   FUNCIONES
 ========================= */
-
 function e($text) {
     return htmlspecialchars($text ?? '', ENT_QUOTES, 'UTF-8');
 }
@@ -95,11 +88,52 @@ function fecha($f) {
 }
 
 /* =========================
+   COLOR POR GÉNERO 🔥
+========================= */
+$colorHeader = ($joven["genero"] === "chico")
+    ? "#dc2626"   // rojo
+    : "#9333ea";  // morado
+
+/* =========================
    HTML PDF
 ========================= */
-
 $html = '
-<h2 style="text-align:center;">Perfil Individual del Joven</h2>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #111;
+}
+
+h2{
+    text-align:center;
+    color: '.$colorHeader.';
+}
+
+h3{
+    margin-top:20px;
+    border-bottom:2px solid '.$colorHeader.';
+    padding-bottom:5px;
+}
+
+.table{
+    width:100%;
+    border-collapse: collapse;
+}
+
+.table th{
+    background: '.$colorHeader.';
+    color: #fff;
+}
+
+.table td, .table th{
+    border:1px solid #ccc;
+    padding:6px;
+    text-align:left;
+}
+</style>
+
+<h2>Perfil Individual del Joven</h2>
 
 <h3>Datos Personales</h3>
 <p><strong>Nombre:</strong> '.e($joven["nombre_completo"]).'</p>
@@ -111,19 +145,15 @@ $html = '
 <p><strong>Estado:</strong> '.e($joven["estado_actividad"]).'</p>
 <p><strong>Fecha de Ingreso:</strong> '.fecha($joven["fecha_ingreso"]).'</p>
 
-<hr>
-
-<h3>Resumen de Seguimientos</h3>
+<h3>Resumen</h3>
 <p><strong>Total:</strong> '.$totalSeguimientos.'</p>
 <p><strong>Finalizados:</strong> '.$totalFinalizados.'</p>
 <p><strong>En Proceso:</strong> '.$totalEnProceso.'</p>
 
-<hr>
-
 <h3>Historial de Seguimientos</h3>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="5">
-<tr style="background:#007bff;color:white;">
+<table class="table">
+<tr>
 <th>Fecha</th>
 <th>Modalidad</th>
 <th>Estado</th>
@@ -131,20 +161,23 @@ $html = '
 <th>Observaciones</th>
 </tr>';
 
+/* =========================
+   FILAS
+========================= */
 foreach ($seguimientos as $s) {
 
-    $color = "black";
+    $color = "#111";
     if ($s["estado_proceso"] == "FINALIZADO") $color = "green";
     elseif ($s["estado_proceso"] == "EN_PROCESO") $color = "orange";
-    else $color = "red";
+    elseif ($s["estado_proceso"] == "PENDIENTE") $color = "red";
 
     $html .= '
     <tr>
-    <td>'.fecha($s["fecha_contacto"]).'</td>
-    <td>'.e($s["modalidad_contacto"]).'</td>
-    <td style="color:'.$color.';"><strong>'.e($s["estado_proceso"]).'</strong></td>
-    <td>'.e($s["responsable"]).'</td>
-    <td>'.e($s["observaciones"]).'</td>
+        <td>'.fecha($s["fecha_contacto"]).'</td>
+        <td>'.e($s["modalidad_contacto"]).'</td>
+        <td style="color:'.$color.';"><strong>'.e($s["estado_proceso"]).'</strong></td>
+        <td>'.e($s["responsable"]).'</td>
+        <td>'.e($s["observaciones"]).'</td>
     </tr>';
 }
 
@@ -153,7 +186,6 @@ $html .= '</table>';
 /* =========================
    GENERAR PDF
 ========================= */
-
 $options = new Options();
 $options->set('isRemoteEnabled', true);
 
@@ -162,7 +194,6 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
 
-// limpiar nombre archivo
 $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $joven["nombre_completo"]);
 
 $dompdf->stream("Perfil_" . $nombreArchivo . ".pdf", ["Attachment" => true]);

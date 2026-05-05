@@ -25,10 +25,15 @@ body{
 }
 
 /* =========================
-   🎨 CHICO (AZUL + ROJO)
+   🎨 CHICO (ROJO + NARANJA + AMARILLO)
 ========================= */
 .perfil-chico{
-    background: linear-gradient(135deg, #475068, #ef4444);
+    background: linear-gradient(
+        135deg,
+        #ff1b1b,   /* rojo intenso */
+        #ff7a00,   /* naranja fuerte */
+        #ffd500    /* amarillo brillante */
+    );
 }
 
 /* glow */
@@ -38,8 +43,8 @@ body{
     inset: 0;
 
     background:
-        radial-gradient(circle at 20% 30%, rgba(96,165,250,.25), transparent 40%),
-        radial-gradient(circle at 80% 70%, rgba(239,68,68,.25), transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(255, 80, 80, .35), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255, 200, 0, .35), transparent 40%);
 }
 
 /* =========================
@@ -147,9 +152,11 @@ body{
     margin-right: 10px;
 }
 /* =========================
-   CARD FORM / TIMELINE (NEUTRO)
+   CARD FORM / TIMELINE
 ========================= */
-.card{
+
+/* 🌙 DARK MODE */
+html.dark .card{
     max-width: 750px;
     margin: 25px auto;
     padding: 25px;
@@ -160,21 +167,28 @@ body{
     backdrop-filter: blur(12px);
 
     border: 1px solid rgba(255,255,255,.08);
-
     box-shadow: 0 10px 30px rgba(0,0,0,.4);
 
     animation: fadeIn .5s ease;
 }
 
-/* 🔥 LIGHT MODE (IMPORTANTE) */
+/* ☀️ LIGHT MODE (🔥 FIX REAL) */
 html:not(.dark) .card{
-    background: #ffffff;
+    max-width: 750px;
+    margin: 25px auto;
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background: #ffffff; /* 🔥 blanco puro */
+    backdrop-filter: none; /* 🔥 QUITA EL AZUL */
+
     border: 1px solid #e5e7eb;
     box-shadow: 0 10px 25px rgba(0,0,0,.08);
 }
 
 /* =========================
-   FORM (NEUTRO)
+   FORM
 ========================= */
 .card input,
 .card select,
@@ -187,9 +201,10 @@ html:not(.dark) .card{
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,.1);
 
-    background: rgba(255,255,255,.05);
+    background: rgba(15,23,42,.9);
     color: #fff;
 
+    appearance: none;
     transition: .25s;
 }
 
@@ -198,24 +213,41 @@ html:not(.dark) .card input,
 html:not(.dark) .card select,
 html:not(.dark) .card textarea{
     background: #f9fafb;
-    border: 1px solid #d1d5db;
+    border: 1px solid #ff4b2b67;
     color: #111;
 }
 
-/* FOCUS DARK */
+/* =========================
+   DROPDOWN OPCIONES
+========================= */
+.card select option{
+    background: #0f172a;
+    color: #fff;
+}
+
+html:not(.dark) .card select option{
+    background: #ffffff;
+    color: #111;
+}
+
+/* =========================
+   FOCUS DARK
+========================= */
 .card input:focus,
 .card select:focus,
 .card textarea:focus{
     border-color: #00e5ff;
-    box-shadow: 0 0 0 3px rgba(0,229,255,.2);
+    box-shadow: 0 0 0 3px rgba(2, 230, 255, 0.4);
 }
 
-/* FOCUS LIGHT */
+/* =========================
+   FOCUS LIGHT
+========================= */
 html:not(.dark) .card input:focus,
 html:not(.dark) .card select:focus,
 html:not(.dark) .card textarea:focus{
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+    border-color: #ff4b2b;
+    box-shadow: 0 0 0 3px rgba(255, 75, 43, 0.2);
 }
 
 /* =========================
@@ -227,7 +259,7 @@ html:not(.dark) .card textarea:focus{
     border: none;
 
     background: linear-gradient(90deg, #00e5ff, #00ff88);
-    color: #000;
+    color: #ece8e8;
 
     font-weight: 700;
     cursor: pointer;
@@ -242,7 +274,7 @@ html:not(.dark) .card textarea:focus{
 
 /* LIGHT BUTTON */
 html:not(.dark) .card button{
-    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    background: linear-gradient(90deg, #ff9a44, #ff4b2b, #ff416c);
     color: #fff;
 }
 
@@ -348,21 +380,89 @@ html:not(.dark) .timeline-content{
 .estado.finalizado{ background: #22c55e; }
 
 /* =========================
-   BOTONES FINALES
+   BOTONES CONTENEDOR
+========================= */
+.btn-group{
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* =========================
+   BOTÓN BASE
 ========================= */
 .btn{
-    background: #334155;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+
+    padding: 10px 18px;
+    border-radius: 12px;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    border: none;
+    cursor: pointer;
+
+    transition: all .25s ease;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+/* 🌞 LIGHT */
+html:not(.dark) .btn{
+    background: linear-gradient(90deg, #ff9a44, #ff4b2b, #ff416c);
     color: #fff;
 }
 
-html:not(.dark) .btn{
-    background: #e5e7eb;
-    color: #111;
+/* 🌙 DARK */
+html.dark .btn{
+    background: linear-gradient(90deg, #00e5ff, #00ffa3, #4facfe);
+    color: #012;
 }
 
-.btn-primary{
+/* HOVER GLOBAL */
+.btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    filter: brightness(1.1);
+}
+
+/* =========================
+   BOTÓN PDF (SEGÚN PERFIL 🔥)
+========================= */
+
+/* 🌸 CHICA - LIGHT */
+html:not(.dark) .btn.btn-pdf.chica{
     background: linear-gradient(90deg, #9333ea, #ec4899);
     color: #fff;
+}
+
+/* 🌸 CHICA - DARK */
+html.dark .btn.btn-pdf.chica{
+    background: linear-gradient(90deg, #9333ea, #ec4899);
+    color: #fff;
+}
+
+/* 🔵 CHICO - LIGHT */
+html:not(.dark) .btn.btn-pdf.chico{
+    background: linear-gradient(90deg, #ff1b1b, #ff7a00, #ffd500);
+    color: #fff;
+}
+
+/* 🔵 CHICO - DARK */
+html.dark .btn.btn-pdf.chico{
+    background: linear-gradient(90deg, #ff1b1b, #ff7a00, #ffd500);
+    color: #fff;
+}
+
+/* hover específico */
+.btn-pdf:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 
 /* =========================

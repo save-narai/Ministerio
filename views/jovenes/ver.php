@@ -78,10 +78,10 @@ $responsables = $pdo->query("
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
 <?php require_once __DIR__ . "/../../includes/header.php"; ?>
+
 <!-- =========================
-     PERFIL
+    PERFIL
 ========================= -->
 <div class="perfil-card <?= $claseGenero ?>">
 
@@ -103,7 +103,6 @@ $responsables = $pdo->query("
                 INACTIVO
             </span>
         <?php endif; ?>
-
     </div>
 
     <div class="perfil-grid">
@@ -115,7 +114,6 @@ $responsables = $pdo->query("
 
     <div class="perfil-stats">
 
-        <!-- ✅ PRESENTES -->
         <span class="badge-presente">
             <svg class="icon" viewBox="0 0 24 24">
                 <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -123,7 +121,6 @@ $responsables = $pdo->query("
             <?= $presentes ?>
         </span>
 
-        <!-- ❌ AUSENTES -->
         <span class="badge-ausente">
             <svg class="icon" viewBox="0 0 24 24">
                 <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -139,11 +136,23 @@ $responsables = $pdo->query("
     </div>
 
 </div>
+
 <!-- =========================
-     FORM SEGUIMIENTO
+    FORM SEGUIMIENTO
 ========================= -->
 <div class="card">
-<h3>📞 Registrar Seguimiento</h3>
+
+<h3>
+    <svg class="icon" viewBox="0 0 24 24">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                 19.79 19.79 0 0 1-8.63-3.07
+                 19.5 19.5 0 0 1-6-6
+                 19.79 19.79 0 0 1-3.07-8.67
+                 A2 2 0 0 1 4.11 2h3"
+              stroke="currentColor" fill="none"/>
+    </svg>
+    Registrar Seguimiento
+</h3>
 
 <form action="<?= BASE_URL ?>/controllers/seguimientoController.php" method="POST">
 
@@ -179,19 +188,23 @@ $responsables = $pdo->query("
 <label>Observaciones:</label>
 <textarea name="observaciones"></textarea>
 
-<br><br>
-<button type="submit" name="crear_seguimiento">
-Guardar Seguimiento
-</button>
+<button type="submit">Guardar Seguimiento</button>
 
 </form>
 </div>
 
 <!-- =========================
-     TIMELINE 🔥
+    HISTORIAL
 ========================= -->
 <div class="card">
-<h3>📋 Historial de Seguimiento</h3>
+
+<h3>
+    <svg class="icon" viewBox="0 0 24 24">
+        <path d="M9 11l3 3L22 4" stroke="currentColor" fill="none"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5" stroke="currentColor" fill="none"/>
+    </svg>
+    Historial de Seguimiento
+</h3>
 
 <?php if(count($seguimientos) > 0): ?>
 
@@ -200,7 +213,6 @@ Guardar Seguimiento
 <?php foreach($seguimientos as $s): ?>
 
 <div class="timeline-item">
-
     <div class="timeline-dot"></div>
 
     <div class="timeline-content">
@@ -213,7 +225,6 @@ Guardar Seguimiento
             </span>
         </div>
 
-        <!-- ✅ META PRO (SIN EMOJIS) -->
         <div class="timeline-meta">
 
             <span class="meta-item">
@@ -239,7 +250,6 @@ Guardar Seguimiento
         </div>
 
     </div>
-
 </div>
 
 <?php endforeach; ?>
@@ -252,12 +262,32 @@ Guardar Seguimiento
 
 </div>
 
-<a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn"> Volver</a>
+<!-- =========================
+    BOTONES FINALES
+========================= -->
+<div class="btn-group">
 
-<a href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $joven['id'] ?>"
-   target="_blank"
-   class="btn-primary">
-📄 Descargar Perfil en PDF
-</a>
+    <a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6" stroke="currentColor" fill="none"/>
+        </svg>
+        Volver
+    </a>
+
+    <a href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $joven['id'] ?>"
+       target="_blank"
+       class="btn btn-pdf <?= $joven['genero'] === 'MASCULINO' ? 'chico' : 'chica' ?>">
+
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6z"
+                  stroke="currentColor" fill="none"/>
+            <path d="M14 2v6h6" stroke="currentColor"/>
+            <path d="M8 13h8M8 17h5" stroke="currentColor"/>
+        </svg>
+
+        Descargar PDF
+    </a>
+
+</div>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>
