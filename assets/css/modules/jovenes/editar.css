@@ -92,7 +92,7 @@ html:not(.dark) .form-group:focus-within label{
     padding: 12px 14px;
 
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.1);
+    border: 1px solid #0c59ccc9;
 
     background: rgba(255,255,255,.05);
     color: #fff;
@@ -108,7 +108,7 @@ html:not(.dark) .card select,
 html:not(.dark) .card textarea{
     background: #fff;
     color: #111;
-    border: 1px solid #d1d5db;
+    border: 1px solid #ff9a44;
 }
 
 /* =========================

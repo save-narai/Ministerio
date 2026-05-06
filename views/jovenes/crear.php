@@ -46,11 +46,20 @@ require_once __DIR__ . "/../../includes/header.php";
         </div>
 
         <!-- 🔥 FILA 2 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>Teléfono:</label>
-                <input type="text" name="telefono" placeholder="3001234567" maxlength="10">
-            </div>
+    <div class="form-group">
+    <label>Teléfono:</label>
+
+    <input type="text"
+           name="telefono"
+           id="telefono"
+           placeholder="3001234567"
+           maxlength="10">
+
+    <label style="margin-top:5px; display:flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="sinTelefono">
+        No tiene teléfono
+    </label>
+</div>
 
             <div class="form-group">
                 <label>Género:</label>
@@ -121,6 +130,20 @@ function showToast(message){
 
     }, 3000);
 }
+</script>
+
+<script>
+const inputTel = document.getElementById("telefono");
+const check = document.getElementById("sinTelefono");
+
+check.addEventListener("change", () => {
+    if (check.checked) {
+        inputTel.value = "";
+        inputTel.disabled = true;
+    } else {
+        inputTel.disabled = false;
+    }
+});
 </script>
 
 

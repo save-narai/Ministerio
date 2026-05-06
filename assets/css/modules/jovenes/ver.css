@@ -95,6 +95,7 @@ body{
     }
 }
 
+
 /* =========================
    STATS
 ========================= */
@@ -199,7 +200,7 @@ html:not(.dark) .card{
     padding: 10px;
 
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.1);
+    border: 1px solid #00e5ff;
 
     background: rgba(15,23,42,.9);
     color: #fff;

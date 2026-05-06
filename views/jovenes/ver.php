@@ -136,57 +136,61 @@ $responsables = $pdo->query("
     </div>
 
 </div>
-
 <!-- =========================
     FORM SEGUIMIENTO
 ========================= -->
 <div class="card">
 
-<h3>
-    <svg class="icon" viewBox="0 0 24 24">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
-                 19.79 19.79 0 0 1-8.63-3.07
-                 19.5 19.5 0 0 1-6-6
-                 19.79 19.79 0 0 1-3.07-8.67
-                 A2 2 0 0 1 4.11 2h3"
-              stroke="currentColor" fill="none"/>
-    </svg>
-    Registrar Seguimiento
-</h3>
+<h3>Registrar Seguimiento</h3>
 
-<form action="<?= BASE_URL ?>/controllers/seguimientoController.php" method="POST">
+<br>
+
+
+<form class="form-grid"
+      action="<?= BASE_URL ?>/controllers/seguimientoController.php"
+      method="POST">
 
 <input type="hidden" name="joven_id" value="<?= $id ?>">
 
-<label>Fecha contacto:</label>
-<input type="date" name="fecha_contacto" required>
+<div>
+    <label>Fecha contacto:</label>
+    <input type="date" name="fecha_contacto" required>
+</div>
 
-<label>Modalidad:</label>
-<select name="modalidad_contacto">
-<option value="WHATSAPP">WhatsApp</option>
-<option value="LLAMADA">Llamada</option>
-<option value="VISITA">Visita</option>
-<option value="MENSAJE">Mensaje</option>
-</select>
+<div>
+    <label>Modalidad:</label>
+    <select name="modalidad_contacto">
+        <option value="WHATSAPP">WhatsApp</option>
+        <option value="LLAMADA">Llamada</option>
+        <option value="VISITA">Visita</option>
+        <option value="MENSAJE">Mensaje</option>
+    </select>
+</div>
 
-<label>Estado:</label>
-<select name="estado_proceso">
-<option value="PENDIENTE">Pendiente</option>
-<option value="EN_PROCESO">En Proceso</option>
-<option value="FINALIZADO">Finalizado</option>
-</select>
+<div>
+    <label>Estado:</label>
+    <select name="estado_proceso">
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="EN_PROCESO">En Proceso</option>
+        <option value="FINALIZADO">Finalizado</option>
+    </select>
+</div>
 
-<label>Responsable:</label>
-<select name="responsable_id">
-<?php foreach($responsables as $r): ?>
-<option value="<?= (int)$r["id"] ?>">
-<?= htmlspecialchars($r["nombre"]) ?>
-</option>
-<?php endforeach; ?>
-</select>
+<div>
+    <label>Responsable:</label>
+    <select name="responsable_id">
+        <?php foreach($responsables as $r): ?>
+            <option value="<?= (int)$r["id"] ?>">
+                <?= htmlspecialchars($r["nombre"]) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
 
-<label>Observaciones:</label>
-<textarea name="observaciones"></textarea>
+<div class="full">
+    <label>Observaciones:</label>
+    <textarea name="observaciones"></textarea>
+</div>
 
 <button type="submit">Guardar Seguimiento</button>
 
@@ -268,22 +272,12 @@ $responsables = $pdo->query("
 <div class="btn-group">
 
     <a href="<?= BASE_URL ?>/views/jovenes/index.php" class="btn">
-        <svg class="icon" viewBox="0 0 24 24">
-            <path d="M15 18l-6-6 6-6" stroke="currentColor" fill="none"/>
-        </svg>
         Volver
     </a>
 
     <a href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $joven['id'] ?>"
        target="_blank"
        class="btn btn-pdf <?= $joven['genero'] === 'MASCULINO' ? 'chico' : 'chica' ?>">
-
-        <svg class="icon" viewBox="0 0 24 24">
-            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6z"
-                  stroke="currentColor" fill="none"/>
-            <path d="M14 2v6h6" stroke="currentColor"/>
-            <path d="M8 13h8M8 17h5" stroke="currentColor"/>
-        </svg>
 
         Descargar PDF
     </a>
