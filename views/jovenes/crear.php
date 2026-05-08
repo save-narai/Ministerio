@@ -7,7 +7,6 @@ if (!tienePermiso('gestionar_jovenes')) {
     exit;
 }
 
-/* ✅ CSS EXTRA */
 $extraCSS = '
 <link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/crear.css">
 ';
@@ -16,23 +15,23 @@ require_once __DIR__ . "/../../includes/header.php";
 ?>
 
 <div class="card card-form">
-<div id="toast" class="toast hidden"></div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast hidden"></div>
 
     <h2>➕ Crear Joven</h2>
 
-    <div id="toast" class="toast hidden"></div>
-
-<?php if(isset($_SESSION["error"])): ?>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        showToast("<?= $_SESSION["error"]; ?>");
-    });
-</script>
-<?php unset($_SESSION["error"]); endif; ?>
+    <?php if(isset($_SESSION["error"])): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            showToast("<?= $_SESSION["error"]; ?>");
+        });
+    </script>
+    <?php unset($_SESSION["error"]); endif; ?>
 
     <form action="<?= BASE_URL ?>/controllers/jovenController.php" method="POST">
 
-        <!-- 🔥 FILA 1 -->
+        <!-- FILA 1 -->
         <div class="form-row">
             <div class="form-group">
                 <label>Nombre Completo:</label>
@@ -45,21 +44,22 @@ require_once __DIR__ . "/../../includes/header.php";
             </div>
         </div>
 
-        <!-- 🔥 FILA 2 -->
-    <div class="form-group">
-    <label>Teléfono:</label>
+        <!-- FILA 2 -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Teléfono:</label>
+                <input type="text"
+                       name="telefono"
+                       id="telefono"
+                       placeholder="3001234567"
+                       maxlength="10">
 
-    <input type="text"
-           name="telefono"
-           id="telefono"
-           placeholder="3001234567"
-           maxlength="10">
-
-    <label style="margin-top:5px; display:flex; align-items:center; gap:6px;">
-        <input type="checkbox" id="sinTelefono">
-        No tiene teléfono
-    </label>
-</div>
+                <label class="check-custom">
+                    <input type="checkbox" name="sinTelefono" id="sinTelefono">
+                    <span class="checkmark"></span>
+                    No tiene teléfono
+                </label>
+            </div>
 
             <div class="form-group">
                 <label>Género:</label>
@@ -71,7 +71,7 @@ require_once __DIR__ . "/../../includes/header.php";
             </div>
         </div>
 
-        <!-- 🔥 FILA 3 -->
+        <!-- FILA 3 -->
         <div class="form-row">
             <div class="form-group">
                 <label>Estado Espiritual:</label>
@@ -84,11 +84,14 @@ require_once __DIR__ . "/../../includes/header.php";
 
             <div class="form-group">
                 <label>Fecha de Ingreso:</label>
-                <input type="date" name="fecha_ingreso" value="<?= date('Y-m-d') ?>" required>
+                <input type="date"
+                       name="fecha_ingreso"
+                       value="<?= date('Y-m-d') ?>"
+                       required>
             </div>
         </div>
 
-        <!-- 🔥 FILA 4 -->
+        <!-- FILA 4 -->
         <div class="form-group">
             <label>¿Es Servidor?</label>
             <select name="es_servidor">
@@ -97,54 +100,63 @@ require_once __DIR__ . "/../../includes/header.php";
             </select>
         </div>
 
-        <button type="submit" name="crear_joven">
-            Guardar
-        </button>
+        <!-- BOTONES -->
+        <div class="form-actions">
+            <button type="submit" name="crear_joven" class="btn-guardar">
+                Guardar
+            </button>
+
+            <button type="button"
+                    class="btn-volver"
+                    onclick="window.location.href='<?= BASE_URL ?>/views/jovenes/index.php'">
+                Volver
+            </button>
+        </div>
 
     </form>
+</div>
 
-  <button type="button" class="btn-volver"
-    onclick="window.location.href='<?= BASE_URL ?>/views/jovenes/index.php'">
-     Volver
-</button>
-
-
+<!-- TOAST -->
 <script>
 function showToast(message){
-
     const toast = document.getElementById("toast");
-
     toast.textContent = message;
     toast.classList.remove("hidden");
 
-    setTimeout(() => {
-        toast.classList.add("show");
-    }, 50);
+    setTimeout(() => toast.classList.add("show"), 50);
 
     setTimeout(() => {
         toast.classList.remove("show");
-
-        setTimeout(() => {
-            toast.classList.add("hidden");
-        }, 300);
-
+        setTimeout(() => toast.classList.add("hidden"), 300);
     }, 3000);
 }
 </script>
 
+<!-- TELÉFONO DINÁMICO -->
 <script>
-const inputTel = document.getElementById("telefono");
-const check = document.getElementById("sinTelefono");
+document.addEventListener("DOMContentLoaded", () => {
+    const inputTel = document.getElementById("telefono");
+    const check = document.getElementById("sinTelefono");
 
-check.addEventListener("change", () => {
-    if (check.checked) {
-        inputTel.value = "";
-        inputTel.disabled = true;
-    } else {
-        inputTel.disabled = false;
+    if (check && inputTel) {
+
+        inputTel.addEventListener("input", () => {
+            if (inputTel.value.trim() !== "") {
+                check.checked = false;
+                inputTel.disabled = false;
+            }
+        });
+
+        check.addEventListener("change", () => {
+            if (check.checked) {
+                inputTel.value = "";
+                inputTel.disabled = true;
+            } else {
+                inputTel.disabled = false;
+            }
+        });
     }
 });
 </script>
-
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

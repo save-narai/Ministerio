@@ -27,148 +27,174 @@ function limpiarNombre($nombre) {
 }
 
 try {
+	
+/* ============================
+   🟢 CREAR JOVEN
+============================ */
+if (isset($_POST["crear_joven"])) {
 
-    /* ============================
-       🟢 CREAR JOVEN
-    ============================ */
-    if (isset($_POST["crear_joven"])) {
+    if (!tienePermiso('gestionar_jovenes')) {
+        die("Acceso denegado.");
+    }
 
-        if (!tienePermiso('gestionar_jovenes')) {
-            die("Acceso denegado.");
-        }
+    [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
 
-        [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
+    if (!$ok) {
+        $_SESSION["error"] = $nombre;
+        header("Location: ../views/jovenes/crear.php");
+        exit();
+    }
 
-        if (!$ok) {
-            $_SESSION["error"] = $nombre;
+    $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? null;
+    $fecha_ingreso = $_POST["fecha_ingreso"] ?? null;
+
+    $telefono = trim($_POST["telefono"] ?? '');
+    $sinTelefono = isset($_POST["sinTelefono"]);
+
+    $genero = $_POST["genero"] ?? null;
+    $estado = $_POST["estado_espiritual"] ?? null;
+    $es_servidor = isset($_POST["es_servidor"]) ? (int) $_POST["es_servidor"] : 0;
+
+    // 🔥 VALIDACIÓN CAMPOS
+    if (empty($nombre) || empty($fecha_nacimiento) || empty($fecha_ingreso)) {
+        $_SESSION["error"] = "Campos obligatorios incompletos";
+        header("Location: ../views/jovenes/crear.php");
+        exit();
+    }
+
+    // 🔥 VALIDACIÓN TELÉFONO (MEJORADA)
+    if (!$sinTelefono) {
+
+        if (empty($telefono)) {
+            $_SESSION["error"] = "Debe ingresar un teléfono o marcar 'No tiene teléfono'";
             header("Location: ../views/jovenes/crear.php");
             exit();
         }
 
-        $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? null;
-        $fecha_ingreso = $_POST["fecha_ingreso"] ?? null;
-        $telefono = trim($_POST["telefono"] ?? '');
-        $genero = $_POST["genero"] ?? null;
-        $estado = $_POST["estado_espiritual"] ?? null;
-        $es_servidor = isset($_POST["es_servidor"]) ? (int) $_POST["es_servidor"] : 0;
-
-        if (empty($nombre) || empty($fecha_nacimiento) || empty($fecha_ingreso)) {
-            $_SESSION["error"] = "Campos obligatorios incompletos";
-            header("Location: ../views/jovenes/crear.php");
-            exit();
-        }
-
-        // duplicados
-        $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM jovenes WHERE nombre_completo = :nombre");
-        $stmtCheck->execute(["nombre" => $nombre]);
-
-        if ($stmtCheck->fetchColumn() > 0) {
-            $_SESSION["error"] = "Este joven ya está registrado";
-            header("Location: ../views/jovenes/crear.php");
-            exit();
-        }
-
-        // teléfono
-        if (!empty($telefono) && !preg_match('/^3[0-9]{9}$/', $telefono)) {
+        if (!preg_match('/^3[0-9]{9}$/', $telefono)) {
             $_SESSION["error"] = "Teléfono inválido";
             header("Location: ../views/jovenes/crear.php");
             exit();
         }
+    }
 
-        $stmt = $pdo->prepare("
-            INSERT INTO jovenes
-            (nombre_completo, fecha_nacimiento, fecha_ingreso, telefono, es_servidor, genero, estado_espiritual, estado_actividad)
-            VALUES
-            (:nombre, :fn, :fi, :tel, :servidor, :genero, :estado, 'ACTIVO')
-        ");
+    // 🔥 DUPLICADOS
+    $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM jovenes WHERE nombre_completo = :nombre");
+    $stmtCheck->execute(["nombre" => $nombre]);
 
-        $stmt->execute([
-            "nombre" => $nombre,
-            "fn" => $fecha_nacimiento,
-            "fi" => $fecha_ingreso,
-            "tel" => $telefono ?: null,
-            "servidor" => $es_servidor,
-            "genero" => $genero,
-            "estado" => $estado
-        ]);
-
-        header("Location: ../views/jovenes/index.php");
+    if ($stmtCheck->fetchColumn() > 0) {
+        $_SESSION["error"] = "Este joven ya está registrado";
+        header("Location: ../views/jovenes/crear.php");
         exit();
     }
 
-    /* ============================
-       🟡 EDITAR JOVEN
-    ============================ */
-    if (isset($_POST["editar_joven"])) {
+    // 🔥 INSERT
+    $stmt = $pdo->prepare("
+        INSERT INTO jovenes
+        (nombre_completo, fecha_nacimiento, fecha_ingreso, telefono, es_servidor, genero, estado_espiritual, estado_actividad)
+        VALUES
+        (:nombre, :fn, :fi, :tel, :servidor, :genero, :estado, 'ACTIVO')
+    ");
 
-        if (!tienePermiso('gestionar_jovenes')) {
-            die("Acceso denegado.");
-        }
+    $stmt->execute([
+        "nombre" => $nombre,
+        "fn" => $fecha_nacimiento,
+        "fi" => $fecha_ingreso,
+        "tel" => $sinTelefono ? null : $telefono,
+        "servidor" => $es_servidor,
+        "genero" => $genero,
+        "estado" => $estado
+    ]);
 
-        $id = (int)($_POST["id"] ?? 0);
+    header("Location: ../views/jovenes/index.php");
+    exit();
+}
 
-        if ($id <= 0) {
-            die("ID inválido.");
-        }
+/* ============================
+   🟡 EDITAR JOVEN
+============================ */
 
-        [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
+if (isset($_POST["editar_joven"])) {
 
-        if (!$ok) {
-            $_SESSION["error"] = $nombre;
+    if (!tienePermiso('gestionar_jovenes')) {
+        die("Acceso denegado.");
+    }
+
+    $id = (int)($_POST["id"] ?? 0);
+
+    [$ok, $nombre] = limpiarNombre($_POST["nombre_completo"] ?? '');
+
+    if (!$ok) {
+        $_SESSION["error"] = $nombre;
+        header("Location: ../views/jovenes/editar.php?id=" . $id);
+        exit();
+    }
+
+    $telefono = trim($_POST["telefono"] ?? '');
+    $sinTelefono = isset($_POST["sinTelefono"]);
+
+    // 🔥 LÓGICA CORRECTA
+    if ($sinTelefono) {
+        $telefonoFinal = null;
+    } else {
+        if (empty($telefono)) {
+            $_SESSION["error"] = "Debe ingresar un teléfono o marcar 'No tiene teléfono'";
             header("Location: ../views/jovenes/editar.php?id=" . $id);
             exit();
         }
 
-        $telefono = trim($_POST["telefono"] ?? '');
-
-        if (!empty($telefono) && !preg_match('/^3[0-9]{9}$/', $telefono)) {
+        if (!preg_match('/^3[0-9]{9}$/', $telefono)) {
             $_SESSION["error"] = "Teléfono inválido";
             header("Location: ../views/jovenes/editar.php?id=" . $id);
             exit();
         }
 
-        // evitar duplicados (excepto el mismo)
-        $stmtCheck = $pdo->prepare("
-            SELECT COUNT(*) FROM jovenes 
-            WHERE nombre_completo = :nombre AND id != :id
-        ");
-        $stmtCheck->execute([
-            "nombre" => $nombre,
-            "id" => $id
-        ]);
+        $telefonoFinal = $telefono;
+    }
 
-        if ($stmtCheck->fetchColumn() > 0) {
-            $_SESSION["error"] = "Ya existe otro joven con ese nombre";
-            header("Location: ../views/jovenes/editar.php?id=" . $id);
-            exit();
-        }
+    // 🔥 DUPLICADOS
+    $stmtCheck = $pdo->prepare("
+        SELECT COUNT(*) FROM jovenes
+        WHERE nombre_completo = :nombre AND id != :id
+    ");
+    $stmtCheck->execute([
+        "nombre" => $nombre,
+        "id" => $id
+    ]);
 
-        $stmt = $pdo->prepare("
-            UPDATE jovenes
-            SET nombre_completo = :nombre,
-                telefono = :telefono,
-                fecha_nacimiento = :fn,
-                fecha_ingreso = :fi,
-                genero = :genero,
-                estado_espiritual = :estado,
-                observaciones = :obs
-            WHERE id = :id
-        ");
-
-        $stmt->execute([
-            "nombre" => $nombre,
-            "telefono" => $telefono ?: null,
-            "fn" => $_POST["fecha_nacimiento"] ?: null,
-            "fi" => $_POST["fecha_ingreso"] ?: null,
-            "genero" => $_POST["genero"] ?: null,
-            "estado" => $_POST["estado_espiritual"] ?: null,
-            "obs" => trim($_POST["observaciones"]) ?: null,
-            "id" => $id
-        ]);
-
-        header("Location: ../views/jovenes/index.php");
+    if ($stmtCheck->fetchColumn() > 0) {
+        $_SESSION["error"] = "Ya existe otro joven con ese nombre";
+        header("Location: ../views/jovenes/editar.php?id=" . $id);
         exit();
     }
+
+    // 🔥 UPDATE LIMPIO
+    $stmt = $pdo->prepare("
+        UPDATE jovenes
+        SET nombre_completo = :nombre,
+            telefono = :telefono,
+            fecha_nacimiento = :fn,
+            fecha_ingreso = :fi,
+            genero = :genero,
+            estado_espiritual = :estado,
+            observaciones = :obs
+        WHERE id = :id
+    ");
+
+    $stmt->execute([
+        "nombre" => $nombre,
+        "telefono" => $telefonoFinal,
+        "fn" => $_POST["fecha_nacimiento"] ?: null,
+        "fi" => $_POST["fecha_ingreso"] ?: null,
+        "genero" => $_POST["genero"] ?: null,
+        "estado" => $_POST["estado_espiritual"] ?: null,
+        "obs" => trim($_POST["observaciones"] ?? '') ?: null,
+        "id" => $id
+    ]);
+
+    header("Location: ../views/jovenes/index.php");
+    exit();
+}
 
     /* ============================
        🔴 ELIMINAR JOVEN

@@ -8,7 +8,7 @@ if (!tienePermiso('gestionar_jovenes')) {
     exit();
 }
 
-$id = isset($_GET["id"]) ? (int)$id = $_GET["id"] : 0;
+$id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
 
 if ($id <= 0) {
     header("Location: index.php");
@@ -24,7 +24,7 @@ if (!$joven) {
     exit();
 }
 
-/* ✅ CSS EXTRA */
+/* CSS */
 $extraCSS = '
 <link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/editar.css">
 ';
@@ -36,103 +36,180 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <h2>✏️ Editar Joven</h2>
 
-    <form action="<?= BASE_URL ?>/controllers/jovenController.php" method="POST">
+  <form action="<?= BASE_URL ?>/controllers/jovenController.php" method="POST">
 
-        <input type="hidden" name="id" value="<?= (int)$joven["id"] ?>">
+    <input type="hidden" name="id" value="<?= (int)$joven["id"] ?>">
 
-        <!-- 🔥 FILA 1 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>Nombre Completo</label>
-                <input type="text" name="nombre_completo"
-                    value="<?= htmlspecialchars($joven["nombre_completo"] ?? "") ?>" required>
-            </div>
+    <!-- FILA 1 -->
+    <div class="form-row">
 
-            <div class="form-group">
-                <label>Teléfono</label>
-                <input type="text" name="telefono"
-                    value="<?= htmlspecialchars($joven["telefono"] ?? "") ?>">
-            </div>
-        </div>
-
-        <!-- 🔥 FILA 2 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>Fecha de Nacimiento</label>
-                <input type="date" name="fecha_nacimiento"
-                    value="<?= htmlspecialchars($joven["fecha_nacimiento"] ?? "") ?>">
-            </div>
-
-            <div class="form-group">
-                <label>Fecha de Ingreso</label>
-                <input type="date" name="fecha_ingreso"
-                    value="<?= htmlspecialchars($joven["fecha_ingreso"] ?? "") ?>">
-            </div>
-        </div>
-
-        <!-- 🔥 FILA 3 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>Género</label>
-                <select name="genero">
-                    <option value="">Seleccionar</option>
-                    <option value="MASCULINO" <?= ($joven["genero"] ?? "") === "MASCULINO" ? "selected" : "" ?>>Masculino</option>
-                    <option value="FEMENINO" <?= ($joven["genero"] ?? "") === "FEMENINO" ? "selected" : "" ?>>Femenino</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Estado Espiritual</label>
-                <select name="estado_espiritual">
-                    <option value="NUEVO" <?= ($joven["estado_espiritual"] ?? "") === "NUEVO" ? "selected" : "" ?>>Nuevo</option>
-                    <option value="ANTIGUO" <?= ($joven["estado_espiritual"] ?? "") === "ANTIGUO" ? "selected" : "" ?>>Antiguo</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- 🔥 OBSERVACIONES -->
         <div class="form-group">
-            <label>Observaciones</label>
-            <textarea name="observaciones"><?= htmlspecialchars($joven["observaciones"] ?? "") ?></textarea>
+            <label>Nombre Completo</label>
+            <input
+                type="text"
+                name="nombre_completo"
+                value="<?= htmlspecialchars($joven["nombre_completo"] ?? "") ?>"
+                required
+            >
         </div>
 
-        <button type="submit" name="editar_joven">
-            💾 Guardar Cambios
-        </button>
+        <div class="form-group">
+            <label>Teléfono</label>
 
-    </form>
+            <input
+                type="text"
+                name="telefono"
+                id="telefono"
+                value="<?= htmlspecialchars($joven["telefono"] ?? "") ?>"
+            >
+
+            <div class="check-wrapper">
+                <label class="check-custom">
+
+                    <input
+                        type="checkbox"
+                        name="sinTelefono"
+                        id="sinTelefono"
+                        <?= empty($joven["telefono"]) ? "checked" : "" ?>
+                    >
+
+                    <span class="checkmark"></span>
+                    <span>No tiene teléfono</span>
+
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FILA 2 -->
+    <div class="form-row">
+
+        <div class="form-group">
+            <label>Fecha de Nacimiento</label>
+
+            <input
+                type="date"
+                name="fecha_nacimiento"
+                value="<?= htmlspecialchars($joven["fecha_nacimiento"] ?? "") ?>"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Fecha de Ingreso</label>
+
+            <input
+                type="date"
+                name="fecha_ingreso"
+                value="<?= htmlspecialchars($joven["fecha_ingreso"] ?? "") ?>"
+            >
+        </div>
+
+    </div>
+
+    <!-- FILA 3 -->
+    <div class="form-row">
+
+        <div class="form-group">
+            <label>Género</label>
+
+            <select name="genero">
+                <option value="">Seleccionar</option>
+
+                <option
+                    value="MASCULINO"
+                    <?= ($joven["genero"] ?? "") === "MASCULINO" ? "selected" : "" ?>
+                >
+                    Masculino
+                </option>
+
+                <option
+                    value="FEMENINO"
+                    <?= ($joven["genero"] ?? "") === "FEMENINO" ? "selected" : "" ?>
+                >
+                    Femenino
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Estado Espiritual</label>
+
+            <select name="estado_espiritual">
+
+                <option
+                    value="NUEVO"
+                    <?= ($joven["estado_espiritual"] ?? "") === "NUEVO" ? "selected" : "" ?>
+                >
+                    Nuevo
+                </option>
+
+                <option
+                    value="ANTIGUO"
+                    <?= ($joven["estado_espiritual"] ?? "") === "ANTIGUO" ? "selected" : "" ?>
+                >
+                    Antiguo
+                </option>
+
+            </select>
+        </div>
+
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div class="form-group full-width">
+        <label>Observaciones</label>
+
+        <textarea name="observaciones"><?= htmlspecialchars($joven["observaciones"] ?? "") ?></textarea>
+    </div>
+
+    <!-- BOTÓN -->
+    <button type="submit" name="editar_joven">
+        Guardar Cambios
+    </button>
+
+</form>
 
     <button type="button" class="btn-volver"
         onclick="window.location.href='<?= BASE_URL ?>/views/jovenes/index.php'">
-         Volver
+        Volver
     </button>
 
 </div>
 
-
+<!-- JS TELÉFONO -->
 <script>
-function showToast(message){
+document.addEventListener("DOMContentLoaded", () => {
 
-    const toast = document.getElementById("toast");
+    const inputTel = document.getElementById("telefono");
+    const check = document.getElementById("sinTelefono");
 
-    toast.textContent = message;
-    toast.classList.remove("hidden");
+    if (check && inputTel) {
 
-    setTimeout(() => {
-        toast.classList.add("show");
-    }, 50);
+        // estado inicial
+        if (check.checked) {
+            inputTel.disabled = true;
+        }
 
-    setTimeout(() => {
-        toast.classList.remove("show");
+        // escribir → quita check
+        inputTel.addEventListener("input", () => {
+            if (inputTel.value.trim() !== "") {
+                check.checked = false;
+                inputTel.disabled = false;
+            }
+        });
 
-        setTimeout(() => {
-            toast.classList.add("hidden");
-        }, 300);
-
-    }, 3000);
-}
+        // check → limpia input
+        check.addEventListener("change", () => {
+            if (check.checked) {
+                inputTel.value = "";
+                inputTel.disabled = true;
+            } else {
+                inputTel.disabled = false;
+            }
+        });
+    }
+});
 </script>
-
-
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>
