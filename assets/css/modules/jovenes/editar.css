@@ -1,210 +1,175 @@
 /* =========================
-   CARD EDITAR
+   CARD
 ========================= */
-
 .card{
- max-width: 460px;
-    margin: 60px auto;
-    padding: 30px;
-    border-radius: 22px;
-    position: relative;
-    overflow: hidden;
-   
+    max-width: 460px;
+    width: 92%;
+    margin: 50px auto;
+    padding: 24px;
+    border-radius: 18px;
 
-    position: relative;
-    z-index: 1;
-
-    background: rgba(15,23,42,.85);
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(14px);
-
     border: 1px solid rgba(255,255,255,.08);
 
-    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
 }
 
-/* ☀️ LIGHT */
+/* LIGHT */
 html:not(.dark) .card{
-    background: rgba(255,255,255,.96);
+    background: #fff;
     border: 1px solid #e5e7eb;
 }
 
 /* =========================
    FORM
 ========================= */
-
 .card form{
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 14px;
 }
 
 /* =========================
    GRID
 ========================= */
-
 .form-row{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    align-items: flex-start;
+    gap: 12px;
 }
 
-@media(max-width:700px){
-
+@media(max-width:600px){
     .form-row{
         grid-template-columns: 1fr;
-    }
-
-    .card{
-        margin: 20px;
-        padding: 25px;
     }
 }
 
 /* =========================
    FORM GROUP
 ========================= */
-
 .form-group{
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    width: 100%;
+    gap: 4px;
 }
 
 /* =========================
    LABELS
 ========================= */
-
 .card label{
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     color: #e2e8f0;
-    transition: .25s;
 }
 
-/* LIGHT */
-
 html:not(.dark) .card label{
-    color: #222;
+    color: #333;
 }
 
 /* =========================
-   INPUTS / SELECT / TEXTAREA
+   INPUTS
 ========================= */
-
 .card input,
-.card select,
-.card textarea{
+.card select{
     width: 100%;
-    padding: 13px 15px;
-
-    border-radius: 14px;
-    border: 1px solid #1e3a8a;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
 
     background: rgba(255,255,255,.05);
+    border: 1px solid #00e5ff;
     color: #fff;
 
-    font-size: 14px;
+    transition: .2s;
+}
 
-    transition: all .25s ease;
+html:not(.dark) .card input,
+html:not(.dark) .card select{
+    background: #fff;
+    border: 1px solid #ff4b2b;
+    color: #111;
+}
 
+/* FOCUS */
+.card input:focus,
+.card select:focus{
+    border-color: #00e5ff;
+    box-shadow: 0 0 0 2px rgba(0,229,255,.2);
     outline: none;
 }
 
-/* LIGHT */
-
-html:not(.dark) .card input,
-html:not(.dark) .card select,
-html:not(.dark) .card textarea{
-    background: #fff;
-    color: #111;
-    border: 1px solid #ffb36b;
-}
-
-/* =========================
-   FOCUS
-========================= */
-
-.card input:focus,
-.card select:focus,
-.card textarea:focus{
-
-    border-color: #00e5ff;
-
-    box-shadow:
-        0 0 0 3px rgba(0,229,255,.18),
-        0 10px 25px rgba(0,229,255,.08);
-
-    transform: translateY(-1px);
-}
-
-/* LIGHT */
-
 html:not(.dark) .card input:focus,
-html:not(.dark) .card select:focus,
-html:not(.dark) .card textarea:focus{
-
-    border-color: #ff7b54;
-
-    box-shadow:
-        0 0 0 3px rgba(255,123,84,.18),
-        0 10px 25px rgba(255,123,84,.08);
+html:not(.dark) .card select:focus{
+    border-color: #ff9a44;
 }
 
-/* =========================
-   SELECT OPTIONS
-========================= */
 
-.card select option{
-    background: #020617;
+/* =========================
+   TEXTAREA OBSERVACIONES
+========================= */
+.card textarea{
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+    font-size: 14px;
+
+    transition: .25s;
+
+    /* DARK */
+    background: rgba(255,255,255,.05);
+    border: 1px solid #00e5ff;
     color: #fff;
 }
 
-html:not(.dark) .card select option{
+/* LIGHT */
+html:not(.dark) .card textarea{
     background: #fff;
+    border: 1px solid #ff4b2b;
     color: #111;
 }
 
-/* =========================
-   TEXTAREA
-========================= */
+/* FOCUS */
+.card textarea:focus{
+    border-color: #00e5ff;
+    box-shadow: 0 0 0 3px rgba(0,229,255,.2);
+    outline: none;
+}
 
-textarea{
-    min-height: 120px;
-    resize: vertical;
+html:not(.dark) .card textarea:focus{
+    border-color: #ff9a44;
+    box-shadow: 0 0 0 3px rgba(255,154,68,.25);
+}
+
+/* PLACEHOLDER */
+.card textarea::placeholder{
+    opacity: .6;
 }
 
 /* =========================
-   FULL WIDTH
+   DISABLED TEL
 ========================= */
-
-.full-width{
-    width: 100%;
+#telefono:disabled{
+    opacity: .5;
+    cursor: not-allowed;
 }
 
 /* =========================
    TITULO
 ========================= */
-
 .card h2{
-    font-size: 28px;
+    font-size: 22px;
     margin-bottom: 10px;
-    font-weight: 800;
-
+    font-weight: 700;
     color: #00e5ff;
 }
 
-/* LIGHT */
-
 html:not(.dark) .card h2{
-    background: linear-gradient(
-        90deg,
-        #ff9a44,
-        #ff4b2b,
-        #ff416c
-    );
-
+    background: linear-gradient(90deg,#ff9a44,#ff4b2b,#ff416c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

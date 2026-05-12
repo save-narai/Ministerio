@@ -54,12 +54,14 @@ require_once __DIR__ . "/../../includes/header.php";
                        placeholder="3001234567"
                        maxlength="10">
 
-                <label class="check-custom">
-                    <input type="checkbox" name="sinTelefono" id="sinTelefono">
-                    <span class="checkmark"></span>
-                    No tiene teléfono
-                </label>
-            </div>
+              <div class="check-wrapper">
+        <label class="check-custom">
+            <input type="checkbox" name="sinTelefono" id="sinTelefono">
+            <span class="checkmark"></span>
+            <span>No tiene teléfono</span>
+        </label>
+    </div>
+</div>
 
             <div class="form-group">
                 <label>Género:</label>
@@ -101,17 +103,19 @@ require_once __DIR__ . "/../../includes/header.php";
         </div>
 
         <!-- BOTONES -->
-        <div class="form-actions">
-            <button type="submit" name="crear_joven" class="btn-guardar">
-                Guardar
-            </button>
+     <!-- BOTÓN -->
+    <button type="submit" name="editar_joven">
+        Guardar 
+    </button>
 
-            <button type="button"
-                    class="btn-volver"
-                    onclick="window.location.href='<?= BASE_URL ?>/views/jovenes/index.php'">
-                Volver
-            </button>
-        </div>
+</form>
+
+    <button type="button" class="btn-volver"
+        onclick="window.location.href='<?= BASE_URL ?>/views/jovenes/index.php'">
+        Volver
+    </button>
+
+</div>
 
     </form>
 </div>
