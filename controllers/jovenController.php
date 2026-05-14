@@ -27,6 +27,50 @@ function limpiarNombre($nombre) {
 }
 
 try {
+
+
+/* ============================
+   📱 VALIDAR TELEFONO
+============================ */
+
+function validarTelefono($telefono) {
+
+    $telefono = trim($telefono);
+
+    // SOLO NUMEROS COLOMBIA
+    if (!preg_match('/^3\d{9}$/', $telefono)) {
+        return [false, "El teléfono debe tener 10 dígitos y comenzar por 3"];
+    }
+
+    // TODOS LOS NUMEROS IGUALES
+    if (preg_match('/^(\d)\1+$/', $telefono)) {
+        return [false, "El teléfono no puede contener números repetidos"];
+    }
+
+    // SECUENCIAS FALSAS
+    $invalidos = [
+        '1234567890',
+        '0123456789',
+        '1111111111',
+        '2222222222',
+        '3333333333',
+        '4444444444',
+        '5555555555',
+        '6666666666',
+        '7777777777',
+        '8888888888',
+        '9999999999',
+        '0000000000',
+        '1212121212',
+        '1231231231'
+    ];
+
+    if (in_array($telefono, $invalidos)) {
+        return [false, "El teléfono ingresado no es válido"];
+    }
+
+    return [true, $telefono];
+}
 	
 /* ============================
    🟢 CREAR JOVEN

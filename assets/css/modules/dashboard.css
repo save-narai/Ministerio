@@ -3,26 +3,29 @@
 ========================= */
 
 .dashboard__header{
-  text-align:center;
-  margin-bottom:40px;
+    text-align:center;
+    margin-bottom:40px;
 }
 
 .dashboard__title{
 
-  font-size:34px;
-  font-weight:800;
-  letter-spacing:.5px;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:.5px;
 
-  background:var(--title-gradient);
+    background:var(--title-gradient);
 
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 .dashboard__user{
-  opacity:.8;
-  margin-top:10px;
-  font-size:15px;
+
+    margin-top:10px;
+
+    font-size:15px;
+
+    opacity:.78;
 }
 
 /* =========================
@@ -31,33 +34,33 @@
 
 .dashboard__section-title{
 
-  margin:35px 0 18px;
+    margin:35px 0 18px;
 
-  font-weight:700;
-  font-size:24px;
+    position:relative;
 
-  position:relative;
+    font-size:24px;
+    font-weight:700;
 
-  background:var(--title-gradient);
+    background:var(--title-gradient);
 
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 .dashboard__section-title::after{
 
-  content:"";
+    content:"";
 
-  width:70px;
-  height:4px;
+    width:70px;
+    height:4px;
 
-  background:var(--primary);
+    display:block;
 
-  display:block;
+    margin-top:8px;
 
-  margin-top:8px;
+    border-radius:20px;
 
-  border-radius:20px;
+    background:var(--primary);
 }
 
 /* =========================
@@ -66,14 +69,14 @@
 
 .dashboard__cards{
 
-  display:grid;
+    display:grid;
 
-  grid-template-columns:
-  repeat(auto-fit,minmax(200px,1fr));
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
 
-  gap:22px;
+    gap:22px;
 
-  margin-top:25px;
+    margin-top:25px;
 }
 
 /* =========================
@@ -82,39 +85,64 @@
 
 .dashboard__card{
 
-  position:relative;
+    position:relative;
 
-  overflow:hidden;
+    overflow:hidden;
 
-  padding:22px;
+    min-height:135px;
 
-  min-height:125px;
+    padding:22px;
 
-  border-radius:20px;
+    border-radius:22px;
 
-  color:var(--card-text);
+    color:var(--card-text);
 
-  background:var(--card-gradient);
+    background:var(--card-gradient);
 
-  /* 🔥 EFECTO LIQUIDO */
-  background-size:400% 400%;
+    background-size:300% 300%;
 
-  animation:
-    liquidCard 10s ease infinite;
+    animation:
+        liquidCard 18s ease infinite;
 
-  box-shadow:var(--shadow);
+    box-shadow:var(--shadow);
 
-  transition:all .35s ease;
+    transition:
+        transform .28s ease,
+        box-shadow .28s ease;
 
-  display:flex;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
 
-  flex-direction:column;
+    isolation:isolate;
+}
 
-  justify-content:center;
+/* =========================
+   VARIANTES
+========================= */
 
-  cursor:pointer;
+.dashboard__card--cyan{
+    border-top:4px solid #00e5ff;
+}
 
-  isolation:isolate;
+.dashboard__card--green{
+    border-top:4px solid #00ff88;
+}
+
+.dashboard__card--red{
+    border-top:4px solid #ff4b4b;
+}
+
+.dashboard__card--purple{
+    border-top:4px solid #8b5cf6;
+}
+
+.dashboard__card--orange{
+    border-top:4px solid #ff9f43;
+}
+
+.dashboard__card--blue{
+    border-top:4px solid #3b82f6;
 }
 
 /* =========================
@@ -123,12 +151,12 @@
 
 .dashboard__card:hover{
 
-  transform:
-    translateY(-8px)
-    scale(1.03);
+    transform:
+        translateY(-4px)
+        scale(1.015);
 
-  box-shadow:
-    0 18px 35px rgba(0,0,0,.22);
+    box-shadow:
+        0 14px 28px rgba(0,0,0,.16);
 }
 
 /* =========================
@@ -137,48 +165,103 @@
 
 .dashboard__card::before{
 
-  content:"";
+    content:"";
 
-  position:absolute;
+    position:absolute;
 
-  inset:0;
+    inset:0;
 
-  background:linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,.22),
-    transparent
-  );
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,.10),
+        transparent
+    );
 
-  opacity:0;
+    opacity:0;
 
-  transition:all .5s ease;
+    transition:opacity .45s ease;
 }
 
 .dashboard__card:hover::before{
-  opacity:1;
+    opacity:1;
 }
 
 /* =========================
-   TEXTOS
+   CARD TOP
 ========================= */
+
+.dashboard__card-top{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:16px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+.dashboard__card-icon{
+
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.12);
+
+    font-size:22px;
+
+    backdrop-filter:blur(4px);
+}
 
 .dashboard__card-title{
 
-  font-size:14px;
+    font-size:14px;
+    font-weight:600;
 
-  opacity:.9;
+    opacity:.92;
+}
 
-  margin-bottom:10px;
+/* =========================
+   CARD BODY
+========================= */
 
-  font-weight:500;
+.dashboard__card-body{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:4px;
+
+    position:relative;
+
+    z-index:2;
 }
 
 .dashboard__card-value{
 
-  font-size:32px;
+    font-size:34px;
+    font-weight:800;
 
-  font-weight:800;
+    line-height:1;
+}
+
+.dashboard__card-extra{
+
+    font-size:13px;
+
+    opacity:.72;
+
+    font-weight:500;
 }
 
 /* =========================
@@ -187,84 +270,103 @@
 
 .dashboard__grid{
 
-  display:grid;
+    display:grid;
 
-  grid-template-columns:1fr 1fr;
+    grid-template-columns:
+        repeat(auto-fit,minmax(320px,1fr));
 
-  gap:22px;
+    gap:22px;
 
-  margin-top:20px;
+    margin-top:20px;
 }
 
 /* =========================
-   TARJETAS GRAFICAS
+   CHARTS
 ========================= */
 
 .dashboard__chart{
 
-  border-radius:20px;
+    position:relative;
 
-  padding:22px;
+    overflow:hidden;
 
-  color:#fff;
+    border-radius:22px;
 
-  background:var(--card-gradient);
+    padding:22px;
 
-  /* 🔥 EFECTO LIQUIDO */
-  background-size:400% 400%;
+    background:var(--card-gradient);
 
-  animation:
-    liquidCard 12s ease infinite;
+    background-size:300% 300%;
 
-  box-shadow:var(--shadow);
+    animation:
+        liquidCard 20s ease infinite;
 
-  transition:all .35s ease;
+    box-shadow:var(--shadow);
 
-  overflow:hidden;
-
-  position:relative;
+    transition:
+        transform .28s ease,
+        box-shadow .28s ease;
 }
-
-/* =========================
-   HOVER CHART
-========================= */
 
 .dashboard__chart:hover{
-  transform:translateY(-6px);
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 14px 28px rgba(0,0,0,.14);
 }
 
 /* =========================
-   EFECTO GLASS
+   GLASS LIGHT
 ========================= */
 
 .dashboard__chart::before{
 
-  content:"";
+    content:"";
 
-  position:absolute;
+    position:absolute;
 
-  inset:0;
+    inset:0;
 
-  background:rgba(255,255,255,.05);
+    background:rgba(255,255,255,.03);
 
-  backdrop-filter:blur(8px);
+    pointer-events:none;
 }
 
 /* =========================
-   TITULOS GRAFICAS
+   CHART HEADER
 ========================= */
 
-.dashboard__chart h4{
+.dashboard__chart-header{
 
-  position:relative;
+    position:relative;
 
-  margin-bottom:18px;
+    z-index:2;
 
-  font-size:18px;
+    margin-bottom:18px;
+}
 
-  font-weight:700;
+.dashboard__chart-header h4{
 
-  z-index:2;
+    font-size:18px;
+    font-weight:700;
+
+    color:#fff;
+}
+
+/* =========================
+   CHART BODY
+========================= */
+
+.dashboard__chart-body{
+
+    position:relative;
+
+    z-index:2;
+
+    width:100%;
+
+    min-height:320px;
 }
 
 /* =========================
@@ -273,13 +375,9 @@
 
 .dashboard__chart canvas{
 
-  position:relative;
+    width:100% !important;
 
-  z-index:2;
-
-  width:100% !important;
-
-  height:300px !important;
+    height:320px !important;
 }
 
 /* =========================
@@ -287,8 +385,162 @@
 ========================= */
 
 .dashboard__footer{
-  margin-top:30px;
-  text-align:right;
+
+    margin-top:35px;
+
+    display:flex;
+    justify-content:flex-end;
+}
+
+/* =========================
+   BOTON PDF
+========================= */
+
+.btn-primary{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+    font-weight:600;
+
+    transition:.25s ease;
+
+    box-shadow:var(--shadow);
+}
+
+.btn-primary:hover{
+
+    transform:
+        translateY(-2px)
+        scale(1.02);
+}
+
+/* =========================
+   SEGUIMIENTO
+========================= */
+
+.dashboard__tracking{
+
+    margin-top:10px;
+}
+
+/* =========================
+   TRACKING CARD
+========================= */
+
+.tracking-card{
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+/* NUEVOS */
+.card-nuevo{
+
+    border-top:4px solid #ff6b6b;
+}
+
+/* PROCESO */
+.card-proceso{
+
+    border-top:4px solid #f59e0b;
+}
+
+/* CAMINO */
+.card-camino{
+
+    border-top:4px solid #6366f1;
+}
+
+/* FIEL */
+.card-fiel{
+
+    border-top:4px solid #22c55e;
+}
+
+/* =========================
+   ALERTA DASHBOARD
+========================= */
+
+.alerta-dashboard{
+
+    margin-top:20px;
+
+    padding:16px 18px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,75,75,.16),
+            rgba(255,75,75,.08)
+        );
+
+    border-left:5px solid #ff4b4b;
+
+    color:#ff4b4b;
+
+    font-size:15px;
+    font-weight:700;
+
+    box-shadow:
+        0 10px 22px rgba(255,75,75,.08);
+
+    animation:
+        alertaGlow 3s ease infinite;
+}
+
+/* =========================
+   ALERTA DARK MODE
+========================= */
+
+html.dark .alerta-dashboard{
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,75,75,.18),
+            rgba(255,75,75,.10)
+        );
+
+    color:#ff8a8a;
+}
+
+/* =========================
+   ANIMACION ALERTA
+========================= */
+
+@keyframes alertaGlow{
+
+    0%{
+        box-shadow:
+            0 0 0 rgba(255,75,75,0);
+    }
+
+    50%{
+        box-shadow:
+            0 0 18px rgba(255,75,75,.14);
+    }
+
+    100%{
+        box-shadow:
+            0 0 0 rgba(255,75,75,0);
+    }
 }
 
 /* =========================
@@ -297,26 +549,25 @@
 
 @keyframes liquidCard{
 
-  0%{
-    background-position:0% 50%;
-  }
+    0%{
+        background-position:0% 50%;
+    }
 
-  25%{
-    background-position:50% 100%;
-  }
+    25%{
+        background-position:50% 100%;
+    }
 
-  50%{
-    background-position:100% 50%;
-  }
+    50%{
+        background-position:100% 50%;
+    }
 
-  75%{
-    background-position:50% 0%;
-  }
+    75%{
+        background-position:50% 0%;
+    }
 
-  100%{
-    background-position:0% 50%;
-  }
-
+    100%{
+        background-position:0% 50%;
+    }
 }
 
 /* =========================
@@ -325,16 +576,15 @@
 
 @keyframes fadeIn{
 
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
 
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 /* =========================
@@ -343,24 +593,46 @@
 
 @media(max-width:900px){
 
-  .dashboard__grid{
-    grid-template-columns:1fr;
-  }
-
+    .dashboard__grid{
+        grid-template-columns:1fr;
+    }
 }
 
 @media(max-width:600px){
 
-  .dashboard__title{
-    font-size:28px;
-  }
+    .dashboard__title{
+        font-size:28px;
+    }
 
-  .dashboard__section-title{
-    font-size:21px;
-  }
+    .dashboard__section-title{
+        font-size:21px;
+    }
 
-  .dashboard__card{
-    min-height:110px;
-  }
+    .dashboard__cards{
+        grid-template-columns:1fr;
+    }
 
+    .dashboard__card{
+        min-height:120px;
+    }
+
+    .dashboard__chart{
+        padding:18px;
+    }
+
+    .dashboard__chart-body{
+        min-height:260px;
+    }
+
+    .dashboard__chart canvas{
+        height:260px !important;
+    }
+
+    .dashboard__footer{
+        justify-content:center;
+    }
+
+    .btn-primary{
+        width:100%;
+    }
 }

@@ -1,440 +1,564 @@
 /* =========================
-   HEADER FIX
+   HEADER
 ========================= */
 
 .jovenes__header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px;
-  gap:20px;
-  flex-wrap:wrap;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
 }
 
 /* =========================
-   BOTONES TOP
+   BOTONES SUPERIORES
 ========================= */
 
 .top-actions{
-  display:flex;
-  gap:14px;
-
-  margin-left:auto;
-
-  margin-right:70px; /* evita choque con dark mode */
+    display:flex;
+    gap:14px;
+    margin-left:auto;
+    margin-right:70px;
 }
 
-/* =========================
-   BOTONES
-========================= */
-
 .jovenes__btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    padding:10px 18px;
 
-  text-decoration:none;
+    border:none;
+    border-radius:12px;
 
-  background:var(--card-gradient);
+    text-decoration:none;
 
-  color:#fff;
+    background:var(--card-gradient);
+    color:#fff;
 
-  border:none;
+    font-size:14px;
+    font-weight:600;
 
-  padding:10px 18px;
+    cursor:pointer;
 
-  border-radius:12px;
+    box-shadow:var(--shadow);
 
-  font-size:14px;
-  font-weight:600;
-
-  cursor:pointer;
-
-  transition:var(--transition);
-
-  box-shadow:var(--shadow);
+    transition:var(--transition);
 }
 
 .jovenes__btn:hover{
-  transform:translateY(-3px) scale(1.03);
+    transform:translateY(-3px) scale(1.03);
 }
 
 /* =========================
-   FILTROS FIX
+   FILTROS
 ========================= */
 
-.jovenes__filters{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:18px;
+.jovenes__filtros{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+
+    margin-bottom:20px;
 }
 
-.jovenes__filters a{
-  text-decoration:none !important;
-  border:none !important;
-  box-shadow:none !important;
+.jovenes__tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+
+    padding:10px 14px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    font-size:13px;
+    font-weight:600;
+
+    transition:.25s ease;
+}
+
+/* hover */
+.jovenes__tag:hover{
+    transform:translateY(-2px);
+}
+
+/* variantes */
+.jovenes__tag--todos{
+    background:#f0f0f0;
+    color:#333;
+}
+
+.jovenes__tag--activos{
+    background:rgba(0,255,150,.15);
+    color:#00b96b;
+}
+
+.jovenes__tag--inactivos{
+    background:rgba(255,75,75,.15);
+    color:#ff4b4b;
+}
+
+.jovenes__tag--riesgo{
+    background:rgba(255,200,0,.15);
+    color:#d8a200;
+}
+
+.jovenes__tag--alto{
+    background:rgba(255,0,0,.16);
+    color:#ff3b3b;
+}
+
+/* activo */
+.jovenes__tag--active{
+    outline:2px solid rgba(0,229,255,.35);
+    transform:scale(1.03);
+}
+
+html:not(.dark) .jovenes__tag--active{
+    outline:2px solid rgba(255,75,43,.25);
 }
 
 /* =========================
-   BUSCADOR PRO
+   BUSCADOR
 ========================= */
 
 .buscador{
+    width:280px;
+    max-width:100%;
 
-  width:280px;
-  max-width:100%;
+    padding:12px 16px;
 
-  padding:12px 16px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
 
-  border-radius:14px;
+    outline:none;
 
-  border:1px solid rgba(255,255,255,.08);
+    background:var(--container);
+    color:var(--text);
 
-  outline:none;
+    box-shadow:var(--shadow);
 
-  background:var(--container);
+    transition:var(--transition);
 
-  color:var(--text);
-
-  box-shadow:var(--shadow);
-
-  transition:var(--transition);
-
-  margin-bottom:20px;
+    margin-bottom:20px;
 }
 
 .buscador:focus{
+    transform:scale(1.02);
 
-  transform:scale(1.02);
-
-  box-shadow:
-    0 0 0 3px rgba(0,229,255,.25);
+    box-shadow:
+        0 0 0 3px rgba(0,229,255,.25);
 }
 
 /* =========================
-   TABLA SAAS PREMIUM
+   CONTENEDOR TABLA
 ========================= */
 
 .jovenes__table{
+    width:100%;
 
-  width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
 
-  overflow:hidden;
+    padding:8px;
 
-  border-radius:22px;
+    border-radius:22px;
 
-  background:var(--container);
+    background:var(--container);
 
-  box-shadow:var(--shadow);
+    box-shadow:var(--shadow);
 
-  backdrop-filter:blur(12px);
-
-  padding:8px;
+    backdrop-filter:blur(8px);
 }
 
-/* TABLA */
+/* =========================
+   TABLA
+========================= */
+
 .jovenes__table table{
+    width:100%;
 
-  width:100%;
+    border-collapse:separate;
+    border-spacing:0 8px;
 
-  border-collapse:separate;
+    table-layout:auto;
 
-  border-spacing:0 8px;
-
-  table-layout:auto;
+    min-width:1000px;
 }
 
-/* HEADER */
+/* =========================
+   HEADER TABLA
+========================= */
+
 .jovenes__table thead th{
+    padding:16px;
 
-  padding:16px;
+    border:none;
 
-  font-size:13px;
+    background:var(--card-gradient);
 
-  font-weight:700;
+    color:#fff;
 
-  text-transform:uppercase;
+    font-size:13px;
+    font-weight:700;
 
-  letter-spacing:.5px;
+    text-transform:uppercase;
 
-  color:#fff;
+    letter-spacing:.5px;
 
-  background:var(--card-gradient);
-
-  border:none;
+    text-align:center;
 }
 
-/* esquinas header */
 .jovenes__table thead th:first-child{
-  border-radius:14px 0 0 14px;
+    border-radius:14px 0 0 14px;
+    text-align:left;
 }
 
 .jovenes__table thead th:last-child{
-  border-radius:0 14px 14px 0;
+    border-radius:0 14px 14px 0;
 }
 
-/* FILAS */
+/* =========================
+   FILAS
+========================= */
+
 .jovenes__table tbody tr{
+    background:rgba(255,255,255,.02);
 
-  background:rgba(255,255,255,.02);
-
-  transition:all .28s ease;
+    transition:.25s ease;
 }
 
-/* DARK */
 html.dark .jovenes__table tbody tr{
-
-  background:rgba(255,255,255,.025);
+    background:rgba(255,255,255,.025);
 }
 
-/* HOVER */
 .jovenes__table tbody tr:hover{
-
-  transform:translateY(-2px);
-
-  background:rgba(0,0,0,.03);
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
 }
 
 html.dark .jovenes__table tbody tr:hover{
-
-  background:rgba(255,255,255,.045);
+    background:rgba(255,255,255,.045);
 }
 
-/* CELDAS */
+/* =========================
+   CELDAS
+========================= */
+
 .jovenes__table td{
+    padding:16px 14px;
 
-  padding:16px 14px;
+    border:none;
 
-  border:none;
-
-  vertical-align:middle;
+    vertical-align:middle;
 }
 
-/* esquinas filas */
+/* bordes filas */
 .jovenes__table td:first-child{
-  border-radius:14px 0 0 14px;
+    border-radius:14px 0 0 14px;
 }
 
 .jovenes__table td:last-child{
-  border-radius:0 14px 14px 0;
+    border-radius:0 14px 14px 0;
 }
 
 /* =========================
-   AJUSTE COLUMNAS
+   COLUMNAS
 ========================= */
 
-/* NOMBRE */
+/* nombre */
 .jovenes__table th:nth-child(1),
 .jovenes__table td:nth-child(1){
-  width:24%;
+    width:24%;
 }
 
-/* EDAD */
+/* edad */
 .jovenes__table th:nth-child(2),
 .jovenes__table td:nth-child(2){
-  width:8%;
-  text-align:center;
+    width:8%;
+    text-align:center;
 }
 
-/* ESPIRITUAL */
+/* estado espiritual */
 .jovenes__table th:nth-child(3),
 .jovenes__table td:nth-child(3){
-
-  width:18%;
-
-  text-align:center;
+    width:18%;
+    text-align:center;
 }
 
-/* ACTIVIDAD */
+/* actividad */
 .jovenes__table th:nth-child(4),
 .jovenes__table td:nth-child(4){
-
-  width:10%;
-
-  text-align:center;
-
-  vertical-align:middle;
+    width:10%;
+    text-align:center;
 }
 
-/* CONEXION */
+/* conexión */
 .jovenes__table th:nth-child(5),
 .jovenes__table td:nth-child(5){
-  width:10%;
-  text-align:center;
+    width:10%;
+    text-align:center;
 }
 
-/* TIEMPO */
+/* tiempo */
 .jovenes__table th:nth-child(6),
 .jovenes__table td:nth-child(6){
-  width:12%;
-  text-align:center;
+    width:12%;
+    text-align:center;
 }
 
-/* ACCIONES */
+/* seguimiento */
 .jovenes__table th:nth-child(7),
 .jovenes__table td:nth-child(7){
-
-  width:16%;
-
-  text-align:center;
-
-  white-space:nowrap;
-
-  padding-left:45px;
+    width:12%;
+    text-align:center;
 }
+
+/* acciones */
+.jovenes__table th:nth-child(8),
+.jovenes__table td:nth-child(8){
+    width:16%;
+    text-align:center;
+    white-space:nowrap;
+}
+
 /* =========================
-   ACCIONES PRO
+   ESTADOS ACTIVIDAD
 ========================= */
 
-.acciones{
+.estado{
+    width:14px;
+    height:14px;
 
-  display:flex;
+    display:inline-block;
 
-  justify-content:center;
-
-  align-items:center;
-
-  gap:14px;
-
-  transform:translateX(-1x);
+    border-radius:50%;
 }
 
-/* BOTONES */
-.btn-icon{
+.estado--activo{
+    background:#00d26a;
 
-  width:40px;
-  height:40px;
-
-  min-width:40px;
-  min-height:40px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border:none;
-
-  border-radius:12px;
-
-  text-decoration:none;
-
-  background:rgba(255,255,255,.06);
-
-  backdrop-filter:blur(8px);
-
-  color:#333;
-
-  cursor:pointer;
-
-  transition:all .25s ease;
+    box-shadow:
+        0 0 10px rgba(0,210,106,.55);
 }
 
-/* SVG */
-.btn-icon svg{
+.estado--inactivo{
+    background:#ff4d6d;
 
-  width:18px;
-  height:18px;
+    box-shadow:
+        0 0 10px rgba(255,77,109,.45);
+}
 
-  fill:currentColor;
+/* =========================
+   RIESGO
+========================= */
+
+.joven-riesgo2{
+    color:#d89b00;
+    font-weight:700;
+}
+
+.joven-riesgo3{
+    color:#d60000;
+    font-weight:700;
+}
+/* =========================
+   TIEMPO IGLESIA
+========================= */
+
+.joven-tiempo-main{
+
+    font-size:14px;
+    font-weight:600;
+
+    color:#222;
+
+    line-height:1.1;
+}
+
+.joven-tiempo-sub{
+
+    font-size:12px;
+
+    color:#222;
+
+    font-weight:500;
+
+    line-height:1.1;
+
+    opacity:1;
 }
 
 /* DARK MODE */
-html.dark .btn-icon{
-
-  background:rgba(255,255,255,.08);
-
-  color:#fff;
+html.dark .joven-tiempo-main{
+    color:#fff;
 }
 
-/* HOVER */
-.btn-icon:hover{
-
-  transform:
-    translateY(-2px)
-    scale(1.08);
+html.dark .joven-tiempo-sub{
+    color:#fff;
+    opacity:1;
 }
 
-/* VER */
-.btn-icon.ver:hover{
-  background:#00e5ff;
-  color:#fff;
+/* =========================
+   SEGUIMIENTO
+========================= */
+
+.joven-seg{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:6px 10px;
+
+    border-radius:10px;
+
+    font-size:12px;
+    font-weight:600;
 }
 
-/* EDITAR */
-.btn-icon.editar:hover{
-  background:#00ff88;
-  color:#fff;
+.joven-seg--nuevo{
+    background:#ffe5e5;
+    color:#d60000;
 }
 
-/* ELIMINAR */
-.btn-icon.eliminar:hover{
-  background:#ff4d6d;
-  color:#fff;
+.joven-seg--proceso{
+    background:#fff4cc;
+    color:#b38600;
+}
+
+.joven-seg--camino{
+    background:#e0f0ff;
+    color:#0066cc;
+}
+
+.joven-seg--fiel{
+    background:#e6ffe6;
+    color:#009933;
+}
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
 }
 
 .btn-icon{
+    width:42px;
+    height:42px;
 
-  width:42px;
-  height:42px;
+    min-width:42px;
+    min-height:42px;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-  border-radius:12px;
+    border:none;
+    border-radius:12px;
 
-  background:rgba(255,255,255,.06);
+    text-decoration:none;
 
-  backdrop-filter:blur(10px);
+    background:rgba(255,255,255,.06);
 
-  border:none;
+    backdrop-filter:blur(8px);
 
-  cursor:pointer;
+    color:#333;
 
-  transition:all .25s ease;
+    cursor:pointer;
+
+    transition:.25s ease;
 }
 
-/* SVG */
-.btn-icon svg{
-
-  width:18px;
-  height:18px;
-
-  fill:currentColor;
-}
-
-/* MODO CLARO */
-.btn-icon{
-  color:#333;
-}
-
-/* MODO OSCURO */
 html.dark .btn-icon{
-  color:#fff;
-  background:rgba(255,255,255,.08);
+    background:rgba(255,255,255,.08);
+    color:#fff;
 }
 
-/* HOVER GENERAL */
 .btn-icon:hover{
-  transform:translateY(-2px) scale(1.08);
+    transform:translateY(-2px) scale(1.08);
 }
 
-/* COLORES POR ACCION */
+/* acciones */
 .btn-icon.ver:hover{
-  background:#00e5ff;
-  color:#fff;
+    background:#00e5ff;
+    color:#fff;
 }
 
 .btn-icon.editar:hover{
-  background:#00ff88;
-  color:#fff;
+    background:#00ff88;
+    color:#fff;
 }
 
 .btn-icon.eliminar:hover{
-  background:#ff4d6d;
-  color:#fff;
+    background:#ff4d6d;
+    color:#fff;
+}
+
+/* =========================
+   FORM INLINE
+========================= */
+
+.inline-form{
+    margin:0;
+    padding:0;
+}
+
+/* =========================
+   DATATABLE FOOTER
+========================= */
+
+.datatable-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:18px;
+
+    flex-wrap:wrap;
+}
+
+
+
+/* =========================
+   bloque-scroll
+========================= */
+
+.bloque-scroll {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.bloque-body {
+    max-height: 420px; /* 🔥 ajustable */
+    overflow-y: auto;
+}
+
+/* opcional: header fijo */
+.bloque-body thead th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+}
+
+.bloque-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bloque-body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }
 
 /* =========================
@@ -443,16 +567,30 @@ html.dark .btn-icon{
 
 @media(max-width:768px){
 
-  .top-actions{
-    margin-right:0;
-  }
+    .top-actions{
+        width:100%;
 
-  .buscador{
-    width:100%;
-  }
+        margin-right:0;
 
-  .jovenes__table{
-    overflow-x:auto;
-  }
+        justify-content:flex-start;
+
+        flex-wrap:wrap;
+    }
+
+    .buscador{
+        width:100%;
+    }
+
+    .jovenes__header{
+        align-items:flex-start;
+    }
+
+    .jovenes__table{
+        padding:4px;
+    }
+
+    .jovenes__table table{
+        min-width:950px;
+    }
 
 }

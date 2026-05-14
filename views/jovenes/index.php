@@ -11,49 +11,242 @@ if (!tienePermiso('gestionar_jovenes')) {
 
 actualizarEstadoActividad();
 
-/* FILTRO */
+/* =========================
+   FILTROS
+========================= */
+
 $permitidos = ["todos", "activos", "inactivos", "riesgo2", "riesgo3"];
+
 $filtro = $_GET["filtro"] ?? "todos";
 
 if (!in_array($filtro, $permitidos)) {
     $filtro = "todos";
 }
 
-/* QUERY */
+/* =========================
+   QUERY OPTIMIZADA
+========================= */
+
 $query = "
-    SELECT
-        j.id,
-        j.nombre_completo,
-        j.fecha_nacimiento,
-        j.estado_espiritual,
-        j.estado_actividad,
-        j.fecha_ingreso,
-        TIMESTAMPDIFF(YEAR, j.fecha_nacimiento, CURDATE()) AS edad,
-        COALESCE(SUM(CASE WHEN a.asistio = 0 THEN 1 ELSE 0 END),0) AS faltas
-    FROM jovenes j
-    LEFT JOIN asistencia a ON j.id = a.joven_id
-    GROUP BY j.id
+SELECT
+    j.id,
+    j.nombre_completo,
+    j.fecha_nacimiento,
+    j.estado_espiritual,
+    j.estado_actividad,
+    j.fecha_ingreso,
+
+    IFNULL(
+        TIMESTAMPDIFF(YEAR, j.fecha_nacimiento, CURDATE()),
+        '-'
+    ) AS edad,
+
+    COUNT(
+        CASE
+            WHEN a.asistio = 0 THEN 1
+        END
+    ) AS faltas
+
+FROM jovenes j
+
+LEFT JOIN asistencia a
+    ON a.joven_id = j.id
 ";
 
-$having = [];
+/* =========================
+   WHERE
+========================= */
 
-if ($filtro === "activos") $having[] = "j.estado_actividad = 'ACTIVO'";
-if ($filtro === "inactivos") $having[] = "j.estado_actividad = 'INACTIVO'";
-if ($filtro === "riesgo2") $having[] = "faltas = 2";
-if ($filtro === "riesgo3") $having[] = "faltas >= 3";
+$where = [];
 
-if (!empty($having)) {
-    $query .= " HAVING " . implode(" AND ", $having);
+if ($filtro === "activos") {
+    $where[] = "j.estado_actividad = 'ACTIVO'";
 }
+
+if ($filtro === "inactivos") {
+    $where[] = "j.estado_actividad = 'INACTIVO'";
+}
+
+if (!empty($where)) {
+    $query .= " WHERE " . implode(" AND ", $where);
+}
+
+/* =========================
+   GROUP BY
+========================= */
+
+$query .= "
+GROUP BY
+    j.id,
+    j.nombre_completo,
+    j.fecha_nacimiento,
+    j.estado_espiritual,
+    j.estado_actividad,
+    j.fecha_ingreso
+";
+
+/* =========================
+   HAVING (para COUNT)
+========================= */
+
+if ($filtro === "riesgo2") {
+    $query .= " HAVING faltas = 2";
+}
+
+if ($filtro === "riesgo3") {
+    $query .= " HAVING faltas >= 3";
+}
+
+/* =========================
+   ORDER
+========================= */
 
 $query .= " ORDER BY j.nombre_completo ASC";
 
-$stmt = $pdo->query($query);
+/* =========================
+   EJECUTAR
+========================= */
+
+$stmt = $pdo->prepare($query);
+$stmt->execute();
+
 $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* CSS */
+/* =========================
+   CSS
+========================= */
+
 $extraCSS = '
 <link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/jovenes.css">
+
+<style>
+
+/* =========================
+   TIEMPO
+========================= */
+
+.joven-tiempo-box{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.joven-tiempo-main{
+    font-weight:700;
+    font-size:14px;
+}
+
+.joven-tiempo-sub{
+    font-size:12px;
+    color:#666;
+}
+
+.joven-badge-tiempo{
+    padding:6px 10px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.joven-tiempo-nuevo{
+    background:#ffe5e5;
+    color:#d60000;
+}
+
+/* =========================
+   SEGUIMIENTO
+========================= */
+
+.joven-seg{
+    font-size:13px;
+    font-weight:600;
+}
+
+.joven-seg--nuevo{
+    color:#d60000;
+}
+
+.joven-seg--proceso{
+    color:#b38600;
+}
+
+.joven-seg--camino{
+    color:#0066cc;
+}
+
+.joven-seg--fiel{
+    color:#009933;
+}
+
+/* =========================
+   RIESGO
+========================= */
+
+.joven-riesgo2{
+    color:#d89b00;
+    font-weight:700;
+}
+
+.joven-riesgo3{
+    color:#d60000;
+    font-weight:700;
+}
+
+/* =========================
+   FILTROS
+========================= */
+
+.jovenes__filtros{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:20px 0;
+}
+
+.jovenes__tag{
+    text-decoration:none;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    transition:0.2s ease;
+}
+
+.jovenes__tag:hover{
+    transform:translateY(-2px);
+}
+
+.jovenes__tag--todos{
+    background:#f0f0f0;
+    color:#333;
+}
+
+.jovenes__tag--activos{
+    background:#e7ffe7;
+    color:#008a00;
+}
+
+.jovenes__tag--inactivos{
+    background:#ffe7e7;
+    color:#c20000;
+}
+
+.jovenes__tag--riesgo{
+    background:#fff5d9;
+    color:#a06a00;
+}
+
+.jovenes__tag--alto{
+    background:#ffe1e1;
+    color:#d60000;
+}
+
+.jovenes__tag--active{
+    outline:3px solid rgba(0,0,0,.1);
+    transform:scale(1.03);
+}
+
+</style>
 ';
 
 require_once __DIR__ . "/../../includes/header.php";
@@ -72,13 +265,13 @@ require_once __DIR__ . "/../../includes/header.php";
 
             <a href="<?= BASE_URL ?>/views/jovenes/crear.php"
                class="jovenes__btn">
-               ➕ Nuevo
+                ➕ Nuevo
             </a>
 
             <a href="<?= BASE_URL ?>/views/jovenes/reporte_jovenes_pdf.php"
                target="_blank"
                class="jovenes__btn">
-               📄 PDF
+                📄 PDF
             </a>
 
         </div>
@@ -86,25 +279,30 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
     <!-- FILTROS -->
-    <div class="jovenes__filters">
+    <div class="jovenes__filtros">
 
-        <a href="?filtro=todos" class="jovenes__tag">
+        <a href="?filtro=todos"
+           class="jovenes__tag jovenes__tag--todos <?= $filtro === 'todos' ? 'jovenes__tag--active' : '' ?>">
             👥 Todos
         </a>
 
-        <a href="?filtro=activos" class="jovenes__tag">
+        <a href="?filtro=activos"
+           class="jovenes__tag jovenes__tag--activos <?= $filtro === 'activos' ? 'jovenes__tag--active' : '' ?>">
             🟢 Activos
         </a>
 
-        <a href="?filtro=inactivos" class="jovenes__tag">
+        <a href="?filtro=inactivos"
+           class="jovenes__tag jovenes__tag--inactivos <?= $filtro === 'inactivos' ? 'jovenes__tag--active' : '' ?>">
             🔴 Inactivos
         </a>
 
-        <a href="?filtro=riesgo2" class="jovenes__tag">
+        <a href="?filtro=riesgo2"
+           class="jovenes__tag jovenes__tag--riesgo <?= $filtro === 'riesgo2' ? 'jovenes__tag--active' : '' ?>">
             🟡 Riesgo
         </a>
 
-        <a href="?filtro=riesgo3" class="jovenes__tag">
+        <a href="?filtro=riesgo3"
+           class="jovenes__tag jovenes__tag--alto <?= $filtro === 'riesgo3' ? 'jovenes__tag--active' : '' ?>">
             🚨 Alto
         </a>
 
@@ -114,17 +312,22 @@ require_once __DIR__ . "/../../includes/header.php";
     <input
         type="text"
         id="buscador"
-        placeholder="🔍 Buscar joven..."
+        placeholder="Buscar joven..."
         class="buscador"
     >
 
     <br><br>
 
     <!-- TABLA -->
+
+    <!-- TABLA -->
+<div class="jovenes__table bloque-scroll">
+
+
     <div class="jovenes__table">
 
-<table id="tablaJovenes">
-    
+        <table id="tablaJovenes">
+
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -133,6 +336,7 @@ require_once __DIR__ . "/../../includes/header.php";
                     <th>Actividad</th>
                     <th>Conexión</th>
                     <th>Tiempo Iglesia</th>
+                    <th>Seguimiento</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -145,30 +349,53 @@ require_once __DIR__ . "/../../includes/header.php";
 
             $faltas = (int)$j["faltas"];
 
-            $meses = 0;
+            /* =========================
+               TIEMPO
+            ========================= */
+
+            $mesesTotal = 0;
+            $diasTotal = 0;
 
             if (!empty($j["fecha_ingreso"])) {
 
-                $inicio = new DateTime($j["fecha_ingreso"]);
-                $hoy = new DateTime();
+                try {
 
-                if ($inicio <= $hoy) {
+                    $fechaIngreso = new DateTime($j["fecha_ingreso"]);
+                    $hoy = new DateTime();
 
-                    $diff = $hoy->diff($inicio);
+                    $diff = $fechaIngreso->diff($hoy);
 
-                    $meses = ($diff->y * 12) + $diff->m;
+                    $mesesTotal = ($diff->y * 12) + $diff->m;
+                    $diasTotal = $diff->days;
+
+                } catch (Exception $e) {
+
+                    $mesesTotal = 0;
+                    $diasTotal = 0;
                 }
             }
+
+            $años = floor($mesesTotal / 12);
+            $restoMeses = $mesesTotal % 12;
 
             ?>
 
             <tr>
 
-                <td><?= htmlspecialchars($j["nombre_completo"]) ?></td>
+                <!-- NOMBRE -->
+                <td>
+                    <?= htmlspecialchars($j["nombre_completo"]) ?>
+                </td>
 
-                <td><?= htmlspecialchars($j["edad"] ?? "-") ?></td>
+                <!-- EDAD -->
+                <td>
+                    <?= htmlspecialchars($j["edad"]) ?>
+                </td>
 
-                <td><?= htmlspecialchars($j["estado_espiritual"] ?? "-") ?></td>
+                <!-- ESTADO ESPIRITUAL -->
+                <td>
+                    <?= htmlspecialchars($j["estado_espiritual"] ?? "-") ?>
+                </td>
 
                 <!-- ACTIVIDAD -->
                 <td>
@@ -185,147 +412,203 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 </td>
 
-                <!-- CONEXION -->
+                <!-- CONEXIÓN -->
                 <td>
 
                     <?php
+
                     if ($faltas >= 3) {
 
-                        echo "<span class='riesgo3'>🔴 Alto</span>";
+                        echo "<span class='joven-riesgo3'>🔴 Alto</span>";
 
                     } elseif ($faltas == 2) {
 
-                        echo "<span class='riesgo2'>🟡 Riesgo</span>";
+                        echo "<span class='joven-riesgo2'>🟡 Riesgo</span>";
 
                     } else {
 
                         echo "✔️";
                     }
+
                     ?>
 
                 </td>
 
                 <!-- TIEMPO -->
                 <td>
-                    <?= $meses ?> meses
+
+                    <div class="joven-tiempo-box">
+
+                        <?php if ($diasTotal <= 30): ?>
+
+                            <span class="joven-badge-tiempo joven-tiempo-nuevo">
+                                🔴 Nuevo
+                            </span>
+
+                        <?php else: ?>
+
+                            <?php if ($años > 0): ?>
+
+                                <span class="joven-tiempo-main">
+                                    <?= $años ?> año<?= $años > 1 ? 's' : '' ?>
+                                </span>
+
+                            <?php endif; ?>
+
+                            <?php if ($restoMeses > 0): ?>
+
+                                <span class="joven-tiempo-sub">
+                                    <?= $restoMeses ?> mes<?= $restoMeses > 1 ? 'es' : '' ?>
+                                </span>
+
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+
+                    </div>
+
                 </td>
 
-              <!-- ACCIONES -->
-<td class="acciones-cell">
+                <!-- SEGUIMIENTO -->
+                <td>
 
-    <div class="acciones">
+                    <?php
 
-        <!-- VER -->
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= (int)$j["id"] ?>"
-            class="btn-icon ver"
-        >
+                    if ($diasTotal <= 30) {
 
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8"/>
-            </svg>
+                        echo "<span class='joven-seg joven-seg--nuevo'>🔴 Nuevo</span>";
 
-        </a>
+                    } elseif ($mesesTotal <= 3) {
 
-        <!-- EDITAR -->
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= (int)$j["id"] ?>"
-            class="btn-icon editar"
-        >
+                        echo "<span class='joven-seg joven-seg--proceso'>🟡 En proceso</span>";
 
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zm14.7-9.04a1 1 0 0 0 0-1.41l-2.5-2.5a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/>
-            </svg>
+                    } elseif ($mesesTotal <= 12) {
 
-        </a>
+                        echo "<span class='joven-seg joven-seg--camino'>🔵 En camino</span>";
 
-        <?php if(tienePermiso('eliminar_jovenes')): ?>
+                    } else {
 
-        <!-- ELIMINAR -->
-        <form
-            action="<?= BASE_URL ?>/controllers/jovenController.php"
-            method="POST"
-            class="inline-form"
-            onsubmit="return confirm('¿Eliminar este joven?');"
-        >
+                        echo "<span class='joven-seg joven-seg--fiel'>🟢 Fiel</span>";
+                    }
 
-            <input
-                type="hidden"
-                name="id"
-                value="<?= (int)$j["id"] ?>"
-            >
+                    ?>
 
-            <button
-                type="submit"
-                name="eliminar_joven"
-                class="btn-icon eliminar"
-            >
+                </td>
 
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 7h12l-1 14H7L6 7zm3-3h6l1 2H8l1-2z"/>
-                </svg>
+                <!-- ACCIONES -->
+                <td class="acciones-cell">
 
-            </button>
+                    <div class="acciones">
 
-        </form>
+                        <!-- VER -->
+                        <a href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= (int)$j["id"] ?>"
+                           class="btn-icon ver">
+                            👁️
+                        </a>
 
-        <?php endif; ?>
+                        <!-- EDITAR -->
+                        <a href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= (int)$j["id"] ?>"
+                           class="btn-icon editar">
+                            ✏️
+                        </a>
+
+                        <!-- ELIMINAR -->
+                        <?php if(tienePermiso('eliminar_jovenes')): ?>
+
+                        <form
+                            action="<?= BASE_URL ?>/controllers/jovenController.php"
+                            method="POST"
+                            class="inline-form"
+                            onsubmit="return confirm('¿Eliminar este joven?');"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="id"
+                                value="<?= (int)$j["id"] ?>"
+                            >
+
+                            <!-- CSRF -->
+                            <?php if(isset($_SESSION['csrf_token'])): ?>
+
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="<?= $_SESSION['csrf_token'] ?>"
+                                >
+
+                            <?php endif; ?>
+
+                            <button
+                                type="submit"
+                                name="eliminar_joven"
+                                class="btn-icon eliminar"
+                            >
+                                🗑️
+                            </button>
+
+                        </form>
+
+                        <?php endif; ?>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            <?php endforeach; ?>
+
+            </tbody>
+
+        </table>
 
     </div>
 
-</td>
-
-</tr>
-
-<?php endforeach; ?>
-
-</tbody>
-
-</table>
-
 </div>
 
-</div>
-
+<!-- DATATABLE -->
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // VALIDAR LIBRERÍAS
     if (typeof $ === "undefined" || !$.fn.DataTable) {
-        console.error("DataTables no está disponible");
+        console.warn("DataTables no está cargado.");
         return;
     }
 
-    // EVITAR DOBLE INICIALIZACIÓN
-    if ($.fn.DataTable.isDataTable('#tablaJovenes')) {
-        return;
-    }
-
-    // TABLA
     const tabla = $('#tablaJovenes').DataTable({
 
         pageLength: 8,
 
         language: {
+
             info: "Mostrando _START_ a _END_ de _TOTAL_ jóvenes",
-            infoFiltered: "",
+
             paginate: {
                 previous: "←",
                 next: "→"
             }
+
         },
 
         dom: 't<"datatable-footer"ip>'
     });
 
-    // BUSCADOR
+    /* =========================
+       BUSCADOR
+    ========================= */
+
     const buscador = document.getElementById("buscador");
 
     if (buscador) {
+
         buscador.addEventListener("keyup", function () {
+
             tabla.search(this.value).draw();
+
         });
+
     }
 
 });

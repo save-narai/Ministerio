@@ -1,0 +1,238 @@
+/* =========================
+   CONTENEDOR
+========================= */
+.main{
+    padding:25px 35px;
+}
+
+/* =========================
+   HEADER
+========================= */
+h2{
+    font-size:26px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+h3{
+    margin-top:40px;
+    margin-bottom:15px;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.btn-pdf{
+    background:var(--card-gradient);
+    color:#fff;
+    border-radius:12px;
+    padding:10px 18px;
+    text-decoration:none;
+    display:inline-block;
+    font-weight:600;
+    transition:.25s;
+}
+
+.btn-pdf:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.btn{
+    margin-top:25px;
+    display:inline-block;
+}
+
+/* =========================
+   KPI CARDS (UNIFICADO 🔥)
+========================= */
+.dashboard__cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+    margin-top:25px;
+}
+
+.dashboard__card{
+    position:relative;
+    overflow:hidden;
+    min-height:135px;
+    padding:22px;
+    border-radius:22px;
+
+    background:var(--card-gradient);
+    color:var(--card-text);
+
+    box-shadow:var(--shadow);
+    transition:var(--transition);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+/* hover */
+.dashboard__card:hover{
+    transform:translateY(-4px) scale(1.02);
+}
+
+/* brillo */
+.dashboard__card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.15),transparent);
+    opacity:0;
+    transition:.4s;
+}
+
+.dashboard__card:hover::before{
+    opacity:1;
+}
+
+/* variantes */
+.dashboard__card--blue{ border-top:4px solid #3b82f6; }
+.dashboard__card--green{ border-top:4px solid #22c55e; }
+.dashboard__card--red{ border-top:4px solid #ef4444; }
+.dashboard__card--orange{ border-top:4px solid #f59e0b; }
+
+/* texto */
+.dashboard__card-title{
+    font-size:14px;
+    opacity:.9;
+}
+
+.dashboard__card-value{
+    font-size:32px;
+    font-weight:800;
+}
+
+/* =========================
+   BLOQUES CON SCROLL 🔥
+========================= */
+.bloque-scroll{
+    margin-top:30px;
+    background:var(--container);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+}
+
+.bloque-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+}
+
+.bloque-body{
+    max-height:320px;
+    overflow-y:auto;
+}
+
+/* =========================
+   BUSCADOR
+========================= */
+.buscador{
+    padding:8px 12px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    background:rgba(0,0,0,.05);
+}
+
+html.dark .buscador{
+    background:rgba(255,255,255,.08);
+    color:#fff;
+}
+
+/* =========================
+   TABLA
+========================= */
+.tabla{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabla th{
+    padding:12px;
+    background:rgba(0,0,0,.05);
+    text-align:left;
+}
+
+.tabla td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.tabla tbody tr{
+    transition:.25s;
+}
+
+.tabla tbody tr:hover{
+    background:rgba(0,0,0,.04);
+}
+
+html.dark .tabla tbody tr:hover{
+    background:rgba(255,255,255,.05);
+}
+
+/* =========================
+   ESTADOS
+========================= */
+.estado{
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:12px;
+    color:#fff;
+}
+
+.estado.pendiente{ background:#ef4444; }
+.estado.en_proceso{ background:#f59e0b; }
+.estado.finalizado{ background:#22c55e; }
+
+/* =========================
+   BOTÓN PERFIL (DINÁMICO)
+========================= */
+.btn-mini{
+    padding:6px 12px;
+    border-radius:10px;
+    font-size:11px;
+    font-weight:600;
+    text-decoration:none;
+    color:#fff;
+    display:inline-block;
+    transition:.25s;
+}
+
+.btn-mini.chico{
+    background:linear-gradient(135deg,#ff1b1b,#ff7a00);
+}
+
+.btn-mini.chica{
+    background:linear-gradient(135deg,#9333ea,#ec4899);
+}
+
+.btn-mini:hover{
+    transform:translateY(-2px);
+}
+
+/* =========================
+   BOTONES ABAJO
+========================= */
+.btn-group{
+    display:flex;
+    gap:15px;
+    margin-top:25px;
+}
+
+/* =========================
+   TEXTO OK
+========================= */
+.ok{
+    color:#22c55e;
+    font-weight:600;
+    margin-top:10px;
+}

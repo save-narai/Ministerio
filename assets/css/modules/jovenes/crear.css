@@ -213,6 +213,72 @@ html:not(.dark) .btn-volver:hover{
 
 
 /* =========================
+   VALIDACION TELEFONO
+========================= */
+
+.telefono-error{
+
+    margin-top: 6px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    min-height: 16px;
+
+    transition: .25s ease;
+}
+
+/* ERROR */
+
+.telefono-error.error{
+
+    color: #ff4b4b;
+}
+
+/* SUCCESS */
+
+.telefono-error.success{
+
+    color: #00d26a;
+}
+
+/* INPUT ERROR */
+
+.input-error{
+
+    border-color: #ff4b4b !important;
+
+    box-shadow:
+        0 0 0 3px rgba(255,75,75,.18) !important;
+}
+
+/* INPUT SUCCESS */
+
+.input-success{
+
+    border-color: #00d26a !important;
+
+    box-shadow:
+        0 0 0 3px rgba(0,210,106,.18) !important;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+html.dark .telefono-error.error{
+
+    color: #ff6b6b;
+}
+
+html.dark .telefono-error.success{
+
+    color: #00ff88;
+}
+
+
+/* =========================
    CHECKBOX (ARREGLADO)
 ========================= */
 

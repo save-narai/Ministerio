@@ -1,7 +1,20 @@
 <?php
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
+require_once __DIR__ . "/../../middleware/actividad.php";
 require_once __DIR__ . "/../../config/conexion.php";
+
+/* SERVICES */
+require_once __DIR__ . "/../../services/seguimientoService.php";
+
+/* HELPERS */
+require_once __DIR__ . "/../../helpers/format.php";
+require_once __DIR__ . "/../../helpers/fechas.php";
+
+/* CSS */
+$extraCSS = '
+<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/seguimientos/seguimientos.css">
+';
 
 if (!tienePermiso('gestionar_seguimientos')) {
     header("Location: ../dashboard.php");
@@ -9,184 +22,199 @@ if (!tienePermiso('gestionar_seguimientos')) {
 }
 
 /* =========================
-   MES ACTUAL
+   DATA
 ========================= */
+$data = obtenerResumenSeguimientosMes();
 
-$mesNumero = date('m');
-$anio = date('Y');
-
-$meses = [
-    '01' => 'Enero',
-    '02' => 'Febrero',
-    '03' => 'Marzo',
-    '04' => 'Abril',
-    '05' => 'Mayo',
-    '06' => 'Junio',
-    '07' => 'Julio',
-    '08' => 'Agosto',
-    '09' => 'Septiembre',
-    '10' => 'Octubre',
-    '11' => 'Noviembre',
-    '12' => 'Diciembre'
-];
-
-$mesTexto = $meses[$mesNumero] . ' ' . $anio;
+$seguimientosMes = $data['seguimientosMes'] ?? [];
+$totalActivos = $data['totalActivos'] ?? 0;
+$totalConSeguimiento = $data['totalConSeguimiento'] ?? 0;
+$totalSinSeguimiento = $data['totalSinSeguimiento'] ?? 0;
+$porcentaje = $data['porcentaje'] ?? 0;
+$color = $data['color'] ?? '';
+$mesTexto = $data['mesTexto'] ?? '';
 
 /* =========================
-   JÓVENES ACTIVOS
+   ALERTAS (jóvenes sin seguimiento)
 ========================= */
+$alertas = $pdo->query("
+    SELECT j.id, j.nombre_completo, j.telefono, j.genero
+    FROM jovenes j
+    WHERE j.estado_actividad = 'ACTIVO'
+    AND j.id NOT IN (
+        SELECT joven_id
+        FROM seguimientos
+        WHERE DATE_FORMAT(fecha_contacto, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+    )
+")->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $pdo->query("
-    SELECT id, nombre_completo
-    FROM jovenes
-    WHERE estado_actividad = 'ACTIVO'
-");
-$jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$totalActivos = count($jovenes);
-
-/* =========================
-   SEGUIMIENTOS DEL MES
-========================= */
-
-$stmt = $pdo->prepare("
-    SELECT 
-        j.id AS joven_id,
-        j.nombre_completo,
-        TIMESTAMPDIFF(YEAR, j.fecha_nacimiento, CURDATE()) AS edad,
-        j.telefono,
-        j.genero,
-        s.modalidad_contacto,
-        s.estado_proceso,
-        s.observaciones,
-        u.nombre AS responsable_nombre,
-        s.fecha_contacto
-    FROM seguimientos s
-    INNER JOIN jovenes j ON s.joven_id = j.id
-    LEFT JOIN usuarios u ON s.responsable_id = u.id
-    WHERE MONTH(s.fecha_contacto) = MONTH(CURDATE())
-    AND YEAR(s.fecha_contacto) = YEAR(CURDATE())
-    ORDER BY j.nombre_completo ASC, s.fecha_contacto DESC
-");
-
-$stmt->execute();
-$seguimientosMes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$totalRegistros = count($seguimientosMes);
-
-$totalFinalizados = 0;
-$totalEnProceso = 0;
-
-foreach ($seguimientosMes as $s) {
-    if ($s["estado_proceso"] === "FINALIZADO") {
-        $totalFinalizados++;
-    } elseif ($s["estado_proceso"] === "EN_PROCESO") {
-        $totalEnProceso++;
-    }
-}
-/* =========================
-   ESTADÍSTICAS
-========================= */
-
-$jovenesConSeguimiento = array_unique(array_column($seguimientosMes, 'joven_id'));
-
-$totalConSeguimiento = count($jovenesConSeguimiento);
-$totalSinSeguimiento = $totalActivos - $totalConSeguimiento;
-
-$porcentaje = $totalActivos > 0
-    ? round(($totalConSeguimiento / $totalActivos) * 100)
-    : 0;
-
-$color = "red";
-if ($porcentaje >= 90) $color = "green";
-elseif ($porcentaje >= 70) $color = "orange";
+require_once __DIR__ . "/../../includes/header.php";
 ?>
 
-
-<?php include("../../includes/header.php"); ?>
-
+<div class="dashboard__section">
 
 <h2>📋 Consolidado de Seguimientos</h2>
-<p>Mes: <strong><?= $mesTexto ?></strong></p>
+<p>Mes: <strong><?= e($mesTexto) ?></strong></p>
 
-<a href="reporte_pdf.php" target="_blank" 
-style="background:#28a745;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;">
-📄 Descargar PDF
-</a>
+<!-- =========================
+     KPI
+========================= -->
+<div class="dashboard__cards">
 
-<div class="grid">
+    <div class="dashboard__card dashboard__card--blue">
+        <div class="dashboard__card-title">Total Activos</div>
+        <div class="dashboard__card-value"><?= $totalActivos ?></div>
+    </div>
 
-<div class="card">
-<p>Total Activos</p>
-<p class="stat"><?= $totalActivos ?></p>
-</div>
+    <div class="dashboard__card dashboard__card--green">
+        <div class="dashboard__card-title">Con Seguimiento</div>
+        <div class="dashboard__card-value"><?= $totalConSeguimiento ?></div>
+    </div>
 
-<div class="card">
-<p>Con Seguimiento</p>
-<p class="stat ok"><?= $totalConSeguimiento ?></p>
-</div>
+    <div class="dashboard__card dashboard__card--red">
+        <div class="dashboard__card-title">Sin Seguimiento</div>
+        <div class="dashboard__card-value"><?= $totalSinSeguimiento ?></div>
+    </div>
 
-<div class="card">
-<p>Sin Seguimiento</p>
-<p class="stat bad"><?= $totalSinSeguimiento ?></p>
-</div>
-
-<div class="card" style="background:<?= $color ?>; color:white;">
-<p>Cumplimiento</p>
-<p class="stat"><?= $porcentaje ?>%</p>
-</div>
+    <div class="dashboard__card <?= $color === 'ok' ? 'dashboard__card--green' : ($color === 'warn' ? 'dashboard__card--orange' : 'dashboard__card--red') ?>">
+        <div class="dashboard__card-title">Cumplimiento</div>
+        <div class="dashboard__card-value"><?= $porcentaje ?>%</div>
+    </div>
 
 </div>
 
-<hr>
+<!-- =========================
+     JÓVENES SIN SEGUIMIENTO
+========================= -->
+<?php if (count($alertas) > 0): ?>
 
-<h3>Detalle por Joven</h3>
+<div class="bloque-scroll">
 
-<table>
-<tr>
-<th>Nombre</th>
-<th>Edad</th>
-<th>Teléfono</th>
-<th>Género</th>
-<th>Modalidad</th>
-<th>Estado</th>
-<th>Responsable</th>
-<th>Observaciones</th>
-<th>Fecha</th>
-</tr>
+    <div class="bloque-header">
+        <h3>Jóvenes sin seguimiento</h3>
+        <input type="text" class="buscador" placeholder="Buscar joven...">
+    </div>
 
+    <div class="bloque-body">
 
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
 
+            <tbody>
 
-<?php foreach($seguimientosMes as $s): ?>
-<tr>
-<td><?= htmlspecialchars($s["nombre_completo"]) ?></td>
-<td><?= $s["edad"] ?></td>
-<td><?= htmlspecialchars($s["telefono"] ?? "-") ?></td>
-<td><?= htmlspecialchars($s["genero"] ?? "-") ?></td>
-<td><?= htmlspecialchars($s["modalidad_contacto"]) ?></td>
+            <?php foreach($alertas as $j): ?>
+                <tr>
+                    <td><?= e($j["nombre_completo"]) ?></td>
+                    <td><?= e($j["telefono"] ?? "-") ?></td>
 
-<td>
-<?php
-$estado = $s["estado_proceso"];
-if ($estado === "FINALIZADO") {
-    echo "<span class='ok'>FINALIZADO</span>";
-} elseif ($estado === "EN_PROCESO") {
-    echo "<span style='color:orange;font-weight:bold;'>EN PROCESO</span>";
-} else {
-    echo "<span class='bad'>PENDIENTE</span>";
-}
-?>
-</td>
+                    <td>
+                        <a href="../jovenes/ver.php?id=<?= $j["id"] ?>"
+                           class="btn-mini <?= $j["genero"] === 'MASCULINO' ? 'chico' : 'chica' ?>">
+                           Ver perfil
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
 
-<td><?= htmlspecialchars($s["responsable_nombre"] ?? "-") ?></td>
-<td><?= htmlspecialchars($s["observaciones"] ?? "-") ?></td>
-<td><?= date("d/m/Y", strtotime($s["fecha_contacto"])) ?></td>
-</tr>
-<?php endforeach; ?>
+            </tbody>
+        </table>
 
-</table>
+    </div>
+</div>
 
-<br>
-<a href="../dashboard.php">⬅ Volver al Dashboard</a>
+<?php else: ?>
+    <p class="ok">✅ Todos tienen seguimiento este mes</p>
+<?php endif; ?>
 
-<?php include("../../includes/footer.php"); ?>
+<!-- =========================
+     DETALLE SEGUIMIENTOS
+========================= -->
+<div class="bloque-scroll">
+
+    <div class="bloque-header">
+        <h3>Detalle de Seguimientos</h3>
+        <input type="text" class="buscador" placeholder="Buscar...">
+    </div>
+
+    <div class="bloque-body">
+
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Modalidad</th>
+                    <th>Estado</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <?php foreach($seguimientosMes as $s): ?>
+                <tr>
+                    <td><?= e($s["nombre_completo"]) ?></td>
+                    <td><?= e($s["modalidad_contacto"]) ?></td>
+
+                    <td>
+                        <span class="estado <?= strtolower($s["estado_proceso"]) ?>">
+                            <?= e($s["estado_proceso"]) ?>
+                        </span>
+                    </td>
+
+                    <td><?= e($s["responsable_nombre"] ?? "-") ?></td>
+                    <td><?= formatearFecha($s["fecha_contacto"]) ?></td>
+                </tr>
+            <?php endforeach; ?>
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- =========================
+     BOTONES
+========================= -->
+<div class="btn-group">
+
+    <a href="../dashboard.php" class="btn btn-pdf">
+         Volver
+    </a>
+
+    <a href="reporte_pdf.php" target="_blank" class="btn btn-pdf">
+        📄 Descargar PDF
+    </a>
+
+</div>
+
+</div>
+
+<!-- =========================
+     BUSCADOR JS
+========================= -->
+<script>
+document.querySelectorAll(".buscador").forEach(input => {
+
+    input.addEventListener("keyup", function(){
+
+        let filtro = this.value.toLowerCase();
+        let filas = this.closest(".bloque-scroll").querySelectorAll("tbody tr");
+
+        filas.forEach(fila => {
+            let texto = fila.innerText.toLowerCase();
+            fila.style.display = texto.includes(filtro) ? "" : "none";
+        });
+
+    });
+
+});
+</script>
+
+<?php require_once __DIR__ . "/../../includes/footer.php"; ?>
