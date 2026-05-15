@@ -128,8 +128,32 @@ h3{
 }
 
 .bloque-body{
-    max-height:320px;
+    max-height:420px;
     overflow-y:auto;
+	 overflow-x:auto;
+}
+
+/* HEADER FIJO */
+.bloque-body thead th{
+    position:sticky;
+    top:0;
+    z-index:5;
+
+    background:var(--container);
+}
+
+/* SCROLL BONITO */
+.bloque-body::-webkit-scrollbar{
+    width:8px;
+}
+
+.bloque-body::-webkit-scrollbar-thumb{
+    background:rgba(150,150,150,.4);
+    border-radius:20px;
+}
+
+.bloque-body::-webkit-scrollbar-track{
+    background:transparent;
 }
 
 /* =========================

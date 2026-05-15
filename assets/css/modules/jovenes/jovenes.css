@@ -160,8 +160,10 @@ html:not(.dark) .jovenes__tag--active{
 .jovenes__table{
     width:100%;
 
+    max-height:520px;
+
+    overflow-y:auto;
     overflow-x:auto;
-    overflow-y:hidden;
 
     padding:8px;
 
@@ -197,6 +199,9 @@ html:not(.dark) .jovenes__tag--active{
     padding:16px;
 
     border:none;
+	position:sticky;
+    top:0;
+    z-index:10;
 
     background:var(--card-gradient);
 
@@ -239,8 +244,14 @@ html.dark .jovenes__table tbody tr{
     box-shadow:0 6px 18px rgba(0,0,0,.08);
 }
 
+/* LIGHT */
+html:not(.dark) .jovenes__table tbody tr:hover{
+    background:#f3f4f6;
+}
+
+/* DARK */
 html.dark .jovenes__table tbody tr:hover{
-    background:rgba(255,255,255,.045);
+    background:#1e293b;
 }
 
 /* =========================
@@ -248,6 +259,7 @@ html.dark .jovenes__table tbody tr:hover{
 ========================= */
 
 .jovenes__table td{
+	color:var(--text),
     padding:16px 14px;
 
     border:none;
@@ -528,38 +540,6 @@ html.dark .btn-icon{
 
 
 
-/* =========================
-   bloque-scroll
-========================= */
-
-.bloque-scroll {
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.bloque-body {
-    max-height: 420px; /* 🔥 ajustable */
-    overflow-y: auto;
-}
-
-/* opcional: header fijo */
-.bloque-body thead th {
-    position: sticky;
-    top: 0;
-    background: #fff;
-    z-index: 2;
-}
-
-.bloque-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.bloque-body::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 10px;
-}
 
 /* =========================
    RESPONSIVE

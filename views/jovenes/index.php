@@ -317,16 +317,14 @@ require_once __DIR__ . "/../../includes/header.php";
     >
 
     <br><br>
+<!-- TABLA -->
 
-    <!-- TABLA -->
+<!-- TABLA -->
 
     <!-- TABLA -->
 <div class="jovenes__table bloque-scroll">
 
-
-    <div class="jovenes__table">
-
-        <table id="tablaJovenes">
+    <table id="tablaJovenes">
 
             <thead>
                 <tr>
@@ -342,6 +340,8 @@ require_once __DIR__ . "/../../includes/header.php";
             </thead>
 
             <tbody>
+			
+			</div>
 
             <?php foreach($jovenes as $j): ?>
 
