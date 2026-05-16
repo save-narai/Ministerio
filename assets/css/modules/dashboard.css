@@ -1,45 +1,121 @@
 /* =========================
-   HEADER
+   MAIN
 ========================= */
 
-.dashboard__header{
-    text-align:center;
-    margin-bottom:40px;
+.main{
+    padding:30px;
 }
 
-.dashboard__title{
+/* =========================
+   TOPBAR
+========================= */
 
-    font-size:34px;
-    font-weight:800;
-    letter-spacing:.5px;
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 
-    background:var(--title-gradient);
+    padding:16px 22px;
 
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    border-radius:20px;
+
+    background:rgba(255,255,255,.6);
+
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.25);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+    margin-bottom:28px;
+
+    position:relative;
 }
 
-.dashboard__user{
+/* DARK MODE */
 
-    margin-top:10px;
+html.dark .topbar{
 
+    background:rgba(16,24,38,.6);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.45);
+}
+
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-mini{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+    font-size:20px;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.18);
+}
+
+.topbar-title{
+    font-weight:700;
     font-size:15px;
+    letter-spacing:.3px;
+}
 
-    opacity:.78;
+.topbar-sub{
+    font-size:12px;
+    opacity:.6;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.topbar-user{
+    font-size:13px;
+    opacity:.75;
+}
+
+.topbar-user strong{
+    margin-left:6px;
+    opacity:1;
 }
 
 /* =========================
    SECCIONES
 ========================= */
 
+.dashboard__section{
+    margin-top:36px;
+}
+
 .dashboard__section-title{
 
-    margin:35px 0 18px;
+    margin:38px 0 18px;
 
     position:relative;
 
-    font-size:24px;
+    font-size:20px;
     font-weight:700;
+
+    letter-spacing:.2px;
 
     background:var(--title-gradient);
 
@@ -80,6 +156,37 @@
 }
 
 /* =========================
+   CARD RESUMEN
+========================= */
+
+.card-resumen{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:16px 20px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    color:#fff;
+
+    font-weight:600;
+
+    box-shadow:
+        0 12px 24px rgba(99,102,241,.25);
+
+    margin-bottom:24px;
+}
+
+/* =========================
    CARD BASE
 ========================= */
 
@@ -99,12 +206,9 @@
 
     background:var(--card-gradient);
 
-    background-size:300% 300%;
-
-    animation:
-        liquidCard 18s ease infinite;
-
     box-shadow:var(--shadow);
+
+    border:1px solid rgba(255,255,255,.06);
 
     transition:
         transform .28s ease,
@@ -117,32 +221,38 @@
     isolation:isolate;
 }
 
+/* DARK MODE */
+
+html.dark .dashboard__card{
+    border:1px solid rgba(255,255,255,.08);
+}
+
 /* =========================
    VARIANTES
 ========================= */
 
 .dashboard__card--cyan{
-    border-top:4px solid #00e5ff;
+    border-left:4px solid #00e5ff;
 }
 
 .dashboard__card--green{
-    border-top:4px solid #00ff88;
+    border-left:4px solid #00ff88;
 }
 
 .dashboard__card--red{
-    border-top:4px solid #ff4b4b;
+    border-left:4px solid #ff4b4b;
 }
 
 .dashboard__card--purple{
-    border-top:4px solid #8b5cf6;
+    border-left:4px solid #8b5cf6;
 }
 
 .dashboard__card--orange{
-    border-top:4px solid #ff9f43;
+    border-left:4px solid #ff9f43;
 }
 
 .dashboard__card--blue{
-    border-top:4px solid #3b82f6;
+    border-left:4px solid #3b82f6;
 }
 
 /* =========================
@@ -151,12 +261,10 @@
 
 .dashboard__card:hover{
 
-    transform:
-        translateY(-4px)
-        scale(1.015);
+    transform:translateY(-5px);
 
     box-shadow:
-        0 14px 28px rgba(0,0,0,.16);
+        0 18px 34px rgba(0,0,0,.16);
 }
 
 /* =========================
@@ -174,7 +282,7 @@
     background:linear-gradient(
         120deg,
         transparent,
-        rgba(255,255,255,.10),
+        rgba(255,255,255,.14),
         transparent
     );
 
@@ -216,7 +324,9 @@
 
     border-radius:14px;
 
-    background:rgba(255,255,255,.12);
+    background:rgba(255,255,255,.10);
+
+    border:1px solid rgba(255,255,255,.08);
 
     font-size:22px;
 
@@ -294,18 +404,28 @@
 
     padding:22px;
 
-    background:var(--card-gradient);
+    background:rgba(255,255,255,.6);
 
-    background-size:300% 300%;
+    backdrop-filter:blur(10px);
 
-    animation:
-        liquidCard 20s ease infinite;
+    color:var(--text);
+
+    border:1px solid rgba(0,0,0,.05);
 
     box-shadow:var(--shadow);
 
     transition:
         transform .28s ease,
         box-shadow .28s ease;
+}
+
+/* DARK MODE */
+
+html.dark .dashboard__chart{
+
+    background:rgba(16,24,38,.6);
+
+    border:1px solid rgba(255,255,255,.08);
 }
 
 .dashboard__chart:hover{
@@ -348,10 +468,10 @@
 
 .dashboard__chart-header h4{
 
-    font-size:18px;
+    font-size:16px;
     font-weight:700;
 
-    color:#fff;
+    color:var(--text);
 }
 
 /* =========================
@@ -419,6 +539,8 @@
     transition:.25s ease;
 
     box-shadow:var(--shadow);
+
+    border:none;
 }
 
 .btn-primary:hover{
@@ -426,6 +548,9 @@
     transform:
         translateY(-2px)
         scale(1.02);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.2);
 }
 
 /* =========================
@@ -433,7 +558,6 @@
 ========================= */
 
 .dashboard__tracking{
-
     margin-top:10px;
 }
 
@@ -449,27 +573,27 @@
 }
 
 /* NUEVOS */
-.card-nuevo{
 
-    border-top:4px solid #ff6b6b;
+.card-nuevo{
+    border-left:4px solid #ff6b6b;
 }
 
 /* PROCESO */
-.card-proceso{
 
-    border-top:4px solid #f59e0b;
+.card-proceso{
+    border-left:4px solid #f59e0b;
 }
 
 /* CAMINO */
-.card-camino{
 
-    border-top:4px solid #6366f1;
+.card-camino{
+    border-left:4px solid #6366f1;
 }
 
 /* FIEL */
-.card-fiel{
 
-    border-top:4px solid #22c55e;
+.card-fiel{
+    border-left:4px solid #22c55e;
 }
 
 /* =========================
@@ -544,33 +668,6 @@ html.dark .alerta-dashboard{
 }
 
 /* =========================
-   ANIMACION LIQUIDA
-========================= */
-
-@keyframes liquidCard{
-
-    0%{
-        background-position:0% 50%;
-    }
-
-    25%{
-        background-position:50% 100%;
-    }
-
-    50%{
-        background-position:100% 50%;
-    }
-
-    75%{
-        background-position:50% 0%;
-    }
-
-    100%{
-        background-position:0% 50%;
-    }
-}
-
-/* =========================
    FADE
 ========================= */
 
@@ -600,12 +697,30 @@ html.dark .alerta-dashboard{
 
 @media(max-width:600px){
 
+    .main{
+        padding:18px;
+    }
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:18px;
+    }
+
+    .topbar-right{
+        width:100%;
+    }
+
+    .btn-primary{
+        width:100%;
+    }
+
     .dashboard__title{
         font-size:28px;
     }
 
     .dashboard__section-title{
-        font-size:21px;
+        font-size:19px;
     }
 
     .dashboard__cards{
@@ -632,7 +747,9 @@ html.dark .alerta-dashboard{
         justify-content:center;
     }
 
-    .btn-primary{
-        width:100%;
+    .card-resumen{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
     }
 }
