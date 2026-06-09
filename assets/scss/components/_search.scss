@@ -1,0 +1,288 @@
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.search-bar{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    width:520px;
+
+    max-width:100%;
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    position:relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.95),
+            rgba(245,247,250,.85)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.45);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 10px 25px rgba(15,23,42,.08),
+        inset 0 1px 1px rgba(255,255,255,.45);
+
+    transition:
+        all .28s ease;
+
+    transform-style:preserve-3d;
+
+    overflow:hidden;
+}
+
+/* =========================================================
+   LIGHT MODE GLOW
+========================================================= */
+
+.search-bar::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,95,46,.04),
+            rgba(255,0,140,.03)
+        );
+
+    opacity:.8;
+
+    pointer-events:none;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html.dark .search-bar{
+
+    background:
+        rgba(9,15,35,.78);
+
+    border:
+        1px solid rgba(0,255,220,.08);
+
+    box-shadow:
+        0 12px 34px rgba(0,0,0,.35);
+}
+
+/* =========================================================
+   DARK MODE GLOW
+========================================================= */
+
+html.dark .search-bar::before{
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,255,200,.05),
+            rgba(0,140,255,.04)
+        );
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.search-bar:hover{
+
+    transform:
+        translateY(-2px)
+        rotateX(2deg);
+
+    box-shadow:
+        0 18px 35px rgba(15,23,42,.12),
+        0 0 18px rgba(255,95,46,.08);
+}
+
+
+
+/* =========================================================
+   DARK FOCUS
+========================================================= */
+
+html.dark .search-bar:focus-within{
+
+    border-color:
+        rgba(0,255,220,.18);
+
+    box-shadow:
+        0 0 0 4px rgba(0,255,200,.08),
+        0 18px 40px rgba(0,0,0,.45);
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.search-input{
+
+    flex:1;
+
+    border:none;
+
+    outline:none;
+
+    background:none;
+
+    color:var(--text);
+
+    font-size:14px;
+
+    font-weight:600;
+
+    position:relative;
+
+    z-index:2;
+}
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.search-input::placeholder{
+
+    color:var(--text-light);
+
+    font-weight:500;
+}
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.search-select{
+
+    min-width:150px;
+
+    padding:10px 14px;
+
+    border-radius:14px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.08);
+
+    color:var(--text);
+
+    font-size:13px;
+
+    font-weight:600;
+
+    outline:none;
+
+    transition:
+        all .25s ease;
+}
+
+/* =========================================================
+   SELECT FOCUS
+========================================================= */
+
+.search-select:focus{
+
+    border-color:
+        rgba(255,95,46,.25);
+}
+
+/* =========================================================
+   ACTION BUTTON
+========================================================= */
+
+.search-action{
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff5f2e,
+            #ff3cac
+        );
+
+    color:#fff;
+
+    transition:
+        all .25s ease;
+
+    box-shadow:
+        0 8px 20px rgba(255,95,46,.22);
+}
+
+/* =========================================================
+   ACTION HOVER
+========================================================= */
+
+.search-action:hover{
+
+    transform:
+        translateY(-2px)
+        scale(1.03);
+
+    box-shadow:
+        0 14px 24px rgba(255,95,46,.28);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .search-bar{
+
+        flex-wrap:wrap;
+
+        padding:14px;
+    }
+
+    .search-select{
+
+        width:100%;
+    }
+
+    .search-action{
+
+        width:100%;
+    }
+}

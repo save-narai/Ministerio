@@ -1,0 +1,199 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.ver{
+
+    animation:fadeIn .45s ease;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.ver__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:28px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.ver__header h1{
+
+    font-size:34px;
+
+    font-weight:800;
+
+    background:var(--title-gradient);
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+}
+
+/* =========================================================
+   SUBTITLE
+========================================================= */
+
+.ver__header span{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:var(--text-soft);
+
+    font-size:15px;
+
+    font-weight:600;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.ver__actions{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+
+    gap:18px;
+
+    margin-bottom:28px;
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress{
+
+    width:100%;
+
+    height:18px;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.06);
+
+    margin-bottom:30px;
+
+    box-shadow:var(--shadow);
+}
+
+.progress-bar{
+
+    height:100%;
+
+    border-radius:999px;
+
+    background:var(--card-gradient);
+
+    transition:width .5s ease;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.tabla{
+
+    animation:fadeIn .5s ease;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.ok{
+
+    color:#22c55e;
+
+    font-weight:700;
+}
+
+.no{
+
+    color:#ef4444;
+
+    font-weight:700;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .ver__header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .ver__header h1{
+
+        font-size:28px;
+    }
+
+    .ver__actions{
+
+        width:100%;
+    }
+
+    .ver__actions .btn{
+
+        width:100%;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}

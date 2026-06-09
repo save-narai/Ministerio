@@ -1,0 +1,160 @@
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+
+    width:85px;
+
+    min-width:85px;
+
+    height:100vh;
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:var(--sidebar-gradient);
+
+    background-size:400% 400%;
+
+    animation:
+        liquidFlow 8s ease infinite;
+
+    transition:
+        width .3s ease;
+
+    box-shadow:
+        5px 0 30px rgba(0,0,0,.12);
+
+    z-index:100;
+}
+
+/* =====================================================
+   EXPAND
+===================================================== */
+
+.sidebar:hover{
+
+    width:240px;
+
+    min-width:240px;
+}
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.sidebar-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+    padding:20px 12px;
+}
+
+/* =====================================================
+   LINKS
+===================================================== */
+
+.sidebar a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:15px 18px;
+
+    border-radius:16px;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    transition:all .25s ease;
+}
+
+/* =====================================================
+   HOVER
+===================================================== */
+
+.sidebar a:hover{
+
+    background:
+        rgba(255,255,255,.14);
+
+    transform:
+        translateX(4px);
+}
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.sidebar i{
+
+    min-width:22px;
+
+    font-size:18px;
+
+    text-align:center;
+}
+
+/* =====================================================
+   TEXT
+===================================================== */
+
+.sidebar span{
+
+    opacity:0;
+
+    white-space:nowrap;
+
+    transition:all .25s ease;
+
+    width:0;
+
+    overflow:hidden;
+}
+
+.sidebar:hover span{
+
+    opacity:1;
+
+    width:auto;
+}
+
+/* =====================================================
+   ACTIVE
+===================================================== */
+
+.sidebar a.active{
+
+    background:
+        rgba(255,255,255,.18);
+}
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+@keyframes liquidFlow{
+
+    0%{
+        background-position:0% 50%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 50%;
+    }
+}

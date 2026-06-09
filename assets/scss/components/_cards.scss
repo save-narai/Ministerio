@@ -1,0 +1,159 @@
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.ui-cards-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:22px;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.ui-card{
+
+    background:var(--container);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    box-shadow:var(--shadow);
+
+    border:var(--border);
+
+    transition:var(--transition);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+/* =====================================================
+   HOVER
+===================================================== */
+
+.ui-card:hover{
+
+    transform:
+        translateY(-6px);
+
+    box-shadow:var(--shadow-hover);
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.ui-card-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:20px;
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.ui-card-title{
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:var(--text);
+}
+
+/* =====================================================
+   KPI CARD
+===================================================== */
+
+.ui-card-kpi{
+
+    background:var(--card-gradient);
+
+    background-size:400% 400%;
+
+    animation:
+        liquidFlow 10s ease infinite;
+
+    color:#fff;
+}
+
+.ui-card-kpi .ui-card-title{
+
+    color:#fff;
+
+    opacity:.9;
+}
+
+.ui-card-value{
+
+    font-size:34px;
+
+    font-weight:800;
+
+    margin-top:10px;
+}
+
+/* =====================================================
+   GLASS
+===================================================== */
+
+.ui-card-glass{
+
+    backdrop-filter:blur(18px);
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+/* =====================================================
+   BODY
+===================================================== */
+
+.ui-card-body{
+
+    margin-top:15px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.ui-card-footer{
+
+    margin-top:20px;
+
+    padding-top:20px;
+
+    border-top:var(--border);
+}
+
+/* =====================================================
+   STATS GRID
+===================================================== */
+
+.ui-stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+
+    gap:20px;
+}

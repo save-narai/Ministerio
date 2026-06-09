@@ -1,0 +1,678 @@
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.jovenes__table{
+
+    position:relative;
+
+    width:100%;
+
+    overflow-x:auto;
+
+    border-radius:28px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0 14px;
+
+    min-width:auto;
+
+    margin-top:14px;
+}
+
+/* =========================================================
+   TABLE HEAD
+========================================================= */
+
+.table thead{
+
+    position:relative;
+}
+
+/* =========================================================
+   HEADER ROW
+========================================================= */
+
+.table thead tr{
+
+    position:relative;
+
+    height:68px;
+}
+
+/* =========================================================
+   HEAD CELLS
+========================================================= */
+
+.table thead th{
+
+    height:68px;
+
+    padding:0 18px;
+
+    text-align:center;
+
+    vertical-align:middle;
+
+    font-size:12px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+    white-space:nowrap;
+
+    border:none;
+
+    color:#fff;
+
+    position:relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff512f 0%,
+            #ff6a5c 25%,
+            #ff4d8d 65%
+        );
+
+    box-shadow:
+        0 16px 35px rgba(255,95,46,.22);
+
+    background-clip:padding-box;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html.dark .table thead th{
+
+    background:
+        linear-gradient(
+            135deg,
+            #00e5ff 0%,
+            #00ffcc 25%,
+            #00c3ff 60%
+        );
+
+    box-shadow:
+        0 16px 35px rgba(0,255,200,.16);
+}
+
+/* =========================================================
+   FIRST HEAD
+========================================================= */
+
+.table thead th:first-child{
+
+    padding-left:28px;
+
+    text-align:left;
+
+    border-top-left-radius:26px;
+
+    border-bottom-left-radius:26px;
+}
+
+/* =========================================================
+   LAST HEAD
+========================================================= */
+
+.table thead th:last-child{
+
+    padding-right:34px;
+
+    border-top-right-radius:26px;
+
+    border-bottom-right-radius:26px;
+}
+
+/* =========================================================
+   SEPARATORS
+========================================================= */
+
+.table thead th::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:50%;
+
+    right:0;
+
+    width:1px;
+
+    height:24px;
+
+    transform:translateY(-50%);
+
+    background:
+        rgba(255,255,255,.18);
+}
+
+/* =========================================================
+   REMOVE LAST SEPARATOR
+========================================================= */
+
+.table thead th:last-child::after{
+
+    display:none;
+}
+
+/* =========================================================
+   SORT ICONS
+========================================================= */
+
+.table th.sorting,
+.table th.sorting_asc,
+.table th.sorting_desc{
+
+    position:relative;
+}
+
+/* =========================================================
+   SORT SPACING
+========================================================= */
+
+.table th.sorting::before,
+.table th.sorting::after,
+.table th.sorting_asc::before,
+.table th.sorting_asc::after,
+.table th.sorting_desc::before,
+.table th.sorting_desc::after{
+
+    right:12px !important;
+}
+
+/* =========================================================
+   CENTER COLUMNS
+========================================================= */
+
+.table td:nth-child(2),
+.table td:nth-child(3),
+.table td:nth-child(4),
+.table td:nth-child(5),
+.table td:nth-child(6),
+.table td:nth-child(7),
+.table td:nth-child(8),
+
+.table th:nth-child(2),
+.table th:nth-child(3),
+.table th:nth-child(4),
+.table th:nth-child(5),
+.table th:nth-child(6),
+.table th:nth-child(7),
+.table th:nth-child(8){
+
+    text-align:center;
+}
+
+/* =========================================================
+   BODY ROW
+========================================================= */
+
+.table tbody tr{
+
+    background:
+        rgba(255,255,255,.03);
+
+    backdrop-filter:blur(10px);
+
+    transition:
+        background .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+/* =========================================================
+   DARK BODY ROW
+========================================================= */
+
+html.dark .table tbody tr{
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+/* =========================================================
+   BODY CELLS
+========================================================= */
+
+.table td{
+
+    padding:18px 20px;
+
+    text-align:center;
+
+    vertical-align:middle;
+
+    border:none;
+
+    color:var(--text);
+
+    font-size:14px;
+}
+
+/* =========================================================
+   FIRST BODY CELL
+========================================================= */
+
+.table td:first-child{
+
+    text-align:left;
+
+    border-top-left-radius:18px;
+
+    border-bottom-left-radius:18px;
+
+    font-weight:700;
+}
+
+/* =========================================================
+   LAST BODY CELL
+========================================================= */
+
+.table td:last-child{
+
+    border-top-right-radius:18px;
+
+    border-bottom-right-radius:18px;
+}
+
+/* =========================================================
+   ROW HOVER
+========================================================= */
+
+.table tbody tr:hover{
+
+    transform:
+        translateY(-2px);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.06),
+            rgba(255,255,255,.02)
+        );
+
+    box-shadow:
+        0 14px 28px rgba(0,0,0,.10);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.estado{
+
+    width:18px;
+
+    height:18px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:999px;
+
+    margin:auto;
+
+    position:relative;
+
+    transition:.25s ease;
+}
+
+/* =========================================================
+   INNER GLOW
+========================================================= */
+
+.estado::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:4px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.28);
+}
+
+/* =========================================================
+   STATUS ACTIVE
+========================================================= */
+
+.estado--activo{
+
+    background:
+        linear-gradient(
+            135deg,
+            #00ff88,
+            #00c27a
+        );
+
+    box-shadow:
+        0 0 14px rgba(0,255,136,.45);
+}
+
+/* =========================================================
+   STATUS INACTIVE
+========================================================= */
+
+.estado--inactivo{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff5f8f,
+            #ff4d6d
+        );
+
+    box-shadow:
+        0 0 14px rgba(255,77,109,.35);
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.table-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    flex-wrap:nowrap;
+}
+
+/* =========================================================
+   ICON BUTTON
+========================================================= */
+
+.btn-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:14px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    transition:all .2s ease;
+
+    position:relative;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    cursor:pointer;
+
+    backdrop-filter:blur(10px);
+
+    background:#fff;
+
+    color:var(--text-soft);
+
+    overflow:visible;
+}
+
+/* =========================================================
+   DARK MODE BUTTON
+========================================================= */
+
+html.dark .btn-icon{
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+/* =========================================================
+   BUTTON HOVER
+========================================================= */
+
+.btn-icon:hover{
+
+    transform:
+        translateY(-2px)
+        scale(1.03);
+}
+
+/* =========================================================
+   VIEW HOVER
+========================================================= */
+
+.btn-view:hover{
+
+    background:
+        rgba(0,255,140,.12);
+
+    color:#00c27a;
+
+    box-shadow:
+        0 0 16px rgba(0,255,140,.18);
+}
+
+/* =========================================================
+   EDIT HOVER
+========================================================= */
+
+.btn-edit:hover{
+
+    background:
+        rgba(255,190,0,.14);
+
+    color:#d89b00;
+
+    box-shadow:
+        0 0 16px rgba(255,190,0,.18);
+}
+
+/* =========================================================
+   DELETE HOVER
+========================================================= */
+
+.btn-delete:hover{
+
+    background:
+        rgba(255,80,80,.14);
+
+    color:#ff5b5b;
+
+    box-shadow:
+        0 0 16px rgba(255,80,80,.18);
+}
+
+/* =========================================================
+   TOOLTIP FIX
+========================================================= */
+
+.btn-icon::after{
+
+    z-index:9999;
+
+    pointer-events:none;
+}
+
+/* =========================================================
+   DATATABLE WRAPPER
+========================================================= */
+
+.dataTables_wrapper{
+
+    margin-top:22px;
+}
+
+/* =========================================================
+   DATATABLE INPUT
+========================================================= */
+
+.dataTables_filter input{
+
+    padding:12px 14px !important;
+
+    border-radius:14px !important;
+
+    border:var(--border) !important;
+
+    background:
+        rgba(255,255,255,.04) !important;
+
+    color:var(--text) !important;
+
+    margin-left:10px !important;
+}
+
+/* =========================================================
+   DATATABLE SELECT
+========================================================= */
+
+.dataTables_length select{
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:var(--text);
+
+    border:var(--border);
+}
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.dataTables_info{
+
+    font-size:14px;
+
+    color:var(--text-soft);
+
+    padding-top:0 !important;
+
+    margin-top:18px;
+
+    margin-left:18px;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.dataTables_paginate{
+
+    margin-top:16px !important;
+}
+
+/* =========================================================
+   PAGINATION BUTTON
+========================================================= */
+
+.paginate_button{
+
+    border:none !important;
+
+    border-radius:14px !important;
+
+    padding:10px 16px !important;
+
+    background:
+        rgba(255,255,255,.05) !important;
+
+    color:var(--text) !important;
+
+    margin:0 4px !important;
+
+    transition:var(--transition) !important;
+}
+
+/* =========================================================
+   PAGINATION HOVER
+========================================================= */
+
+.paginate_button:hover{
+
+    background:var(--primary) !important;
+
+    color:#fff !important;
+}
+
+/* =========================================================
+   CURRENT PAGE
+========================================================= */
+
+.paginate_button.current{
+
+    background:var(--card-gradient) !important;
+
+    color:#fff !important;
+
+    box-shadow:
+        0 8px 20px rgba(255,95,46,.18);
+}
+
+/* =========================================================
+   EMPTY TABLE
+========================================================= */
+
+.dataTables_empty{
+
+    text-align:center;
+
+    padding:40px !important;
+
+    opacity:.7;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .table{
+
+        min-width:980px;
+    }
+
+    .table th,
+    .table td{
+
+        padding:16px 18px;
+    }
+
+    .table-actions{
+
+        flex-wrap:nowrap;
+    }
+}

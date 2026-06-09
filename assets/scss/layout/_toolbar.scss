@@ -1,0 +1,62 @@
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
+.toolbar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:18px;
+
+    flex-wrap:wrap;
+}
+
+/* =====================================================
+   TOOLBAR LEFT
+===================================================== */
+
+.toolbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+}
+
+/* =====================================================
+   TOOLBAR RIGHT
+===================================================== */
+
+.toolbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+}
+
+/* =====================================================
+   TOOLBAR ACTIONS
+===================================================== */
+
+.toolbar-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}

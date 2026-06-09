@@ -1,0 +1,103 @@
+/* =========================================================
+   STATS GRID
+========================================================= */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(160px,1fr));
+
+    gap:16px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.stat-card{
+
+    padding:20px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    backdrop-filter:blur(12px);
+
+    transition:.25s ease;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.06);
+}
+
+/* LIGHT */
+
+html:not(.dark) .stat-card{
+
+    background:#fff;
+}
+
+/* HOVER */
+
+.stat-card:hover{
+
+    transform:translateY(-4px);
+}
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.stat-number{
+
+    display:block;
+
+    font-size:30px;
+
+    font-weight:800;
+
+    margin-bottom:8px;
+}
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.stat-label{
+
+    font-size:13px;
+
+    opacity:.82;
+}
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+.stat-card.success{
+
+    border-color:
+        rgba(34,197,94,.35);
+}
+
+.stat-card.danger{
+
+    border-color:
+        rgba(239,68,68,.35);
+}
+
+.stat-card.info{
+
+    border-color:
+        rgba(59,130,246,.35);
+}
+
+.stat-card.purple{
+
+    border-color:
+        rgba(168,85,247,.35);
+}

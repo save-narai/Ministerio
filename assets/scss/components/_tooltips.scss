@@ -1,0 +1,118 @@
+/* =========================================================
+   TOOLTIP BASE
+========================================================= */
+
+.btn-icon,
+.tooltip{
+
+    position:relative;
+
+    overflow:visible;
+}
+
+/* =========================================================
+   TOOLTIP CONTENT
+========================================================= */
+
+.btn-icon::after,
+.tooltip::after{
+
+    content:attr(data-tooltip);
+
+    position:absolute;
+
+    bottom:120%;
+
+    left:50%;
+
+    transform:
+        translateX(-50%)
+        scale(.92);
+
+    padding:9px 13px;
+
+    border-radius:12px;
+
+    background:#111827;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:.3px;
+
+    white-space:nowrap;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:all .18s ease;
+
+    z-index:99999;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.18);
+}
+
+/* =========================================================
+   TOOLTIP SHOW
+========================================================= */
+
+.btn-icon:hover::after,
+.tooltip:hover::after{
+
+    opacity:1;
+
+    transform:
+        translateX(-50%)
+        scale(1);
+}
+
+/* =========================================================
+   FIRST ROW FIX
+========================================================= */
+
+.table tbody tr:first-child .btn-icon::after{
+
+    top:50%;
+
+    left:-12px;
+
+    bottom:auto;
+
+    transform:
+        translate(-100%, -50%)
+        scale(.92);
+}
+
+/* =========================================================
+   FIRST ROW SHOW
+========================================================= */
+
+.table tbody tr:first-child .btn-icon:hover::after{
+
+    transform:
+        translate(-100%, -50%)
+        scale(1);
+}
+
+/* =========================================================
+   TOOLTIP FIX
+========================================================= */
+
+.btn-icon{
+
+    position:relative;
+
+    overflow:visible;
+}
+
+.btn-icon::after{
+
+    z-index:9999;
+
+    pointer-events:none;
+}

@@ -1,0 +1,148 @@
+/* =====================================================
+   PAGE TITLE
+===================================================== */
+
+.page-title{
+
+    margin:0;
+
+    font-size:32px;
+
+    font-weight:800;
+
+    letter-spacing:-1px;
+
+    line-height:1.1;
+
+    color:var(--text);
+}
+
+/* =====================================================
+   PAGE SUBTITLE
+===================================================== */
+
+.page-subtitle{
+
+    margin-top:6px;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    line-height:1.5;
+
+    color:var(--text-soft);
+}
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
+.page-section-title{
+
+    margin:0 0 20px;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    line-height:1.3;
+
+    color:var(--text);
+}
+
+/* =====================================================
+   CARD TITLE
+===================================================== */
+
+.card-title{
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:var(--text);
+}
+
+/* =====================================================
+   MINI TITLE
+===================================================== */
+
+.title-sm{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:var(--text-soft);
+
+    text-transform:uppercase;
+
+    letter-spacing:.6px;
+}
+
+/* =====================================================
+   GRADIENT TITLE
+===================================================== */
+
+.title-gradient{
+
+    background:var(--title-gradient);
+
+    background-size:200% auto;
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+    background-clip:text;
+}
+
+/* =====================================================
+   CENTER
+===================================================== */
+
+.title-center{
+
+    text-align:center;
+}
+
+/* =====================================================
+   MUTED
+===================================================== */
+
+.title-muted{
+
+    opacity:.7;
+}
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+html.dark .page-title{
+
+    color:#fff;
+}
+
+html.dark .page-section-title{
+
+    color:#f8fafc;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:768px){
+
+    .page-title{
+
+        font-size:26px;
+    }
+
+    .page-section-title{
+
+        font-size:18px;
+    }
+}

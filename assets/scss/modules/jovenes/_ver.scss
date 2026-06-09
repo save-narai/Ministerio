@@ -1,0 +1,262 @@
+/* =========================================================
+   PERFIL BASE
+========================================================= */
+
+.perfil-card{
+
+    max-width:780px;
+
+    margin:40px auto;
+
+    color:#fff;
+
+    animation:fadeIn .5s ease;
+}
+
+/* =========================================================
+   CHICO
+========================================================= */
+
+.perfil-chico{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff1b1b,
+            #ff7a00,
+            #ffd500
+        );
+}
+
+.perfil-chico::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(255,255,255,.18),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(255,255,255,.12),
+            transparent 35%
+        );
+}
+
+/* =========================================================
+   CHICA
+========================================================= */
+
+.perfil-chica{
+
+    background:
+        linear-gradient(
+            135deg,
+            #9333ea,
+            #ec4899
+        );
+}
+
+.perfil-chica::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(255,255,255,.15),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(255,255,255,.10),
+            transparent 35%
+        );
+}
+
+/* =========================================================
+   PERFIL GRID ITEMS
+========================================================= */
+
+.perfil-grid div{
+
+    padding:14px;
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.10);
+
+    backdrop-filter:blur(10px);
+
+    font-size:14px;
+}
+
+/* =========================================================
+   PERFIL STATS
+========================================================= */
+
+.perfil-stats{
+
+    margin-bottom:25px;
+}
+
+/* =========================================================
+   OBS
+========================================================= */
+
+.perfil-obs strong{
+
+    display:block;
+
+    margin-bottom:10px;
+}
+
+.perfil-obs p{
+
+    line-height:1.7;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:20px;
+}
+
+.section-header h3{
+
+    font-size:22px;
+
+    font-weight:700;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.text-center{
+
+    text-align:center;
+
+    padding:35px 20px;
+
+    border-radius:18px;
+
+    font-size:15px;
+
+    font-weight:500;
+}
+
+/* DARK */
+
+html.dark .text-center{
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:#cbd5e1;
+}
+
+/* LIGHT */
+
+html:not(.dark) .text-center{
+
+    background:#f9fafb;
+
+    color:#6b7280;
+}
+
+/* =========================================================
+   PDF BUTTONS
+========================================================= */
+
+.btn.btn-pdf.chica{
+
+    background:
+        linear-gradient(
+            90deg,
+            #9333ea,
+            #ec4899
+        ) !important;
+
+    color:#fff !important;
+}
+
+.btn.btn-pdf.chico{
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff1b1b,
+            #ff7a00,
+            #ffd500
+        ) !important;
+
+    color:#fff !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .section-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+}
+
+@media(max-width:520px){
+
+    .perfil-card{
+
+        padding:22px;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}

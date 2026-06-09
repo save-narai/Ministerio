@@ -1,0 +1,225 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.reuniones{
+
+    animation:fadeIn .45s ease;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.reuniones__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+    flex-wrap:wrap;
+}
+
+.reuniones__title{
+
+    font-size:32px;
+
+    font-weight:800;
+
+    background:var(--title-gradient);
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.top-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.reuniones__filtros{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:24px;
+}
+
+.reuniones__filtros a{
+
+    padding:10px 16px;
+
+    border-radius:999px;
+
+    text-decoration:none;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transition:var(--transition);
+
+    border:var(--border);
+
+    color:var(--text);
+
+    background:var(--surface);
+}
+
+/* HOVER */
+
+.reuniones__filtros a:hover{
+
+    transform:translateY(-2px);
+
+    border-color:var(--primary);
+}
+
+/* ACTIVE */
+
+.reuniones__filtros .active{
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+    border-color:transparent;
+
+    box-shadow:var(--shadow);
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.reuniones__table{
+
+    animation:fadeIn .5s ease;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.tipo-reunion_jovenes{
+
+    background:#3b82f6;
+}
+
+.tipo-grupo_conexion{
+
+    background:#22c55e;
+}
+
+.tipo-evento_especial{
+
+    background:#a855f7;
+}
+
+.tipo-discipulado{
+
+    background:#f97316;
+}
+
+/* =========================================================
+   PORCENTAJES
+========================================================= */
+
+.porcentaje{
+
+    font-weight:700;
+}
+
+.porcentaje.alto{
+
+    color:#22c55e;
+}
+
+.porcentaje.medio{
+
+    color:#f59e0b;
+}
+
+.porcentaje.bajo{
+
+    color:#ef4444;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.acciones{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .reuniones__header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .reuniones__title{
+
+        font-size:26px;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}

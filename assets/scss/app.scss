@@ -1,0 +1,44 @@
+/* =========================================================
+   BASE
+========================================================= */
+
+@import 'base/reset';
+@import 'base/variables';
+@import 'base/layout';
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+@import 'layout/sidebar';
+@import 'layout/page';
+
+/* =========================================================
+   THEMES
+========================================================= */
+
+@import 'themes/dark';
+
+/* =========================================================
+   COMPONENTS
+========================================================= */
+
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/forms';
+@import 'components/tables';
+@import 'components/search';
+@import 'components/titles';
+@import 'components/badges';
+@import 'components/buttons';
+@import 'components/tooltips';
+@import 'components/tables';
+
+/* =========================================================
+   MODULES
+========================================================= */
+
+@import 'modules/dashboard/dashboard';
+@import 'modules/jovenes/jovenes';
+@import 'modules/reuniones/reuniones';
+@import 'modules/seguimientos/seguimientos';

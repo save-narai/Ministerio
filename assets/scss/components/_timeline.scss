@@ -1,0 +1,148 @@
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+.timeline{
+
+    position:relative;
+
+    padding-left:30px;
+}
+
+.timeline::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:11px;
+
+    top:0;
+    bottom:0;
+
+    width:2px;
+
+    background:
+        rgba(148,163,184,.35);
+}
+
+/* =========================================================
+   ITEM
+========================================================= */
+
+.timeline-item{
+
+    position:relative;
+
+    margin-bottom:24px;
+}
+
+/* =========================================================
+   DOT
+========================================================= */
+
+.timeline-dot{
+
+    position:absolute;
+
+    left:-24px;
+
+    top:8px;
+
+    width:14px;
+    height:14px;
+
+    border-radius:50%;
+
+    background:#00e5ff;
+
+    box-shadow:
+        0 0 12px rgba(0,229,255,.45);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.timeline-content{
+
+    padding:16px;
+
+    border-radius:18px;
+
+    transition:.25s ease;
+}
+
+/* DARK */
+
+html.dark .timeline-content{
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+}
+
+/* LIGHT */
+
+html:not(.dark) .timeline-content{
+
+    background:#f9fafb;
+
+    border:1px solid #e5e7eb;
+}
+
+/* HOVER */
+
+.timeline-content:hover{
+
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.timeline-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:10px;
+}
+
+/* =========================================================
+   META
+========================================================= */
+
+.timeline-meta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:16px;
+
+    font-size:12px;
+
+    opacity:.8;
+
+    margin-bottom:12px;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.timeline-body{
+
+    line-height:1.7;
+
+    font-size:14px;
+}
