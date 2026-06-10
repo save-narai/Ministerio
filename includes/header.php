@@ -66,12 +66,21 @@ if (empty($_SESSION['csrf_token'])) {
     >
 
     <!-- =====================================================
-       DATATABLES
+       DATATABLES CSS
     ===================================================== -->
 
     <link
         rel="stylesheet"
         href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    >
+
+    <!-- =====================================================
+       DATATABLE BUTTONS CSS
+    ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"
     >
 
     <!-- =====================================================
@@ -120,6 +129,52 @@ if (empty($_SESSION['csrf_token'])) {
     </script>
 
     <!-- =====================================================
+       DATATABLE BUTTONS
+    ===================================================== -->
+
+    <script
+        defer
+        src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js">
+    </script>
+
+    <!-- =====================================================
+       ZIP
+    ===================================================== -->
+
+    <script
+        defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+    </script>
+
+    <!-- =====================================================
+       PDF
+    ===================================================== -->
+
+    <script
+        defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">
+    </script>
+
+    <script
+        defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">
+    </script>
+
+    <!-- =====================================================
+       EXPORT BUTTONS
+    ===================================================== -->
+
+    <script
+        defer
+        src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js">
+    </script>
+
+    <script
+        defer
+        src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js">
+    </script>
+
+    <!-- =====================================================
        CHART JS
     ===================================================== -->
 
@@ -129,12 +184,39 @@ if (empty($_SESSION['csrf_token'])) {
     </script>
 
     <!-- =====================================================
-       THEME JS
+       THEME
     ===================================================== -->
 
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/theme.js">
+    </script>
+
+    <!-- =====================================================
+       DATATABLE COMPONENT
+    ===================================================== -->
+
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/datatable.js">
+    </script>
+
+    <!-- =====================================================
+       SEARCH COMPONENT
+    ===================================================== -->
+
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/search.js">
+    </script>
+
+    <!-- =====================================================
+       EXPORT COMPONENT
+    ===================================================== -->
+
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/datatable-export.js">
     </script>
 
 </head>
@@ -220,14 +302,14 @@ if (empty($_SESSION['csrf_token'])) {
     </aside>
 
     <!-- =====================================================
-   THEME TOGGLE
-===================================================== -->
+       THEME TOGGLE
+    ===================================================== -->
 
-<button id="themeToggle">
+    <button id="themeToggle">
 
-    <i class="fa-solid fa-moon"></i>
+        <i class="fa-solid fa-moon"></i>
 
-</button>
+    </button>
 
     <!-- =====================================================
        MAIN

@@ -673,63 +673,18 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<script>
+<!-- DATATABLE -->
 
-document.addEventListener("DOMContentLoaded", () => {
+<script
+    defer
+    src="<?= BASE_URL ?>/assets/js/components/datatable.js">
+</script>
 
-    if (
-        typeof $ === "undefined" ||
-        !$.fn.DataTable
-    ) return;
+<!-- SEARCH -->
 
-    const tabla = $('#tablaJovenes').DataTable({
-
-        pageLength: 8,
-
-        ordering: true,
-
-        searching: true,
-
-        paging: true,
-
-        info: true,
-
-        lengthChange: false,
-
-        responsive: false,
-
-        dom:
-        't<"datatable-footer"<"datatable-info"i><"datatable-pagination"p>>',
-
-        language: {
-
-            search: "",
-
-            info: "Mostrando _START_ a _END_ de _TOTAL_ jóvenes",
-
-            infoEmpty: "No hay jóvenes registrados",
-
-            emptyTable: "No hay datos disponibles",
-
-            zeroRecords: "No se encontraron resultados",
-
-            paginate: {
-                previous: "‹",
-                next: "›"
-            }
-        }
-    });
-
-    const buscador = document.getElementById("buscador");
-
-    buscador.addEventListener("keyup", function(){
-
-        tabla.search(this.value).draw();
-
-    });
-
-});
-
+<script
+    defer
+    src="<?= BASE_URL ?>/assets/js/components/search.js">
 </script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>
