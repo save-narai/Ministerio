@@ -1,3 +1,4 @@
+
 /* =========================================================
    FORM CARD
 ========================================================= */
@@ -6,9 +7,9 @@
 
     width:100%;
 
-    max-width:1100px;
+    max-width:950px;
 
-    margin:auto;
+    margin:20px auto;
 
     background:var(--container);
 
@@ -38,9 +39,55 @@
 
 .form-header{
 
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
     padding:30px 34px;
 
     border-bottom:var(--border);
+
+    position:relative;
+}
+
+/* =========================================================
+   HEADER ICON
+========================================================= */
+
+.form-header-icon{
+
+    width:72px;
+
+    height:72px;
+
+    flex-shrink:0;
+
+    border-radius:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+    font-size:28px;
+
+    box-shadow:var(--shadow);
+}
+
+/* =========================================================
+   HEADER CONTENT
+========================================================= */
+
+.form-header-content{
+
+    flex:1;
 }
 
 /* =========================================================
@@ -51,7 +98,7 @@
 
     margin:0;
 
-    font-size:30px;
+    font-size:32px;
 
     font-weight:900;
 
@@ -75,6 +122,8 @@
     font-size:14px;
 
     color:var(--text-soft);
+
+    line-height:1.6;
 }
 
 /* =========================================================
@@ -83,7 +132,7 @@
 
 .form{
 
-    padding:34px;
+    padding:28px;
 }
 
 /* =========================================================
@@ -97,7 +146,7 @@
     grid-template-columns:
         repeat(auto-fit,minmax(260px,1fr));
 
-    gap:22px;
+    gap:18px;
 }
 
 /* =========================================================
@@ -149,7 +198,7 @@
 
     width:100%;
 
-    padding:15px 16px;
+    padding:12px 14px;
 
     border-radius:16px;
 
@@ -178,6 +227,12 @@ html.dark .form-textarea{
 
     background:
         rgba(255,255,255,.04);
+
+    backdrop-filter:
+        blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,.06);
 }
 
 /* =========================================================
@@ -191,17 +246,65 @@ html.dark .form-textarea{
 }
 
 /* =========================================================
-   FOCUS
+   INPUT HOVER
+========================================================= */
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover{
+
+    border-color:
+        rgba(255,95,46,.28);
+
+    transform:
+        translateY(-1px);
+}
+
+/* =========================================================
+   DARK HOVER
+========================================================= */
+
+html.dark .form-input:hover,
+html.dark .form-select:hover,
+html.dark .form-textarea:hover{
+
+    border-color:
+        rgba(0,229,255,.25);
+}
+
+/* =========================================================
+   FOCUS LIGHT
 ========================================================= */
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus{
 
-    border-color:var(--primary);
+    outline:none;
+
+    border-color:
+        rgba(255,95,46,.45);
 
     box-shadow:
         0 0 0 4px rgba(255,95,46,.12);
+
+    transform:
+        translateY(-1px);
+}
+
+/* =========================================================
+   FOCUS DARK
+========================================================= */
+
+html.dark .form-input:focus,
+html.dark .form-select:focus,
+html.dark .form-textarea:focus{
+
+    border-color:
+        rgba(0,229,255,.45);
+
+    box-shadow:
+        0 0 0 4px rgba(0,229,255,.12);
 
     transform:
         translateY(-1px);
@@ -287,6 +390,19 @@ html.dark .form-textarea{
     .form-header{
 
         padding:24px;
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .form-header-icon{
+
+        width:64px;
+
+        height:64px;
+
+        font-size:24px;
     }
 
     .form-title{
@@ -303,4 +419,64 @@ html.dark .form-textarea{
 
         width:100%;
     }
+}
+/* =========================================================
+   SELECT RESET
+========================================================= */
+.form-select{
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    -moz-appearance:none;
+}
+
+html.dark .form-select{
+
+    background:#182233 !important;
+
+    color:#ffffff !important;
+}
+
+html.dark .form-select option{
+
+    background:#182233 !important;
+
+    color:#ffffff !important;
+}
+
+/* =========================================================
+   DARK SELECT
+========================================================= */
+
+html.dark .form-select{
+
+    background:#111827 !important;
+
+    color:#ffffff !important;
+
+    border-color:
+        rgba(0,229,255,.20);
+}
+
+/* =========================================================
+   DARK OPTIONS
+========================================================= */
+
+html.dark .form-select option{
+
+    background:#111827 !important;
+
+    color:#ffffff !important;
+}
+
+
+html.dark select{
+
+    background:#182233 !important;
+
+    color:#ffffff !important;
+
+    border:1px solid #00e5ff !important;
 }

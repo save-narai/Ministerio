@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* =========================================================
    BASE
 ========================================================= */
@@ -623,12 +624,12 @@ html.dark {
 /* =========================================================
    SECONDARY
 ========================================================= */
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+.btn-back {
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text);
   border: var(--border);
   backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow);
 }
 
 /* =========================================================
@@ -1035,8 +1036,8 @@ html.dark .btn-pdf {
 ========================================================= */
 .form-card {
   width: 100%;
-  max-width: 1100px;
-  margin: auto;
+  max-width: 950px;
+  margin: 20px auto;
   background: var(--container);
   border-radius: 26px;
   border: var(--border);
@@ -1056,8 +1057,36 @@ html.dark .btn-pdf {
    FORM HEADER
 ========================================================= */
 .form-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
   padding: 30px 34px;
   border-bottom: var(--border);
+  position: relative;
+}
+
+/* =========================================================
+   HEADER ICON
+========================================================= */
+.form-header-icon {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-gradient);
+  color: #fff;
+  font-size: 28px;
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   HEADER CONTENT
+========================================================= */
+.form-header-content {
+  flex: 1;
 }
 
 /* =========================================================
@@ -1065,7 +1094,7 @@ html.dark .btn-pdf {
 ========================================================= */
 .form-title {
   margin: 0;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 900;
   line-height: 1.1;
   background: var(--title-gradient);
@@ -1080,13 +1109,14 @@ html.dark .btn-pdf {
   margin-top: 8px;
   font-size: 14px;
   color: var(--text-soft);
+  line-height: 1.6;
 }
 
 /* =========================================================
    FORM
 ========================================================= */
 .form {
-  padding: 34px;
+  padding: 28px;
 }
 
 /* =========================================================
@@ -1095,7 +1125,7 @@ html.dark .btn-pdf {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
+  gap: 18px;
 }
 
 /* =========================================================
@@ -1132,7 +1162,7 @@ html.dark .btn-pdf {
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 15px 16px;
+  padding: 12px 14px;
   border-radius: 16px;
   border: 1px solid var(--border-color);
   background: var(--container);
@@ -1148,6 +1178,8 @@ html.dark .form-input,
 html.dark .form-select,
 html.dark .form-textarea {
   background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* =========================================================
@@ -1162,13 +1194,44 @@ html.dark .form-textarea {
 }
 
 /* =========================================================
-   FOCUS
+   INPUT HOVER
+========================================================= */
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: rgba(255, 95, 46, 0.28);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   DARK HOVER
+========================================================= */
+html.dark .form-input:hover,
+html.dark .form-select:hover,
+html.dark .form-textarea:hover {
+  border-color: rgba(0, 229, 255, 0.25);
+}
+
+/* =========================================================
+   FOCUS LIGHT
 ========================================================= */
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--primary);
+  outline: none;
+  border-color: rgba(255, 95, 46, 0.45);
   box-shadow: 0 0 0 4px rgba(255, 95, 46, 0.12);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   FOCUS DARK
+========================================================= */
+html.dark .form-input:focus,
+html.dark .form-select:focus,
+html.dark .form-textarea:focus {
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.12);
   transform: translateY(-1px);
 }
 
@@ -1226,6 +1289,13 @@ html.dark .form-textarea {
   }
   .form-header {
     padding: 24px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .form-header-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
   }
   .form-title {
     font-size: 24px;
@@ -1237,6 +1307,48 @@ html.dark .form-textarea {
     width: 100%;
   }
 }
+/* =========================================================
+   SELECT RESET
+========================================================= */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+html.dark .form-select {
+  background: #182233 !important;
+  color: #ffffff !important;
+}
+
+html.dark .form-select option {
+  background: #182233 !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   DARK SELECT
+========================================================= */
+html.dark .form-select {
+  background: #111827 !important;
+  color: #ffffff !important;
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+/* =========================================================
+   DARK OPTIONS
+========================================================= */
+html.dark .form-select option {
+  background: #111827 !important;
+  color: #ffffff !important;
+}
+
+html.dark select {
+  background: #182233 !important;
+  color: #ffffff !important;
+  border: 1px solid #00e5ff !important;
+}
+
 /* =========================================================
    TABLE WRAPPER
 ========================================================= */
@@ -1663,6 +1775,13 @@ html.dark .btn-icon {
     flex-wrap: nowrap;
   }
 }
+/* =========================================================
+   HIDE DATATABLE BUTTONS
+========================================================= */
+.dt-buttons {
+  display: none;
+}
+
 /* =========================================================
    SEARCH BAR
 ========================================================= */
@@ -2009,363 +2128,6 @@ html.dark .badge-warning {
 }
 
 /* =========================================================
-   BUTTON BASE
-========================================================= */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 13px 22px;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, color 0.22s ease;
-}
-
-/* =========================================================
-   HOVER
-========================================================= */
-.btn:hover {
-  transform: translateY(-2px);
-  opacity: 0.98;
-}
-
-/* =========================================================
-   ACTIVE
-========================================================= */
-.btn:active {
-  transform: scale(0.98);
-}
-
-/* =========================================================
-   PRIMARY
-========================================================= */
-.btn-primary {
-  background: var(--card-gradient);
-  color: #fff;
-  box-shadow: 0 12px 24px rgba(255, 95, 46, 0.22);
-}
-
-/* =========================================================
-   PRIMARY HOVER
-========================================================= */
-.btn-primary:hover {
-  box-shadow: 0 16px 30px rgba(255, 95, 46, 0.28);
-}
-
-/* =========================================================
-   SECONDARY
-========================================================= */
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  border: var(--border);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* =========================================================
-   SECONDARY HOVER
-========================================================= */
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* =========================================================
-   SUCCESS
-========================================================= */
-.btn-success {
-  background: linear-gradient(135deg, #00d26a, #00b85c);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(0, 210, 106, 0.22);
-}
-
-/* =========================================================
-   SUCCESS HOVER
-========================================================= */
-.btn-success:hover {
-  box-shadow: 0 14px 28px rgba(0, 210, 106, 0.28);
-}
-
-/* =========================================================
-   DANGER
-========================================================= */
-.btn-danger {
-  background: linear-gradient(135deg, #ff4d6d, #ff355d);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(255, 77, 109, 0.22);
-}
-
-/* =========================================================
-   DANGER HOVER
-========================================================= */
-.btn-danger:hover {
-  box-shadow: 0 14px 28px rgba(255, 77, 109, 0.28);
-}
-
-/* =========================================================
-   WARNING
-========================================================= */
-.btn-warning {
-  background: linear-gradient(135deg, #ffb020, #f59e0b);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(255, 176, 32, 0.22);
-}
-
-/* =========================================================
-   WARNING HOVER
-========================================================= */
-.btn-warning:hover {
-  box-shadow: 0 14px 28px rgba(255, 176, 32, 0.28);
-}
-
-/* =========================================================
-   INFO
-========================================================= */
-.btn-info {
-  background: linear-gradient(135deg, #00a8ff, #0077ff);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(0, 168, 255, 0.22);
-}
-
-/* =========================================================
-   INFO HOVER
-========================================================= */
-.btn-info:hover {
-  box-shadow: 0 14px 28px rgba(0, 168, 255, 0.28);
-}
-
-/* =========================================================
-   GHOST
-========================================================= */
-.btn-ghost {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* =========================================================
-   GHOST HOVER
-========================================================= */
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-/* =========================================================
-   OUTLINE
-========================================================= */
-.btn-outline {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid rgba(255, 95, 46, 0.2);
-}
-
-/* =========================================================
-   OUTLINE HOVER
-========================================================= */
-.btn-outline:hover {
-  background: rgba(255, 95, 46, 0.08);
-}
-
-/* =========================================================
-   SMALL
-========================================================= */
-.btn-sm {
-  padding: 9px 14px;
-  font-size: 12px;
-  border-radius: 12px;
-}
-
-/* =========================================================
-   LARGE
-========================================================= */
-.btn-lg {
-  padding: 17px 28px;
-  font-size: 15px;
-  border-radius: 18px;
-}
-
-/* =========================================================
-   BLOCK
-========================================================= */
-.btn-block {
-  width: 100%;
-}
-
-/* =========================================================
-   ICON
-========================================================= */
-.btn i {
-  font-size: 13px;
-}
-
-/* =========================================================
-   PDF BUTTON
-========================================================= */
-.btn-pdf {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  border: var(--border);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* =========================================================
-   EXPORT DROPDOWN
-========================================================= */
-.export-dropdown {
-  position: relative;
-  display: inline-flex;
-}
-
-/* =========================================================
-   TRIGGER
-========================================================= */
-.export-dropdown__trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #ff5f2e 0%, #ff3cac 100%);
-  box-shadow: 0 12px 28px rgba(255, 95, 46, 0.22);
-  transition: all 0.28s ease;
-}
-
-/* =========================================================
-   DARK MODE
-========================================================= */
-html.dark .export-dropdown__trigger {
-  background: linear-gradient(135deg, #00e5ff 0%, #00ffcc 100%);
-  color: #04111f;
-  box-shadow: 0 12px 30px rgba(0, 255, 220, 0.16);
-}
-
-/* =========================================================
-   HOVER
-========================================================= */
-.export-dropdown__trigger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(255, 95, 46, 0.28);
-}
-
-/* =========================================================
-   DARK HOVER
-========================================================= */
-html.dark .export-dropdown__trigger:hover {
-  box-shadow: 0 18px 40px rgba(0, 255, 220, 0.2);
-}
-
-/* =========================================================
-   MENU
-========================================================= */
-.export-dropdown__menu {
-  position: absolute;
-  top: calc(100% + 14px);
-  right: 0;
-  min-width: 220px;
-  padding: 10px;
-  border-radius: 22px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  z-index: 999;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
-  transition: all 0.25s ease;
-}
-
-/* =========================================================
-   DARK MENU
-========================================================= */
-html.dark .export-dropdown__menu {
-  background: rgba(9, 15, 35, 0.88);
-  border: 1px solid rgba(0, 255, 220, 0.08);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
-}
-
-/* =========================================================
-   SHOW MENU
-========================================================= */
-.export-dropdown:hover .export-dropdown__menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* =========================================================
-   OPTION
-========================================================= */
-.export-option {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border: none;
-  border-radius: 14px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  transition: all 0.22s ease;
-}
-
-/* =========================================================
-   OPTION ICON
-========================================================= */
-.export-option i {
-  width: 18px;
-  text-align: center;
-}
-
-/* =========================================================
-   OPTION HOVER
-========================================================= */
-.export-option:hover {
-  transform: translateX(4px);
-  background: rgba(255, 95, 46, 0.08);
-  color: #ff5f2e;
-}
-
-/* =========================================================
-   DARK OPTION HOVER
-========================================================= */
-html.dark .export-option:hover {
-  background: rgba(0, 255, 220, 0.08);
-  color: #00ffcc;
-}
-
-/* =========================================================
-   DARK MODE
-========================================================= */
-html.dark .btn-secondary,
-html.dark .btn-pdf {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* =========================================================
    TOOLTIP BASE
 ========================================================= */
 .btn-icon,
@@ -2438,432 +2200,6 @@ html.dark .btn-pdf {
   pointer-events: none;
 }
 
-/* =========================================================
-   TABLE WRAPPER
-========================================================= */
-.jovenes__table {
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 28px;
-}
-
-/* =========================================================
-   TABLE
-========================================================= */
-.table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 14px;
-  min-width: auto;
-  margin-top: 14px;
-}
-
-/* =========================================================
-   TABLE HEAD
-========================================================= */
-.table thead {
-  position: relative;
-}
-
-/* =========================================================
-   HEADER ROW
-========================================================= */
-.table thead tr {
-  position: relative;
-  height: 68px;
-}
-
-/* =========================================================
-   HEAD CELLS
-========================================================= */
-.table thead th {
-  height: 68px;
-  padding: 0 18px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  border: none;
-  color: #fff;
-  position: relative;
-  background: linear-gradient(135deg, #ff512f 0%, #ff6a5c 25%, #ff4d8d 65%);
-  box-shadow: 0 16px 35px rgba(255, 95, 46, 0.22);
-  background-clip: padding-box;
-}
-
-/* =========================================================
-   DARK MODE
-========================================================= */
-html.dark .table thead th {
-  background: linear-gradient(135deg, #00e5ff 0%, #00ffcc 25%, #00c3ff 60%);
-  box-shadow: 0 16px 35px rgba(0, 255, 200, 0.16);
-}
-
-/* =========================================================
-   FIRST HEAD
-========================================================= */
-.table thead th:first-child {
-  padding-left: 28px;
-  text-align: left;
-  border-top-left-radius: 26px;
-  border-bottom-left-radius: 26px;
-}
-
-/* =========================================================
-   LAST HEAD
-========================================================= */
-.table thead th:last-child {
-  padding-right: 34px;
-  border-top-right-radius: 26px;
-  border-bottom-right-radius: 26px;
-}
-
-/* =========================================================
-   SEPARATORS
-========================================================= */
-.table thead th::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1px;
-  height: 24px;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.18);
-}
-
-/* =========================================================
-   REMOVE LAST SEPARATOR
-========================================================= */
-.table thead th:last-child::after {
-  display: none;
-}
-
-/* =========================================================
-   SORT ICONS
-========================================================= */
-.table th.sorting,
-.table th.sorting_asc,
-.table th.sorting_desc {
-  position: relative;
-}
-
-/* =========================================================
-   SORT SPACING
-========================================================= */
-.table th.sorting::before,
-.table th.sorting::after,
-.table th.sorting_asc::before,
-.table th.sorting_asc::after,
-.table th.sorting_desc::before,
-.table th.sorting_desc::after {
-  right: 12px !important;
-}
-
-/* =========================================================
-   CENTER COLUMNS
-========================================================= */
-.table td:nth-child(2),
-.table td:nth-child(3),
-.table td:nth-child(4),
-.table td:nth-child(5),
-.table td:nth-child(6),
-.table td:nth-child(7),
-.table td:nth-child(8),
-.table th:nth-child(2),
-.table th:nth-child(3),
-.table th:nth-child(4),
-.table th:nth-child(5),
-.table th:nth-child(6),
-.table th:nth-child(7),
-.table th:nth-child(8) {
-  text-align: center;
-}
-
-/* =========================================================
-   BODY ROW
-========================================================= */
-.table tbody tr {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-/* =========================================================
-   DARK BODY ROW
-========================================================= */
-html.dark .table tbody tr {
-  background: rgba(255, 255, 255, 0.025);
-}
-
-/* =========================================================
-   BODY CELLS
-========================================================= */
-.table td {
-  padding: 18px 20px;
-  text-align: center;
-  vertical-align: middle;
-  border: none;
-  color: var(--text);
-  font-size: 14px;
-}
-
-/* =========================================================
-   FIRST BODY CELL
-========================================================= */
-.table td:first-child {
-  text-align: left;
-  border-top-left-radius: 18px;
-  border-bottom-left-radius: 18px;
-  font-weight: 700;
-}
-
-/* =========================================================
-   LAST BODY CELL
-========================================================= */
-.table td:last-child {
-  border-top-right-radius: 18px;
-  border-bottom-right-radius: 18px;
-}
-
-/* =========================================================
-   ROW HOVER
-========================================================= */
-.table tbody tr:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
-}
-
-/* =========================================================
-   STATUS
-========================================================= */
-.estado {
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  margin: auto;
-  position: relative;
-  transition: 0.25s ease;
-}
-
-/* =========================================================
-   INNER GLOW
-========================================================= */
-.estado::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
-}
-
-/* =========================================================
-   STATUS ACTIVE
-========================================================= */
-.estado--activo {
-  background: linear-gradient(135deg, #00ff88, #00c27a);
-  box-shadow: 0 0 14px rgba(0, 255, 136, 0.45);
-}
-
-/* =========================================================
-   STATUS INACTIVE
-========================================================= */
-.estado--inactivo {
-  background: linear-gradient(135deg, #ff5f8f, #ff4d6d);
-  box-shadow: 0 0 14px rgba(255, 77, 109, 0.35);
-}
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-.table-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: nowrap;
-}
-
-/* =========================================================
-   ICON BUTTON
-========================================================= */
-.btn-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  background: #fff;
-  color: var(--text-soft);
-  overflow: visible;
-}
-
-/* =========================================================
-   DARK MODE BUTTON
-========================================================= */
-html.dark .btn-icon {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* =========================================================
-   BUTTON HOVER
-========================================================= */
-.btn-icon:hover {
-  transform: translateY(-2px) scale(1.03);
-}
-
-/* =========================================================
-   VIEW HOVER
-========================================================= */
-.btn-view:hover {
-  background: rgba(0, 255, 140, 0.12);
-  color: #00c27a;
-  box-shadow: 0 0 16px rgba(0, 255, 140, 0.18);
-}
-
-/* =========================================================
-   EDIT HOVER
-========================================================= */
-.btn-edit:hover {
-  background: rgba(255, 190, 0, 0.14);
-  color: #d89b00;
-  box-shadow: 0 0 16px rgba(255, 190, 0, 0.18);
-}
-
-/* =========================================================
-   DELETE HOVER
-========================================================= */
-.btn-delete:hover {
-  background: rgba(255, 80, 80, 0.14);
-  color: #ff5b5b;
-  box-shadow: 0 0 16px rgba(255, 80, 80, 0.18);
-}
-
-/* =========================================================
-   TOOLTIP FIX
-========================================================= */
-.btn-icon::after {
-  z-index: 9999;
-  pointer-events: none;
-}
-
-/* =========================================================
-   DATATABLE WRAPPER
-========================================================= */
-.dataTables_wrapper {
-  margin-top: 22px;
-}
-
-/* =========================================================
-   DATATABLE INPUT
-========================================================= */
-.dataTables_filter input {
-  padding: 12px 14px !important;
-  border-radius: 14px !important;
-  border: var(--border) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  color: var(--text) !important;
-  margin-left: 10px !important;
-}
-
-/* =========================================================
-   DATATABLE SELECT
-========================================================= */
-.dataTables_length select {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  border: var(--border);
-}
-
-/* =========================================================
-   INFO
-========================================================= */
-.dataTables_info {
-  font-size: 14px;
-  color: var(--text-soft);
-  padding-top: 0 !important;
-  margin-top: 18px;
-  margin-left: 18px;
-}
-
-/* =========================================================
-   PAGINATION
-========================================================= */
-.dataTables_paginate {
-  margin-top: 16px !important;
-}
-
-/* =========================================================
-   PAGINATION BUTTON
-========================================================= */
-.paginate_button {
-  border: none !important;
-  border-radius: 14px !important;
-  padding: 10px 16px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: var(--text) !important;
-  margin: 0 4px !important;
-  transition: var(--transition) !important;
-}
-
-/* =========================================================
-   PAGINATION HOVER
-========================================================= */
-.paginate_button:hover {
-  background: var(--primary) !important;
-  color: #fff !important;
-}
-
-/* =========================================================
-   CURRENT PAGE
-========================================================= */
-.paginate_button.current {
-  background: var(--card-gradient) !important;
-  color: #fff !important;
-  box-shadow: 0 8px 20px rgba(255, 95, 46, 0.18);
-}
-
-/* =========================================================
-   EMPTY TABLE
-========================================================= */
-.dataTables_empty {
-  text-align: center;
-  padding: 40px !important;
-  opacity: 0.7;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-@media (max-width: 768px) {
-  .table {
-    min-width: 980px;
-  }
-  .table th,
-  .table td {
-    padding: 16px 18px;
-  }
-  .table-actions {
-    flex-wrap: nowrap;
-  }
-}
 /* =========================================================
    MODULES
 ========================================================= */
@@ -3152,6 +2488,471 @@ html.dark .btn-icon {
   .jovenes__filtros {
     overflow: auto;
     padding-bottom: 6px;
+  }
+}
+/* =========================================================
+   PHONE VALIDATION
+========================================================= */
+.telefono-error {
+  min-height: 18px;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.25s ease;
+}
+
+/* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+.telefono-error.success {
+  color: #00c27a;
+}
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+.telefono-error.error {
+  color: #ff4d6d;
+}
+
+/* =========================================================
+   DARK SUCCESS MESSAGE
+========================================================= */
+html.dark .telefono-error.success {
+  color: #22ff99;
+}
+
+/* =========================================================
+   DARK ERROR MESSAGE
+========================================================= */
+html.dark .telefono-error.error {
+  color: #ff6b86;
+}
+
+/* =========================================================
+   INPUT SUCCESS
+========================================================= */
+.form-input.input-success {
+  border-color: #00d26a !important;
+  background: rgba(0, 210, 106, 0.04) !important;
+  box-shadow: 0 0 0 4px rgba(0, 210, 106, 0.18), 0 0 18px rgba(0, 210, 106, 0.25) !important;
+}
+
+/* =========================================================
+   INPUT ERROR
+========================================================= */
+.form-input.input-error {
+  border-color: #ff4d6d !important;
+  background: rgba(255, 77, 109, 0.04) !important;
+  box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.18), 0 0 18px rgba(255, 77, 109, 0.25) !important;
+}
+
+/* =========================================================
+   SUCCESS FOCUS
+========================================================= */
+.form-input.input-success:focus {
+  border-color: #00d26a !important;
+  background: rgba(0, 210, 106, 0.05) !important;
+  box-shadow: 0 0 0 4px rgba(0, 210, 106, 0.2), 0 0 22px rgba(0, 210, 106, 0.3) !important;
+}
+
+/* =========================================================
+   ERROR FOCUS
+========================================================= */
+.form-input.input-error:focus {
+  border-color: #ff4d6d !important;
+  background: rgba(255, 77, 109, 0.05) !important;
+  box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2), 0 0 22px rgba(255, 77, 109, 0.3) !important;
+}
+
+/* =========================================================
+   DARK SUCCESS
+========================================================= */
+html.dark .form-input.input-success {
+  border-color: #00ff88 !important;
+  background: rgba(0, 255, 136, 0.08) !important;
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.15), 0 0 20px rgba(0, 255, 136, 0.25) !important;
+}
+
+/* =========================================================
+   DARK SUCCESS FOCUS
+========================================================= */
+html.dark .form-input.input-success:focus {
+  border-color: #00ff88 !important;
+  background: rgba(0, 255, 136, 0.1) !important;
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.18), 0 0 24px rgba(0, 255, 136, 0.3) !important;
+}
+
+/* =========================================================
+   DARK ERROR
+========================================================= */
+html.dark .form-input.input-error {
+  border-color: #ff5f7d !important;
+  background: rgba(255, 95, 125, 0.08) !important;
+  box-shadow: 0 0 0 4px rgba(255, 95, 125, 0.15), 0 0 20px rgba(255, 95, 125, 0.25) !important;
+}
+
+/* =========================================================
+   DARK ERROR FOCUS
+========================================================= */
+html.dark .form-input.input-error:focus {
+  border-color: #ff5f7d !important;
+  background: rgba(255, 95, 125, 0.1) !important;
+  box-shadow: 0 0 0 4px rgba(255, 95, 125, 0.18), 0 0 24px rgba(255, 95, 125, 0.3) !important;
+}
+
+/* =========================================================
+   CHECK WRAPPER
+========================================================= */
+.check-wrapper {
+  margin-top: 12px;
+}
+
+/* =========================================================
+   CUSTOM CHECKBOX
+========================================================= */
+.check-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+/* =========================================================
+   HIDE INPUT
+========================================================= */
+.check-custom input {
+  display: none;
+}
+
+/* =========================================================
+   CHECKMARK
+========================================================= */
+.checkmark {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 95, 46, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s ease;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+/* =========================================================
+   DARK CHECKMARK
+========================================================= */
+html.dark .checkmark {
+  border-color: rgba(0, 229, 255, 0.35);
+}
+
+/* =========================================================
+   CHECK ICON
+========================================================= */
+.checkmark::after {
+  content: "✓";
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: 0.25s ease;
+}
+
+/* =========================================================
+   CHECKED LIGHT
+========================================================= */
+.check-custom input:checked + .checkmark {
+  background: linear-gradient(135deg, #ff5f2e, #ff3cac);
+  border-color: transparent;
+}
+
+/* =========================================================
+   CHECKED DARK
+========================================================= */
+html.dark .check-custom input:checked + .checkmark {
+  background: linear-gradient(135deg, #00e5ff, #00ffcc);
+  border-color: transparent;
+}
+
+/* =========================================================
+   SHOW CHECK ICON
+========================================================= */
+.check-custom input:checked + .checkmark::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* =========================================================
+   DUPLICATE ALERT
+========================================================= */
+.toast.warning {
+  margin-bottom: 24px;
+}
+
+/* =========================================================
+   DUPLICATE ACTIONS
+========================================================= */
+.toast.warning .btn-group {
+  margin-top: 14px;
+}
+
+/* =========================================================
+   TELEFONO VALIDACION
+========================================================= */
+.telefono-error {
+  position: absolute;
+  top: -22px;
+  right: 0;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transition: 0.2s ease;
+}
+
+.telefono-error.show {
+  opacity: 1;
+}
+
+/* SUCCESS */
+.telefono-error.success {
+  color: #16a34a;
+}
+
+/* ERROR */
+.telefono-error.error {
+  color: #dc2626;
+}
+
+/* DARK */
+html.dark .telefono-error.success {
+  color: #00ff88;
+}
+
+html.dark .telefono-error.error {
+  color: #ff6b6b;
+}
+
+/* =========================================================
+   INPUT STATES
+========================================================= */
+.input-success {
+  border: 1px solid #16a34a !important;
+}
+
+.input-error {
+  border: 1px solid #dc2626 !important;
+}
+
+html.dark .input-success {
+  border: 1px solid #00ff88 !important;
+}
+
+html.dark .input-error {
+  border: 1px solid #ff6b6b !important;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: 0.35s ease;
+  z-index: 9999;
+}
+
+/* SHOW */
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* SUCCESS */
+.toast.success {
+  background: linear-gradient(135deg, #00ff88, #00e5ff);
+  color: #032b22;
+}
+
+/* ERROR */
+.toast.error {
+  background: linear-gradient(135deg, #ff4d6d, #ff6b6b);
+  color: #fff;
+}
+
+/* WARNING */
+.toast.warning {
+  background: linear-gradient(135deg, #ffcc00, #ff9a00);
+  color: #3b2f00;
+}
+
+/* =========================================================
+   PERFIL BASE
+========================================================= */
+.perfil-card {
+  max-width: 780px;
+  margin: 40px auto;
+  color: #fff;
+  animation: fadeIn 0.5s ease;
+}
+
+/* =========================================================
+   CHICO
+========================================================= */
+.perfil-chico {
+  background: linear-gradient(135deg, #ff1b1b, #ff7a00, #ffd500);
+}
+
+.perfil-chico::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.18), transparent 35%), radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12), transparent 35%);
+}
+
+/* =========================================================
+   CHICA
+========================================================= */
+.perfil-chica {
+  background: linear-gradient(135deg, #9333ea, #ec4899);
+}
+
+.perfil-chica::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15), transparent 35%), radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1), transparent 35%);
+}
+
+/* =========================================================
+   PERFIL GRID ITEMS
+========================================================= */
+.perfil-grid div {
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  font-size: 14px;
+}
+
+/* =========================================================
+   PERFIL STATS
+========================================================= */
+.perfil-stats {
+  margin-bottom: 25px;
+}
+
+/* =========================================================
+   OBS
+========================================================= */
+.perfil-obs strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.perfil-obs p {
+  line-height: 1.7;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+.text-center {
+  text-align: center;
+  padding: 35px 20px;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* DARK */
+html.dark .text-center {
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+}
+
+/* LIGHT */
+html:not(.dark) .text-center {
+  background: #f9fafb;
+  color: #6b7280;
+}
+
+/* =========================================================
+   PDF BUTTONS
+========================================================= */
+.btn.btn-pdf.chica {
+  background: linear-gradient(90deg, #9333ea, #ec4899) !important;
+  color: #fff !important;
+}
+
+.btn.btn-pdf.chico {
+  background: linear-gradient(90deg, #ff1b1b, #ff7a00, #ffd500) !important;
+  color: #fff !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@media (max-width: 520px) {
+  .perfil-card {
+    padding: 22px;
+  }
+}
+/* =========================================================
+   ANIMATION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 /* =========================================================

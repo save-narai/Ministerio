@@ -1,107 +1,331 @@
 /* =========================================================
-   TOAST
+   PHONE VALIDATION
 ========================================================= */
 
-.toast{
+.telefono-error{
 
-    position:fixed;
+    min-height:18px;
 
-    top:20px;
-    right:20px;
+    margin-top:6px;
 
-    min-width:260px;
-    max-width:320px;
+    font-size:12px;
 
-    padding:14px 16px;
-
-    border-radius:16px;
-
-    font-size:14px;
     font-weight:700;
 
-    display:flex;
-    align-items:center;
-    gap:10px;
+    transition:.25s ease;
+}
 
-    backdrop-filter:blur(14px);
+/* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+
+.telefono-error.success{
+
+    color:#00c27a;
+}
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.telefono-error.error{
+
+    color:#ff4d6d;
+}
+
+/* =========================================================
+   DARK SUCCESS MESSAGE
+========================================================= */
+
+html.dark .telefono-error.success{
+
+    color:#22ff99;
+}
+
+/* =========================================================
+   DARK ERROR MESSAGE
+========================================================= */
+
+html.dark .telefono-error.error{
+
+    color:#ff6b86;
+}
+
+/* =========================================================
+   INPUT SUCCESS
+========================================================= */
+
+.form-input.input-success{
+
+    border-color:#00d26a !important;
+
+    background:rgba(0,210,106,.04) !important;
 
     box-shadow:
-        0 18px 40px rgba(0,0,0,.25);
+        0 0 0 4px rgba(0,210,106,.18),
+        0 0 18px rgba(0,210,106,.25) !important;
+}
 
-    transform:
-        translateX(120%);
+/* =========================================================
+   INPUT ERROR
+========================================================= */
+
+.form-input.input-error{
+
+    border-color:#ff4d6d !important;
+
+    background:rgba(255,77,109,.04) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(255,77,109,.18),
+        0 0 18px rgba(255,77,109,.25) !important;
+}
+
+/* =========================================================
+   SUCCESS FOCUS
+========================================================= */
+
+.form-input.input-success:focus{
+
+    border-color:#00d26a !important;
+
+    background:rgba(0,210,106,.05) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(0,210,106,.20),
+        0 0 22px rgba(0,210,106,.30) !important;
+}
+
+/* =========================================================
+   ERROR FOCUS
+========================================================= */
+
+.form-input.input-error:focus{
+
+    border-color:#ff4d6d !important;
+
+    background:rgba(255,77,109,.05) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(255,77,109,.20),
+        0 0 22px rgba(255,77,109,.30) !important;
+}
+
+/* =========================================================
+   DARK SUCCESS
+========================================================= */
+
+html.dark .form-input.input-success{
+
+    border-color:#00ff88 !important;
+
+    background:rgba(0,255,136,.08) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(0,255,136,.15),
+        0 0 20px rgba(0,255,136,.25) !important;
+}
+
+/* =========================================================
+   DARK SUCCESS FOCUS
+========================================================= */
+
+html.dark .form-input.input-success:focus{
+
+    border-color:#00ff88 !important;
+
+    background:rgba(0,255,136,.10) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(0,255,136,.18),
+        0 0 24px rgba(0,255,136,.30) !important;
+}
+
+/* =========================================================
+   DARK ERROR
+========================================================= */
+
+html.dark .form-input.input-error{
+
+    border-color:#ff5f7d !important;
+
+    background:rgba(255,95,125,.08) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(255,95,125,.15),
+        0 0 20px rgba(255,95,125,.25) !important;
+}
+
+/* =========================================================
+   DARK ERROR FOCUS
+========================================================= */
+
+html.dark .form-input.input-error:focus{
+
+    border-color:#ff5f7d !important;
+
+    background:rgba(255,95,125,.10) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(255,95,125,.18),
+        0 0 24px rgba(255,95,125,.30) !important;
+}
+
+/* =========================================================
+   CHECK WRAPPER
+========================================================= */
+
+.check-wrapper{
+
+    margin-top:12px;
+}
+
+/* =========================================================
+   CUSTOM CHECKBOX
+========================================================= */
+
+.check-custom{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:var(--text-soft);
+}
+
+/* =========================================================
+   HIDE INPUT
+========================================================= */
+
+.check-custom input{
+
+    display:none;
+}
+
+/* =========================================================
+   CHECKMARK
+========================================================= */
+
+.checkmark{
+
+    width:22px;
+
+    height:22px;
+
+    border-radius:8px;
+
+    border:2px solid rgba(255,95,46,.35);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.25s ease;
+
+    flex-shrink:0;
+
+    background:transparent;
+}
+
+/* =========================================================
+   DARK CHECKMARK
+========================================================= */
+
+html.dark .checkmark{
+
+    border-color:rgba(0,229,255,.35);
+}
+
+/* =========================================================
+   CHECK ICON
+========================================================= */
+
+.checkmark::after{
+
+    content:"✓";
+
+    font-size:12px;
+
+    font-weight:900;
+
+    color:#fff;
 
     opacity:0;
 
-    transition:.35s ease;
+    transform:scale(.5);
 
-    z-index:9999;
+    transition:.25s ease;
 }
 
 /* =========================================================
-   SHOW
+   CHECKED LIGHT
 ========================================================= */
 
-.toast.show{
+.check-custom input:checked + .checkmark{
 
-    transform:translateX(0);
+    background:
+        linear-gradient(
+            135deg,
+            #ff5f2e,
+            #ff3cac
+        );
+
+    border-color:transparent;
+}
+
+/* =========================================================
+   CHECKED DARK
+========================================================= */
+
+html.dark .check-custom input:checked + .checkmark{
+
+    background:
+        linear-gradient(
+            135deg,
+            #00e5ff,
+            #00ffcc
+        );
+
+    border-color:transparent;
+}
+
+/* =========================================================
+   SHOW CHECK ICON
+========================================================= */
+
+.check-custom input:checked + .checkmark::after{
 
     opacity:1;
+
+    transform:scale(1);
 }
 
 /* =========================================================
-   SUCCESS
-========================================================= */
-
-.toast.success{
-
-    background:
-        linear-gradient(
-            135deg,
-            #00ff88,
-            #00e5ff
-        );
-
-    color:#032b22;
-}
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.toast.error{
-
-    background:
-        linear-gradient(
-            135deg,
-            #ff4d6d,
-            #ff6b6b
-        );
-
-    color:#fff;
-}
-
-/* =========================================================
-   WARNING
+   DUPLICATE ALERT
 ========================================================= */
 
 .toast.warning{
 
-    background:
-        linear-gradient(
-            135deg,
-            #ffcc00,
-            #ff9a00
-        );
-
-    color:#3b2f00;
+    margin-bottom:24px;
 }
 
 /* =========================================================
-   ICON
+   DUPLICATE ACTIONS
 ========================================================= */
 
-.toast i{
+.toast.warning .btn-group{
 
-    font-size:18px;
+    margin-top:14px;
 }

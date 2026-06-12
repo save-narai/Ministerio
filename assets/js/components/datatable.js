@@ -16,6 +16,15 @@ function initDataTable(tableId){
     }
 
     /* =====================================================
+       AVOID DOUBLE INIT
+    ===================================================== */
+
+    if($.fn.DataTable.isDataTable(tableId)){
+
+        return $(tableId).DataTable();
+    }
+
+    /* =====================================================
        INIT
     ===================================================== */
 
@@ -41,6 +50,8 @@ function initDataTable(tableId){
 
         autoWidth:false,
 
+        processing:false,
+
         /* =================================================
            DOM
         ================================================= */
@@ -56,35 +67,28 @@ function initDataTable(tableId){
 
             {
                 extend:'pdfHtml5',
-
                 className:'buttons-pdf',
-
                 title:'Registros'
             },
 
             {
                 extend:'excelHtml5',
-
                 className:'buttons-excel',
-
                 title:'Registros'
             },
 
             {
                 extend:'csvHtml5',
-
                 className:'buttons-csv',
-
                 title:'Registros'
             },
 
             {
                 extend:'print',
-
                 className:'buttons-print',
-
                 title:'Registros'
             }
+
         ],
 
         /* =================================================

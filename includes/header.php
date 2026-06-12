@@ -210,6 +210,12 @@ if (empty($_SESSION['csrf_token'])) {
         src="<?= BASE_URL ?>/assets/js/components/search.js">
     </script>
 
+
+<script
+    defer
+    src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
+</script>
+
     <!-- =====================================================
        EXPORT COMPONENT
     ===================================================== -->

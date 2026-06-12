@@ -204,8 +204,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <?php unset($_SESSION["success"]); endif; ?>
 
-    <!-- HEADER -->
-
 <!-- HEADER -->
 
 <div class="page-header">
@@ -279,6 +277,16 @@ require_once __DIR__ . "/../../includes/header.php";
                     Excel
 
                 </button>
+
+
+                <button
+    type="button"
+    class="export-option"
+    id="exportWord"
+>
+    <i class="fa-solid fa-file-word"></i>
+    Word
+</button>
 
                 <button
                     type="button"
@@ -673,18 +681,29 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<!-- DATATABLE -->
+</div>
 
-<script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/datatable.js">
-</script>
+<script>
 
-<!-- SEARCH -->
+document.addEventListener('DOMContentLoaded', () => {
 
-<script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/search.js">
+    const tabla =
+    initDataTable('#tablaJovenes');
+
+    if(tabla){
+
+        initSearch(
+            'buscador',
+            tabla
+        );
+
+        initExportButtons(
+            tabla
+        );
+    }
+
+});
+
 </script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

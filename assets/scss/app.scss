@@ -30,15 +30,19 @@
 @import 'components/search';
 @import 'components/titles';
 @import 'components/badges';
-@import 'components/buttons';
 @import 'components/tooltips';
-@import 'components/tables';
 
 /* =========================================================
    MODULES
 ========================================================= */
 
 @import 'modules/dashboard/dashboard';
+
 @import 'modules/jovenes/jovenes';
+@import 'modules/jovenes/crear';
+@import 'modules/jovenes/editar';
+@import 'modules/jovenes/ver';
+
 @import 'modules/reuniones/reuniones';
+
 @import 'modules/seguimientos/seguimientos';

@@ -3,64 +3,15 @@
    DATATABLE EXPORT
 ========================================================= */
 
-function initExportButtons(tableId){
+function initExportButtons(table){
 
-    const table = $(tableId).DataTable({
+    /* =====================================================
+       VALIDATION
+    ===================================================== */
 
-        dom:
-        't<"datatable-footer"<"datatable-info"i><"datatable-pagination"p>>',
-
-        responsive:true,
-
-        autoWidth:false,
-
-        pageLength:8,
-
-        language:{
-
-            search:"",
-
-            searchPlaceholder:"Buscar joven...",
-
-            lengthMenu:"Mostrar _MENU_",
-
-            info:"Mostrando _START_ a _END_ de _TOTAL_ jóvenes",
-
-            paginate:{
-                previous:"‹",
-                next:"›"
-            },
-
-            emptyTable:"No hay registros disponibles"
-        },
-
-        buttons:[
-
-            {
-                extend:'pdfHtml5',
-                className:'buttons-pdf',
-                title:'Jovenes'
-            },
-
-            {
-                extend:'excelHtml5',
-                className:'buttons-excel',
-                title:'Jovenes'
-            },
-
-            {
-                extend:'csvHtml5',
-                className:'buttons-csv',
-                title:'Jovenes'
-            },
-
-            {
-                extend:'print',
-                className:'buttons-print',
-                title:'Jovenes'
-            }
-        ]
-    });
+    if(!table){
+        return;
+    }
 
     /* =====================================================
        PDF
@@ -71,6 +22,7 @@ function initExportButtons(tableId){
     ?.addEventListener('click', () => {
 
         table.button('.buttons-pdf').trigger();
+
     });
 
     /* =====================================================
@@ -82,6 +34,7 @@ function initExportButtons(tableId){
     ?.addEventListener('click', () => {
 
         table.button('.buttons-excel').trigger();
+
     });
 
     /* =====================================================
@@ -93,6 +46,7 @@ function initExportButtons(tableId){
     ?.addEventListener('click', () => {
 
         table.button('.buttons-csv').trigger();
+
     });
 
     /* =====================================================
@@ -104,7 +58,52 @@ function initExportButtons(tableId){
     ?.addEventListener('click', () => {
 
         table.button('.buttons-print').trigger();
+
     });
 
-    return table;
 }
+
+/* =====================================================
+       volt doc
+    ===================================================== */
+
+
+
+document
+.getElementById('exportWord')
+?.addEventListener('click', () => {
+
+    const tablaHtml =
+    table.table().node();
+
+    const contenido = `
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Registros</title>
+        </head>
+        <body>
+            ${tablaHtml.outerHTML}
+        </body>
+        </html>
+    `;
+
+    const blob = new Blob(
+        [contenido],
+        {
+            type:'application/msword'
+        }
+    );
+
+    const enlace =
+    document.createElement('a');
+
+    enlace.href =
+    URL.createObjectURL(blob);
+
+    enlace.download =
+    'registros.doc';
+
+    enlace.click();
+
+});
