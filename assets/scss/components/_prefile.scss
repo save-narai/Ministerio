@@ -1,0 +1,442 @@
+/* =====================================================
+   PERFIL CARD
+===================================================== */
+
+.perfil-card{
+
+    position:relative;
+
+    padding:20px;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:28px;
+
+    color:#fff;
+}
+
+/* =====================================================
+   HOMBRE
+===================================================== */
+
+.perfil-card.perfil-chico{
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff1b1b,
+        #ff7a00,
+        #ffd500
+    );
+}
+
+/* =====================================================
+   MUJER
+===================================================== */
+
+.perfil-card.perfil-chica{
+
+    background:
+    linear-gradient(
+        135deg,
+        #9333ea,
+        #c026d3,
+        #ec4899
+    );
+}
+
+/* =====================================================
+   BRILLO
+===================================================== */
+
+.perfil-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,255,255,.18),
+            transparent 40%
+        );
+
+    pointer-events:none;
+}
+
+.perfil-card > *{
+
+    position:relative;
+
+    z-index:2;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.perfil-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    margin-bottom:24px;
+}
+
+.perfil-header-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+.perfil-header h2{
+
+    margin:0;
+
+    font-size:32px;
+
+    font-weight:800;
+
+    color:#fff;
+}
+
+/* =====================================================
+   CONEXION
+===================================================== */
+
+.perfil-conexion{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    width:max-content;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    backdrop-filter:blur(10px);
+}
+
+.perfil-conexion i{
+
+    font-size:8px;
+}
+
+.conexion-ok{
+
+    background:#22c55e;
+
+    color:#fff;
+
+    box-shadow:
+        0 0 18px rgba(34,197,94,.45);
+}
+
+.conexion-warning{
+
+    background:rgba(245,158,11,.85);
+
+    color:#fff;
+
+    box-shadow:
+        0 0 18px rgba(245,158,11,.35);
+}
+
+.conexion-danger{
+
+    background:#ef4444;
+
+    color:#fff;
+
+    box-shadow:
+        0 0 18px rgba(239,68,68,.45);
+}
+
+/* =====================================================
+   ESTADO ACTIVIDAD
+===================================================== */
+
+.badge-activo{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:8px 16px;
+
+    border-radius:999px;
+
+    background:#22c55e;
+
+    color:#fff;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    border:none;
+
+    box-shadow:
+        0 6px 18px rgba(34,197,94,.35);
+}
+
+.badge-inactivo{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:8px 16px;
+
+    border-radius:999px;
+
+    background:#ef4444;
+
+    color:#fff;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    border:none;
+
+    box-shadow:
+        0 0 18px rgba(239,68,68,.45);
+}
+
+/* =====================================================
+   GRID INFO
+===================================================== */
+
+.perfil-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:12px;
+
+    margin-bottom:24px;
+}
+
+.perfil-grid > div{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+}
+
+.perfil-grid strong{
+
+    font-size:13px;
+
+    opacity:.9;
+}
+
+/* =====================================================
+   STATS
+===================================================== */
+
+.perfil-stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+
+    gap:16px;
+
+    margin-bottom:24px;
+}
+
+.stat-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    padding:14px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    text-align:center;
+}
+
+.stat-card b{
+
+    font-size:38px;
+
+    line-height:1;
+
+    font-weight:800;
+}
+
+.stat-card span{
+
+    font-size:14px;
+
+    opacity:.95;
+}
+
+/* =====================================================
+   OBSERVACIONES
+===================================================== */
+
+.perfil-obs{
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    margin-bottom:18px;
+}
+
+.perfil-obs strong{
+
+    display:block;
+
+    margin-bottom:10px;
+}
+
+.perfil-obs p{
+
+    margin:0;
+
+    line-height:1.6;
+}
+
+/* =====================================================
+   ESTADOS
+===================================================== */
+
+.estado{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.estado.nuevo{
+
+    background:#ffe4e6;
+
+    color:#e11d48;
+}
+
+.estado.consolidacion{
+
+    background:#fef3c7;
+
+    color:#b45309;
+}
+
+.estado.crecimiento{
+
+    background:#dbeafe;
+
+    color:#2563eb;
+}
+
+.estado.maduro{
+
+    background:#dcfce7;
+
+    color:#16a34a;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:768px){
+
+    .perfil-card{
+
+        padding:18px;
+    }
+
+    .perfil-header{
+
+        flex-direction:column;
+    }
+
+    .perfil-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .perfil-stats{
+
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:500px){
+
+    .perfil-stats{
+
+        grid-template-columns:1fr;
+    }
+}

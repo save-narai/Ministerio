@@ -1,0 +1,34 @@
+/* =====================================================
+   GX TOOLBAR
+===================================================== */
+.gx-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   SEARCH AREA
+===================================================== */
+.gx-toolbar .search-bar {
+  min-width: 280px;
+  flex: 1;
+  max-width: 420px;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 768px) {
+  .gx-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .gx-toolbar .search-bar {
+    max-width: none;
+    width: 100%;
+  }
+}/*# sourceMappingURL=gx-toolbar.css.map */

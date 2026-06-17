@@ -1,139 +1,203 @@
+/* =====================================================
+   CARD SEGUIMIENTOS
+===================================================== */
+
+.card{
+
+    background:var(--container);
+
+    border:var(--border);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:24px;
+}
+
+/* =====================================================
+   SECTION HEADER
+===================================================== */
+
+.section-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:16px;
+
+    margin-bottom:20px;
+}
+
+.section-header h3{
+
+    margin:0;
+
+    font-size:22px;
+
+    color:var(--text);
+}
+
+/* =====================================================
+   WRAPPER
+===================================================== */
+.ver-wrapper{
+
+    max-width: 1000px !important;
+
+    width:100%;
+
+    margin:0 auto;
+
+    
+}
+
 /* =========================================================
-   PERFIL BASE
+   BTN MINI
 ========================================================= */
 
-.perfil-card{
 
-    max-width:780px;
+.btn-mini{
 
-    margin:40px auto;
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px 16px;
+
+    border-radius:12px;
+
+    background:var(--card-gradient);
 
     color:#fff;
 
-    animation:fadeIn .5s ease;
+    text-decoration:none;
+
+    font-weight:700;
 }
 
-/* =========================================================
-   CHICO
-========================================================= */
+.btn-mini:hover{
 
-.perfil-chico{
+    transform:translateY(-2px);
 
-    background:
-        linear-gradient(
-            135deg,
-            #ff1b1b,
-            #ff7a00,
-            #ffd500
-        );
+    background:rgba(255,95,46,.14);
 }
 
-.perfil-chico::before{
+/* =====================================================
+   EMPTY STATE
+===================================================== */
 
-    content:"";
+.empty-state{
 
-    position:absolute;
+    display:flex;
 
-    inset:0;
+    flex-direction:column;
 
-    background:
-        radial-gradient(
-            circle at 20% 30%,
-            rgba(255,255,255,.18),
-            transparent 35%
-        ),
+    align-items:center;
 
-        radial-gradient(
-            circle at 80% 70%,
-            rgba(255,255,255,.12),
-            transparent 35%
-        );
+    justify-content:center;
+
+    gap:12px;
+
+    padding:50px 20px;
+
+    text-align:center;
+
+    border-radius:20px;
+
+    background:var(--container);
+
+    border:var(--border);
 }
 
-/* =========================================================
-   CHICA
-========================================================= */
+.empty-state i{
 
-.perfil-chica{
+    font-size:38px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #9333ea,
-            #ec4899
-        );
+    color:var(--primary);
 }
 
-.perfil-chica::before{
+.empty-state h4{
 
-    content:"";
+    margin:0;
 
-    position:absolute;
+    font-size:18px;
 
-    inset:0;
-
-    background:
-        radial-gradient(
-            circle at 20% 30%,
-            rgba(255,255,255,.15),
-            transparent 35%
-        ),
-
-        radial-gradient(
-            circle at 80% 70%,
-            rgba(255,255,255,.10),
-            transparent 35%
-        );
+    color:var(--text);
 }
 
-/* =========================================================
-   PERFIL GRID ITEMS
-========================================================= */
+.empty-state p{
 
-.perfil-grid div{
+    margin:0;
 
-    padding:14px;
+    color:var(--text-soft);
 
-    border-radius:14px;
-
-    background:
-        rgba(255,255,255,.10);
-
-    backdrop-filter:blur(10px);
-
-    font-size:14px;
+    max-width:320px;
 }
 
-/* =========================================================
-   PERFIL STATS
-========================================================= */
+/* =====================================================
+   TIMELINE
+===================================================== */
 
-.perfil-stats{
+.timeline{
 
-    margin-bottom:25px;
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
 }
 
-/* =========================================================
-   OBS
-========================================================= */
+.timeline-item{
 
-.perfil-obs strong{
+    display:flex;
 
-    display:block;
-
-    margin-bottom:10px;
+    gap:16px;
 }
 
-.perfil-obs p{
+.timeline-dot{
 
-    line-height:1.7;
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    margin-top:8px;
+
+    flex-shrink:0;
 }
 
-/* =========================================================
-   SECTION HEADER
-========================================================= */
+.timeline-content{
 
-.section-header{
+    flex:1;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:var(--container);
+
+    border:var(--border);
+
+    transition:var(--transition);
+}
+
+.timeline-content:hover{
+
+    box-shadow:var(--shadow);
+}
+
+.timeline-header{
 
     display:flex;
 
@@ -141,86 +205,124 @@
 
     align-items:center;
 
-    gap:15px;
+    gap:10px;
 
-    margin-bottom:20px;
+    margin-bottom:10px;
 }
 
-.section-header h3{
+.timeline-meta{
 
-    font-size:22px;
+    display:flex;
 
-    font-weight:700;
+    flex-wrap:wrap;
+
+    gap:16px;
+
+    margin-bottom:10px;
+
+    color:var(--text-soft);
+
+    font-size:13px;
 }
 
-/* =========================================================
-   EMPTY STATE
-========================================================= */
+.timeline-content p{
 
-.text-center{
+    margin:0;
 
-    text-align:center;
+    line-height:1.6;
 
-    padding:35px 20px;
-
-    border-radius:18px;
-
-    font-size:15px;
-
-    font-weight:500;
+    color:var(--text);
 }
 
-/* DARK */
+/* =====================================================
+   BOTONES INFERIORES
+===================================================== */
 
-html.dark .text-center{
+.btn-group{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-top:24px;
+}
+
+.btn-group .btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+}
+
+/* =====================================================
+   SEGUIMIENTO
+===================================================== */
+
+.btn-seguimiento{
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+    border:none;
+
+    box-shadow:var(--shadow);
+}
+
+.btn-seguimiento:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--shadow-hover);
+}
+
+/* =====================================================
+   PDF HOMBRE
+===================================================== */
+
+.btn-pdf.perfil-chico{
 
     background:
-        rgba(255,255,255,.04);
-
-    color:#cbd5e1;
-}
-
-/* LIGHT */
-
-html:not(.dark) .text-center{
-
-    background:#f9fafb;
-
-    color:#6b7280;
-}
-
-/* =========================================================
-   PDF BUTTONS
-========================================================= */
-
-.btn.btn-pdf.chica{
-
-    background:
-        linear-gradient(
-            90deg,
-            #9333ea,
-            #ec4899
-        ) !important;
+    linear-gradient(
+        90deg,
+        #ff1b1b,
+        #ff7a00,
+        #ffd500
+    ) !important;
 
     color:#fff !important;
+
+    border:none;
 }
 
-.btn.btn-pdf.chico{
+/* =====================================================
+   PDF MUJER
+===================================================== */
+
+.btn-pdf.perfil-chica{
 
     background:
-        linear-gradient(
-            90deg,
-            #ff1b1b,
-            #ff7a00,
-            #ffd500
-        ) !important;
+    linear-gradient(
+        90deg,
+      #9333ea,
+        #c026d3,
+        #ec4899
+    ) !important;
 
     color:#fff !important;
+
+    border:none;
 }
 
-/* =========================================================
+/* =====================================================
    RESPONSIVE
-========================================================= */
+===================================================== */
 
 @media(max-width:768px){
 
@@ -230,33 +332,21 @@ html:not(.dark) .text-center{
 
         align-items:flex-start;
     }
-}
 
-@media(max-width:520px){
+    .timeline-header{
 
-    .perfil-card{
+        flex-direction:column;
 
-        padding:22px;
-    }
-}
-
-/* =========================================================
-   ANIMATION
-========================================================= */
-
-@keyframes fadeIn{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(15px);
+        align-items:flex-start;
     }
 
-    to{
+    .btn-group{
 
-        opacity:1;
+        flex-direction:column;
+    }
 
-        transform:translateY(0);
+    .btn-group .btn{
+
+        width:100%;
     }
 }

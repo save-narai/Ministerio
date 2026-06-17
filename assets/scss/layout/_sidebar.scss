@@ -1,17 +1,21 @@
-
 /* =====================================================
    SIDEBAR
 ===================================================== */
 
 .sidebar{
 
-    width:85px;
+    width:var(--sidebar-collapsed);
 
-    min-width:85px;
+    min-width:var(--sidebar-collapsed);
 
-    height:100vh;
+    min-height:100vh;
 
-    position:relative;
+    position:fixed;
+
+    top:0;
+    left:0;
+    top:0;
+    bottom:0;
 
     overflow:hidden;
 
@@ -19,16 +23,16 @@
 
     background-size:400% 400%;
 
-    animation:
-        liquidFlow 8s ease infinite;
+    animation:liquidFlow 8s ease infinite;
 
-    transition:
-        width .3s ease;
+    transition:all .3s ease;
 
     box-shadow:
         5px 0 30px rgba(0,0,0,.12);
 
-    z-index:100;
+    z-index:var(--z-sidebar);
+
+    flex-shrink:0;
 }
 
 /* =====================================================
@@ -37,9 +41,9 @@
 
 .sidebar:hover{
 
-    width:240px;
+    width:var(--sidebar-width);
 
-    min-width:240px;
+    min-width:var(--sidebar-width);
 }
 
 /* =====================================================
@@ -52,9 +56,11 @@
 
     flex-direction:column;
 
-    gap:6px;
+    gap:8px;
 
     padding:20px 12px;
+
+    height:100%;
 }
 
 /* =====================================================
@@ -94,6 +100,16 @@
 }
 
 /* =====================================================
+   ACTIVE
+===================================================== */
+
+.sidebar a.active{
+
+    background:
+        rgba(255,255,255,.18);
+}
+
+/* =====================================================
    ICON
 ===================================================== */
 
@@ -114,13 +130,13 @@
 
     opacity:0;
 
-    white-space:nowrap;
-
-    transition:all .25s ease;
-
     width:0;
 
     overflow:hidden;
+
+    white-space:nowrap;
+
+    transition:all .25s ease;
 }
 
 .sidebar:hover span{
@@ -128,16 +144,6 @@
     opacity:1;
 
     width:auto;
-}
-
-/* =====================================================
-   ACTIVE
-===================================================== */
-
-.sidebar a.active{
-
-    background:
-        rgba(255,255,255,.18);
 }
 
 /* =====================================================
@@ -156,5 +162,31 @@
 
     100%{
         background-position:0% 50%;
+    }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:768px){
+
+    .sidebar{
+
+        width:72px;
+
+        min-width:72px;
+    }
+
+    .sidebar:hover{
+
+        width:72px;
+
+        min-width:72px;
+    }
+
+    .sidebar span{
+
+        display:none;
     }
 }

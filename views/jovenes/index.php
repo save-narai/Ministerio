@@ -176,13 +176,7 @@ $stmt->execute();
 
 $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =========================
-   CSS
-========================= */
 
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/jovenes.css">
-';
 
 require_once __DIR__ . "/../../includes/header.php";
 ?>
@@ -320,55 +314,98 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-    <!-- FILTROS -->
+   <?php
 
-    <div class="jovenes__filtros">
+$totalJovenes = count($jovenes);
+
+$totalActivos = count(array_filter(
+    $jovenes,
+    fn($j) => $j["estado_actividad"] === "ACTIVO"
+));
+
+$totalInactivos = count(array_filter(
+    $jovenes,
+    fn($j) => $j["estado_actividad"] === "INACTIVO"
+));
+
+$totalRiesgo = 0;
+$totalAltoRiesgo = 0;
+
+foreach ($jovenes as $item) {
+
+    $faltas = (int)$item["faltas_recientes"];
+
+    $mes0 = (int)($item["asistencias_mes_actual"] ?? 0);
+    $mes1 = (int)($item["asistencias_mes_1"] ?? 0);
+    $mes2 = (int)($item["asistencias_mes_2"] ?? 0);
+
+    if (
+        $mes1 <= 1 &&
+        $mes2 <= 1
+    ) {
+
+        $totalAltoRiesgo++;
+
+    } elseif (
+        $mes0 <= 1 ||
+        $faltas >= 3
+    ) {
+
+        $totalRiesgo++;
+    }
+}
+
+?>
+
+<!-- TOOLBAR -->
+
+<div class="gx-toolbar">
+
+    <div class="filters-bar">
 
         <a
             href="?filtro=todos"
-            class="jovenes__tag jovenes__tag--todos <?= $filtro === 'todos' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--default <?= $filtro === 'todos' ? 'filter-chip--active' : '' ?>"
         >
             Todos
         </a>
 
         <a
             href="?filtro=activos"
-            class="jovenes__tag jovenes__tag--activos <?= $filtro === 'activos' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--success <?= $filtro === 'activos' ? 'filter-chip--active' : '' ?>"
         >
             Activos
         </a>
 
         <a
             href="?filtro=inactivos"
-            class="jovenes__tag jovenes__tag--inactivos <?= $filtro === 'inactivos' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--danger <?= $filtro === 'inactivos' ? 'filter-chip--active' : '' ?>"
         >
             Inactivos
         </a>
 
         <a
             href="?filtro=eliminados"
-            class="jovenes__tag jovenes__tag--inactivos <?= $filtro === 'eliminados' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--danger <?= $filtro === 'eliminados' ? 'filter-chip--active' : '' ?>"
         >
             Eliminados
         </a>
 
         <a
             href="?filtro=riesgo2"
-            class="jovenes__tag jovenes__tag--riesgo <?= $filtro === 'riesgo2' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--warning <?= $filtro === 'riesgo2' ? 'filter-chip--active' : '' ?>"
         >
             Riesgo
         </a>
 
         <a
             href="?filtro=riesgo3"
-            class="jovenes__tag jovenes__tag--alto <?= $filtro === 'riesgo3' ? 'jovenes__tag--active' : '' ?>"
+            class="filter-chip filter-chip--critical <?= $filtro === 'riesgo3' ? 'filter-chip--active' : '' ?>"
         >
-            Alto riesgo
+            Alto Riesgo
         </a>
 
     </div>
-
-    <!-- BUSCADOR -->
 
     <div class="search-bar">
 
@@ -381,7 +418,11 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+</div>
+
     <!-- TABLA -->
+
+    <div class="page-section">
 
     <div class="table-container">
 
@@ -493,23 +534,31 @@ require_once __DIR__ . "/../../includes/header.php";
                     )) ?>
 
                 </td>
+<td
+<?= $j["estado_actividad"] === "ACTIVO"
+    ? 'data-order="1"'
+    : 'data-order="2"' ?>
+>
 
-                <td
-                <?= $j["estado_actividad"] === "ACTIVO"
-                    ? 'data-order="1"'
-                    : 'data-order="2"' ?>
-                >
+<?php
 
-                    <span
-                        class="estado
-                        <?= match($j["estado_actividad"]) {
-                            "ACTIVO" => "estado--activo",
-                            "INACTIVO" => "estado--inactivo",
-                            default => "estado--eliminado"
-                        } ?>">
-                    </span>
+$estadoClase = match($j["estado_actividad"]) {
+    "ACTIVO" => "estado--activo",
+    "INACTIVO" => "estado--inactivo",
+    default => "estado--eliminado"
+};
 
-                </td>
+?>
+
+<span class="estado-label">
+
+    <span class="estado <?= $estadoClase ?>"></span>
+
+    <?= ucfirst(strtolower($j["estado_actividad"])) ?>
+
+</span>
+
+</td>
 
                 <td
                     title="<?= htmlspecialchars($conexionReal) ?>"
@@ -677,6 +726,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </table>
 
+    </div>
+    
     </div>
 
 </div>

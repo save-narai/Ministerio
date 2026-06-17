@@ -40,6 +40,7 @@
         color .22s ease;
 }
 
+
 /* =========================================================
    HOVER
 ========================================================= */
@@ -86,25 +87,20 @@
     box-shadow:
         0 16px 30px rgba(255,95,46,.28);
 }
-
 /* =========================================================
    SECONDARY
 ========================================================= */
 
-.btn-back{
+.btn-secondary{
 
-    background:
-        rgba(255,255,255,.08);
+    background:var(--container);
 
     color:var(--text);
 
     border:var(--border);
 
-    backdrop-filter:blur(14px);
-
     box-shadow:var(--shadow);
 }
-
 
 /* =========================================================
    SECONDARY HOVER
@@ -112,12 +108,37 @@
 
 .btn-secondary:hover{
 
-    background:
-        rgba(255,255,255,.1);
+    transform:translateY(-2px);
 
-    border-color:
-        rgba(255,255,255,.08);
+    box-shadow:var(--shadow-hover);
 }
+
+
+/* =========================================================
+   SEGUIMIENTO
+========================================================= */
+
+.btn-seguimiento{
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        );
+
+    color:#fff;
+
+    box-shadow:
+        0 10px 22px rgba(37,99,235,.25);
+}
+
+.btn-seguimiento:hover{
+
+    box-shadow:
+        0 14px 28px rgba(37,99,235,.30);
+}
+
 
 /* =========================================================
    SUCCESS
@@ -332,9 +353,7 @@
 
 .btn-pdf{
 
-    background:
-        rgba(255,255,255,.05);
-
+color:#fff;
     color:var(--text);
 
     border:var(--border);
@@ -599,10 +618,13 @@ html.dark .export-option:hover{
    DARK MODE
 ========================================================= */
 
-html.dark .btn-secondary,
-html.dark .btn-pdf{
+hhtml.dark .btn-secondary{
 
     background:
         rgba(255,255,255,.04);
+
+    color:var(--text);
+
+    border:var(--border);
 }
 
