@@ -137,33 +137,44 @@
 
     flex-wrap:wrap;
 }
-
 /* =========================================================
    LISTA
 ========================================================= */
 
 .lista{
 
-    background:var(--container);
+    display:flex;
 
-    border:var(--border);
+    flex-direction:column;
 
-    border-radius:24px;
+    gap:12px;
 
-    box-shadow:var(--shadow);
-
-    max-height:520px;
+    max-height:650px;
 
     overflow-y:auto;
 
-    padding:14px;
+    padding:6px;
+
+    scrollbar-width:thin;
+}
+
+.lista::-webkit-scrollbar{
+
+    width:8px;
+}
+
+.lista::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:999px;
 }
 
 /* =========================================================
-   FILA
+   ATTENDANCE CARD
 ========================================================= */
 
-.fila{
+.attendance-card{
 
     display:flex;
 
@@ -173,25 +184,26 @@
 
     gap:20px;
 
-    padding:14px;
+    padding:18px 22px;
 
-    border-radius:16px;
+    background:var(--container);
+
+    border:var(--border);
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow);
 
     transition:var(--transition);
 }
 
-/* HOVER */
+.attendance-card:hover{
 
-.fila:hover{
+    transform:translateY(-3px);
 
-    background:rgba(255,255,255,.04);
-}
+    border-color:var(--primary);
 
-/* SEPARADOR */
-
-.fila + .fila{
-
-    margin-top:8px;
+    box-shadow:var(--shadow-hover);
 }
 
 /* =========================================================
@@ -209,7 +221,9 @@
 
 .info strong{
 
-    font-size:14px;
+    font-size:15px;
+
+    font-weight:700;
 
     color:var(--text);
 }
@@ -224,7 +238,7 @@
 
     align-items:center;
 
-    gap:10px;
+    gap:12px;
 
     flex-wrap:wrap;
 }
@@ -237,11 +251,11 @@
 
     position:relative;
 
-    width:36px;
+    width:42px;
 
-    height:36px;
+    height:42px;
 
-    border-radius:12px;
+    border-radius:14px;
 
     display:flex;
 
@@ -264,21 +278,15 @@
     overflow:hidden;
 }
 
-/* HOVER */
-
 .checks-grid label:hover{
 
     transform:translateY(-2px);
 }
 
-/* HIDE INPUT */
-
 .checks-grid input{
 
     display:none;
 }
-
-/* SPAN */
 
 .checks-grid span{
 
@@ -291,28 +299,20 @@
    CHECKED STATES
 ========================================================= */
 
-/* ASISTENCIA */
-
 .checks-grid label:nth-child(1) input:checked + span{
 
     background:#22c55e;
 }
-
-/* CONEXION */
 
 .checks-grid label:nth-child(2) input:checked + span{
 
     background:#3b82f6;
 }
 
-/* DISCIPULADO */
-
 .checks-grid label:nth-child(3) input:checked + span{
 
     background:#a855f7;
 }
-
-/* PRIMERA VEZ */
 
 .checks-grid label:nth-child(4) input:checked + span{
 
@@ -338,6 +338,9 @@
     color:#fff;
 
     border-radius:10px;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.15);
 }
 
 /* =========================================================
@@ -355,7 +358,7 @@
 
 @media(max-width:768px){
 
-    .fila{
+    .attendance-card{
 
         flex-direction:column;
 
@@ -365,11 +368,6 @@
     .checks-grid{
 
         width:100%;
-    }
-
-    .marcar__header{
-
-        align-items:flex-start;
     }
 }
 

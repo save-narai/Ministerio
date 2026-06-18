@@ -1,0 +1,188 @@
+/* =========================================================
+   ATTENDANCE CARD
+========================================================= */
+
+.attendance-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:18px 22px;
+
+    background:var(--container);
+
+    border:var(--border);
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow);
+
+    transition:var(--transition);
+}
+
+.attendance-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:var(--primary);
+
+    box-shadow:var(--shadow-hover);
+}
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+}
+
+.info strong{
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:var(--text);
+}
+
+/* =========================================================
+   CHECKS
+========================================================= */
+
+.checks-grid{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.checks-grid label{
+
+    position:relative;
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    transition:var(--transition);
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    overflow:hidden;
+}
+
+.checks-grid label:hover{
+
+    transform:translateY(-2px);
+}
+
+.checks-grid input{
+
+    display:none;
+}
+
+.checks-grid span{
+
+    position:relative;
+
+    z-index:2;
+}
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+.checks-grid label:nth-child(1) input:checked + span{
+
+    background:#22c55e;
+}
+
+.checks-grid label:nth-child(2) input:checked + span{
+
+    background:#3b82f6;
+}
+
+.checks-grid label:nth-child(3) input:checked + span{
+
+    background:#a855f7;
+}
+
+.checks-grid label:nth-child(4) input:checked + span{
+
+    background:#f59e0b;
+}
+
+.checks-grid input:checked + span{
+
+    width:100%;
+
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#fff;
+
+    border-radius:10px;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.15);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .attendance-card{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .checks-grid{
+
+        width:100%;
+    }
+
+}

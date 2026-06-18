@@ -61,22 +61,18 @@ function initExportButtons(table){
 
     });
 
-}
-
-/* =====================================================
-       volt doc
+    /* =====================================================
+       WORD
     ===================================================== */
 
+    document
+    .getElementById('exportWord')
+    ?.addEventListener('click', () => {
 
+        const tablaHtml =
+        table.table().node();
 
-document
-.getElementById('exportWord')
-?.addEventListener('click', () => {
-
-    const tablaHtml =
-    table.table().node();
-
-    const contenido = `
+        const contenido = `
         <html>
         <head>
             <meta charset="utf-8">
@@ -86,24 +82,26 @@ document
             ${tablaHtml.outerHTML}
         </body>
         </html>
-    `;
+        `;
 
-    const blob = new Blob(
-        [contenido],
-        {
-            type:'application/msword'
-        }
-    );
+        const blob = new Blob(
+            [contenido],
+            {
+                type:'application/msword'
+            }
+        );
 
-    const enlace =
-    document.createElement('a');
+        const enlace =
+        document.createElement('a');
 
-    enlace.href =
-    URL.createObjectURL(blob);
+        enlace.href =
+        URL.createObjectURL(blob);
 
-    enlace.download =
-    'registros.doc';
+        enlace.download =
+        'registros.doc';
 
-    enlace.click();
+        enlace.click();
 
-});
+    });
+
+}

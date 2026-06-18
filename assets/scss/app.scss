@@ -35,6 +35,8 @@
 @import 'components/gx-stats';
 @import 'components/gx-toolbar';
 @import 'components/filters';
+@import 'components/stats';
+@import 'components/attendance-card';
 
 
 
@@ -50,5 +52,9 @@
 @import 'modules/jovenes/ver';
 
 @import 'modules/reuniones/reuniones';
+@import 'modules/reuniones/crear';
+@import 'modules/reuniones/editar';
+@import 'modules/reuniones/ver';
+@import 'modules/reuniones/marcar';
 
 @import 'modules/seguimientos/seguimientos';

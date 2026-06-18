@@ -7,7 +7,6 @@ require_once __DIR__ . "/../../config/conexion.php";
 if (!tienePermiso('gestionar_reuniones')) {
 
     header("Location: ../dashboard.php");
-
     exit;
 }
 
@@ -75,19 +74,14 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total = count($data);
 
 $asistieron = 0;
-
 $servidores = 0;
-
 $servidoresAsist = 0;
-
 $conexion = 0;
-
 $discipulado = 0;
 
 foreach ($data as $d) {
 
     if ($d["asistio"]) {
-
         $asistieron++;
     }
 
@@ -96,18 +90,15 @@ foreach ($data as $d) {
         $servidores++;
 
         if ($d["asistio"]) {
-
             $servidoresAsist++;
         }
     }
 
     if ($d["participa_discipulado"]) {
-
         $discipulado++;
     }
 
     if ($d["primera_vez_discipulado"]) {
-
         $conexion++;
     }
 }
@@ -117,17 +108,32 @@ $porcentaje = $total > 0
     : 0;
 
 /* =========================
+   CONFIG EXTRA
+========================= */
+
+$mostrarDiscipulado = in_array(
+    $reunion["tipo"],
+    ["GRUPO_CONEXION", "DISCIPULADO"]
+);
+
+$estadoAsistencia =
+    $porcentaje >= 70
+        ? "Excelente"
+        : (
+            $porcentaje >= 40
+                ? "Regular"
+                : "Baja"
+        );
+
+/* =========================
    TIPO BONITO
 ========================= */
 
 $tipoBonito = match($reunion["tipo"]) {
 
     "REUNION_JOVENES" => "Reunión Jóvenes",
-
     "GRUPO_CONEXION" => "Grupo Conexión",
-
     "DISCIPULADO" => "Discipulado",
-
     "EVENTO_ESPECIAL" => "Evento Especial",
 
     default => $reunion["tipo"]
@@ -145,112 +151,259 @@ require_once __DIR__ . "/../../includes/header.php";
 
 ?>
 
-<div class="ver">
+<div class="page">
 
     <!-- HEADER -->
 
-    <div class="ver__header">
+    <div class="page-header">
 
-        <div>
+        <div class="page-header-left">
 
-            <h1>
-                Informe reunión
+            <h1 class="page-title">
+                Informe de Reunión
             </h1>
 
-            <span>
+            <div class="page-subtitle">
+
                 <?= $tipoBonito ?>
-                •
+
+                ·
+
                 <?= date("d/m/Y", strtotime($reunion["fecha"])) ?>
-            </span>
+
+            </div>
 
         </div>
 
-        <div class="ver__actions">
+        <div class="page-header-right">
 
-            <a
-            href="reporte_reunion_pdf.php?id=<?= $reunion_id ?>"
-            class="btn-pdf"
-            target="_blank">
+            <div class="export-dropdown">
 
-                 Descargar PDF
+                <button
+                    type="button"
+                    class="export-dropdown__trigger"
+                >
 
-            </a>
+                    <i class="fa-solid fa-download"></i>
+
+                    Exportar
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </button>
+
+                <div class="export-dropdown__menu">
+
+                    <a
+                        href="reporte_reunion_pdf.php?id=<?= $reunion_id ?>"
+                        target="_blank"
+                        class="export-option"
+                    >
+
+                        <i class="fa-solid fa-file-pdf"></i>
+
+                        PDF
+
+                    </a>
+
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportExcel"
+                    >
+
+                        <i class="fa-solid fa-file-excel"></i>
+
+                        Excel
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportWord"
+                    >
+
+                        <i class="fa-solid fa-file-word"></i>
+
+                        Word
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportCsv"
+                    >
+
+                        <i class="fa-solid fa-file-csv"></i>
+
+                        CSV
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportPrint"
+                    >
+
+                        <i class="fa-solid fa-print"></i>
+
+                        Imprimir
+
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-    <!-- CARDS -->
+   
 
-    <div class="cards">
+<!-- ESTADÍSTICAS -->
 
-        <div class="card">
-            <h3>Total</h3>
-            <p><?= $total ?></p>
-        </div>
+<div class="stats-grid reunion-stats">
 
-        <div class="card">
-            <h3>Asistencia</h3>
-            <p><?= $asistieron ?></p>
-        </div>
+    <div class="stat-card info">
 
-        <div class="card">
-            <h3>Porcentaje</h3>
-            <p><?= $porcentaje ?>%</p>
-        </div>
+        <span class="stat-number">
+            <?= $total ?>
+        </span>
 
-        <div class="card">
-            <h3>Servidores</h3>
-            <p><?= $servidoresAsist ?>/<?= $servidores ?></p>
-        </div>
-
-        <div class="card">
-            <h3>Discipulado</h3>
-            <p><?= $discipulado ?></p>
-        </div>
-
-        <div class="card">
-            <h3>Primera vez</h3>
-            <p><?= $conexion ?></p>
-        </div>
+        <span class="stat-label">
+            Total registros
+        </span>
 
     </div>
 
-    <!-- PROGRESS -->
+    <div class="stat-card success">
 
-    <?php if($porcentaje > 0): ?>
+        <span class="stat-number">
+            <?= $asistieron ?>
+        </span>
 
-    <div class="progress">
-
-        <div
-        class="progress-bar"
-        style="width: <?= $porcentaje ?>%">
-
-        </div>
+        <span class="stat-label">
+            Asistieron
+        </span>
 
     </div>
 
-    <?php endif; ?>
+    <div class="stat-card info">
 
-    <!-- TABLA -->
+        <span class="stat-number">
+            <?= $porcentaje ?>%
+        </span>
 
-    <div class="tabla">
+        <span class="stat-label">
+            Asistencia
+        </span>
 
-        <table>
+    </div>
+
+    <div class="stat-card purple">
+
+        <span class="stat-number">
+            <?= $servidoresAsist ?>/<?= $servidores ?>
+        </span>
+
+        <span class="stat-label">
+            Servidores
+        </span>
+
+    </div>
+
+</div>
+
+<!-- TABLA -->
+
+<div class="page-section">
+
+    <h3 class="page-section-title">
+        Participantes registrados
+    </h3>
+
+    <div class="search-bar reunion-search">
+
+        <input
+            type="text"
+            id="buscarParticipante"
+            class="search-input"
+            placeholder="Buscar participante..."
+        >
+
+    </div>
+
+    <br>
+
+    <div class="filters-bar reunion-filters">
+
+        <button
+            type="button"
+            class="filter-chip filter-chip--active"
+            data-filter="todos"
+        >
+            Todos
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filter="asistio"
+        >
+            Asistieron
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filter="falto"
+        >
+            Faltaron
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filter="teen"
+        >
+            Teen
+        </button>
+
+        <button
+            type="button"
+            class="filter-chip"
+            data-filter="remanente"
+        >
+            Remanente
+        </button>
+
+    </div>
+
+    <div class="table-wrapper reunion-table-wrapper">
+
+      <table
+    id="tablaParticipantes"
+    class="table"
+>
 
             <thead>
 
                 <tr>
 
                     <th>Nombre</th>
-
                     <th>Servidor</th>
-
                     <th>Grupo</th>
 
-                    <th>Discipulado</th>
+                    <?php if($mostrarDiscipulado): ?>
 
-                    <th>Primera vez</th>
+                        <th>Discipulado</th>
+                        <th>Primera vez</th>
+
+                    <?php endif; ?>
 
                     <th>Asistencia</th>
 
@@ -262,7 +415,10 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 <?php foreach($data as $d): ?>
 
-                <tr>
+                <tr
+                    data-grupo="<?= strtolower($d["grupo_edad"] ?? '') ?>"
+                    data-asistencia="<?= $d["asistio"] ? 'asistio' : 'falto' ?>"
+                >
 
                     <td>
                         <?= htmlspecialchars($d["nombre_completo"]) ?>
@@ -276,6 +432,8 @@ require_once __DIR__ . "/../../includes/header.php";
                         <?= $d["grupo_edad"] ?? "-" ?>
                     </td>
 
+                    <?php if($mostrarDiscipulado): ?>
+
                     <td>
                         <?= $d["participa_discipulado"] ? "✔" : "-" ?>
                     </td>
@@ -284,15 +442,23 @@ require_once __DIR__ . "/../../includes/header.php";
                         <?= $d["primera_vez_discipulado"] ? "✔" : "-" ?>
                     </td>
 
+                    <?php endif; ?>
+
                     <td>
 
-                        <span class="<?= $d["asistio"] ? 'ok' : 'no' ?>">
+                        <?php if($d["asistio"]): ?>
 
-                            <?= $d["asistio"]
-                                ? "Asistió"
-                                : "Faltó" ?>
+                            <span class="badge badge-success">
+                                Asistió
+                            </span>
 
-                        </span>
+                        <?php else: ?>
+
+                            <span class="badge badge-danger">
+                                Faltó
+                            </span>
+
+                        <?php endif; ?>
 
                     </td>
 
@@ -306,16 +472,29 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <br>
-
-    <a
-    href="index.php"
-    class="btn-volver">
-
-         Volver
-
-    </a>
+     </div>
 
 </div>
+
+    <!-- BOTONES -->
+
+    <div class="btn-group">
+
+        <a
+            href="index.php"
+            class="btn btn-secondary"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Volver
+
+        </a>
+
+    </div>
+
+</div>
+
+<script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/reuniones-ver.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

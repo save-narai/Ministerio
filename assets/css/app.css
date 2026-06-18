@@ -1443,7 +1443,7 @@ html.dark select {
   min-width: auto;
   margin-top: 14px;
 }
-
+.
 /* =========================================================
    TABLE HEAD
 ========================================================= */
@@ -2726,6 +2726,75 @@ html.dark .page-section-title {
   }
 }
 /* =========================================================
+   STATS GRID
+========================================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+.stat-card {
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  transition: 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* LIGHT */
+html:not(.dark) .stat-card {
+  background: #fff;
+}
+
+/* HOVER */
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+/* =========================================================
+   NUMBER
+========================================================= */
+.stat-number {
+  display: block;
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+/* =========================================================
+   LABEL
+========================================================= */
+.stat-label {
+  font-size: 13px;
+  opacity: 0.82;
+}
+
+/* =========================================================
+   COLORS
+========================================================= */
+.stat-card.success {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.stat-card.danger {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.stat-card.info {
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.stat-card.purple {
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+/* =========================================================
    MODULES
 ========================================================= */
 /* =====================================================
@@ -3469,7 +3538,109 @@ html.dark .check-custom input:checked + .checkmark {
 }
 
 /* =========================================================
-   BADGES TIPOS
+   FILTROS
+========================================================= */
+.reuniones-filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   TIPOS
+========================================================= */
+.reuniones-tipos {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reuniones-tipos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border);
+  transition: var(--transition);
+}
+
+.reuniones-tipos a:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.reuniones-tipos a.active {
+  background: var(--card-gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   TOOLS
+========================================================= */
+.reuniones-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   MES
+========================================================= */
+.reuniones-tools input[type=month] {
+  min-width: 180px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: var(--border);
+  background: var(--container);
+  color: var(--text);
+}
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+.reuniones-tools .search-input {
+  min-width: 260px;
+}
+
+.reuniones-tools .search-wrapper {
+  position: relative;
+}
+
+.reuniones-tools .search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-soft);
+}
+
+.reuniones-tools .search-input {
+  padding-left: 40px;
+}
+
+/* =========================================================
+   TABLA
+========================================================= */
+.table-wrapper {
+  max-height: 650px;
+  overflow: auto;
+}
+
+/* =========================================================
+   BADGES
 ========================================================= */
 .tipo-reunion_jovenes {
   background: #3b82f6;
@@ -3483,14 +3654,14 @@ html.dark .check-custom input:checked + .checkmark {
   border: none;
 }
 
-.tipo-discipulado {
-  background: #f97316;
+.tipo-evento_especial {
+  background: #9333ea;
   color: #fff;
   border: none;
 }
 
-.tipo-evento_especial {
-  background: #9333ea;
+.tipo-discipulado {
+  background: #f97316;
   color: #fff;
   border: none;
 }
@@ -3515,18 +3686,7 @@ html.dark .check-custom input:checked + .checkmark {
 }
 
 /* =========================================================
-   TABLE ACTIONS
-========================================================= */
-.table-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* =========================================================
-   BTN SUCCESS
+   BOTON MARCAR
 ========================================================= */
 .btn-success {
   background: rgba(34, 197, 94, 0.12);
@@ -3535,60 +3695,37 @@ html.dark .check-custom input:checked + .checkmark {
 }
 
 .btn-success:hover {
-  transform: translateY(-2px);
   background: rgba(34, 197, 94, 0.18);
 }
 
 /* =========================================================
-   RESUMEN FUTURO
+   ACCIONES
 ========================================================= */
-.reunion-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-}
-
-.reunion-stat {
-  background: var(--container);
-  border: var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-}
-
-.reunion-stat-title {
-  font-size: 13px;
-  color: var(--text-soft);
-  margin-bottom: 8px;
-}
-
-.reunion-stat-value {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--text);
-}
-
-/* =========================================================
-   DATATABLE
-========================================================= */
-.dataTables_wrapper {
-  width: 100%;
-}
-
-.dataTables_filter {
-  display: none;
+.table-actions {
+  justify-content: center;
 }
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 @media (max-width: 768px) {
-  .table-actions {
-    justify-content: flex-start;
+  .reuniones-filtros {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .reuniones-tools {
+    width: 100%;
+  }
+  .reuniones-tools input[type=month] {
+    width: 100%;
+  }
+  .reuniones-tools .search-input {
+    width: 100%;
+    min-width: 100%;
   }
 }
 /* =========================================================
-   ANIMATION
+   ANIMACION
 ========================================================= */
 @keyframes fadeIn {
   from {

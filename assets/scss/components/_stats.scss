@@ -77,27 +77,34 @@ html:not(.dark) .stat-card{
 /* =========================================================
    COLORS
 ========================================================= */
+.stat-card.info{
+    border:2px solid rgba(59,130,246,.55);
+
+    box-shadow:
+        0 0 0 1px rgba(59,130,246,.15),
+        0 0 18px rgba(59,130,246,.12);
+}
 
 .stat-card.success{
+    border:2px solid rgba(34,197,94,.55);
 
-    border-color:
-        rgba(34,197,94,.35);
-}
-
-.stat-card.danger{
-
-    border-color:
-        rgba(239,68,68,.35);
-}
-
-.stat-card.info{
-
-    border-color:
-        rgba(59,130,246,.35);
+    box-shadow:
+        0 0 0 1px rgba(34,197,94,.15),
+        0 0 18px rgba(34,197,94,.12);
 }
 
 .stat-card.purple{
+    border:2px solid rgba(168,85,247,.55);
 
-    border-color:
-        rgba(168,85,247,.35);
+    box-shadow:
+        0 0 0 1px rgba(168,85,247,.15),
+        0 0 18px rgba(168,85,247,.12);
+}
+
+.stat-card.danger{
+    border:2px solid rgba(239,68,68,.55);
+
+    box-shadow:
+        0 0 0 1px rgba(239,68,68,.15),
+        0 0 18px rgba(239,68,68,.12);
 }
