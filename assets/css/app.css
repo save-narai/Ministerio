@@ -693,11 +693,47 @@ html.dark {
 }
 
 /* =========================================================
-   SECONDARY HOVER
+   BOTON SECUNDARIO
 ========================================================= */
-.btn-secondary:hover {
+.btn-secondary,
+.btn-back {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: var(--transition);
+}
+
+.btn-secondary:hover,
+.btn-back:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  border-color: var(--primary);
+  box-shadow: 0 10px 24px rgba(255, 95, 46, 0.15);
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+html.dark .btn-secondary,
+html.dark .btn-back {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+html.dark .btn-secondary:hover,
+html.dark .btn-back:hover {
+  border-color: #00e5ff;
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.18);
+}
+
+.btn-back i {
+  margin-right: 8px;
+  transition: 0.25s ease;
+}
+
+.btn-back:hover i {
+  transform: translateX(-3px);
 }
 
 /* =========================================================
@@ -1443,7 +1479,7 @@ html.dark select {
   min-width: auto;
   margin-top: 14px;
 }
-.
+
 /* =========================================================
    TABLE HEAD
 ========================================================= */
@@ -2778,22 +2814,368 @@ html:not(.dark) .stat-card {
 /* =========================================================
    COLORS
 ========================================================= */
-.stat-card.success {
-  border-color: rgba(34, 197, 94, 0.35);
-}
-
-.stat-card.danger {
-  border-color: rgba(239, 68, 68, 0.35);
-}
-
 .stat-card.info {
-  border-color: rgba(59, 130, 246, 0.35);
+  border: 2px solid rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.15), 0 0 18px rgba(59, 130, 246, 0.12);
+}
+
+.stat-card.success {
+  border: 2px solid rgba(34, 197, 94, 0.55);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.15), 0 0 18px rgba(34, 197, 94, 0.12);
 }
 
 .stat-card.purple {
-  border-color: rgba(168, 85, 247, 0.35);
+  border: 2px solid rgba(168, 85, 247, 0.55);
+  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.15), 0 0 18px rgba(168, 85, 247, 0.12);
 }
 
+.stat-card.danger {
+  border: 2px solid rgba(239, 68, 68, 0.55);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15), 0 0 18px rgba(239, 68, 68, 0.12);
+}
+
+/* =========================================================
+   CONTENEDOR GENERAL
+========================================================= */
+.attendance-section {
+  background: var(--container);
+  border: var(--border);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 28px;
+}
+
+/* =========================================================
+   CABECERA
+========================================================= */
+.attendance-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: var(--border);
+}
+
+.attendance-section-header h3 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* =========================================================
+   INDICADORES SUPERIORES
+========================================================= */
+.attendance-head-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.attendance-head-actions span {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: default;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.attendance-head-actions span:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.attendance-head-actions span:nth-child(1) {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.attendance-head-actions span:nth-child(2) {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.attendance-head-actions span:nth-child(3) {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+}
+
+.attendance-head-actions span:nth-child(4) {
+  background: linear-gradient(135deg, #ea580c, #f59e0b);
+}
+
+/* =========================================================
+   LISTA
+========================================================= */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 650px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+}
+
+.lista::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lista::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   TARJETAS
+========================================================= */
+.attendance-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 24px;
+  background: var(--surface);
+  border: var(--border);
+  border-radius: 20px;
+  transition: var(--transition);
+}
+
+.attendance-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+/* =========================================================
+   INFORMACIÓN
+========================================================= */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.info small {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* =========================================================
+   CHECKS
+========================================================= */
+.checks-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.checks-grid label {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  background: var(--container);
+  border: var(--border);
+  transition: 0.25s ease;
+  overflow: hidden;
+}
+
+.checks-grid input {
+  display: none;
+}
+
+.checks-grid span {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 800;
+  transition: 0.25s ease, transform 0.2s ease;
+}
+
+.checks-grid label:hover {
+  transform: scale(1.06);
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   ESTADOS ACTIVOS
+========================================================= */
+.checks-grid input:checked + span {
+  transform: scale(1.08);
+  color: #fff;
+}
+
+.checks-grid label:nth-child(1) input:checked + span {
+  background: #22c55e;
+}
+
+.checks-grid label:nth-child(2) input:checked + span {
+  background: #3b82f6;
+}
+
+.checks-grid label:nth-child(3) input:checked + span {
+  background: #a855f7;
+}
+
+.checks-grid label:nth-child(4) input:checked + span {
+  background: #f59e0b;
+}
+
+/* =========================================================
+   CHECKS GRID
+========================================================= */
+.checks-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.checks-grid label {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--container);
+  border: var(--border);
+  transition: 0.25s ease;
+  overflow: hidden;
+}
+
+/* =========================================================
+   COLORES BASE SEGÚN FUNCIÓN
+========================================================= */
+/* ASISTENCIA */
+.checks-grid label:nth-child(1) {
+  border: 1px solid rgba(34, 197, 94, 0.45);
+}
+
+/* CONEXIÓN */
+.checks-grid label:nth-child(2) {
+  border: 1px solid rgba(59, 130, 246, 0.45);
+}
+
+/* DISCIPULADO */
+.checks-grid label:nth-child(3) {
+  border: 1px solid rgba(168, 85, 247, 0.45);
+}
+
+/* PRIMERA VEZ */
+.checks-grid label:nth-child(4) {
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+.checks-grid label:hover {
+  transform: scale(1.06);
+}
+
+.checks-grid label:nth-child(1):hover {
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.2);
+}
+
+.checks-grid label:nth-child(2):hover {
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.2);
+}
+
+.checks-grid label:nth-child(3):hover {
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.2);
+}
+
+.checks-grid label:nth-child(4):hover {
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.2);
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+.checks-grid input {
+  display: none;
+}
+
+.checks-grid span {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-soft);
+  transition: 0.25s ease;
+}
+
+/* =========================================================
+   ESTADOS ACTIVOS
+========================================================= */
+.checks-grid label:nth-child(1) input:checked + span {
+  background: #22c55e;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+}
+
+.checks-grid label:nth-child(2) input:checked + span {
+  background: #3b82f6;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+}
+
+.checks-grid label:nth-child(3) input:checked + span {
+  background: #a855f7;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.45);
+}
+
+.checks-grid label:nth-child(4) input:checked + span {
+  background: #f59e0b;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.45);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .attendance-section {
+    padding: 20px;
+  }
+  .attendance-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .attendance-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .checks-grid {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
 /* =========================================================
    MODULES
 ========================================================= */
@@ -3738,163 +4120,457 @@ html.dark .check-custom input:checked + .checkmark {
   }
 }
 /* =========================================================
-   HEADER
+   CREAR REUNION
 ========================================================= */
-.header-flex {
+.reunion-form {
+  animation: fadeIn 0.35s ease;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   REUNION STATS
+========================================================= */
+.reunion-stats {
+  margin-bottom: 24px;
+}
+
+.reunion-stats .stat-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reunion-stats .stat-card.info .stat-number {
+  color: #3b82f6;
+}
+
+.reunion-stats .stat-card.success .stat-number {
+  color: #22c55e;
+}
+
+.reunion-stats .stat-card.purple .stat-number {
+  color: #a855f7;
+}
+
+.reunion-stats .stat-card.orange .stat-number {
+  color: #f97316;
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+.progress {
+  width: 100%;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+html.dark .progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--card-gradient);
+  transition: width 0.5s ease;
+}
+
+/* =========================================================
+   REUNION SEARCH
+========================================================= */
+.reunion-search {
+  margin-bottom: 16px;
+}
+
+/* =========================================================
+   REUNION FILTERS
+========================================================= */
+.reunion-filters {
+  margin-bottom: 18px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+.badge-success,
+.badge-danger {
+  min-width: 80px;
+  justify-content: center;
+}
+
+/* =========================================================
+   PAGE SECTION
+========================================================= */
+.page-section {
+  animation: fadeIn 0.35s ease;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .attendance-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .filter-chip {
+    width: 100%;
+  }
+}
+@media (max-width: 520px) {
+  .reunion-stats {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   PAGE
+========================================================= */
+.marcar {
+  animation: fadeIn 0.4s ease;
+}
+
+/* =========================================================
+   TOOLBAR SUPERIOR
+========================================================= */
+.marcar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 60px;
+  margin-bottom: 32px;
+}
+
+/* =========================================================
+   FILTROS
+========================================================= */
+.marcar-filters {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   BUSCADOR + BOTONES
+========================================================= */
+.marcar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.marcar-actions .search-bar {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+}
+
+.marcar-actions .btn-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   TOTAL PARTICIPANTES
+========================================================= */
+.attendance-total {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.attendance-total i {
+  color: var(--primary);
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+.attendance-section {
+  margin-top: 30px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--container);
+  border: var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   HEADER PARTICIPANTES
+========================================================= */
+.attendance-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 28px;
 }
 
-.header-flex h2 {
-  font-size: 30px;
+.attendance-section-header h3 {
+  margin: 0;
+  font-size: 34px;
   font-weight: 800;
+  color: var(--text);
 }
 
-.header-meta {
+/* =========================================================
+   INDICADORES CABECERA
+========================================================= */
+.attendance-head-actions {
   display: flex;
-  align-items: center;
   gap: 12px;
-  margin-top: 8px;
-  flex-wrap: wrap;
 }
 
-.header-sub {
-  font-size: 13px;
-  color: var(--text-soft);
-}
-
-/* =========================================================
-   BLOQUES
-========================================================= */
-.bloque-scroll {
-  position: relative;
-  overflow: hidden;
-  border-radius: 26px;
-  background: var(--container);
-  border: var(--border);
-  box-shadow: var(--shadow);
-  margin-bottom: 34px;
-}
-
-/* =========================================================
-   HEADER BLOQUE
-========================================================= */
-.bloque-header {
+.attendance-head-actions span {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 24px;
-  border-bottom: var(--border);
-}
-
-/* =========================================================
-   TITLES
-========================================================= */
-.section-title h3 {
-  font-size: 18px;
+  justify-content: center;
+  font-size: 10px;
   font-weight: 800;
-  background: var(--title-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #fff;
+  cursor: default;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.section-sub {
-  margin-top: 5px;
-  font-size: 13px;
-  color: var(--text-soft);
+.attendance-head-actions span:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 
 /* =========================================================
-   LISTA
+   COLORES INDICADORES
 ========================================================= */
-.lista {
+.attendance-head-actions span:nth-child(1) {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.attendance-head-actions span:nth-child(2) {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.attendance-head-actions span:nth-child(3) {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+}
+
+.attendance-head-actions span:nth-child(4) {
+  background: linear-gradient(135deg, #ea580c, #f59e0b);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .marcar-toolbar {
+    margin-top: 28px;
+  }
+  .marcar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .marcar-actions .search-bar {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .attendance-section {
+    padding: 20px;
+  }
+  .attendance-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .attendance-head-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* =========================================================
+   ANIMATION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   PAGE
+========================================================= */
+.seguimientos-page {
+  animation: fadeIn 0.4s ease;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.badge-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 95, 46, 0.14), rgba(255, 60, 172, 0.14));
+  border: 1px solid rgba(255, 95, 46, 0.25);
+  color: #ff5f2e;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+html.dark .badge-info {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.12), rgba(0, 255, 204, 0.12));
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  color: #00e5ff;
+}
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+.seguimientos-alertas {
   display: flex;
   flex-direction: column;
-  max-height: 500px;
-  overflow-y: auto;
+  gap: 16px;
 }
 
 /* =========================================================
-   ITEM
+   CARD ALERTA
 ========================================================= */
-.lista-item {
+.seguimiento-alerta-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  padding: 18px 24px;
-  border-top: var(--border);
-  transition: 0.25s ease;
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: var(--border);
+  transition: var(--transition);
 }
 
-.lista-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-html.dark .lista-item:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-/* =========================================================
-   LEFT / RIGHT
-========================================================= */
-.lista-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.lista-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.seguimiento-alerta-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
 }
 
 /* =========================================================
-   AVATAR
+   CARD - IZQUIERDA
 ========================================================= */
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+.seguimiento-alerta-left {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-weight: 800;
-  color: #fff;
-  background: var(--card-gradient);
-  background-size: 300% 300%;
-  animation: liquidFlow 10s ease infinite;
-  box-shadow: var(--shadow);
+  gap: 16px;
 }
 
-/* =========================================================
-   TEXTOS
-========================================================= */
-.nombre {
+.seguimiento-alerta-left h4 {
+  margin: 0;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
 }
 
-.sub {
+.seguimiento-alerta-left span {
+  display: block;
   margin-top: 4px;
   font-size: 13px;
   color: var(--text-soft);
 }
 
 /* =========================================================
-   TABLA WRAPPER
+   CARD - DERECHA
 ========================================================= */
-.bloque-body {
-  max-height: 650px;
-  overflow: auto;
+.seguimiento-alerta-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   AVATAR
+========================================================= */
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--card-gradient);
+  box-shadow: var(--shadow);
 }
 
 /* =========================================================
@@ -3905,7 +4581,7 @@ html.dark .lista-item:hover {
   align-items: center;
   justify-content: center;
   padding: 7px 14px;
-  border-radius: 12px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
 }
@@ -3916,8 +4592,8 @@ html.dark .lista-item:hover {
   color: #ef4444;
 }
 
-/* PROCESO */
-.estado.en_proceso {
+/* EN PROCESO */
+.estado.en-proceso {
   background: rgba(245, 158, 11, 0.15);
   color: #f59e0b;
 }
@@ -3929,63 +4605,379 @@ html.dark .lista-item:hover {
 }
 
 /* =========================================================
-   MINI BUTTONS
+   BOTONES
 ========================================================= */
-.btn-mini {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 14px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  transition: 0.25s ease;
-}
-
-/* CHICOS */
-.btn-mini.chico {
-  background: linear-gradient(135deg, #ff9a44, #ff4b2b, #ff416c);
-}
-
-/* CHICAS */
-.btn-mini.chica {
-  background: linear-gradient(135deg, #a855f7, #ec4899);
-}
-
-.btn-mini:hover {
-  transform: translateY(-2px) scale(1.03);
+.btn-sm {
+  padding: 10px 16px;
+  font-size: 13px;
 }
 
 /* =========================================================
-   SCROLL
+   ESTADO VACÍO
 ========================================================= */
-.bloque-body::-webkit-scrollbar,
-.lista::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.bloque-body::-webkit-scrollbar-thumb,
-.lista::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
+.ok {
+  padding: 28px;
+  border-radius: 20px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  font-weight: 700;
+  text-align: center;
 }
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 @media (max-width: 768px) {
-  .bloque-header {
-    align-items: flex-start;
-  }
-  .lista-item {
+  .seguimiento-alerta-card {
     flex-direction: column;
     align-items: flex-start;
   }
-  .lista-right {
+  .seguimiento-alerta-right {
     width: 100%;
     justify-content: space-between;
+  }
+  .page-header {
+    align-items: flex-start;
+  }
+  .page-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+/* =========================================================
+   STATS
+========================================================= */
+.reunion-stats {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.reunion-stats .stat-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reunion-stats .stat-card.info .stat-number {
+  color: #3b82f6;
+}
+
+.reunion-stats .stat-card.success .stat-number {
+  color: #22c55e;
+}
+
+.reunion-stats .stat-card.purple .stat-number {
+  color: #a855f7;
+}
+
+.reunion-stats .stat-card.orange .stat-number {
+  color: #fc7515;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+.gx-stat {
+  min-height: 110px;
+  padding: 24px;
+  border-radius: 22px;
+  background: var(--container);
+  border: 2px solid transparent;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: 0.25s ease;
+}
+
+.gx-stat:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   VALUE
+========================================================= */
+.gx-stat__value {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.reunion-stats .stat-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reunion-stats .stat-card.info .stat-number {
+  color: #3b82f6;
+}
+
+.reunion-stats .stat-card.success .stat-number {
+  color: #22c55e;
+}
+
+.reunion-stats .stat-card.purple .stat-number {
+  color: #a855f7;
+}
+
+.reunion-stats .stat-card.orange .stat-number {
+  color: #f97316;
+}
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   REUNIONES
+========================================================= */
+.reuniones {
+  animation: fadeIn 0.45s ease;
+}
+
+/* =========================================================
+   FILTROS
+========================================================= */
+.reuniones-filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   TIPOS
+========================================================= */
+.reuniones-tipos {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reuniones-tipos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border);
+  transition: var(--transition);
+}
+
+.reuniones-tipos a:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.reuniones-tipos a.active {
+  background: var(--card-gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   TOOLS
+========================================================= */
+.reuniones-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   MES
+========================================================= */
+.reuniones-tools input[type=month] {
+  min-width: 180px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: var(--border);
+  background: var(--container);
+  color: var(--text);
+}
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+.reuniones-tools .search-input {
+  min-width: 260px;
+}
+
+.reuniones-tools .search-wrapper {
+  position: relative;
+}
+
+.reuniones-tools .search-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-soft);
+}
+
+.reuniones-tools .search-input {
+  padding-left: 40px;
+}
+
+/* =========================================================
+   TABLA
+========================================================= */
+.table-wrapper {
+  max-height: 650px;
+  overflow: auto;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+.tipo-reunion_jovenes {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+}
+
+.tipo-grupo_conexion {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+}
+
+.tipo-evento_especial {
+  background: #9333ea;
+  color: #fff;
+  border: none;
+}
+
+.tipo-discipulado {
+  background: #f97316;
+  color: #fff;
+  border: none;
+}
+
+/* =========================================================
+   PORCENTAJES
+========================================================= */
+.porcentaje {
+  font-weight: 700;
+}
+
+.porcentaje.alto {
+  color: #22c55e;
+}
+
+.porcentaje.medio {
+  color: #f59e0b;
+}
+
+.porcentaje.bajo {
+  color: #ef4444;
+}
+
+/* =========================================================
+   BOTON MARCAR
+========================================================= */
+.btn-success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+.btn-success:hover {
+  background: rgba(34, 197, 94, 0.18);
+}
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+.table-actions {
+  justify-content: center;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .reuniones-filtros {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .reuniones-tools {
+    width: 100%;
+  }
+  .reuniones-tools input[type=month] {
+    width: 100%;
+  }
+  .reuniones-tools .search-input {
+    width: 100%;
+    min-width: 100%;
+  }
+}
+/* =========================================================
+   ANIMACION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   CREAR REUNION
+========================================================= */
+.reunion-form {
+  animation: fadeIn 0.35s ease;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }/*# sourceMappingURL=app.css.map */

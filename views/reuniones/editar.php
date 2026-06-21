@@ -14,7 +14,12 @@ if (!isset($_GET["id"])) {
 
 $id = (int)$_GET["id"];
 
-$stmt = $pdo->prepare("SELECT * FROM reuniones WHERE id = ?");
+$stmt = $pdo->prepare("
+    SELECT *
+    FROM reuniones
+    WHERE id = ?
+");
+
 $stmt->execute([$id]);
 
 $reunion = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,42 +28,57 @@ if (!$reunion) {
     die("Reunión no encontrada");
 }
 
-/* =========================
-   CSS
-========================= */
-
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/reuniones/reuniones.css">
-';
-
 require_once __DIR__ . "/../../includes/header.php";
 ?>
 
-<div class="reuniones">
+<div class="form-card">
 
-    <div class="form-card">
+    <div class="form-header">
 
-        <h1 class="form-title">
-            Editar reunión
-        </h1>
+        <div class="form-header-icon">
 
-        <form
-            method="POST"
-            action="<?= BASE_URL ?>/controllers/reunionController.php"
+            <i class="fa-solid fa-calendar-days"></i>
+
+        </div>
+
+        <div class="form-header-content">
+
+            <h1 class="form-title">
+                Editar reunión
+            </h1>
+
+            <p class="form-subtitle">
+                Actualiza la información de esta reunión o evento.
+            </p>
+
+        </div>
+
+    </div>
+
+    <form
+        class="form"
+        method="POST"
+        action="<?= BASE_URL ?>/controllers/reunionController.php"
+    >
+
+        <input
+            type="hidden"
+            name="id"
+            value="<?= $reunion["id"] ?>"
         >
 
-            <input
-                type="hidden"
-                name="id"
-                value="<?= $reunion["id"] ?>"
-            >
+        <div class="form-grid">
 
             <!-- FECHA -->
+
             <div class="form-group">
 
-                <label>Fecha</label>
+                <label class="form-label">
+                    Fecha
+                </label>
 
                 <input
+                    class="form-input"
                     type="date"
                     name="fecha"
                     value="<?= htmlspecialchars($reunion["fecha"]) ?>"
@@ -68,11 +88,18 @@ require_once __DIR__ . "/../../includes/header.php";
             </div>
 
             <!-- TIPO -->
+
             <div class="form-group">
 
-                <label>Tipo de reunión</label>
+                <label class="form-label">
+                    Tipo de reunión
+                </label>
 
-                <select name="tipo" required>
+                <select
+                    class="form-select"
+                    name="tipo"
+                    required
+                >
 
                     <option
                         value="REUNION_JOVENES"
@@ -106,26 +133,29 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-            <!-- BOTONES -->
-            <div class="form-actions">
+        </div>
 
-                <button
-                    type="submit"
-                    name="actualizar"
-                    class="btn-primary"
-                >
-                    Guardar cambios
-                </button>
+        <div class="form-actions">
 
-                <a href="index.php" class="btn-secondary">
-                    Cancelar
-                </a>
+            <a
+                href="index.php"
+                class="btn btn-back"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Volver
+            </a>
 
-            </div>
+            <button
+                type="submit"
+                name="actualizar"
+                class="btn btn-primary"
+            >
+                Guardar cambios
+            </button>
 
-        </form>
+        </div>
 
-    </div>
+    </form>
 
 </div>
 

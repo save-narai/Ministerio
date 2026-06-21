@@ -9,7 +9,7 @@ if (!tienePermiso('gestionar_reuniones')) {
 }
 
 /* FILTRO */
-$tipos = ["todos", "REUNION_JOVENES", "GRUPO_CONEXION", "EVENTO_ESPECIAL"];
+$tipos = ["todos", "REUNION_JOVENES", "GRUPO_CONEXION", "EVENTO_ESPECIAL", "DISCIPULADO"];
 $filtro = $_GET["tipo"] ?? "todos";
 if (!in_array($filtro, $tipos)) $filtro = "todos";
 
@@ -139,65 +139,71 @@ require_once "../../includes/header.php";
         </div>
 
     </div>
+<!-- FILTROS -->
 
-    <!-- FILTROS -->
+<div class="page-section">
 
-    <div class="page-section">
+    <div class="reuniones-filtros">
 
-        <div class="reuniones-filtros">
+        <div class="reuniones-tipos">
 
-            <div class="reuniones-tipos">
+            <a
+                href="?tipo=todos"
+                class="<?= $filtro == 'todos' ? 'active' : '' ?>"
+            >
+                Todos
+            </a>
 
-                <a
-                    href="?tipo=todos"
-                    class="<?= $filtro == 'todos' ? 'active' : '' ?>"
-                >
-                    Todos
-                </a>
+            <a
+                href="?tipo=REUNION_JOVENES"
+                class="<?= $filtro == 'REUNION_JOVENES' ? 'active' : '' ?>"
+            >
+                Reunión
+            </a>
 
-                <a
-                    href="?tipo=REUNION_JOVENES"
-                    class="<?= $filtro == 'REUNION_JOVENES' ? 'active' : '' ?>"
-                >
-                    Reunión
-                </a>
+            <a
+                href="?tipo=GRUPO_CONEXION"
+                class="<?= $filtro == 'GRUPO_CONEXION' ? 'active' : '' ?>"
+            >
+                Conexión
+            </a>
 
-                <a
-                    href="?tipo=GRUPO_CONEXION"
-                    class="<?= $filtro == 'GRUPO_CONEXION' ? 'active' : '' ?>"
-                >
-                    Conexión
-                </a>
+            <a
+                href="?tipo=EVENTO_ESPECIAL"
+                class="<?= $filtro == 'EVENTO_ESPECIAL' ? 'active' : '' ?>"
+            >
+                Evento
+            </a>
 
-                <a
-                    href="?tipo=EVENTO_ESPECIAL"
-                    class="<?= $filtro == 'EVENTO_ESPECIAL' ? 'active' : '' ?>"
-                >
-                    Evento
-                </a>
+            <a
+                href="?tipo=DISCIPULADO"
+                class="<?= $filtro == 'DISCIPULADO' ? 'active' : '' ?>"
+            >
+                Discipulado
+            </a>
 
-            </div>
+        </div>
 
-            <div class="reuniones-tools">
+        <div class="reuniones-tools">
 
-                <input
-                    type="month"
-                    class="form-control"
-                    id="filtroMes"
-                >
+            <input
+                type="month"
+                class="form-control"
+                id="filtroMes"
+            >
 
-                <input
-                    type="text"
-                    id="buscador"
-                    class="search-input"
-                    placeholder="Buscar reunión..."
-                >
-
-            </div>
+            <input
+                type="text"
+                id="buscador"
+                class="search-input"
+                placeholder="Buscar reunión..."
+            >
 
         </div>
 
     </div>
+
+</div>
 
     <!-- TABLA -->
 

@@ -27,13 +27,7 @@ if (!tienePermiso('gestionar_seguimientos')) {
 
 actualizarEstadoActividad();
 
-/* =========================
-   CSS
-========================= */
 
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/seguimientos/seguimientos.css">
-';
 
 /* =========================
    RESUMEN
@@ -95,183 +89,166 @@ require_once __DIR__ . "/../../includes/header.php";
 
 ?>
 
-<div class="dashboard__section">
+<div class="seguimientos-page">
+<div class="page-header">
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+    <div class="page-header-left">
 
-    <div class="header-flex">
+        <h1 class="page-title">
+            Seguimientos
+        </h1>
 
-        <div>
-
-            <h2>
-                Consolidado de Seguimientos
-            </h2>
-
-            <div class="header-meta">
-
-                <span class="badge badge-info">
-
-                    <?= e($mesTexto) ?>
-
-                </span>
-
-                <span class="header-sub">
-
-                    Vista mensual
-
-                </span>
-
-            </div>
-
+        <div class="page-subtitle">
+            Consolidado mensual del acompañamiento Ministerial.
         </div>
 
     </div>
 
-    <!-- =========================
-         KPI
-    ========================== -->
+    <div class="page-header-right">
 
-    <div class="dashboard__cards">
+        <span class="badge badge-info">
+            <?= e($mesTexto) ?>
+        </span>
 
-        <div class="dashboard__card dashboard__card--blue">
-
-            <div class="dashboard__card-title">
-                Activos
-            </div>
-
-            <div class="dashboard__card-value">
-                <?= $totalActivos ?>
-            </div>
-
-        </div>
-
-        <div class="dashboard__card dashboard__card--green">
-
-            <div class="dashboard__card-title">
-                Con seguimiento
-            </div>
-
-            <div class="dashboard__card-value">
-                <?= $totalConSeguimiento ?>
-            </div>
-
-        </div>
-
-        <div class="dashboard__card dashboard__card--red">
-
-            <div class="dashboard__card-title">
-                Sin seguimiento
-            </div>
-
-            <div class="dashboard__card-value">
-                <?= $totalSinSeguimiento ?>
-            </div>
-
-        </div>
-
-        <div class="dashboard__card <?=
-
-            $color === 'ok'
-
-            ? 'dashboard__card--green'
-
-            : (
-
-                $color === 'warn'
-
-                ? 'dashboard__card--orange'
-
-                : 'dashboard__card--red'
-            )
-
-        ?>">
-
-            <div class="dashboard__card-title">
-                Cumplimiento
-            </div>
-
-            <div class="dashboard__card-value">
-                <?= $porcentaje ?>%
-            </div>
-
-        </div>
+        <a
+            href="reporte_pdf.php"
+            target="_blank"
+            class="btn btn-primary"
+        >
+            <i class="fa-solid fa-download"></i>
+            Exportar
+        </a>
 
     </div>
 
-    <!-- =========================
+</div>
+<!-- =====================================
+     ESTADÍSTICAS
+===================================== -->
+
+<div class="stats-grid gx-stats">
+
+    <div class="stat-card info">
+
+        <span class="stat-number">
+            <?= $totalActivos ?>
+        </span>
+
+        <span class="stat-label">
+            Jóvenes activos
+        </span>
+
+    </div>
+
+    <div class="stat-card success">
+
+        <span class="stat-number">
+            <?= $totalConSeguimiento ?>
+        </span>
+
+        <span class="stat-label">
+            Con seguimiento
+        </span>
+
+    </div>
+
+    <div class="stat-card danger">
+
+        <span class="stat-number">
+            <?= $totalSinSeguimiento ?>
+        </span>
+
+        <span class="stat-label">
+            Sin seguimiento
+        </span>
+
+    </div>
+
+    <div class="stat-card <?= e($color ?: 'orange') ?>">
+
+        <span class="stat-number">
+            <?= $porcentaje ?>%
+        </span>
+
+        <span class="stat-label">
+            Cumplimiento
+        </span>
+
+    </div>
+
+</div>
+
+
+    <!-- =====================================
          ALERTAS
-    ========================== -->
+    ====================================== -->
 
     <?php if(count($alertas) > 0): ?>
 
-    <div class="bloque-scroll">
+    <div class="page-section">
 
-        <div class="bloque-header">
+        <div class="section-header">
 
-            <div class="section-title">
+            <div>
 
-                <h3>
-                    Sin seguimiento
-                </h3>
+                <h2 class="section-title">
 
-                <span class="section-sub">
-                    Este mes
-                </span>
+                    Jóvenes sin seguimiento
+
+                </h2>
+
+                <p class="section-subtitle">
+
+                    Pendientes durante este mes
+
+                </p>
 
             </div>
 
-            <input
-                type="text"
-                class="buscador"
-                placeholder="Buscar..."
-            >
-
         </div>
 
-        <div class="lista">
+        <div class="seguimientos-alertas">
 
             <?php foreach($alertas as $j): ?>
 
-            <div class="lista-item">
+            <div class="seguimiento-alerta-card">
 
-                <div class="lista-left">
+                <div class="seguimiento-alerta-left">
 
-                    <div class="avatar">
+                  <div class="avatar">
 
-                        <?= strtoupper(
-                            substr(
-                                $j["nombre_completo"],
-                                0,
-                                1
-                            )
-                        ) ?>
+    <?= mb_strtoupper(
+        mb_substr(
+            $j["nombre_completo"],
+            0,
+            1
+        )
+    ) ?>
 
-                    </div>
+</div>
 
                     <div>
 
-                        <div class="nombre">
+                        <h4>
 
                             <?= e($j["nombre_completo"]) ?>
 
-                        </div>
+                        </h4>
 
-                        <div class="sub">
+                        <span>
 
                             <?= e(
                                 $j["telefono"]
                                 ?: "Sin teléfono"
                             ) ?>
 
-                        </div>
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="lista-right">
+                <div class="seguimiento-alerta-right">
 
                     <span class="badge badge-danger">
 
@@ -281,12 +258,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     <a
                         href="../jovenes/ver.php?id=<?= $j["id"] ?>"
-                        class="btn-mini <?= ($j["genero"] ?? '') === 'F'
-                            ? 'chica'
-                            : 'chico' ?>">
-
-                        Ver
-
+                        class="btn btn-primary btn-sm"
+                    >
+                        Ver perfil
                     </a>
 
                 </div>
@@ -299,47 +273,55 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <?php else: ?>
-
-        <p class="ok">
-
-            Todos tienen seguimiento este mes
-
-        </p>
-
     <?php endif; ?>
 
-    <!-- =========================
-         DETALLE
-    ========================== -->
+    <!-- =====================================
+         TABLA
+    ====================================== -->
 
-    <div class="bloque-scroll">
+    <div class="page-section">
 
-        <div class="bloque-header">
+        <div class="section-header">
 
-            <div class="section-title">
+            <div>
 
-                <h3>
-                    Detalle
-                </h3>
+                <h2 class="section-title">
 
-                <span class="section-sub">
-                    Registros
-                </span>
+                    Historial de seguimientos
+
+                </h2>
+
+                <p class="section-subtitle">
+
+                    Registros del mes actual
+
+                </p>
 
             </div>
 
-            <input
-                type="text"
-                class="buscador"
-                placeholder="Buscar..."
-            >
+        </div>
+
+        <div class="gx-toolbar">
+
+            <div class="search-wrapper">
+
+                <input
+                    type="text"
+                    id="buscador"
+                    class="search-input"
+                    placeholder="Buscar seguimiento..."
+                >
+
+            </div>
 
         </div>
 
-        <div class="bloque-body">
+        <div class="table-responsive">
 
-            <table class="tabla">
+            <table
+                id="tablaSeguimientos"
+                class="table gx-table"
+            >
 
                 <thead>
 
@@ -373,9 +355,11 @@ require_once __DIR__ . "/../../includes/header.php";
 
                         <td>
 
-                            <?= ucfirst(strtolower(
-                                e($s["modalidad_contacto"])
-                            )) ?>
+                            <?= ucfirst(
+                                strtolower(
+                                    e($s["modalidad_contacto"])
+                                )
+                            ) ?>
 
                         </td>
 
@@ -389,13 +373,15 @@ require_once __DIR__ . "/../../includes/header.php";
                                 )
                             ) ?>">
 
-                                <?= ucfirst(strtolower(
-                                    str_replace(
-                                        '_',
-                                        ' ',
-                                        e($s["estado_proceso"])
+                                <?= ucfirst(
+                                    strtolower(
+                                        str_replace(
+                                            '_',
+                                            ' ',
+                                            e($s["estado_proceso"])
+                                        )
                                     )
-                                )) ?>
+                                ) ?>
 
                             </span>
 
@@ -430,28 +416,20 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <!-- =========================
+    <!-- =====================================
          BOTONES
-    ========================== -->
+    ====================================== -->
 
-    <div class="btn-group">
+    <div class="form-actions">
 
         <a
             href="../dashboard.php"
-            class="btn btn-secondary">
+            class="btn btn-back"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
 
             Volver
-
-        </a>
-
-        <a
-            href="reporte_pdf.php"
-            target="_blank"
-            class="btn btn-primary">
-
-            <i class="fa-solid fa-file-pdf"></i>
-
-            PDF
 
         </a>
 
@@ -461,31 +439,19 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <script>
 
-document.querySelectorAll(".buscador")
-.forEach(input => {
+document.addEventListener('DOMContentLoaded', ()=>{
 
-    input.addEventListener("keyup", function(){
+    const tabla =
+        initDataTable(
+            '#tablaSeguimientos'
+        );
 
-        const bloque =
-            this.closest(".bloque-scroll");
+    if(tabla){
 
-        const filtro =
-            this.value.toLowerCase();
+        initExportButtons(tabla);
 
-        bloque.querySelectorAll(
-            ".lista-item, tbody tr"
-        ).forEach(el => {
+    }
 
-            el.style.display =
-                el.innerText
-                .toLowerCase()
-                .includes(filtro)
-
-                ? ""
-
-                : "none";
-        });
-    });
 });
 
 </script>

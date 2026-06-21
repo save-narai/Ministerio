@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
@@ -70,12 +69,6 @@ $jovenes = $pdo->query("
     ORDER BY nombre_completo ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-/* =========================================================
-   CSS DEL MÓDULO
-========================================================= */
-
-
-
 require_once __DIR__ . "/../../includes/header.php";
 
 ?>
@@ -107,7 +100,37 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+        <div class="page-header-right">
+
+            <div class="attendance-total">
+
+                <i class="fa-solid fa-users"></i>
+
+                <span>
+                    <?= count($jovenes) ?> participantes
+                </span>
+
+            </div>
+
+        </div>
+
     </div>
+
+    <form
+    method="POST"
+    action="<?= BASE_URL ?>/controllers/asistenciaController.php"
+>
+
+    <input
+        type="hidden"
+        name="reunion_id"
+        value="<?= $reunion_id ?>"
+    >
+
+
+<!-- HERRAMIENTAS -->
+
+<div class="marcar-toolbar">
 
     <!-- FILTROS -->
 
@@ -141,7 +164,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <!-- BUSCADOR -->
 
-    <div class="search-bar">
+    <div class="search-bar marcar-search">
 
         <input
             type="text"
@@ -152,47 +175,68 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <form
-        method="POST"
-        action="<?= BASE_URL ?>/controllers/asistenciaController.php"
-    >
+    <!-- BOTONES -->
 
-        <input
-            type="hidden"
-            name="reunion_id"
-            value="<?= $reunion_id ?>"
+    <div class="btn-group marcar-buttons">
+
+        <button
+            type="button"
+            id="checkAll"
+            class="btn btn-success"
         >
+            Marcar todos
+        </button>
 
-        <!-- ACCIONES -->
+        <button
+            type="button"
+            id="uncheckAll"
+            class="btn btn-secondary"
+        >
+            Limpiar selección
+        </button>
 
-        <div class="btn-group">
+    </div>
 
-            <button
-                type="button"
-                id="checkAll"
-                class="btn btn-success"
-            >
-                Marcar todos
-            </button>
+</div>
 
-            <button
-                type="button"
-                id="uncheckAll"
-                class="btn btn-secondary"
-            >
-                Limpiar selección
-            </button>
+<!-- PARTICIPANTES -->
+
+<div class="attendance-section">
+
+        <div class="attendance-section-header">
+
+            <h3>
+                Participantes
+            </h3>
+
+            <div class="attendance-head-actions">
+
+                <span title="Asistencia">
+                    ✓
+                </span>
+
+                <span title="Conexión">
+                    Cx
+                </span>
+
+                <span title="Discipulado">
+                    Dp
+                </span>
+
+                <span title="Primera vez">
+                    1V
+                </span>
+
+            </div>
 
         </div>
-
-        <!-- LISTA -->
 
         <div class="lista">
 
             <?php foreach($jovenes as $j):
 
                 $grupoEdad =
-                ($j["edad"] >= 15 && $j["edad"] <= 17)
+                    ($j["edad"] >= 15 && $j["edad"] <= 17)
                     ? "teen"
                     : "remanente";
 
@@ -209,6 +253,20 @@ require_once __DIR__ . "/../../includes/header.php";
                         <?= htmlspecialchars($j["nombre_completo"]) ?>
                     </strong>
 
+                    <small>
+
+                        <?= ucfirst($grupoEdad) ?>
+
+                        ·
+
+                        <?= ucfirst(
+                            strtolower(
+                                $j["estado_actividad"]
+                            )
+                        ) ?>
+
+                    </small>
+
                 </div>
 
                 <div class="checks-grid">
@@ -221,7 +279,7 @@ require_once __DIR__ . "/../../includes/header.php";
                             value="<?= $j["id"] ?>"
                         >
 
-                        <span>✔</span>
+                        <span>✓</span>
 
                     </label>
 
@@ -233,7 +291,7 @@ require_once __DIR__ . "/../../includes/header.php";
                             value="<?= $j["id"] ?>"
                         >
 
-                        <span>C</span>
+                        <span>Cx</span>
 
                     </label>
 
@@ -245,7 +303,7 @@ require_once __DIR__ . "/../../includes/header.php";
                             value="<?= $j["id"] ?>"
                         >
 
-                        <span>D</span>
+                        <span>Dp</span>
 
                     </label>
 
@@ -257,7 +315,7 @@ require_once __DIR__ . "/../../includes/header.php";
                             value="<?= $j["id"] ?>"
                         >
 
-                        <span>P</span>
+                        <span>1V</span>
 
                     </label>
 
@@ -275,31 +333,31 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
-        <!-- BOTONES -->
+    </div>
 
-        <div class="form-actions">
+    <!-- BOTONES -->
 
-            <button
-                type="submit"
-                name="guardar_asistencia"
-                class="btn btn-primary"
-            >
-                Guardar asistencia
-            </button>
+    <div class="form-actions">
 
-            <a
-                href="index.php"
-                class="btn btn-secondary"
-            >
-                Cancelar
-            </a>
+        <button
+            type="submit"
+            name="guardar_asistencia"
+            class="btn btn-primary"
+        >
+            Guardar asistencia
+        </button>
 
-        </div>
+        <a
+            href="index.php"
+            class="btn btn-secondary"
+        >
+            Cancelar
+        </a>
 
-    </form>
+    </div>
+
+</form>
 
 </div>
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/reuniones-marcar.js"></script>
-
-<?php require_once __DIR__ . "/../../includes/footer.php"; ?>

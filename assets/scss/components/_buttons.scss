@@ -102,15 +102,73 @@
     box-shadow:var(--shadow);
 }
 
+
+
 /* =========================================================
-   SECONDARY HOVER
+   BOTON SECUNDARIO
 ========================================================= */
 
-.btn-secondary:hover{
+.btn-secondary,
+.btn-back{
+
+    background:var(--surface);
+
+    color:var(--text);
+
+    border:1px solid rgba(0,0,0,.08);
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.05);
+
+    transition:var(--transition);
+}
+
+.btn-secondary:hover,
+.btn-back:hover{
 
     transform:translateY(-2px);
 
-    box-shadow:var(--shadow-hover);
+    border-color:var(--primary);
+
+    box-shadow:
+        0 10px 24px rgba(255,95,46,.15);
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html.dark .btn-secondary,
+html.dark .btn-back{
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.25);
+}
+
+html.dark .btn-secondary:hover,
+html.dark .btn-back:hover{
+
+    border-color:#00e5ff;
+
+    box-shadow:
+        0 0 18px rgba(0,229,255,.18);
+}
+
+.btn-back i{
+
+    margin-right:8px;
+
+    transition:.25s ease;
+}
+
+.btn-back:hover i{
+
+    transform:translateX(-3px);
 }
 
 

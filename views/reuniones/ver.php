@@ -139,13 +139,7 @@ $tipoBonito = match($reunion["tipo"]) {
     default => $reunion["tipo"]
 };
 
-/* =========================
-   CSS
-========================= */
 
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/reuniones/ver.css">
-';
 
 require_once __DIR__ . "/../../includes/header.php";
 
@@ -317,7 +311,6 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
 </div>
-
 <!-- TABLA -->
 
 <div class="page-section">
@@ -383,12 +376,12 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <div class="table-wrapper reunion-table-wrapper">
+    <div class="table-wrapper">
 
-      <table
-    id="tablaParticipantes"
-    class="table"
->
+        <table
+            id="tablaParticipantes"
+            class="table"
+        >
 
             <thead>
 
@@ -472,8 +465,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-     </div>
-
 </div>
 
     <!-- BOTONES -->
@@ -495,6 +486,45 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/reuniones-ver.js"></script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const tabla =
+        initDataTable('#tablaParticipantes');
+
+    if(tabla){
+
+        /* EXPORTACIONES */
+        initExportButtons(tabla);
+
+        /* BUSCADOR */
+        initSearch(
+            'buscarParticipante',
+            tabla
+        );
+
+        /* FILTROS */
+        initFilters(
+            '.filter-chip',
+            tabla,
+            {
+                todos: '',
+                asistio: 'Asistió',
+                falto: 'Faltó',
+                teen: 'Teen',
+                remanente: 'Remanente'
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+
+
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>
