@@ -122,6 +122,10 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
 </div>
+
+<br>
+<br>
+
 <!-- =====================================
      ESTADÍSTICAS
 ===================================== -->
@@ -178,102 +182,101 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
+<!-- =====================================
+     ALERTAS
+===================================== -->
 
-    <!-- =====================================
-         ALERTAS
-    ====================================== -->
+<?php if(count($alertas) > 0): ?>
 
-    <?php if(count($alertas) > 0): ?>
+<div class="page-section">
 
-    <div class="page-section">
+  <div class="section-header">
 
-        <div class="section-header">
+  <h2 class="section-title">
 
-            <div>
+    Jóvenes sin seguimiento
 
-                <h2 class="section-title">
+    <span class="section-counter">
 
-                    Jóvenes sin seguimiento
+        <?= count($alertas) ?>
 
-                </h2>
+    </span>
 
-                <p class="section-subtitle">
-
-                    Pendientes durante este mes
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="seguimientos-alertas">
-
-            <?php foreach($alertas as $j): ?>
-
-            <div class="seguimiento-alerta-card">
-
-                <div class="seguimiento-alerta-left">
-
-                  <div class="avatar">
-
-    <?= mb_strtoupper(
-        mb_substr(
-            $j["nombre_completo"],
-            0,
-            1
-        )
-    ) ?>
+</h2>
 
 </div>
 
-                    <div>
+    <div class="seguimientos-alertas">
 
-                        <h4>
+        <?php foreach($alertas as $j): ?>
 
-                            <?= e($j["nombre_completo"]) ?>
+        <div class="seguimiento-alerta-card">
 
-                        </h4>
+            <div class="seguimiento-alerta-left">
 
-                        <span>
+                <div class="avatar">
 
-                            <?= e(
-                                $j["telefono"]
-                                ?: "Sin teléfono"
-                            ) ?>
-
-                        </span>
-
-                    </div>
+                    <?= mb_strtoupper(
+                        mb_substr(
+                            $j["nombre_completo"],
+                            0,
+                            1
+                        )
+                    ) ?>
 
                 </div>
 
-                <div class="seguimiento-alerta-right">
+                <div>
 
-                    <span class="badge badge-danger">
+                    <h4>
 
-                        Pendiente
+                        <?= e($j["nombre_completo"]) ?>
+
+                    </h4>
+
+                    <span>
+
+                        <?= e(
+                            $j["telefono"]
+                            ?: "Sin teléfono"
+                        ) ?>
 
                     </span>
-
-                    <a
-                        href="../jovenes/ver.php?id=<?= $j["id"] ?>"
-                        class="btn btn-primary btn-sm"
-                    >
-                        Ver perfil
-                    </a>
 
                 </div>
 
             </div>
 
-            <?php endforeach; ?>
+            <div class="seguimiento-alerta-right">
+
+                <span class="badge badge-danger">
+
+                    Pendiente
+
+                </span>
+
+                <a
+                    href="../jovenes/ver.php?id=<?= $j["id"] ?>"
+                    class="btn-mini <?= ($j["genero"] ?? '') === 'F'
+                        ? 'chica'
+                        : 'chico' ?>"
+                >
+                    Ver perfil
+                </a>
+
+            </div>
 
         </div>
 
+        <?php endforeach; ?>
+
     </div>
 
-    <?php endif; ?>
+</div>
+
+<div class="section-divider"></div>
+
+<?php endif; ?>
 
     <!-- =====================================
          TABLA
@@ -281,40 +284,24 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <div class="page-section">
 
-        <div class="section-header">
+        <div class="section-header historial-header">
 
-            <div>
+    <h2 class="section-title">
+        Historial de seguimientos
+    </h2>
 
-                <h2 class="section-title">
+    <div class="search-wrapper historial-search">
 
-                    Historial de seguimientos
+        <input
+            type="text"
+            id="buscador"
+            class="search-input"
+            placeholder="Buscar seguimiento..."
+        >
 
-                </h2>
+    </div>
 
-                <p class="section-subtitle">
-
-                    Registros del mes actual
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="gx-toolbar">
-
-            <div class="search-wrapper">
-
-                <input
-                    type="text"
-                    id="buscador"
-                    class="search-input"
-                    placeholder="Buscar seguimiento..."
-                >
-
-            </div>
-
-        </div>
+</div>
 
         <div class="table-responsive">
 

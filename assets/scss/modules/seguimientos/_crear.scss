@@ -1,12 +1,10 @@
-
 /* =========================================================
    PAGE
 ========================================================= */
 
 .form-page{
 
-    animation:
-        fadeIn .45s ease;
+    animation:fadeIn .45s ease;
 }
 
 /* =========================================================
@@ -17,22 +15,15 @@
 
     position:relative;
 
-    max-width:1150px;
-
     overflow:hidden;
 
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,.04),
-            rgba(255,255,255,.02)
-        );
+    max-width:1150px;
 
-    backdrop-filter:blur(24px);
+    margin:0 auto;
 }
 
 /* =========================================================
-   TOP GLOW
+   GLOW
 ========================================================= */
 
 .form-card::before{
@@ -52,7 +43,7 @@
     background:
         radial-gradient(
             circle,
-            rgba(255,255,255,.12),
+            rgba(255,255,255,.10),
             transparent 70%
         );
 
@@ -66,163 +57,22 @@
 .form-header{
 
     position:relative;
-
-    overflow:hidden;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.06),
-            rgba(255,255,255,.02)
-        );
 }
 
-/* =========================================================
-   HEADER LINE
-========================================================= */
+.form-header-icon{
 
-.form-header::after{
+    width:70px;
+    height:70px;
 
-    content:"";
+    border-radius:22px;
 
-    position:absolute;
+    display:flex;
 
-    left:0;
-    bottom:0;
+    align-items:center;
 
-    width:100%;
-    height:1px;
+    justify-content:center;
 
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.12),
-            transparent
-        );
-}
-
-/* =========================================================
-   TITLE
-========================================================= */
-
-.form-header h2{
-
-    font-size:32px;
-
-    font-weight:900;
-
-    letter-spacing:-.5px;
-}
-
-/* =========================================================
-   SUBTITLE
-========================================================= */
-
-.form-header p{
-
-    max-width:520px;
-
-    line-height:1.6;
-}
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.modern-form{
-
-    position:relative;
-
-    z-index:2;
-}
-
-/* =========================================================
-   INPUTS
-========================================================= */
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-
-    background:
-        rgba(255,255,255,.045);
-
-    border:
-        1px solid rgba(255,255,255,.08);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.03);
-}
-
-/* =========================================================
-   HOVER
-========================================================= */
-
-.form-group input:hover,
-.form-group select:hover,
-.form-group textarea:hover{
-
-    border-color:
-        rgba(255,255,255,.14);
-}
-
-/* =========================================================
-   FOCUS
-========================================================= */
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus{
-
-    border-color:var(--primary);
-
-    background:
-        rgba(255,255,255,.07);
-
-    box-shadow:
-        0 0 0 4px rgba(0,229,255,.10),
-        0 10px 25px rgba(0,0,0,.15);
-
-    transform:
-        translateY(-1px);
-}
-
-/* =========================================================
-   TEXTAREA
-========================================================= */
-
-.form-group textarea{
-
-    min-height:170px;
-}
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.form-actions{
-
-    padding-top:10px;
-
-    border-top:
-        1px solid rgba(255,255,255,.06);
-}
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-.form-actions .btn{
-
-    min-width:180px;
-}
-
-/* =========================================================
-   PRIMARY BUTTON
-========================================================= */
-
-.form-actions .btn-primary{
+    margin-bottom:20px;
 
     background:var(--card-gradient);
 
@@ -231,66 +81,110 @@
     animation:
         liquidFlow 8s ease infinite;
 
-    border:none;
+    color:#fff;
 
-    box-shadow:
-        0 12px 30px rgba(0,0,0,.22);
+    font-size:28px;
+
+    box-shadow:var(--shadow);
+}
+
+.form-title{
+
+    font-size:34px;
+
+    font-weight:900;
+
+    letter-spacing:-.5px;
+
+    margin-bottom:8px;
+}
+
+.form-subtitle{
+
+    max-width:600px;
+
+    color:var(--text-soft);
+
+    line-height:1.7;
 }
 
 /* =========================================================
-   PRIMARY HOVER
+   INFO BOX
 ========================================================= */
 
-.form-actions .btn-primary:hover{
+.form-info{
 
-    transform:
-        translateY(-3px)
-        scale(1.02);
+    display: inline-flex;
 
-    box-shadow:
-        0 18px 35px rgba(0,0,0,.28);
+    align-items: center;
+
+    gap: 12px;
+
+    width: fit-content;
+
+    max-width: 650px;
+
+    margin: 30px 0 40px 55px;
+
+    padding: 14px 18px;
+
+    border-radius: 16px;
+
+    background: rgba(59,130,246,.08);
+
+    border: 1px solid rgba(59,130,246,.15);
+
+    color: var(--text-soft);
+
+    font-size: 14px;
+}
+
+.form-info i{
+
+    color:#3b82f6;
+
+    font-size:18px;
 }
 
 /* =========================================================
-   SECONDARY
+   GRID
 ========================================================= */
 
-.form-actions .btn-secondary{
+.form-grid{
+
+    margin-top:10px;
+
+    margin-bottom:30px;
+}
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+textarea.form-input{
+
+    min-height:180px;
+
+    resize:vertical;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html.dark .form-info{
 
     background:
-        rgba(255,255,255,.05);
+        rgba(0,229,255,.08);
 
     border:
-        1px solid rgba(255,255,255,.08);
-
-    color:var(--text);
+        1px solid rgba(0,229,255,.15);
 }
 
-/* =========================================================
-   SECONDARY HOVER
-========================================================= */
+html.dark .form-info i{
 
-.form-actions .btn-secondary:hover{
-
-    background:
-        rgba(255,255,255,.10);
-
-    transform:
-        translateY(-2px);
-}
-
-/* =========================================================
-   DARK MODE EXTRA
-========================================================= */
-
-html.dark .form-card{
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(16,24,38,.92),
-            rgba(10,15,25,.96)
-        );
+    color:#00e5ff;
 }
 
 /* =========================================================
@@ -299,15 +193,37 @@ html.dark .form-card{
 
 @media(max-width:768px){
 
-    .form-header h2{
+    .form-title{
 
-        font-size:26px;
+        font-size:28px;
     }
 
-    .form-actions .btn{
+    .form-header-icon{
 
-        width:100%;
+        width:60px;
+        height:60px;
 
-        min-width:100%;
+        font-size:24px;
+    }
+}
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(12px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
     }
 }

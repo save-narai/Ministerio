@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
@@ -13,7 +12,6 @@ require_once __DIR__ . "/../../config/conexion.php";
 if (!tienePermiso('gestionar_seguimientos')) {
 
     header("Location: ../dashboard.php");
-
     exit;
 }
 
@@ -36,14 +34,10 @@ $jovenSeleccionado =
 
 $jovenes = $pdo->query("
     SELECT
-
         id,
         nombre_completo
-
     FROM jovenes
-
     WHERE estado_actividad != 'ELIMINADO'
-
     ORDER BY nombre_completo ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -53,12 +47,9 @@ $jovenes = $pdo->query("
 
 $responsables = $pdo->query("
     SELECT
-
         id,
         nombre
-
     FROM usuarios
-
     ORDER BY nombre ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -69,13 +60,6 @@ $responsables = $pdo->query("
 $usuarioActual =
     (int)($_SESSION["user_id"] ?? 0);
 
-/* =========================
-   CSS
-========================= */
-
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/seguimientos/registrar.css">
-';
 
 /* =========================
    HEADER
@@ -84,69 +68,87 @@ $extraCSS = '
 require_once __DIR__ . "/../../includes/header.php";
 
 ?>
+<div class="form-card">
 
-<div class="form-page">
+    <!-- =====================================
+         HEADER
+    ====================================== -->
 
-    <div class="form-card">
+    <div class="form-header">
 
-        <!-- =========================
-             HEADER
-        ========================== -->
+        <div class="form-header-icon">
 
-        <div class="form-header">
-
-            <div>
-
-                <h2>
-                    Crear Seguimiento
-                </h2>
-
-                <p>
-                    Registrar contacto y consolidación
-                </p>
-
-            </div>
+            <i class="fa-solid fa-handshake"></i>
 
         </div>
 
-        <!-- =========================
-             FORM
-        ========================== -->
+        <div class="form-header-content">
 
-        <form
-            action="../../controllers/seguimientoController.php"
-            method="POST"
-            class="modern-form"
-        >
+            <h1 class="form-title">
+                Crear Seguimiento
+            </h1>
 
-            <div class="form-grid">
+            <p class="form-subtitle">
+                Registra y documenta el acompañamiento realizado a un joven.
+            </p>
 
-                <!-- JOVEN -->
+        </div>
 
-                <div class="form-group">
+    </div>
 
-                    <label>
-                        Joven
-                    </label>
+    <!-- =====================================
+         INFORMACIÓN
+    ====================================== -->
 
-                    <select
-                        name="joven_id"
-                        required
-                    >
+    <div class="form-info">
 
-                        <option value="">
-                            Seleccionar joven
-                        </option>
+        <i class="fa-solid fa-circle-info"></i>
 
-                        <?php foreach($jovenes as $j): ?>
+        Cada seguimiento permite registrar el acompañamiento realizado a un joven durante el mes.
+
+    </div>
+
+    <!-- =====================================
+         FORMULARIO
+    ====================================== -->
+
+    <form
+        action="../../controllers/seguimientoController.php"
+        method="POST"
+        class="form"
+    >
+
+        <div class="form-grid">
+
+            <!-- JOVEN -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Joven
+
+                </label>
+
+                <select
+                    class="form-select"
+                    name="joven_id"
+                    required
+                >
+
+                    <option value="">
+                        Seleccionar joven
+                    </option>
+
+                    <?php foreach($jovenes as $j): ?>
 
                         <option
                             value="<?= $j["id"] ?>"
-
                             <?= $jovenSeleccionado === (int)$j["id"]
                                 ? 'selected'
                                 : '' ?>
-
                         >
 
                             <?= htmlspecialchars(
@@ -155,112 +157,130 @@ require_once __DIR__ . "/../../includes/header.php";
 
                         </option>
 
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
 
-                    </select>
+                </select>
 
-                </div>
+            </div>
 
-                <!-- FECHA -->
+            <!-- FECHA -->
 
-                <div class="form-group">
+            <div class="form-group">
 
-                    <label>
-                        Fecha de contacto
-                    </label>
+                <label class="form-label">
 
-                    <input
-                        type="date"
-                        name="fecha_contacto"
-                        value="<?= date('Y-m-d') ?>"
-                        required
-                    >
+                    <i class="fa-solid fa-calendar-days"></i>
 
-                </div>
+                    Fecha de contacto
 
-                <!-- MODALIDAD -->
+                </label>
 
-                <div class="form-group">
+                <input
+                    class="form-input"
+                    type="date"
+                    name="fecha_contacto"
+                    value="<?= date('Y-m-d') ?>"
+                    required
+                >
 
-                    <label>
-                        Modalidad
-                    </label>
+            </div>
 
-                    <select
-                        name="modalidad_contacto"
-                        required
-                    >
+            <!-- MODALIDAD -->
 
-                        <option value="WHATSAPP">
-                            WhatsApp
-                        </option>
+            <div class="form-group">
 
-                        <option value="LLAMADA">
-                            Llamada
-                        </option>
+                <label class="form-label">
 
-                        <option value="VISITA">
-                            Visita
-                        </option>
+                    <i class="fa-brands fa-whatsapp"></i>
 
-                    </select>
+                    Modalidad
 
-                </div>
+                </label>
 
-                <!-- ESTADO -->
+                <select
+                    class="form-select"
+                    name="modalidad_contacto"
+                    required
+                >
 
-                <div class="form-group">
+                    <option value="WHATSAPP">
+                        WhatsApp
+                    </option>
 
-                    <label>
-                        Estado
-                    </label>
+                    <option value="LLAMADA">
+                        Llamada
+                    </option>
 
-                    <select
-                        name="estado_proceso"
-                        required
-                    >
+                    <option value="VISITA">
+                        Visita
+                    </option>
 
-                        <option value="PENDIENTE">
-                            Pendiente
-                        </option>
+                </select>
 
-                        <option value="EN_PROCESO">
-                            En proceso
-                        </option>
+            </div>
 
-                        <option value="FINALIZADO">
-                            Finalizado
-                        </option>
+            <!-- ESTADO -->
 
-                    </select>
+            <div class="form-group">
 
-                </div>
+                <label class="form-label">
 
-                <!-- RESPONSABLE -->
+                    <i class="fa-solid fa-list-check"></i>
 
-                <div class="form-group">
+                    Estado
 
-                    <label>
-                        Responsable
-                    </label>
+                </label>
 
-                    <select
-                        name="responsable_id"
-                    >
+                <select
+                    class="form-select"
+                    name="estado_proceso"
+                    required
+                >
 
-                        <option value="">
-                            Seleccionar responsable
-                        </option>
+                    <option value="PENDIENTE">
+                        Pendiente
+                    </option>
 
-                        <?php foreach($responsables as $r): ?>
+                    <option value="EN_PROCESO">
+                        En proceso
+                    </option>
+
+                    <option value="FINALIZADO">
+                        Finalizado
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- RESPONSABLE -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-user-tie"></i>
+
+                    Responsable
+
+                </label>
+
+                <select
+                    class="form-select"
+                    name="responsable_id"
+                >
+
+                    <option value="">
+                        Seleccionar responsable
+                    </option>
+
+                    <?php foreach($responsables as $r): ?>
 
                         <option
                             value="<?= $r["id"] ?>"
-
                             <?= $usuarioActual === (int)$r["id"]
                                 ? 'selected'
                                 : '' ?>
-
                         >
 
                             <?= htmlspecialchars(
@@ -269,58 +289,59 @@ require_once __DIR__ . "/../../includes/header.php";
 
                         </option>
 
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
 
-                    </select>
-
-                </div>
+                </select>
 
             </div>
 
-            <!-- OBSERVACIONES -->
+        </div>
 
-            <div class="form-group">
 
-                <label>
-                    Observaciones
-                </label>
+<!-- OBSERVACIONES -->
 
-                <textarea
-                    name="observaciones"
-                    rows="5"
-                    placeholder="Escribe observaciones del seguimiento..."
-                ></textarea>
+<div class="form-group form-group-full">
 
-            </div>
+    <label class="form-label">
 
-            <!-- BOTONES -->
+        <i class="fa-solid fa-comment-dots"></i>
 
-            <div class="form-actions">
+        Observaciones
 
-                <a
-                    href="index.php"
-                    class="btn btn-secondary"
-                >
+    </label>
 
-                    Volver
+    <textarea
+        class="form-textarea"
+        name="observaciones"
+        rows="6"
+        placeholder="Describe la conversación, acuerdos, necesidades detectadas o compromisos establecidos..."
+    ></textarea>
 
-                </a>
+</div>
 
-                <button
-                    type="submit"
-                    name="crear_seguimiento"
-                    class="btn btn-primary"
-                >
+<!-- BOTONES -->
 
-                    Guardar seguimiento
+<div class="form-actions">
 
-                </button>
+    <a
+        href="index.php"
+        class="btn btn-back"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        Volver
+    </a>
 
-            </div>
+    <button
+        type="submit"
+        name="crear_seguimiento"
+        class="btn btn-primary"
+    >
+        Guardar Seguimiento
+    </button>
 
-        </form>
+</div>
 
-    </div>
+</form>
 
 </div>
 
