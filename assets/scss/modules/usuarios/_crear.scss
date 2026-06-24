@@ -1,0 +1,49 @@
+/* =========================================================
+   CREATE USER
+========================================================= */
+
+.form-info{
+
+    max-width:650px;
+
+    margin:30px auto;
+}
+
+
+/* =========================================================
+   INFO BOX
+========================================================= */
+
+.form-info{
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: fit-content;
+
+    max-width: 650px;
+
+    margin: 30px 0 40px 55px;
+
+    padding: 14px 18px;
+
+    border-radius: 16px;
+
+    background: rgba(59,130,246,.08);
+
+    border: 1px solid rgba(59,130,246,.15);
+
+    color: var(--text-soft);
+
+    font-size: 14px;
+}
+
+.form-info i{
+
+    color:#3b82f6;
+
+    font-size:18px;
+}

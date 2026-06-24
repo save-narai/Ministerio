@@ -1,0 +1,202 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.usuarios-page{
+
+    animation:fadeIn .4s ease;
+}
+
+/* =========================================================
+   HEADER RIGHT
+========================================================= */
+
+.page-header-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.gx-stats{
+
+    margin:32px 0;
+}
+
+.gx-stats .stat-card{
+
+    min-height:120px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+.gx-stats .stat-card.info .stat-number{
+
+    color:#3b82f6;
+}
+
+.gx-stats .stat-card.success .stat-number{
+
+    color:#22c55e;
+}
+
+.gx-stats .stat-card.danger .stat-number{
+
+    color:#ef4444;
+}
+
+.gx-stats .stat-card.purple .stat-number{
+
+    color:#a855f7;
+}
+
+/* =========================================================
+   TABLE ACTIONS
+========================================================= */
+
+.table-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   ICON BUTTONS
+========================================================= */
+
+.btn-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:12px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    transition:.25s ease;
+}
+
+/* EDIT */
+
+.btn-edit{
+
+    background:
+        rgba(59,130,246,.12);
+
+    color:#3b82f6;
+}
+
+.btn-edit:hover{
+
+    transform:translateY(-2px);
+
+    background:
+        rgba(59,130,246,.20);
+}
+
+/* POWER */
+
+.btn-danger{
+
+    background:
+        rgba(239,68,68,.12);
+
+    color:#ef4444;
+}
+
+.btn-danger:hover{
+
+    transform:translateY(-2px);
+
+    background:
+        rgba(239,68,68,.20);
+}
+
+/* LOCK */
+
+.btn-disabled{
+
+    background:
+        rgba(148,163,184,.12);
+
+    color:var(--text-soft);
+
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .page-header{
+
+        align-items:flex-start;
+    }
+
+    .page-header-right{
+
+        width:100%;
+
+        justify-content:flex-start;
+    }
+
+    .table-actions{
+
+        justify-content:flex-start;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}

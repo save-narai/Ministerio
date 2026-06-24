@@ -288,6 +288,22 @@ if (empty($_SESSION['csrf_token'])) {
                 <span>Seguimientos</span>
 
             </a>
+			
+			
+			
+			 <!-- usuarios -->
+			 
+			 
+			 <a href="<?= BASE_URL ?>/views/usuarios/index.php">
+
+        <i class="fa-solid fa-users-gear"></i>
+
+        <span>Usuarios</span>
+
+    </a>
+			
+			
+			
 
             <!-- ROLES -->
 

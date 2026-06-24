@@ -60,3 +60,11 @@
 
 @import 'modules/seguimientos/seguimientos';
 @import 'modules/seguimientos/crear';
+
+@import 'modules/usuarios/usuarios';
+@import 'modules/usuarios/crear';
+@import 'modules/usuarios/editar';
+
+@import 'modules/roles/index';
+@import 'modules/roles/crear';
+@import 'modules/roles/editar';
