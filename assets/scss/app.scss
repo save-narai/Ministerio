@@ -32,6 +32,7 @@
 @import 'components/badges';
 @import 'components/tooltips';
 @import 'components/prefile';
+@import 'components/permissions';
 @import 'components/gx-stats';
 @import 'components/gx-toolbar';
 @import 'components/filters';
@@ -65,6 +66,6 @@
 @import 'modules/usuarios/crear';
 @import 'modules/usuarios/editar';
 
-@import 'modules/roles/index';
+@import 'modules/roles/roles';
 @import 'modules/roles/crear';
 @import 'modules/roles/editar';

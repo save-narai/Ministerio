@@ -325,13 +325,13 @@ require_once "../../includes/header.php";
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const tabla = initDataTable(
-        '#tablaUsuarios'
-    );
+    const tabla = initDataTable('#tablaUsuarios');
 
-    if (tabla) {
-        initExportButtons(tabla);
-    }
+    if (!tabla) return;
+
+    initExportButtons(tabla);
+
+    initSearch('buscador', tabla);
 
 });
 

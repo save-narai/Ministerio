@@ -23,7 +23,13 @@ $roles = $pdo->query("
             SELECT COUNT(*)
             FROM rol_permiso rp
             WHERE rp.rol_id = r.id
-        ) AS total_permisos
+        ) AS total_permisos,
+
+        (
+            SELECT COUNT(*)
+            FROM usuarios u
+            WHERE u.rol_id = r.id
+        ) AS total_usuarios
 
     FROM roles r
 
@@ -37,7 +43,13 @@ $roles = $pdo->query("
 $totalRoles = count($roles);
 
 $totalPermisos = $pdo->query("
-    SELECT COUNT(*) FROM permisos
+    SELECT COUNT(*)
+    FROM permisos
+")->fetchColumn();
+
+$totalUsuarios = $pdo->query("
+    SELECT COUNT(*)
+    FROM usuarios
 ")->fetchColumn();
 
 /* =====================================
@@ -50,9 +62,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <div class="roles-page">
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
+    <!-- HEADER -->
 
     <div class="page-header">
 
@@ -63,9 +73,7 @@ require_once __DIR__ . "/../../includes/header.php";
             </h1>
 
             <p class="page-subtitle">
-
-                Administra roles y permisos del sistema.
-
+                Administra los roles y permisos del sistema.
             </p>
 
         </div>
@@ -78,7 +86,6 @@ require_once __DIR__ . "/../../includes/header.php";
             >
 
                 <i class="fa-solid fa-plus"></i>
-
                 Nuevo Rol
 
             </a>
@@ -87,24 +94,18 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <!-- =====================================
-         ESTADÍSTICAS
-    ====================================== -->
+    <!-- ESTADÍSTICAS -->
 
     <div class="stats-grid gx-stats">
 
         <div class="stat-card info">
 
             <span class="stat-number">
-
                 <?= $totalRoles ?>
-
             </span>
 
             <span class="stat-label">
-
                 Roles registrados
-
             </span>
 
         </div>
@@ -112,24 +113,30 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card success">
 
             <span class="stat-number">
-
                 <?= $totalPermisos ?>
-
             </span>
 
             <span class="stat-label">
-
                 Permisos disponibles
+            </span>
 
+        </div>
+
+        <div class="stat-card warning">
+
+            <span class="stat-number">
+                <?= $totalUsuarios ?>
+            </span>
+
+            <span class="stat-label">
+                Usuarios asignados
             </span>
 
         </div>
 
     </div>
 
-    <!-- =====================================
-         TABLA
-    ====================================== -->
+    <!-- TABLA -->
 
     <div class="page-section">
 
@@ -138,22 +145,21 @@ require_once __DIR__ . "/../../includes/header.php";
             <div>
 
                 <h2 class="section-title">
-
-                    Roles del sistema
-
+                    Roles del Sistema
                 </h2>
 
                 <p class="section-subtitle">
-
                     Configuración y administración de permisos.
-
                 </p>
 
             </div>
 
             <div class="gx-toolbar">
 
-                <div class="search-wrapper">
+                <div
+                    class="search-wrapper tooltip"
+                    data-tooltip="Buscar rol"
+                >
 
                     <input
                         type="text"
@@ -180,11 +186,9 @@ require_once __DIR__ . "/../../includes/header.php";
                     <tr>
 
                         <th>ID</th>
-
                         <th>Rol</th>
-
                         <th>Permisos</th>
-
+                        <th>Usuarios</th>
                         <th>Acciones</th>
 
                     </tr>
@@ -195,53 +199,86 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     <?php foreach($roles as $rol): ?>
 
-                    <tr>
+                        <tr>
 
-                        <td>
+                            <td>
+                                #<?= (int)$rol["id"] ?>
+                            </td>
 
-                            #<?= (int)$rol["id"] ?>
+                            <td>
+                                <?= htmlspecialchars($rol["nombre"]) ?>
+                            </td>
 
-                        </td>
+                            <td>
 
-                        <td>
+                                <span class="badge badge-info">
 
-                            <?= htmlspecialchars(
-                                $rol["nombre"]
-                            ) ?>
+                                    <?= $rol["total_permisos"] ?>
 
-                        </td>
+                                    permisos
 
-                        <td>
+                                </span>
 
-                            <span class="badge badge-info">
+                            </td>
 
-                                <?= $rol["total_permisos"] ?>
+                            <td>
 
-                                permisos
+                                <span class="badge badge-success">
 
-                            </span>
+                                    <?= $rol["total_usuarios"] ?>
 
-                        </td>
+                                    usuarios
 
-                        <td>
+                                </span>
 
-                            <div class="table-actions">
+                            </td>
 
-                                <a
-                                    href="editar.php?id=<?= (int)$rol["id"] ?>"
-                                    class="btn-icon btn-edit"
-                                    title="Editar permisos"
-                                >
+                            <td>
 
-                                    <i class="fa-solid fa-shield-halved"></i>
+                                <div class="table-actions">
 
-                                </a>
+                                    <a
+                                        href="editar.php?id=<?= (int)$rol['id'] ?>"
+                                        class="btn btn-primary btn-sm"
+                                    >
 
-                            </div>
+                                        Editar
 
-                        </td>
+                                    </a>
 
-                    </tr>
+                                    <?php if($rol["nombre"] !== "ADMIN"): ?>
+
+                                        <form
+                                            action="<?= BASE_URL ?>/controllers/rolController.php"
+                                            method="POST"
+                                            onsubmit="return confirm('¿Deseas eliminar este rol?');"
+                                        >
+
+                                            <input
+                                                type="hidden"
+                                                name="id"
+                                                value="<?= (int)$rol['id'] ?>"
+                                            >
+
+                                            <button
+                                                type="submit"
+                                                name="eliminar_rol"
+                                                class="btn btn-back btn-sm"
+                                            >
+
+                                                Eliminar
+
+                                            </button>
+
+                                        </form>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
 
                     <?php endforeach; ?>
 
@@ -252,10 +289,6 @@ require_once __DIR__ . "/../../includes/header.php";
         </div>
 
     </div>
-
-    <!-- =====================================
-         BOTONES
-    ====================================== -->
 
     <div class="form-actions">
 
@@ -278,7 +311,13 @@ require_once __DIR__ . "/../../includes/header.php";
 
 document.addEventListener('DOMContentLoaded', ()=>{
 
-    initDataTable('#tablaRoles');
+    const tabla =
+        initDataTable('#tablaRoles');
+
+    initSearch(
+        'buscador',
+        tabla
+    );
 
 });
 

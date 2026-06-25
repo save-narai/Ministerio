@@ -1,8 +1,13 @@
+
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+
+/* =====================================
+   PERMISOS
+===================================== */
 
 if (!tienePermiso('gestionar_roles')) {
 
@@ -11,7 +16,7 @@ if (!tienePermiso('gestionar_roles')) {
 }
 
 /* =====================================
-   PERMISOS DISPONIBLES
+   OBTENER PERMISOS DISPONIBLES
 ===================================== */
 
 $permisos = $pdo->query("
@@ -72,6 +77,8 @@ require_once __DIR__ . "/../../includes/header.php";
         class="form"
     >
 
+        <!-- NOMBRE DEL ROL -->
+
         <div class="form-grid">
 
             <div class="form-group form-group-full">
@@ -105,16 +112,11 @@ require_once __DIR__ . "/../../includes/header.php";
                 <div>
 
                     <h2 class="section-title">
-
                         Permisos del Rol
-
                     </h2>
 
                     <p class="section-subtitle">
-
-                        Selecciona los permisos
-                        que tendrá este rol.
-
+                        Selecciona los permisos que tendrá este rol.
                     </p>
 
                 </div>
@@ -123,42 +125,45 @@ require_once __DIR__ . "/../../includes/header.php";
 
             <div class="permissions-grid">
 
-                <?php foreach($permisos as $permiso): ?>
+               <?php foreach($permisos as $permiso): ?>
 
-                    <label class="permission-card">
+    <label class="permission-card">
 
-                        <input
-                            type="checkbox"
-                            name="permisos[]"
-                            value="<?= $permiso["id"] ?>"
-                        >
+        <input
+            type="checkbox"
+            name="permisos[]"
+            value="<?= (int)$permiso["id"] ?>"
+        >
 
-                        <span class="checkmark"></span>
+        <span class="checkmark"></span>
 
-                        <div>
+        <div class="permission-content">
 
-                            <strong>
+            <strong>
 
-                                <?= htmlspecialchars(
-                                    $permiso["nombre"]
-                                ) ?>
+                <?= htmlspecialchars(
+                    $permiso["nombre"]
+                ) ?>
 
-                            </strong>
+            </strong>
 
-                            <small>
+            <?php if(!empty($permiso["descripcion"])): ?>
 
-                                <?= htmlspecialchars(
-                                    $permiso["descripcion"]
-                                    ?? ''
-                                ) ?>
+                <small>
 
-                            </small>
+                    <?= htmlspecialchars(
+                        $permiso["descripcion"]
+                    ) ?>
 
-                        </div>
+                </small>
 
-                    </label>
+            <?php endif; ?>
 
-                <?php endforeach; ?>
+        </div>
+
+    </label>
+
+<?php endforeach; ?>
 
             </div>
 
@@ -186,6 +191,8 @@ require_once __DIR__ . "/../../includes/header.php";
                 name="crear_rol"
                 class="btn btn-primary"
             >
+
+               
 
                 Guardar Rol
 

@@ -1,0 +1,243 @@
+/* =========================================================
+   PERMISSIONS GRID
+========================================================= */
+
+.permissions-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(300px,1fr));
+
+    gap:20px;
+
+    margin-top:24px;
+}
+
+/* =========================================================
+   PERMISSION CARD
+========================================================= */
+
+.permission-card{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:16px;
+
+    padding:22px;
+
+    border-radius:22px;
+
+    background:var(--container);
+
+    border:var(--border);
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+    overflow:hidden;
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.permission-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:
+        rgba(255,95,46,.25);
+
+    box-shadow:var(--shadow-hover);
+}
+
+html.dark .permission-card:hover{
+
+    border-color:
+        rgba(0,229,255,.25);
+}
+
+/* =========================================================
+   HIDE CHECKBOX
+========================================================= */
+
+.permission-card input{
+
+    position:absolute;
+
+    opacity:0;
+
+    pointer-events:none;
+}
+
+/* =========================================================
+   CHECKMARK
+========================================================= */
+
+.checkmark{
+
+    width:28px;
+
+    height:28px;
+
+    min-width:28px;
+
+    border-radius:10px;
+
+    border:2px solid rgba(255,95,46,.35);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.25s ease;
+
+    background:transparent;
+
+    margin-top:2px;
+}
+
+html.dark .checkmark{
+
+    border-color:
+        rgba(0,229,255,.35);
+}
+
+/* =========================================================
+   CHECK ICON
+========================================================= */
+
+.checkmark::after{
+
+    content:"✓";
+
+    color:#fff;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    opacity:0;
+
+    transform:scale(.4);
+
+    transition:.25s ease;
+}
+
+/* =========================================================
+   CHECKED STATE
+========================================================= */
+
+.permission-card input:checked + .checkmark{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff5f2e,
+            #ff3cac
+        );
+
+    border-color:transparent;
+}
+
+html.dark
+.permission-card input:checked + .checkmark{
+
+    background:
+        linear-gradient(
+            135deg,
+            #00e5ff,
+            #00ffcc
+        );
+}
+
+.permission-card
+input:checked + .checkmark::after{
+
+    opacity:1;
+
+    transform:scale(1);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.permission-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+    flex:1;
+}
+
+.permission-content strong{
+
+    font-size:15px;
+
+    font-weight:800;
+
+    color:var(--text);
+
+    text-transform:capitalize;
+}
+
+.permission-content small{
+
+    color:var(--text-soft);
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+/* =========================================================
+   CARD ACTIVE
+========================================================= */
+
+.permission-card:has(input:checked){
+
+    border-color:
+        rgba(255,95,46,.35);
+
+    background:
+        rgba(255,95,46,.05);
+}
+
+html.dark
+.permission-card:has(input:checked){
+
+    border-color:
+        rgba(0,229,255,.35);
+
+    background:
+        rgba(0,229,255,.06);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .permissions-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .permission-card{
+
+        padding:18px;
+    }
+}

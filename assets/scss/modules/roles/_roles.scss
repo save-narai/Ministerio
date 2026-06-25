@@ -1,0 +1,201 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.roles-page{
+
+    animation:fadeIn .4s ease;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.roles-page .gx-stats{
+
+    margin:24px 0 32px;
+}
+
+.roles-page .stat-card{
+
+    min-height:120px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+.roles-page .stat-card.info .stat-number{
+
+    color:#3b82f6;
+}
+
+.roles-page .stat-card.success .stat-number{
+
+    color:#22c55e;
+}
+
+.roles-page .stat-card.warning .stat-number{
+
+    color:#f97316;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+
+.gx-stats .stat-card.info .stat-number{
+
+    color:#3b82f6;
+}
+
+.gx-stats .stat-card.success .stat-number{
+
+    color:#22c55e;
+}
+
+.gx-stats .stat-card.danger .stat-number{
+
+    color:#ef4444;
+}
+
+.gx-stats .stat-card.purple .stat-number{
+
+    color:#a855f7;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.roles-page .gx-table td{
+
+    vertical-align:middle;
+}
+
+.roles-page .gx-table th:first-child,
+.roles-page .gx-table td:first-child{
+
+    min-width:90px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.table-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}
+
+.table-actions form{
+
+    margin:0;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.table-actions .btn{
+
+    min: width 90px;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.roles-page .section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.roles-page .gx-toolbar{
+
+    margin-left:auto;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .roles-page .section-header{
+
+        flex-direction:column;
+    }
+
+    .roles-page .gx-toolbar{
+
+        width:100%;
+    }
+
+    .roles-page .search-wrapper{
+
+        width:100%;
+    }
+
+    .roles-page .search-input{
+
+        width:100%;
+    }
+
+    .table-actions{
+
+        flex-direction:column;
+    }
+
+    .table-actions .btn{
+
+        width:100%;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+}
