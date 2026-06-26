@@ -1,43 +1,127 @@
 <?php
+
 session_start();
 
 require_once "../config/conexion.php";
 
-// Verificar que venga por POST
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../index.php");
-    exit();
+require_once "../helpers/redirect.php";
+require_once "../helpers/validaciones.php";
+
+try {
+
+    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+
+        redirect(
+            "../index.php",
+            "error",
+            "Acceso inválido."
+        );
+    }
+
+    autenticarUsuario($pdo);
+
+} catch (PDOException $e) {
+
+    error_log($e->getMessage());
+
+    redirect(
+        "../index.php",
+        "error",
+        "Error interno del sistema."
+    );
+
+} catch (Exception $e) {
+
+    redirect(
+        "../index.php",
+        "error",
+        $e->getMessage()
+    );
 }
 
-$usuario = $_POST["usuario"] ?? "";
-$password = $_POST["password"] ?? "";
 
-// Buscar usuario con su rol
-$stmt = $pdo->prepare("
-    SELECT u.*, r.nombre AS rol_nombre
-    FROM usuarios u
-    INNER JOIN roles r ON u.rol_id = r.id
-    WHERE u.usuario = :usuario
-    AND u.activo = 1
-");
+/* =========================================================
+   AUTENTICAR USUARIO
+========================================================= */
 
-$stmt->execute(["usuario" => $usuario]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+function autenticarUsuario(PDO $pdo): void
+{
+    $usuario = limpiarTexto(
+        $_POST["usuario"] ?? ''
+    );
 
-// Verificar contraseña
-if ($user && password_verify($password, $user["password"])) {
+    $password = trim(
+        $_POST["password"] ?? ''
+    );
+
+    if (
+        empty($usuario)
+        || empty($password)
+    ) {
+
+        throw new Exception(
+            "Debe ingresar usuario y contraseña."
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT
+
+            u.id,
+            u.nombre,
+            u.password,
+            u.rol_id,
+            r.nombre AS rol_nombre
+
+        FROM usuarios u
+
+        INNER JOIN roles r
+            ON u.rol_id = r.id
+
+        WHERE
+
+            u.usuario = :usuario
+
+            AND u.activo = 1
+
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ":usuario" => $usuario
+    ]);
+
+    $user = $stmt->fetch(
+        PDO::FETCH_ASSOC
+    );
+
+    if (
+        !$user
+        || !password_verify(
+            $password,
+            $user["password"]
+        )
+    ) {
+
+        throw new Exception(
+            "Usuario o contraseña incorrectos."
+        );
+    }
 
     session_regenerate_id(true);
 
-    $_SESSION["user_id"] = $user["id"];
-    $_SESSION["nombre"] = $user["nombre"];
-    $_SESSION["rol"] = $user["rol_nombre"];
+    $_SESSION["user_id"] =
+        $user["id"];
 
-    header("Location: ../views/dashboard.php");
-    exit();
+    $_SESSION["nombre"] =
+        $user["nombre"];
+
+    $_SESSION["rol"] =
+        $user["rol_nombre"];
+
+    redirect(
+        "../views/dashboard.php",
+        "success",
+        "Bienvenido {$user['nombre']}"
+    );
 }
-
-// Si falla
-$_SESSION["error"] = "Usuario o contraseña incorrectos";
-header("Location: ../index.php");
-exit();

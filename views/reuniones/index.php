@@ -302,56 +302,61 @@ require_once "../../includes/header.php";
 
                         <td>
 
-                            <div class="table-actions">
+<div class="table-actions">
 
-                                <a
-                                    href="marcar.php?reunion_id=<?= $r["id"] ?>"
-                                    class="btn-icon btn-success"
-                                    data-tooltip="Marcar asistencia"
-                                >
-                                    <i class="fa-solid fa-clipboard-check"></i>
-                                </a>
+    <a
+        href="marcar.php?reunion_id=<?= $r['id'] ?>"
+        class="btn-icon btn-success"
+        data-tooltip="Marcar asistencia"
+    >
+        <i class="fa-solid fa-clipboard-check"></i>
+    </a>
 
-                                <a
-                                    href="ver.php?id=<?= $r["id"] ?>"
-                                    class="btn-icon btn-view"
-                                    data-tooltip="Ver informe"
-                                >
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
+    <a
+        href="ver.php?id=<?= $r['id'] ?>"
+        class="btn-icon btn-view"
+        data-tooltip="Ver informe"
+    >
+        <i class="fa-solid fa-eye"></i>
+    </a>
 
-                                <a
-                                    href="editar.php?id=<?= $r["id"] ?>"
-                                    class="btn-icon btn-edit"
-                                    data-tooltip="Editar"
-                                >
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
+    <a
+        href="editar.php?id=<?= $r['id'] ?>"
+        class="btn-icon btn-edit"
+        data-tooltip="Editar"
+    >
+        <i class="fa-solid fa-pen"></i>
+    </a>
 
-                                <a
-                                    href="../../controllers/reunionController.php?eliminar=<?= $r["id"] ?>"
-                                    class="btn-icon btn-delete"
-                                    data-tooltip="Eliminar"
-                                    onclick="return confirm('¿Eliminar reunión?')"
-                                >
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
+    <form
+        action="../../controllers/reunionController.php"
+        method="POST"
+        class="table-action-form"
+        onsubmit="return confirm('¿Eliminar reunión?')"
+    >
 
-                            </div>
+        <input
+            type="hidden"
+            name="id"
+            value="<?= $r['id'] ?>"
+        >
 
-                        </td>
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
 
-                    </tr>
+        <button
+            type="submit"
+            name="eliminar_reunion"
+            class="btn-icon btn-delete"
+            data-tooltip="Eliminar"
+        >
+            <i class="fa-solid fa-trash"></i>
+        </button>
 
-                    <?php endforeach; ?>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
+    </form>
 
 </div>
 
@@ -359,10 +364,11 @@ require_once "../../includes/header.php";
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const tabla =
-    initDataTable('#tablaReuniones');
+    const tabla = initDataTable(
+        '#tablaReuniones'
+    );
 
-    if(tabla){
+    if (tabla) {
 
         initSearch(
             'buscador',

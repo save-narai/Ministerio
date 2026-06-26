@@ -2,7 +2,8 @@
 
 session_start();
 
-require_once "../config/conexion.php";
+require_once '../config/conexion.php';
+require_once '../helpers/redirect.php';
 
 try {
 
@@ -10,102 +11,154 @@ try {
        CREAR ROL
     ===================================== */
 
-    if (isset($_POST["crear_rol"])) {
-
-        $nombre = trim($_POST["nombre"]);
-
-        $permisos = $_POST["permisos"] ?? [];
-
-        if (empty($nombre)) {
-
-            throw new Exception(
-                "Debe ingresar el nombre del rol."
-            );
-        }
-
-        /* VERIFICAR DUPLICADO */
-
-        $verificar = $pdo->prepare("
-            SELECT id
-            FROM roles
-            WHERE nombre = :nombre
-            LIMIT 1
-        ");
-
-        $verificar->execute([
-            ":nombre" => $nombre
-        ]);
-
-        if ($verificar->fetch()) {
-
-            throw new Exception(
-                "Ya existe un rol con ese nombre."
-            );
-        }
-
-        /* CREAR ROL */
-
-        $stmt = $pdo->prepare("
-            INSERT INTO roles (nombre)
-            VALUES (:nombre)
-        ");
-
-        $stmt->execute([
-            ":nombre" => strtoupper($nombre)
-        ]);
-
-        $rolId = $pdo->lastInsertId();
-
-        /* GUARDAR PERMISOS */
-
-        if (!empty($permisos)) {
-
-            $insertPermiso = $pdo->prepare("
-                INSERT INTO rol_permiso
-                (rol_id, permiso_id)
-                VALUES
-                (:rol_id, :permiso_id)
-            ");
-
-            foreach ($permisos as $permisoId) {
-
-                $insertPermiso->execute([
-                    ":rol_id"      => $rolId,
-                    ":permiso_id"  => $permisoId
-                ]);
-            }
-        }
-
-        $_SESSION["success"] =
-            "Rol creado correctamente.";
-
-        header(
-            "Location: ../views/roles/index.php"
-        );
-
-        exit();
+    if (isset($_POST['crear_rol'])) {
+        crearRol($pdo);
     }
 
     /* =====================================
        EDITAR ROL
     ===================================== */
 
-    if (isset($_POST["editar_rol"])) {
+    if (isset($_POST['editar_rol'])) {
+        editarRol($pdo);
+    }
 
-        $id = (int) $_POST["id"];
+    /* =====================================
+       GUARDAR PERMISOS
+    ===================================== */
 
-        $nombre = trim($_POST["nombre"]);
+    if (isset($_POST['guardar_permisos'])) {
+        editarRol($pdo);
+    }
 
-        $permisos = $_POST["permisos"] ?? [];
+    /* =====================================
+       ELIMINAR ROL
+    ===================================== */
 
-        if ($id <= 0) {
+    if (isset($_POST['eliminar_rol'])) {
+        eliminarRol($pdo);
+    }
+
+} catch (Exception $e) {
+
+    redirect(
+        '../views/roles/index.php',
+        'error',
+        $e->getMessage()
+    );
+}
+
+
+/* =========================================================
+   CREAR ROL
+========================================================= */
+
+function crearRol(PDO $pdo): void
+{
+    $nombre = trim($_POST['nombre'] ?? '');
+
+    $permisos = $_POST['permisos'] ?? [];
+
+    if (empty($nombre)) {
+
+        throw new Exception(
+            'Debe ingresar el nombre del rol.'
+        );
+    }
+
+    $nombre = strtoupper($nombre);
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM roles
+        WHERE nombre = :nombre
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ':nombre' => $nombre
+    ]);
+
+    if ($stmt->fetch()) {
+
+        throw new Exception(
+            'Ya existe un rol con ese nombre.'
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO roles(nombre)
+        VALUES(:nombre)
+    ");
+
+    $stmt->execute([
+        ':nombre' => $nombre
+    ]);
+
+    $rolId = (int) $pdo->lastInsertId();
+
+    guardarPermisos(
+        $pdo,
+        $rolId,
+        $permisos
+    );
+
+    redirect(
+        '../views/roles/index.php',
+        'success',
+        'Rol creado correctamente.'
+    );
+}
+
+
+/* =========================================================
+   EDITAR ROL
+========================================================= */
+
+function editarRol(PDO $pdo): void
+{
+    $id = (int) (
+        $_POST['id']
+        ?? $_POST['rol_id']
+        ?? 0
+    );
+
+    $nombre = trim($_POST['nombre'] ?? '');
+
+    $permisos = $_POST['permisos'] ?? [];
+
+    if ($id <= 0) {
+
+        throw new Exception(
+            'Rol inválido.'
+        );
+    }
+
+    /* VALIDAR DUPLICADO */
+
+    if (!empty($nombre)) {
+
+        $nombre = strtoupper($nombre);
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM roles
+            WHERE nombre = :nombre
+            AND id != :id
+            LIMIT 1
+        ");
+
+        $stmt->execute([
+            ':nombre' => $nombre,
+            ':id'      => $id
+        ]);
+
+        if ($stmt->fetch()) {
 
             throw new Exception(
-                "Rol inválido."
+                'Ya existe un rol con ese nombre.'
             );
         }
-
-        /* ACTUALIZAR ROL */
 
         $stmt = $pdo->prepare("
             UPDATE roles
@@ -114,109 +167,79 @@ try {
         ");
 
         $stmt->execute([
-            ":nombre" => strtoupper($nombre),
-            ":id" => $id
+            ':nombre' => $nombre,
+            ':id'     => $id
         ]);
-
-        /* ELIMINAR PERMISOS ACTUALES */
-
-        $delete = $pdo->prepare("
-            DELETE FROM rol_permiso
-            WHERE rol_id = :rol_id
-        ");
-
-        $delete->execute([
-            ":rol_id" => $id
-        ]);
-
-        /* INSERTAR NUEVOS */
-
-        if (!empty($permisos)) {
-
-            $insertPermiso = $pdo->prepare("
-                INSERT INTO rol_permiso
-                (rol_id, permiso_id)
-                VALUES
-                (:rol_id, :permiso_id)
-            ");
-
-            foreach ($permisos as $permisoId) {
-
-                $insertPermiso->execute([
-                    ":rol_id" => $id,
-                    ":permiso_id" => $permisoId
-                ]);
-            }
-        }
-
-        $_SESSION["success"] =
-            "Rol actualizado correctamente.";
-
-        header(
-            "Location: ../views/roles/index.php"
-        );
-
-        exit();
     }
 
-} catch (Exception $e) {
+    /* ELIMINAR PERMISOS ACTUALES */
 
-    $_SESSION["error"] =
-        $e->getMessage();
+    $stmt = $pdo->prepare("
+        DELETE FROM rol_permiso
+        WHERE rol_id = :rol_id
+    ");
 
-    header(
-        "Location: ../views/roles/index.php"
+    $stmt->execute([
+        ':rol_id' => $id
+    ]);
+
+    /* INSERTAR NUEVOS PERMISOS */
+
+    guardarPermisos(
+        $pdo,
+        $id,
+        $permisos
     );
 
-    exit();
+    redirect(
+        '../views/roles/index.php',
+        'success',
+        'Rol actualizado correctamente.'
+    );
 }
 
 
-
-/* =============================
+/* =========================================================
    ELIMINAR ROL
-==============================*/
+========================================================= */
 
-if (isset($_POST["eliminar_rol"])) {
-
-    $id = (int)$_POST["id"];
+function eliminarRol(PDO $pdo): void
+{
+    $id = (int) ($_POST['id'] ?? 0);
 
     if ($id <= 0) {
 
         throw new Exception(
-            "Rol inválido."
+            'Rol inválido.'
         );
     }
-
-    /* EVITAR ELIMINAR ADMIN */
 
     $stmt = $pdo->prepare("
         SELECT nombre
         FROM roles
         WHERE id = :id
+        LIMIT 1
     ");
 
     $stmt->execute([
-        "id" => $id
+        ':id' => $id
     ]);
 
-    $rol = $stmt->fetch();
+    $rol = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$rol) {
 
         throw new Exception(
-            "Rol no encontrado."
+            'Rol no encontrado.'
         );
     }
 
-    if ($rol["nombre"] === "ADMIN") {
+    if ($rol['nombre'] === 'ADMIN') {
 
         throw new Exception(
-            "No se puede eliminar el rol ADMIN."
+            'No se puede eliminar el rol ADMIN.'
         );
     }
-
-    /* ELIMINAR RELACIONES */
 
     $stmt = $pdo->prepare("
         DELETE FROM rol_permiso
@@ -224,10 +247,8 @@ if (isset($_POST["eliminar_rol"])) {
     ");
 
     $stmt->execute([
-        "id" => $id
+        ':id' => $id
     ]);
-
-    /* ELIMINAR ROL */
 
     $stmt = $pdo->prepare("
         DELETE FROM roles
@@ -235,12 +256,47 @@ if (isset($_POST["eliminar_rol"])) {
     ");
 
     $stmt->execute([
-        "id" => $id
+        ':id' => $id
     ]);
 
-    header(
-        "Location: ../views/roles/index.php"
+    redirect(
+        '../views/roles/index.php',
+        'success',
+        'Rol eliminado correctamente.'
     );
+}
 
-    exit();
+
+/* =========================================================
+   GUARDAR PERMISOS
+========================================================= */
+
+function guardarPermisos(
+    PDO $pdo,
+    int $rolId,
+    array $permisos
+): void {
+
+    if (empty($permisos)) {
+        return;
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO rol_permiso (
+            rol_id,
+            permiso_id
+        )
+        VALUES (
+            :rol_id,
+            :permiso_id
+        )
+    ");
+
+    foreach ($permisos as $permisoId) {
+
+        $stmt->execute([
+            ':rol_id'     => $rolId,
+            ':permiso_id' => (int) $permisoId
+        ]);
+    }
 }

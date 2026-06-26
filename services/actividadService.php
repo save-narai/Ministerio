@@ -1,61 +1,53 @@
-
 <?php
 
-require_once __DIR__ . "/../config/conexion.php";
+declare(strict_types=1);
+
+/* ======================================================
+   CONSTANTES
+====================================================== */
+
+const ESTADOS_NUEVOS = [
+    'NUEVO',
+    'CONSOLIDACION'
+];
+
+const ESTADOS_MADUROS = [
+    'MADURO',
+    'LIDER'
+];
+
 
 /* ======================================================
    ACTUALIZAR ESTADOS AUTOMÁTICOS
 ====================================================== */
 
-function actualizarEstadoActividad() {
-
-    global $pdo;
-
-    /*
-    |--------------------------------------------------------------------------
-    | INACTIVOS
-    |--------------------------------------------------------------------------
-    */
+function actualizarEstadoActividad(PDO $pdo): void
+{
+    /* INACTIVOS */
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
-
         SET estado_actividad = 'INACTIVO'
-
         WHERE estado_actividad != 'ELIMINADO'
-
         AND ultima_actividad IS NOT NULL
-
         AND DATEDIFF(NOW(), ultima_actividad) >= 60
     ");
 
     $stmt->execute();
 
-    /*
-    |--------------------------------------------------------------------------
-    | REACTIVAR ACTIVOS
-    |--------------------------------------------------------------------------
-    */
+    /* ACTIVOS */
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
-
         SET estado_actividad = 'ACTIVO'
-
         WHERE estado_actividad != 'ELIMINADO'
-
         AND ultima_actividad IS NOT NULL
-
         AND DATEDIFF(NOW(), ultima_actividad) < 60
     ");
 
     $stmt->execute();
 
-    /*
-    |--------------------------------------------------------------------------
-    | ELIMINAR MAYORES DE 28
-    |--------------------------------------------------------------------------
-    */
+    /* ELIMINAR MAYORES DE 28 */
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
@@ -89,13 +81,15 @@ function actualizarEstadoActividad() {
     $stmt->execute();
 }
 
+
 /* ======================================================
-   FALTAS CONSECUTIVAS
+   FALTAS CONSECUTIVAS EN CONEXIÓN
 ====================================================== */
 
-function faltasConsecutivasConexion($joven_id) {
-
-    global $pdo;
+function faltasConsecutivasConexion(
+    PDO $pdo,
+    int $joven_id
+): int {
 
     $stmt = $pdo->prepare("
         SELECT a.asistio
@@ -107,7 +101,7 @@ function faltasConsecutivasConexion($joven_id) {
 
         WHERE a.joven_id = :id
 
-        AND r.tipo = 'CONEXION'
+        AND r.tipo = 'GRUPO_CONEXION'
 
         ORDER BY r.fecha DESC
 
@@ -118,14 +112,15 @@ function faltasConsecutivasConexion($joven_id) {
         "id" => $joven_id
     ]);
 
-    $asistencias =
-        $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $asistencias = $stmt->fetchAll(
+        PDO::FETCH_COLUMN
+    );
 
     $faltas = 0;
 
-    foreach ($asistencias as $a) {
+    foreach ($asistencias as $asistio) {
 
-        if ((int)$a === 0) {
+        if ((int) $asistio === 0) {
 
             $faltas++;
 
@@ -138,38 +133,41 @@ function faltasConsecutivasConexion($joven_id) {
     return $faltas;
 }
 
+
 /* ======================================================
    MESES EN EL MINISTERIO
 ====================================================== */
 
-function mesesMinisterio($fechaIngreso){
+function mesesMinisterio(
+    ?string $fechaIngreso
+): int {
 
     if (empty($fechaIngreso)) {
+
         return 0;
     }
 
-    $inicio = new DateTime($fechaIngreso);
+    $inicio = new DateTime(
+        $fechaIngreso
+    );
 
     $hoy = new DateTime();
 
     $diff = $inicio->diff($hoy);
 
-    return ($diff->y * 12) + $diff->m;
+    return ($diff->y * 12)
+        + $diff->m;
 }
 
+
 /* ======================================================
-   ESTADO CONEXIÓN INTELIGENTE
+   ESTADO DE CONEXIÓN DEL JOVEN
 ====================================================== */
 
-function estadoConexionJoven($joven_id) {
-
-    global $pdo;
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATOS JOVEN
-    |--------------------------------------------------------------------------
-    */
+function estadoConexionJoven(
+    PDO $pdo,
+    int $joven_id
+): array {
 
     $stmt = $pdo->prepare("
         SELECT
@@ -187,58 +185,50 @@ function estadoConexionJoven($joven_id) {
         "id" => $joven_id
     ]);
 
-    $joven = $stmt->fetch(PDO::FETCH_ASSOC);
+    $joven = $stmt->fetch(
+        PDO::FETCH_ASSOC
+    );
 
-    if (!$joven){
+    if (!$joven) {
 
         return [
+
             "estado" => "Desconocido",
+
             "color" => "warning",
+
             "icono" => "⚪"
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | DATOS BASE
-    |--------------------------------------------------------------------------
-    */
+    $faltas = faltasConsecutivasConexion(
+        $pdo,
+        $joven_id
+    );
 
-    $faltas =
-        faltasConsecutivasConexion($joven_id);
+    $estadoEspiritual = strtoupper(
+        $joven["estado_espiritual"] ?? ''
+    );
 
-    $estadoEspiritual =
-        strtoupper(
-            $joven["estado_espiritual"] ?? ''
-        );
+    $meses = mesesMinisterio(
+        $joven["fecha_ingreso"] ?? null
+    );
 
-    $meses =
-        mesesMinisterio(
-            $joven["fecha_ingreso"] ?? null
-        );
+    $esServidor = (int) (
+        $joven["es_servidor"] ?? 0
+    );
 
-    $esServidor =
-        (int)($joven["es_servidor"] ?? 0);
-
-    /*
-    |--------------------------------------------------------------------------
-    | NUEVOS / CONSOLIDACIÓN
-    |--------------------------------------------------------------------------
-    */
+    /* NUEVOS */
 
     $esNuevo =
         $meses <= 3
         ||
         in_array(
             $estadoEspiritual,
-            ["NUEVO", "CONSOLIDACION"]
+            ESTADOS_NUEVOS
         );
 
-    /*
-    |--------------------------------------------------------------------------
-    | MADUROS / SERVIDORES
-    |--------------------------------------------------------------------------
-    */
+    /* MADUROS */
 
     $esMaduro =
         $meses >= 12
@@ -247,76 +237,73 @@ function estadoConexionJoven($joven_id) {
         ||
         in_array(
             $estadoEspiritual,
-            ["MADURO", "LIDER"]
+            ESTADOS_MADUROS
         );
 
-    /*
-    |--------------------------------------------------------------------------
-    | ALTO RIESGO
-    |--------------------------------------------------------------------------
-    */
+    /* ALTO RIESGO */
 
-    if ($esNuevo && $faltas >= 4){
+    if ($esNuevo && $faltas >= 4) {
 
         return [
+
             "estado" => "Alto Riesgo",
+
             "color" => "danger",
+
             "icono" => "🔴"
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | RIESGO
-    |--------------------------------------------------------------------------
-    */
+    /* RIESGO */
 
-    if (!$esMaduro && $faltas >= 3){
+    if (!$esMaduro && $faltas >= 3) {
 
         return [
+
             "estado" => "Riesgo",
+
             "color" => "warning",
+
             "icono" => "🟡"
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | OBSERVACIÓN
-    |--------------------------------------------------------------------------
-    */
+    /* OBSERVACIÓN */
 
-    if ($esMaduro && $faltas >= 3){
+    if ($esMaduro && $faltas >= 3) {
 
         return [
+
             "estado" => "Observación",
+
             "color" => "info",
+
             "icono" => "🔵"
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | CONECTADO
-    |--------------------------------------------------------------------------
-    */
+    /* CONECTADO */
 
     return [
+
         "estado" => "Conectado",
+
         "color" => "ok",
+
         "icono" => "🟢"
     ];
 }
 
+
 /* ======================================================
-   CONTADORES GLOBALES
+   RESUMEN GLOBAL DEL MINISTERIO
 ====================================================== */
 
-function resumenConexionMinisterial() {
+function resumenConexionMinisterial(
+    PDO $pdo
+): array {
 
-    global $pdo;
-
-    $stmt = $pdo->prepare("
+    $stmt = $pdo->query("
         SELECT id
 
         FROM jovenes
@@ -324,23 +311,21 @@ function resumenConexionMinisterial() {
         WHERE estado_actividad != 'ELIMINADO'
     ");
 
-    $stmt->execute();
-
-    $jovenes =
-        $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $jovenes = $stmt->fetchAll(
+        PDO::FETCH_ASSOC
+    );
 
     $conectados = 0;
-
     $observacion = 0;
-
     $riesgo = 0;
-
     $alto = 0;
 
-    foreach ($jovenes as $j) {
+    foreach ($jovenes as $joven) {
 
-        $estado =
-            estadoConexionJoven($j["id"]);
+        $estado = estadoConexionJoven(
+            $pdo,
+            (int) $joven["id"]
+        );
 
         switch ($estado["estado"]) {
 

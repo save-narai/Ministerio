@@ -3,21 +3,58 @@
 session_start();
 
 require_once '../config/conexion.php';
+require_once '../helpers/redirect.php';
+require_once '../helpers/validaciones.php';
 
 try {
 
+    /* =============================
+       CREAR USUARIO
+    ============================== */
+
+    if (isset($_POST['crear_usuario'])) {
+
+        crearUsuario($pdo);
+    }
+
+    /* =============================
+       EDITAR USUARIO
+    ============================== */
+
+    if (isset($_POST['editar_usuario'])) {
+
+        editarUsuario($pdo);
+    }
+
+    /* =============================
+       CAMBIAR CONTRASEÑA
+    ============================== */
+
+    if (isset($_POST['cambiar_password'])) {
+
+        cambiarPassword($pdo);
+    }
+
+} catch (Exception $e) {
+
+    redirect(
+        '../views/usuarios/index.php',
+        'error',
+        $e->getMessage()
+    );
+}
 
 
-/* =============================
+/* =========================================================
    CREAR USUARIO
-==============================*/
+========================================================= */
 
-if (isset($_POST["crear_usuario"])) {
-
-    $nombre = trim($_POST["nombre"]);
-    $usuario = trim($_POST["usuario"]);
-    $password = trim($_POST["password"]);
-    $rol_id = (int) $_POST["rol_id"];
+function crearUsuario(PDO $pdo): void
+{
+    $nombre = trim($_POST['nombre']);
+    $usuario = trim($_POST['usuario']);
+    $password = trim($_POST['password']);
+    $rol_id = (int) $_POST['rol_id'];
 
     if (
         empty($nombre) ||
@@ -27,27 +64,27 @@ if (isset($_POST["crear_usuario"])) {
     ) {
 
         throw new Exception(
-            "Todos los campos son obligatorios."
+            'Todos los campos son obligatorios.'
         );
     }
 
     /* VERIFICAR DUPLICADO */
 
-    $verificar = $pdo->prepare("
+    $stmt = $pdo->prepare("
         SELECT id
         FROM usuarios
         WHERE usuario = :usuario
         LIMIT 1
     ");
 
-    $verificar->execute([
-        ":usuario" => $usuario
+    $stmt->execute([
+        ':usuario' => $usuario
     ]);
 
-    if ($verificar->fetch()) {
+    if ($stmt->fetch()) {
 
         throw new Exception(
-            "El nombre de usuario ya existe."
+            'El nombre de usuario ya existe.'
         );
     }
 
@@ -78,155 +115,160 @@ if (isset($_POST["crear_usuario"])) {
     ");
 
     $stmt->execute([
-        ":nombre" => $nombre,
-        ":usuario" => $usuario,
-        ":password" => $passwordHash,
-        ":rol_id" => $rol_id
+        ':nombre' => $nombre,
+        ':usuario' => $usuario,
+        ':password' => $passwordHash,
+        ':rol_id' => $rol_id
     ]);
 
-    $_SESSION["success"] =
-        "Usuario creado correctamente.";
-
-    header(
-        "Location: ../views/usuarios/index.php"
+    redirect(
+        '../views/usuarios/index.php',
+        'success',
+        'Usuario creado correctamente.'
     );
-
-    exit();
 }
 
-    /* =============================
-       EDITAR USUARIO
-    ==============================*/
-    if (isset($_POST["editar_usuario"])) {
 
-        $id = (int) $_POST["id"];
-        $nombre = trim($_POST["nombre"]);
-        $usuario = trim($_POST["usuario"]);
-        $password = trim($_POST["password"] ?? "");
-        $rol_id = (int) $_POST["rol_id"];
+/* =========================================================
+   EDITAR USUARIO
+========================================================= */
 
-        /* VALIDAR CAMPOS OBLIGATORIOS */
-        if (
-            empty($nombre) ||
-            empty($usuario) ||
-            $rol_id <= 0
-        ) {
+function editarUsuario(PDO $pdo): void
+{
+    $id = (int) $_POST['id'];
 
-            throw new Exception(
-                "Todos los campos son obligatorios."
-            );
-        }
+    $nombre = trim($_POST['nombre']);
 
-        /* VALIDAR ID */
-        if ($id <= 0) {
+    $usuario = trim($_POST['usuario']);
 
-            throw new Exception(
-                "ID de usuario inválido."
-            );
-        }
+    $password = trim($_POST['password'] ?? '');
 
-        /* VERIFICAR USUARIO DUPLICADO */
-        $verificar = $pdo->prepare("
-            SELECT id
-            FROM usuarios
-            WHERE usuario = :usuario
-            AND id != :id
-            LIMIT 1
-        ");
+    $rol_id = (int) $_POST['rol_id'];
 
-        $verificar->execute([
-            ":usuario" => $usuario,
-            ":id" => $id
-        ]);
+    if (
+        empty($nombre) ||
+        empty($usuario) ||
+        $rol_id <= 0
+    ) {
 
-        if ($verificar->fetch()) {
-
-            throw new Exception(
-                "El nombre de usuario ya existe."
-            );
-        }
-
-        /* ACTUALIZAR CON CONTRASEÑA */
-        if (!empty($password)) {
-
-            $passwordHash = password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
-
-            $stmt = $pdo->prepare("
-                UPDATE usuarios
-                SET nombre = :nombre,
-                    usuario = :usuario,
-                    password = :password,
-                    rol_id = :rol_id
-                WHERE id = :id
-            ");
-
-            $stmt->execute([
-                ":nombre" => $nombre,
-                ":usuario" => $usuario,
-                ":password" => $passwordHash,
-                ":rol_id" => $rol_id,
-                ":id" => $id
-            ]);
-
-        } else {
-
-            /* ACTUALIZAR SIN CONTRASEÑA */
-            $stmt = $pdo->prepare("
-                UPDATE usuarios
-                SET nombre = :nombre,
-                    usuario = :usuario,
-                    rol_id = :rol_id
-                WHERE id = :id
-            ");
-
-            $stmt->execute([
-                ":nombre" => $nombre,
-                ":usuario" => $usuario,
-                ":rol_id" => $rol_id,
-                ":id" => $id
-            ]);
-        }
-
-        $_SESSION["success"] =
-            "Usuario actualizado correctamente.";
-
-        header(
-            "Location: ../views/usuarios/index.php"
+        throw new Exception(
+            'Todos los campos son obligatorios.'
         );
-
-        exit();
     }
 
-} catch (Exception $e) {
+    if ($id <= 0) {
 
-    $_SESSION["error"] = $e->getMessage();
+        throw new Exception(
+            'ID de usuario inválido.'
+        );
+    }
 
-    header(
-        "Location: ../views/usuarios/index.php"
+    /* VERIFICAR DUPLICADO */
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM usuarios
+        WHERE usuario = :usuario
+        AND id != :id
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ':usuario' => $usuario,
+        ':id' => $id
+    ]);
+
+    if ($stmt->fetch()) {
+
+        throw new Exception(
+            'El nombre de usuario ya existe.'
+        );
+    }
+
+    /* ACTUALIZAR */
+
+    if (!empty($password)) {
+
+        $passwordHash = password_hash(
+            $password,
+            PASSWORD_DEFAULT
+        );
+
+        $stmt = $pdo->prepare("
+            UPDATE usuarios
+            SET nombre = :nombre,
+                usuario = :usuario,
+                password = :password,
+                rol_id = :rol_id
+            WHERE id = :id
+        ");
+
+        $stmt->execute([
+            ':nombre' => $nombre,
+            ':usuario' => $usuario,
+            ':password' => $passwordHash,
+            ':rol_id' => $rol_id,
+            ':id' => $id
+        ]);
+
+    } else {
+
+        $stmt = $pdo->prepare("
+            UPDATE usuarios
+            SET nombre = :nombre,
+                usuario = :usuario,
+                rol_id = :rol_id
+            WHERE id = :id
+        ");
+
+        $stmt->execute([
+            ':nombre' => $nombre,
+            ':usuario' => $usuario,
+            ':rol_id' => $rol_id,
+            ':id' => $id
+        ]);
+    }
+
+    redirect(
+        '../views/usuarios/index.php',
+        'success',
+        'Usuario actualizado correctamente.'
     );
-
-    exit();
 }
 
 
-/* =============================
+/* =========================================================
    CAMBIAR CONTRASEÑA
-==============================*/
+========================================================= */
 
-if (isset($_POST["cambiar_password"])) {
+function cambiarPassword(PDO $pdo): void
+{
+    $id = (int) $_POST['id'];
 
-    $id = (int)$_POST["id"];
+    $password = trim($_POST['password']);
 
-    $password = trim($_POST["password"]);
-    $confirmar = trim($_POST["confirmar_password"]);
+    $confirmar = trim(
+        $_POST['confirmar_password']
+    );
+
+    if ($id <= 0) {
+
+        throw new Exception(
+            'Usuario inválido.'
+        );
+    }
+
+    if (empty($password)) {
+
+        throw new Exception(
+            'La contraseña es obligatoria.'
+        );
+    }
 
     if ($password !== $confirmar) {
 
         throw new Exception(
-            "Las contraseñas no coinciden."
+            'Las contraseñas no coinciden.'
         );
     }
 
@@ -242,13 +284,13 @@ if (isset($_POST["cambiar_password"])) {
     ");
 
     $stmt->execute([
-        "password" => $passwordHash,
-        "id" => $id
+        ':password' => $passwordHash,
+        ':id' => $id
     ]);
 
-    header(
-        "Location: ../views/usuarios/index.php"
+    redirect(
+        '../views/usuarios/index.php',
+        'success',
+        'Contraseña actualizada correctamente.'
     );
-
-    exit();
 }

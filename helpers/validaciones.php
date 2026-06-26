@@ -1,12 +1,11 @@
-
 <?php
 
 /* ======================================================
    LIMPIAR TEXTO
 ====================================================== */
 
-function limpiarTexto($texto){
-
+function limpiarTexto(string $texto): string
+{
     return trim(
         htmlspecialchars(
             $texto,
@@ -16,29 +15,35 @@ function limpiarTexto($texto){
     );
 }
 
+
 /* ======================================================
    VALIDAR NOMBRE
 ====================================================== */
 
-function validarNombre($nombre){
-
+function validarNombre(string $nombre): array
+{
     $nombre = trim($nombre);
 
-    $nombre = preg_replace('/\s+/', ' ', $nombre);
+    $nombre = preg_replace(
+        '/\s+/',
+        ' ',
+        $nombre
+    );
 
     if (
         !preg_match(
             '/^[\p{L}\'\- ]+$/u',
             $nombre
         )
-    ){
+    ) {
+
         return [
             false,
             "Nombre inválido"
         ];
     }
 
-    if (mb_strlen($nombre) < 3){
+    if (mb_strlen($nombre) < 3) {
 
         return [
             false,
@@ -58,46 +63,43 @@ function validarNombre($nombre){
     ];
 }
 
+
 /* ======================================================
    VALIDAR TELÉFONO
 ====================================================== */
 
-function validarTelefono($telefono){
-
+function validarTelefono(string $telefono): array
+{
     $telefono = preg_replace(
         '/\D/',
         '',
         $telefono
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Debe iniciar en 3 y tener 10 dígitos
-    */
+    /* Debe iniciar en 3 y tener 10 dígitos */
 
     if (
         !preg_match(
             '/^3\d{9}$/',
             $telefono
         )
-    ){
+    ) {
+
         return [
             false,
             "Teléfono inválido"
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Bloquear repetidos
-    */
+    /* Evitar teléfonos repetidos */
 
     if (
         preg_match(
             '/^(\d)\1+$/',
             $telefono
         )
-    ){
+    ) {
+
         return [
             false,
             "Teléfono inválido"
@@ -110,53 +112,54 @@ function validarTelefono($telefono){
     ];
 }
 
+
 /* ======================================================
    VALIDAR FECHA
 ====================================================== */
 
-function validarFecha($fecha){
-
+function validarFecha(?string $fecha): bool
+{
     if (
-        empty($fecha)
-        ||
+        empty($fecha) ||
         !strtotime($fecha)
-    ){
+    ) {
+
         return false;
     }
 
     return true;
 }
 
+
 /* ======================================================
    VALIDAR GÉNERO
 ====================================================== */
 
-function validarGenero($genero){
-
+function validarGenero(?string $genero): bool
+{
     $permitidos = ['M', 'F'];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Vacío permitido
-    */
+    /* Vacío permitido */
 
-    if (empty($genero)){
+    if (empty($genero)) {
 
         return true;
     }
 
     return in_array(
         $genero,
-        $permitidos
+        $permitidos,
+        true
     );
 }
+
 
 /* ======================================================
    VALIDAR ENTERO POSITIVO
 ====================================================== */
 
-function validarEntero($numero){
-
+function validarEntero($numero): bool
+{
     return (
         filter_var(
             $numero,
@@ -167,59 +170,110 @@ function validarEntero($numero){
     );
 }
 
+
+/* ======================================================
+   VALIDAR ID
+====================================================== */
+
+function validarId($id): bool
+{
+    return (
+        filter_var(
+            $id,
+            FILTER_VALIDATE_INT
+        ) !== false
+        &&
+        $id > 0
+    );
+}
+
+
 /* ======================================================
    VALIDAR EDAD
 ====================================================== */
 
-function validarEdad($edad){
+function validarEdad($edad): bool
+{
+    if (!validarEntero($edad)) {
 
-    if (
-        !validarEntero($edad)
-    ){
         return false;
     }
 
     return (
-        $edad >= 0
-        &&
+        $edad >= 0 &&
         $edad <= 120
     );
 }
+
 
 /* ======================================================
    VALIDAR EMAIL
 ====================================================== */
 
-function validarEmail($email){
-
-    return filter_var(
-        $email,
-        FILTER_VALIDATE_EMAIL
+function validarEmail(string $email): bool
+{
+    return (
+        filter_var(
+            $email,
+            FILTER_VALIDATE_EMAIL
+        ) !== false
     );
 }
 
+
 /* ======================================================
-   VALIDAR STRING REQUERIDO
+   VALIDAR CAMPO REQUERIDO
 ====================================================== */
 
-function requerido($valor){
-
+function requerido($valor): bool
+{
     return (
         isset($valor)
         &&
-        trim($valor) !== ''
+        trim((string)$valor) !== ''
     );
 }
+
 
 /* ======================================================
    VALIDAR BOOLEANO
 ====================================================== */
 
-function validarBoolean($valor){
-
+function validarBoolean($valor): bool
+{
     return in_array(
         $valor,
         [0, 1, '0', '1', true, false],
+        true
+    );
+}
+
+
+/* ======================================================
+   VALIDAR ARRAY NO VACÍO
+====================================================== */
+
+function validarArray($array): bool
+{
+    return (
+        is_array($array)
+        &&
+        count($array) > 0
+    );
+}
+
+/* ======================================================
+   VALIDAR VALOR EN ARRAY
+====================================================== */
+
+function validarOpcion(
+    string $valor,
+    array $permitidos
+): bool {
+
+    return in_array(
+        $valor,
+        $permitidos,
         true
     );
 }

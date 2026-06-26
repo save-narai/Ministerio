@@ -4,96 +4,90 @@ session_start();
 
 require_once "../middleware/auth.php";
 require_once "../middleware/permiso.php";
+
 require_once "../config/conexion.php";
 
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require_once "../helpers/redirect.php";
+require_once "../helpers/csrf.php";
+require_once "../helpers/validaciones.php";
 
-/* ============================
-   CONFIG
-============================ */
+require_once "../services/jovenService.php";
 
-const GENEROS_VALIDOS = ['M', 'F'];
+$pdo->setAttribute(
+    PDO::ATTR_ERRMODE,
+    PDO::ERRMODE_EXCEPTION
+);
 
-/* ============================
-   HELPERS
-============================ */
+try {
 
-function redireccionar($ruta, $mensaje){
+    if (isset($_POST["eliminar_joven"])) {
 
-    $_SESSION["error"] = $mensaje;
-
-    header("Location: $ruta");
-
-    exit;
-}
-
-function validarCsrf(){
-
-    if (
-        !isset($_POST["csrf_token"]) ||
-        !isset($_SESSION["csrf_token"]) ||
-        $_POST["csrf_token"] !== $_SESSION["csrf_token"]
-    ){
-        die("Token CSRF inválido");
-    }
-}
-
-function limpiarNombre($nombre){
-
-    $nombre = trim($nombre);
-
-    $nombre = preg_replace('/\s+/', ' ', $nombre);
-
-    if (!preg_match('/^[\p{L}\'\- ]+$/u', $nombre)){
-
-        return [false, "Nombre inválido"];
+        eliminarJoven($pdo);
     }
 
-    if (mb_strlen($nombre) < 3){
+    if (isset($_POST["recuperar_joven"])) {
 
-        return [false, "Nombre demasiado corto"];
+        recuperarJoven($pdo);
     }
 
-    $nombre = mb_convert_case(
-        $nombre,
-        MB_CASE_TITLE,
-        "UTF-8"
+    if (isset($_POST["eliminar_definitivo"])) {
+
+        eliminarDefinitivo($pdo);
+    }
+
+    if (isset($_POST["crear_joven"])) {
+
+        crearJoven($pdo);
+    }
+
+    if (isset($_POST["editar_joven"])) {
+
+        editarJoven($pdo);
+    }
+
+} catch (PDOException $e) {
+
+    error_log($e->getMessage());
+
+    redirect(
+        "../views/jovenes/index.php",
+        "error",
+        "Error en base de datos."
     );
 
-    return [true, $nombre];
+} catch (Exception $e) {
+
+    redirect(
+        "../views/jovenes/index.php",
+        "error",
+        $e->getMessage()
+    );
 }
 
-function validarTelefono($telefono){
 
-    $telefono = preg_replace('/\D/', '', $telefono);
+/* =========================================================
+   ELIMINAR JOVEN
+========================================================= */
 
-    if (!preg_match('/^3\d{9}$/', $telefono)){
-
-        return [false, "Teléfono inválido"];
-    }
-
-    if (preg_match('/^(\d)\1+$/', $telefono)){
-
-        return [false, "Teléfono inválido"];
-    }
-
-    return [true, $telefono];
-}
-
-/* ============================
-   ELIMINAR (SOFT DELETE)
-============================ */
-
-if (isset($_POST["eliminar_joven"])) {
-
+function eliminarJoven(PDO $pdo): void
+{
     if (!tienePermiso('eliminar_jovenes')) {
 
-        die("Acceso denegado.");
+        throw new Exception(
+            "Acceso denegado."
+        );
     }
 
     validarCsrf();
 
-    $id = (int)($_POST["id"] ?? 0);
+    $id = (int) ($_POST["id"] ?? 0);
+
+    if (!validarId($id)) {
+
+        throw new Exception(
+            "ID inválido."
+        );
+    }
 
     $stmt = $pdo->prepare("
         SELECT id
@@ -107,18 +101,14 @@ if (isset($_POST["eliminar_joven"])) {
 
     if (!$stmt->fetch()) {
 
-        $_SESSION["error"] = "Joven no existe";
-
-        header("Location: ../views/jovenes/index.php");
-
-        exit;
+        throw new Exception(
+            "El joven no existe."
+        );
     }
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
-
         SET estado_actividad = 'ELIMINADO'
-
         WHERE id = :id
     ");
 
@@ -126,33 +116,41 @@ if (isset($_POST["eliminar_joven"])) {
         "id" => $id
     ]);
 
-    $_SESSION["success"] = "Joven eliminado correctamente";
-
-    header("Location: ../views/jovenes/index.php");
-
-    exit;
+    redirect(
+        "../views/jovenes/index.php",
+        "success",
+        "Joven eliminado correctamente."
+    );
 }
 
-/* ============================
+
+/* =========================================================
    RECUPERAR JOVEN
-============================ */
+========================================================= */
 
-if (isset($_POST["recuperar_joven"])) {
-
+function recuperarJoven(PDO $pdo): void
+{
     if (!tienePermiso('gestionar_jovenes')) {
 
-        die("Acceso denegado.");
+        throw new Exception(
+            "Acceso denegado."
+        );
     }
 
     validarCsrf();
 
-    $id = (int)($_POST["id"] ?? 0);
+    $id = (int) ($_POST["id"] ?? 0);
+
+    if (!validarId($id)) {
+
+        throw new Exception(
+            "ID inválido."
+        );
+    }
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
-
         SET estado_actividad = 'ACTIVO'
-
         WHERE id = :id
     ");
 
@@ -160,258 +158,102 @@ if (isset($_POST["recuperar_joven"])) {
         "id" => $id
     ]);
 
-    $_SESSION["success"] =
-        "Joven recuperado correctamente";
-
-    header(
-        "Location: ../views/jovenes/index.php?filtro=eliminados"
+    redirect(
+        "../views/jovenes/index.php?filtro=eliminados",
+        "success",
+        "Joven recuperado correctamente."
     );
-
-    exit;
 }
 
-/* ============================
-   ELIMINAR DEFINITIVO
-============================ */
 
-if (isset($_POST["eliminar_definitivo"])) {
+/* =========================================================
+   ELIMINAR DEFINITIVAMENTE
+========================================================= */
 
+function eliminarDefinitivo(PDO $pdo): void
+{
     if (!tienePermiso('eliminar_jovenes')) {
 
-        die("Acceso denegado.");
+        throw new Exception(
+            "Acceso denegado."
+        );
     }
 
     validarCsrf();
 
-    $id = (int)($_POST["id"] ?? 0);
+    $id = (int) ($_POST["id"] ?? 0);
 
-    /*
-    |--------------------------------------------------------------------------
-    | ELIMINAR RELACIONES
-    |--------------------------------------------------------------------------
-    */
+    if (!validarId($id)) {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM asistencia
-        WHERE joven_id = :id
-    ");
-
-    $stmt->execute([
-        "id" => $id
-    ]);
-
-    $stmt = $pdo->prepare("
-        DELETE FROM seguimientos
-        WHERE joven_id = :id
-    ");
-
-    $stmt->execute([
-        "id" => $id
-    ]);
-
-    /*
-    |--------------------------------------------------------------------------
-    | ELIMINAR JOVEN
-    |--------------------------------------------------------------------------
-    */
-
-    $stmt = $pdo->prepare("
-        DELETE FROM jovenes
-        WHERE id = :id
-    ");
-
-    $stmt->execute([
-        "id" => $id
-    ]);
-
-    $_SESSION["success"] =
-        "Joven eliminado definitivamente";
-
-    header(
-        "Location: ../views/jovenes/index.php?filtro=eliminados"
-    );
-
-    exit;
-}
-
-/* ============================
-   CREAR JOVEN
-============================ */
-
-if (isset($_POST["crear_joven"])) {
-
-    if (!tienePermiso('gestionar_jovenes')) {
-
-        die("Acceso denegado.");
-    }
-
-    validarCsrf();
-
-    /*
-    |--------------------------------------------------------------------------
-    | NOMBRE
-    |--------------------------------------------------------------------------
-    */
-
-    [$ok, $nombre] = limpiarNombre(
-        $_POST["nombre_completo"] ?? ''
-    );
-
-    if (!$ok){
-
-        redireccionar(
-            "../views/jovenes/crear.php",
-            $nombre
+        throw new Exception(
+            "ID inválido."
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | GÉNERO
-    |--------------------------------------------------------------------------
-    */
+    $pdo->beginTransaction();
 
-    $genero = $_POST["genero"] ?? null;
-
-    if (
-        $genero &&
-        !in_array($genero, GENEROS_VALIDOS)
-    ) {
-
-        redireccionar(
-            "../views/jovenes/crear.php",
-            "Género inválido"
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | FECHA INGRESO
-    |--------------------------------------------------------------------------
-    */
-
-    $fechaIngreso =
-        $_POST["fecha_ingreso"] ?? null;
-
-    if (
-        !$fechaIngreso ||
-        !strtotime($fechaIngreso)
-    ) {
-
-        redireccionar(
-            "../views/jovenes/crear.php",
-            "Fecha ingreso inválida"
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | EDAD / FECHA NACIMIENTO
-    |--------------------------------------------------------------------------
-    */
-
-    $fechaNacimiento =
-        $_POST["fecha_nacimiento"] ?: null;
-
-    $edadManual =
-        $_POST["edad_manual"] ?: null;
-
-    if (!$fechaNacimiento && !$edadManual){
-
-        redireccionar(
-            "../views/jovenes/crear.php",
-            "Debes ingresar edad o fecha"
-        );
-    }
-
-    if ($fechaNacimiento){
-
-        $edadManual = null;
-
-        $fechaActualizacionEdad = null;
-
-    } else {
-
-        $fechaActualizacionEdad = date("Y-m-d");
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | TELÉFONO
-    |--------------------------------------------------------------------------
-    */
-
-    $sinTelefono =
-        isset($_POST["sinTelefono"]);
-
-    $telefono =
-        $_POST["telefono"] ?? '';
-
-    if ($sinTelefono){
-
-        $telefonoFinal = null;
-
-    } else {
-
-        if (empty($telefono)){
-
-            redireccionar(
-                "../views/jovenes/crear.php",
-                "Debes ingresar teléfono"
-            );
-        }
-
-        [$okTel, $telefono] =
-            validarTelefono($telefono);
-
-        if (!$okTel){
-
-            redireccionar(
-                "../views/jovenes/crear.php",
-                $telefono
-            );
-        }
-
-        $telefonoFinal = $telefono;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | DUPLICADOS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($telefonoFinal){
+    try {
 
         $stmt = $pdo->prepare("
-            SELECT COUNT(*)
-
-            FROM jovenes
-
-            WHERE nombre_completo = :nombre
-
-            AND telefono = :tel
+            DELETE FROM asistencia
+            WHERE joven_id = :id
         ");
 
         $stmt->execute([
-            "nombre" => $nombre,
-            "tel" => $telefonoFinal
+            "id" => $id
         ]);
 
-        if ($stmt->fetchColumn() > 0){
+        $stmt = $pdo->prepare("
+            DELETE FROM seguimientos
+            WHERE joven_id = :id
+        ");
 
-            redireccionar(
-                "../views/jovenes/crear.php",
-                "Este joven ya existe"
-            );
-        }
+        $stmt->execute([
+            "id" => $id
+        ]);
+
+        $stmt = $pdo->prepare("
+            DELETE FROM jovenes
+            WHERE id = :id
+        ");
+
+        $stmt->execute([
+            "id" => $id
+        ]);
+
+        $pdo->commit();
+
+    } catch (Exception $e) {
+
+        $pdo->rollBack();
+
+        throw $e;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | INSERT
-    |--------------------------------------------------------------------------
-    */
+    redirect(
+        "../views/jovenes/index.php?filtro=eliminados",
+        "success",
+        "Joven eliminado definitivamente."
+    );
+}
+
+
+/* =========================================================
+   CREAR JOVEN
+========================================================= */
+
+function crearJoven(PDO $pdo): void
+{
+    if (!tienePermiso('gestionar_jovenes')) {
+
+        throw new Exception(
+            "Acceso denegado."
+        );
+    }
+
+    validarCsrf();
+
+    $datos = prepararDatosJoven($pdo);
 
     $stmt = $pdo->prepare("
         INSERT INTO jovenes (
@@ -444,215 +286,78 @@ if (isset($_POST["crear_joven"])) {
 
     $stmt->execute([
 
-        "nombre" => $nombre,
+        "nombre" => $datos["nombre"],
 
-        "fn" => $fechaNacimiento,
+        "fn" => $datos["fechaNacimiento"],
 
-        "edad" => $edadManual,
+        "edad" => $datos["edadManual"],
 
-        "fa" => $fechaActualizacionEdad,
+        "fa" => $datos["fechaActualizacionEdad"],
 
-        "tel" => $telefonoFinal,
+        "tel" => $datos["telefono"],
 
-        "genero" => $genero,
+        "genero" => $datos["genero"],
 
-        "estado" =>
-            $_POST["estado_espiritual"] ?? null,
+        "estado" => $datos["estadoEspiritual"],
 
-        "fi" => $fechaIngreso,
+        "fi" => $datos["fechaIngreso"],
 
-        "serv" =>
-            $_POST["es_servidor"] ?? 0
+        "serv" => $datos["esServidor"]
     ]);
 
-    $_SESSION["success"] =
-        "Joven creado correctamente";
-
-    header("Location: ../views/jovenes/index.php");
-
-    exit;
+    redirect(
+        "../views/jovenes/index.php",
+        "success",
+        "Joven creado correctamente."
+    );
 }
 
-/* ============================
+
+/* =========================================================
    EDITAR JOVEN
-============================ */
+========================================================= */
 
-if (isset($_POST["editar_joven"])) {
-
+function editarJoven(PDO $pdo): void
+{
     if (!tienePermiso('gestionar_jovenes')) {
 
-        die("Acceso denegado.");
+        throw new Exception(
+            "Acceso denegado."
+        );
     }
 
     validarCsrf();
 
-    $id = (int)($_POST["id"] ?? 0);
+    $id = (int) ($_POST["id"] ?? 0);
 
-    [$ok, $nombre] = limpiarNombre(
-        $_POST["nombre_completo"] ?? ''
+    if (!validarId($id)) {
+
+        throw new Exception(
+            "ID inválido."
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM jovenes
+        WHERE id = :id
+    ");
+
+    $stmt->execute([
+        "id" => $id
+    ]);
+
+    if (!$stmt->fetch()) {
+
+        throw new Exception(
+            "El joven no existe."
+        );
+    }
+
+    $datos = prepararDatosJoven(
+        $pdo,
+        $id
     );
-
-    if (!$ok){
-
-        redireccionar(
-            "../views/jovenes/editar.php?id=".$id,
-            $nombre
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | GÉNERO
-    |--------------------------------------------------------------------------
-    */
-
-    $genero = $_POST["genero"] ?? null;
-
-    if (
-        $genero &&
-        !in_array($genero, GENEROS_VALIDOS)
-    ) {
-
-        redireccionar(
-            "../views/jovenes/editar.php?id=".$id,
-            "Género inválido"
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | FECHA INGRESO
-    |--------------------------------------------------------------------------
-    */
-
-    $fechaIngreso =
-        $_POST["fecha_ingreso"] ?? null;
-
-    if (
-        !$fechaIngreso ||
-        !strtotime($fechaIngreso)
-    ) {
-
-        redireccionar(
-            "../views/jovenes/editar.php?id=".$id,
-            "Fecha ingreso inválida"
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | EDAD
-    |--------------------------------------------------------------------------
-    */
-
-    $fechaNacimiento =
-        $_POST["fecha_nacimiento"] ?: null;
-
-    $edadManual =
-        $_POST["edad_manual"] ?: null;
-
-    if (!$fechaNacimiento && !$edadManual){
-
-        redireccionar(
-            "../views/jovenes/editar.php?id=".$id,
-            "Debes ingresar edad o fecha"
-        );
-    }
-
-    if ($fechaNacimiento){
-
-        $edadManual = null;
-
-        $fechaActualizacionEdad = null;
-
-    } else {
-
-        $fechaActualizacionEdad = date("Y-m-d");
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | TELÉFONO
-    |--------------------------------------------------------------------------
-    */
-
-    $sinTelefono =
-        isset($_POST["sinTelefono"]);
-
-    $telefono =
-        $_POST["telefono"] ?? '';
-
-    if ($sinTelefono){
-
-        $telefonoFinal = null;
-
-    } else {
-
-        if (empty($telefono)) {
-
-            redireccionar(
-                "../views/jovenes/editar.php?id=".$id,
-                "Debes ingresar teléfono"
-            );
-        }
-
-        [$okTel, $telefono] =
-            validarTelefono($telefono);
-
-        if (!$okTel){
-
-            redireccionar(
-                "../views/jovenes/editar.php?id=".$id,
-                $telefono
-            );
-        }
-
-        $telefonoFinal = $telefono;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | DUPLICADOS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($telefonoFinal){
-
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*)
-
-            FROM jovenes
-
-            WHERE nombre_completo = :nombre
-
-            AND telefono = :tel
-
-            AND id != :id
-        ");
-
-        $stmt->execute([
-
-            "nombre" => $nombre,
-
-            "tel" => $telefonoFinal,
-
-            "id" => $id
-        ]);
-
-        if ($stmt->fetchColumn() > 0){
-
-            redireccionar(
-                "../views/jovenes/editar.php?id=".$id,
-                "Ya existe otro joven con ese nombre y teléfono"
-            );
-        }
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
 
     $stmt = $pdo->prepare("
         UPDATE jovenes
@@ -660,23 +365,14 @@ if (isset($_POST["editar_joven"])) {
         SET
 
             nombre_completo = :nombre,
-
             fecha_nacimiento = :fn,
-
             edad_manual = :edad,
-
             fecha_actualizacion_edad = :fa,
-
             telefono = :tel,
-
             genero = :genero,
-
             estado_espiritual = :estado,
-
             fecha_ingreso = :fi,
-
             es_servidor = :serv,
-
             observaciones = :obs
 
         WHERE id = :id
@@ -684,36 +380,32 @@ if (isset($_POST["editar_joven"])) {
 
     $stmt->execute([
 
-        "nombre" => $nombre,
+        "nombre" => $datos["nombre"],
 
-        "fn" => $fechaNacimiento,
+        "fn" => $datos["fechaNacimiento"],
 
-        "edad" => $edadManual,
+        "edad" => $datos["edadManual"],
 
-        "fa" => $fechaActualizacionEdad,
+        "fa" => $datos["fechaActualizacionEdad"],
 
-        "tel" => $telefonoFinal,
+        "tel" => $datos["telefono"],
 
-        "genero" => $genero,
+        "genero" => $datos["genero"],
 
-        "estado" =>
-            $_POST["estado_espiritual"] ?? null,
+        "estado" => $datos["estadoEspiritual"],
 
-        "fi" => $fechaIngreso,
+        "fi" => $datos["fechaIngreso"],
 
-        "serv" =>
-            $_POST["es_servidor"] ?? 0,
+        "serv" => $datos["esServidor"],
 
-        "obs" =>
-            trim($_POST["observaciones"] ?? '') ?: null,
+        "obs" => $datos["observaciones"],
 
         "id" => $id
     ]);
 
-    $_SESSION["success"] =
-        "Joven actualizado correctamente";
-
-    header("Location: ../views/jovenes/index.php");
-
-    exit;
+    redirect(
+        "../views/jovenes/index.php",
+        "success",
+        "Joven actualizado correctamente."
+    );
 }

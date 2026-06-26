@@ -1,10 +1,12 @@
 <?php
 
 require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../helpers/csrf.php';
 
 $config = require __DIR__ . '/../config/app.php';
 
 if (session_status() === PHP_SESSION_NONE) {
+
     session_start();
 }
 
@@ -12,11 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
    CSRF
 ===================================================== */
 
-if (empty($_SESSION['csrf_token'])) {
-
-    $_SESSION['csrf_token'] =
-        bin2hex(random_bytes(32));
-}
+generarCsrf();
 
 ?>
 
@@ -87,7 +85,7 @@ if (empty($_SESSION['csrf_token'])) {
        EXTRA CSS
     ===================================================== -->
 
-    <?php if(isset($extraCSS)) echo $extraCSS; ?>
+    <?= $extraCSS ?? '' ?>
 
     <!-- =====================================================
        THEME INIT
@@ -95,15 +93,13 @@ if (empty($_SESSION['csrf_token'])) {
 
     <script>
 
-    (function(){
+    (() => {
 
-        const theme =
-            localStorage.getItem("theme");
+        const theme = localStorage.getItem('theme');
 
-        if(theme === "dark"){
+        if (theme === 'dark') {
 
-            document.documentElement
-                .classList.add("dark");
+            document.documentElement.classList.add('dark');
         }
 
     })();
@@ -111,7 +107,7 @@ if (empty($_SESSION['csrf_token'])) {
     </script>
 
     <!-- =====================================================
-       JQUERY
+       LIBRERÍAS
     ===================================================== -->
 
     <script
@@ -119,36 +115,20 @@ if (empty($_SESSION['csrf_token'])) {
         src="https://code.jquery.com/jquery-3.6.0.min.js">
     </script>
 
-    <!-- =====================================================
-       DATATABLES
-    ===================================================== -->
-
     <script
         defer
         src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js">
     </script>
-
-    <!-- =====================================================
-       DATATABLE BUTTONS
-    ===================================================== -->
 
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js">
     </script>
 
-    <!-- =====================================================
-       ZIP
-    ===================================================== -->
-
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
     </script>
-
-    <!-- =====================================================
-       PDF
-    ===================================================== -->
 
     <script
         defer
@@ -160,10 +140,6 @@ if (empty($_SESSION['csrf_token'])) {
         src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">
     </script>
 
-    <!-- =====================================================
-       EXPORT BUTTONS
-    ===================================================== -->
-
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js">
@@ -174,17 +150,13 @@ if (empty($_SESSION['csrf_token'])) {
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js">
     </script>
 
-    <!-- =====================================================
-       CHART JS
-    ===================================================== -->
-
     <script
         defer
         src="https://cdn.jsdelivr.net/npm/chart.js">
     </script>
 
     <!-- =====================================================
-       THEME
+       COMPONENTES APP
     ===================================================== -->
 
     <script
@@ -192,43 +164,29 @@ if (empty($_SESSION['csrf_token'])) {
         src="<?= BASE_URL ?>/assets/js/theme.js">
     </script>
 
-    <!-- =====================================================
-       DATATABLE COMPONENT
-    ===================================================== -->
-
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/datatable.js">
     </script>
 
-    <!-- =====================================================
-       SEARCH COMPONENT
-    ===================================================== -->
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/datatable-export.js">
+    </script>
 
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/search.js">
     </script>
 
-
     <script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/filters.js">
-</script>
-
-
-<script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
-</script>
-
-    <!-- =====================================================
-       EXPORT COMPONENT
-    ===================================================== -->
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/filters.js">
+    </script>
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/datatable-export.js">
+        src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
     </script>
 
 </head>
@@ -241,93 +199,23 @@ if (empty($_SESSION['csrf_token'])) {
 
 <div class="app">
 
+    <?php require_once __DIR__ . '/sidebar.php'; ?>
+
+    <button id="themeToggle">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <main class="main">
+
+        <div class="container">
+
     <!-- =====================================================
        SIDEBAR
     ===================================================== -->
 
-    <aside class="sidebar">
-
-        <div class="sidebar-content">
-
-            <!-- DASHBOARD -->
-
-            <a href="<?= BASE_URL ?>/views/dashboard.php">
-
-                <i class="fa-solid fa-house"></i>
-
-                <span>Dashboard</span>
-
-            </a>
-
-            <!-- JOVENES -->
-
-            <a href="<?= BASE_URL ?>/views/jovenes/index.php">
-
-                <i class="fa-solid fa-users"></i>
-
-                <span>Jóvenes</span>
-
-            </a>
-
-            <!-- REUNIONES -->
-
-            <a href="<?= BASE_URL ?>/views/reuniones/index.php">
-
-                <i class="fa-solid fa-calendar"></i>
-
-                <span>Reuniones</span>
-
-            </a>
-
-            <!-- SEGUIMIENTOS -->
-
-            <a href="<?= BASE_URL ?>/views/seguimientos/index.php">
-
-                <i class="fa-solid fa-notes-medical"></i>
-
-                <span>Seguimientos</span>
-
-            </a>
-			
-			
-			
-			 <!-- usuarios -->
-			 
-			 
-			 <a href="<?= BASE_URL ?>/views/usuarios/index.php">
-
-        <i class="fa-solid fa-users-gear"></i>
-
-        <span>Usuarios</span>
-
-    </a>
-			
-			
-			
-
-            <!-- ROLES -->
-
-            <a href="<?= BASE_URL ?>/views/roles/index.php">
-
-                <i class="fa-solid fa-gear"></i>
-
-                <span>Roles</span>
-
-            </a>
-
-            <!-- LOGOUT -->
-
-            <a href="<?= BASE_URL ?>/logout.php">
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                <span>Salir</span>
-
-            </a>
-
-        </div>
-
-    </aside>
+    <?php require_once __DIR__ . '/sidebar.php'; ?>
 
     <!-- =====================================================
        THEME TOGGLE
