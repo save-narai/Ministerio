@@ -2,21 +2,17 @@
    SIDEBAR
 ===================================================== */
 
-.sidebar {
-
-    width: var(--sidebar-collapsed);
-
-    min-width: var(--sidebar-collapsed);
-
-    min-height: 100vh;
+.sidebar{
 
     position: fixed;
 
     top: 0;
-
     left: 0;
-
     bottom: 0;
+
+    width: var(--sidebar-collapsed);
+
+    height: 100vh;
 
     overflow: hidden;
 
@@ -26,32 +22,28 @@
 
     animation: liquidFlow 8s ease infinite;
 
-    transition: all .3s ease;
-
     box-shadow:
-        5px 0 30px rgba(0, 0, 0, .12);
+        5px 0 30px rgba(0,0,0,.12);
+
+    transition: width .3s ease;
 
     z-index: var(--z-sidebar);
-
-    flex-shrink: 0;
 }
 
 /* =====================================================
    EXPAND
 ===================================================== */
 
-.sidebar:hover {
+.sidebar:hover{
 
     width: var(--sidebar-width);
-
-    min-width: var(--sidebar-width);
 }
 
 /* =====================================================
    CONTENT
 ===================================================== */
 
-.sidebar-content {
+.sidebar-content{
 
     display: flex;
 
@@ -59,18 +51,20 @@
 
     gap: 8px;
 
-    padding: 20px 12px;
-
     height: 100%;
 
+    padding: 20px 12px;
+
     overflow-y: auto;
+
+    overflow-x: hidden;
 }
 
 /* =====================================================
    LINKS
 ===================================================== */
 
-.sidebar a {
+.sidebar a{
 
     display: flex;
 
@@ -86,6 +80,8 @@
 
     text-decoration: none;
 
+    white-space: nowrap;
+
     transition: all .25s ease;
 }
 
@@ -93,39 +89,33 @@
    HOVER
 ===================================================== */
 
-.sidebar a:hover {
+.sidebar a:hover{
 
-    background:
-        rgba(255, 255, 255, .14);
+    background: rgba(255,255,255,.14);
 
-    transform:
-        translateX(4px);
+    transform: translateX(4px);
 }
 
 /* =====================================================
    ACTIVE
 ===================================================== */
 
-.sidebar a.active {
+.sidebar a.active{
 
-    background: rgba(255, 255, 255, .16);
+    background: rgba(255,255,255,.16);
 
     backdrop-filter: blur(12px);
 
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255,255,255,.15);
 
     box-shadow:
-        0 8px 24px rgba(0, 0, 0, .15);
+        0 8px 24px rgba(0,0,0,.15);
 
     transform: translateX(4px);
 }
 
-.sidebar a.active i {
-
-    color: #fff;
-}
-
-.sidebar a.active span {
+.sidebar a.active span,
+.sidebar a.active i{
 
     color: #fff;
 
@@ -136,7 +126,7 @@
    ICON
 ===================================================== */
 
-.sidebar i {
+.sidebar i{
 
     min-width: 22px;
 
@@ -149,41 +139,39 @@
    TEXT
 ===================================================== */
 
-.sidebar span {
+.sidebar span{
 
     opacity: 0;
 
-    width: 0;
+    visibility: hidden;
 
-    overflow: hidden;
+    transition: opacity .2s ease;
 
     white-space: nowrap;
-
-    transition: all .25s ease;
 }
 
-.sidebar:hover span {
+.sidebar:hover span{
 
     opacity: 1;
 
-    width: auto;
+    visibility: visible;
 }
 
 /* =====================================================
    ANIMATION
 ===================================================== */
 
-@keyframes liquidFlow {
+@keyframes liquidFlow{
 
-    0% {
+    0%{
         background-position: 0% 50%;
     }
 
-    50% {
+    50%{
         background-position: 100% 50%;
     }
 
-    100% {
+    100%{
         background-position: 0% 50%;
     }
 }
@@ -192,23 +180,19 @@
    MOBILE
 ===================================================== */
 
-@media (max-width: 768px) {
+@media(max-width:768px){
 
-    .sidebar {
-
-        width: 72px;
-
-        min-width: 72px;
-    }
-
-    .sidebar:hover {
+    .sidebar{
 
         width: 72px;
-
-        min-width: 72px;
     }
 
-    .sidebar span {
+    .sidebar:hover{
+
+        width: 72px;
+    }
+
+    .sidebar span{
 
         display: none;
     }

@@ -297,66 +297,83 @@ require_once "../../includes/header.php";
                                 <?= $porcentaje ?>%
 
                             </span>
-
-                        </td>
+</td>
 
                         <td>
 
-<div class="table-actions">
+                            <div class="table-actions">
 
-    <a
-        href="marcar.php?reunion_id=<?= $r['id'] ?>"
-        class="btn-icon btn-success"
-        data-tooltip="Marcar asistencia"
-    >
-        <i class="fa-solid fa-clipboard-check"></i>
-    </a>
+                                <a
+                                    href="marcar.php?reunion_id=<?= $r['id'] ?>"
+                                    class="btn-icon btn-success"
+                                    data-tooltip="Marcar asistencia"
+                                >
+                                    <i class="fa-solid fa-clipboard-check"></i>
+                                </a>
 
-    <a
-        href="ver.php?id=<?= $r['id'] ?>"
-        class="btn-icon btn-view"
-        data-tooltip="Ver informe"
-    >
-        <i class="fa-solid fa-eye"></i>
-    </a>
+                                <a
+                                    href="ver.php?id=<?= $r['id'] ?>"
+                                    class="btn-icon btn-view"
+                                    data-tooltip="Ver informe"
+                                >
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
 
-    <a
-        href="editar.php?id=<?= $r['id'] ?>"
-        class="btn-icon btn-edit"
-        data-tooltip="Editar"
-    >
-        <i class="fa-solid fa-pen"></i>
-    </a>
+                                <a
+                                    href="editar.php?id=<?= $r['id'] ?>"
+                                    class="btn-icon btn-edit"
+                                    data-tooltip="Editar"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
 
-    <form
-        action="../../controllers/reunionController.php"
-        method="POST"
-        class="table-action-form"
-        onsubmit="return confirm('¿Eliminar reunión?')"
-    >
+                                <form
+                                    action="../../controllers/reunionController.php"
+                                    method="POST"
+                                    class="table-action-form"
+                                    onsubmit="return confirm('¿Eliminar reunión?')"
+                                >
 
-        <input
-            type="hidden"
-            name="id"
-            value="<?= $r['id'] ?>"
-        >
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="<?= $r['id'] ?>"
+                                    >
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= $_SESSION['csrf_token'] ?>"
-        >
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="<?= $_SESSION['csrf_token'] ?>"
+                                    >
 
-        <button
-            type="submit"
-            name="eliminar_reunion"
-            class="btn-icon btn-delete"
-            data-tooltip="Eliminar"
-        >
-            <i class="fa-solid fa-trash"></i>
-        </button>
+                                    <button
+                                        type="submit"
+                                        name="eliminar_reunion"
+                                        class="btn-icon btn-delete"
+                                        data-tooltip="Eliminar"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
 
-    </form>
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    <?php endforeach; ?>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
 
 </div>
 

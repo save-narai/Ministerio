@@ -199,18 +199,6 @@ generarCsrf();
 
 <div class="app">
 
-    <?php require_once __DIR__ . '/sidebar.php'; ?>
-
-    <button id="themeToggle">
-
-        <i class="fa-solid fa-moon"></i>
-
-    </button>
-
-    <main class="main">
-
-        <div class="container">
-
     <!-- =====================================================
        SIDEBAR
     ===================================================== -->

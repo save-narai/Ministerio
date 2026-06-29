@@ -1,12 +1,11 @@
 <?php
-
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
+require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
-require_once __DIR__ . "/../../middleware/actividad.php";
 
 
-actualizarEstadoActividad();
+actualizarEstadoActividad($pdo);
 
 
 if (!tienePermiso('gestionar_jovenes')) {
@@ -207,34 +206,29 @@ $total > 0
 
 
 
-
 /* =========================
    CONEXION
 ========================= */
 
-
-$con =
-estadoConexionJoven($id);
-
-
+$con = estadoConexionJoven(
+    $pdo,
+    $id
+);
 
 $estadoConexion =
-$con["estado"];
-
-
+    $con["estado"];
 
 $claseConexion =
-match($con["color"]){
+match($con["color"]) {
 
-"danger" =>
-"conexion-danger",
+    "danger" =>
+        "conexion-danger",
 
-"warning" =>
-"conexion-warning",
+    "warning" =>
+        "conexion-warning",
 
-default =>
-"conexion-ok"
-
+    default =>
+        "conexion-ok"
 };
 
 

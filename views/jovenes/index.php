@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
-require_once __DIR__ . "/../../middleware/actividad.php";
+require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 if (!tienePermiso('gestionar_jovenes')) {
@@ -9,7 +9,7 @@ if (!tienePermiso('gestionar_jovenes')) {
     exit;
 }
 
-actualizarEstadoActividad();
+actualizarEstadoActividad($pdo);
 
 /* =========================
    FILTROS
@@ -650,71 +650,135 @@ $estadoClase = match($j["estado_actividad"]) {
 
                 <td>
 
-                    <div class="table-actions">
+                   <div class="table-actions">
 
-                        <!-- VER -->
+    <!-- VER -->
 
-                        <a
-                            href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $j["id"] ?>"
-                            class="btn-icon btn-view"
-                            data-tooltip="Ver detalles"
-                        >
+    <a
+        href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $j["id"] ?>"
+        class="btn-icon btn-view"
+        data-tooltip="Ver detalles"
+    >
+        <i class="fa-solid fa-eye"></i>
+    </a>
 
-                            <i class="fa-solid fa-eye"></i>
+    <?php if($filtro !== 'eliminados'): ?>
 
-                        </a>
+        <!-- EDITAR -->
 
-                        <!-- EDITAR -->
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= $j["id"] ?>"
+            class="btn-icon btn-edit"
+            data-tooltip="Editar"
+        >
+            <i class="fa-solid fa-pen"></i>
+        </a>
 
-                        <a
-                            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= $j["id"] ?>"
-                            class="btn-icon btn-edit"
-                            data-tooltip="Editar"
-                        >
+        <?php if(tienePermiso('eliminar_jovenes')): ?>
 
-                            <i class="fa-solid fa-pen"></i>
+        <!-- ELIMINAR -->
 
-                        </a>
+        <form
+            method="POST"
+            class="inline-form"
+            action="<?= BASE_URL ?>/controllers/jovenController.php"
+        >
 
-                        <?php if(tienePermiso('eliminar_jovenes')): ?>
+            <input
+                type="hidden"
+                name="id"
+                value="<?= $j["id"] ?>"
+            >
 
-                        <!-- ELIMINAR -->
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= $_SESSION['csrf_token'] ?>"
+            >
 
-                        <form
-                            method="POST"
-                            class="inline-form"
-                            action="<?= BASE_URL ?>/controllers/jovenController.php"
-                        >
+            <button
+                type="submit"
+                name="eliminar_joven"
+                class="btn-icon btn-delete"
+                data-tooltip="Eliminar"
+                onclick="return confirm('¿Seguro que deseas eliminar este joven?')"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
 
-                            <input
-                                type="hidden"
-                                name="id"
-                                value="<?= $j["id"] ?>"
-                            >
+        </form>
 
-                            <input
-                                type="hidden"
-                                name="csrf_token"
-                                value="<?= $_SESSION['csrf_token'] ?>"
-                            >
+        <?php endif; ?>
 
-                            <button
-                                type="submit"
-                                name="eliminar_joven"
-                                class="btn-icon btn-delete"
-                                data-tooltip="Eliminar"
-                                onclick="return confirm('¿Seguro que deseas eliminar este joven?')"
-                            >
+    <?php else: ?>
 
-                                <i class="fa-solid fa-trash"></i>
+        <!-- RECUPERAR -->
 
-                            </button>
+        <form
+            method="POST"
+            class="inline-form"
+            action="<?= BASE_URL ?>/controllers/jovenController.php"
+        >
 
-                        </form>
+            <input
+                type="hidden"
+                name="id"
+                value="<?= $j["id"] ?>"
+            >
 
-                        <?php endif; ?>
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= $_SESSION['csrf_token'] ?>"
+            >
 
-                    </div>
+            <button
+                type="submit"
+                name="recuperar_joven"
+                class="btn-icon btn-success"
+                data-tooltip="Recuperar"
+                onclick="return confirm('¿Recuperar este joven?')"
+            >
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+
+        </form>
+
+        <!-- ELIMINAR DEFINITIVO -->
+
+        <form
+            method="POST"
+            class="inline-form"
+            action="<?= BASE_URL ?>/controllers/jovenController.php"
+        >
+
+            <input
+                type="hidden"
+                name="id"
+                value="<?= $j["id"] ?>"
+            >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= $_SESSION['csrf_token'] ?>"
+            >
+
+            <button
+                type="submit"
+                name="eliminar_definitivo"
+                class="btn-icon btn-delete"
+                data-tooltip="Eliminar definitivamente"
+                onclick="return confirm('Esta acción no se puede deshacer. ¿Continuar?')"
+            >
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+
+        </form>
+
+    <?php endif; ?>
+
+</div>
 
                 </td>
 

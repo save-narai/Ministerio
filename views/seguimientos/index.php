@@ -3,7 +3,7 @@
 
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
-require_once __DIR__ . "/../../middleware/actividad.php";
+require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 require_once __DIR__ . "/../../services/seguimientoService.php";
@@ -25,7 +25,7 @@ if (!tienePermiso('gestionar_seguimientos')) {
    ACTUALIZAR ACTIVIDAD
 ========================= */
 
-actualizarEstadoActividad();
+actualizarEstadoActividad($pdo);
 
 
 

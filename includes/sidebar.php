@@ -5,15 +5,9 @@ require_once __DIR__ . '/../middleware/permiso.php';
 
 ?>
 
-<!-- =====================================================
-   SIDEBAR
-===================================================== -->
-
 <aside class="sidebar">
 
     <div class="sidebar-content">
-
-        <!-- DASHBOARD -->
 
         <?php if (tienePermiso('ver_dashboard')): ?>
 
@@ -31,8 +25,6 @@ require_once __DIR__ . '/../middleware/permiso.php';
         <?php endif; ?>
 
 
-        <!-- JÓVENES -->
-
         <?php if (tienePermiso('gestionar_jovenes')): ?>
 
         <a
@@ -48,8 +40,6 @@ require_once __DIR__ . '/../middleware/permiso.php';
 
         <?php endif; ?>
 
-
-        <!-- REUNIONES -->
 
         <?php if (tienePermiso('gestionar_reuniones')): ?>
 
@@ -67,8 +57,6 @@ require_once __DIR__ . '/../middleware/permiso.php';
         <?php endif; ?>
 
 
-        <!-- SEGUIMIENTOS -->
-
         <?php if (tienePermiso('gestionar_seguimientos')): ?>
 
         <a
@@ -85,8 +73,6 @@ require_once __DIR__ . '/../middleware/permiso.php';
         <?php endif; ?>
 
 
-        <!-- USUARIOS -->
-
         <?php if (tienePermiso('gestionar_usuarios')): ?>
 
         <a
@@ -102,8 +88,6 @@ require_once __DIR__ . '/../middleware/permiso.php';
 
         <?php endif; ?>
 
-
-        <!-- ROLES -->
 
         <?php if (
             tienePermiso('gestionar_roles')
@@ -124,11 +108,7 @@ require_once __DIR__ . '/../middleware/permiso.php';
         <?php endif; ?>
 
 
-        <!-- CERRAR SESIÓN -->
-
-        <a
-            href="<?= BASE_URL ?>/logout.php"
-        >
+        <a href="<?= BASE_URL ?>/logout.php">
 
             <i class="fa-solid fa-right-from-bracket"></i>
 
