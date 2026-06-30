@@ -2457,20 +2457,23 @@ html.dark .page-section-title {
 .perfil-grid > div {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px;
+  gap: 8px;
+  padding: 18px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .perfil-grid strong {
   font-size: 13px;
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
 }
 
 /* =====================================================
-   STATS
+   STATS GRID
 ===================================================== */
 .perfil-stats {
   display: grid;
@@ -2479,49 +2482,47 @@ html.dark .page-section-title {
   margin-bottom: 24px;
 }
 
-.stat-card {
+/* =====================================================
+   PERFIL STATS CARD
+===================================================== */
+.perfil-stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 14px;
+  gap: 8px;
+  padding: 22px 14px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
-}
-
-.stat-card b {
-  font-size: 38px;
-  line-height: 1;
-  font-weight: 800;
-}
-
-.stat-card span {
-  font-size: 14px;
-  opacity: 0.95;
+  transition: var(--transition);
 }
 
 /* =====================================================
    OBSERVACIONES
 ===================================================== */
 .perfil-obs {
-  padding: 18px;
+  padding: 20px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 18px;
+  color: #ffffff;
 }
 
 .perfil-obs strong {
   display: block;
   margin-bottom: 10px;
+  color: #ffffff;
 }
 
 .perfil-obs p {
   margin: 0;
   line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 /* =====================================================

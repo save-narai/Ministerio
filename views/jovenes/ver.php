@@ -367,79 +367,79 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <div class="perfil-stats">
+  <div class="perfil-stats">
 
-        <div class="stat-card presente">
+    <div class="perfil-stat-card presente">
 
-            <b><?= $presentes ?></b>
+        <b><?= $presentes ?></b>
 
-            <span>Presentes</span>
-
-        </div>
-
-        <div class="stat-card ausente">
-
-            <b><?= $ausentes ?></b>
-
-            <span>Ausencias</span>
-
-        </div>
-
-        <div class="stat-card porcentaje">
-
-            <b><?= $porcentaje ?>%</b>
-
-            <span>Asistencia</span>
-
-        </div>
-
-        <div class="stat-card seguimiento">
-
-            <b><?= $totalSeguimientos ?></b>
-
-            <span>Seguimientos</span>
-
-        </div>
+        <span>Presentes</span>
 
     </div>
+
+    <div class="perfil-stat-card ausente">
+
+        <b><?= $ausentes ?></b>
+
+        <span>Ausencias</span>
+
+    </div>
+
+    <div class="perfil-stat-card porcentaje">
+
+        <b><?= $porcentaje ?>%</b>
+
+        <span>Asistencia</span>
+
+    </div>
+
+    <div class="perfil-stat-card seguimiento">
+
+        <b><?= $totalSeguimientos ?></b>
+
+        <span>Seguimientos</span>
+
+    </div>
+
+</div>
+
+<div class="perfil-obs">
+
+    <strong>
+        Observaciones generales
+    </strong>
+
+    <p>
+        <?= nl2br($observaciones) ?>
+    </p>
+
+</div>
+
+<?php if($ultimoSeguimiento): ?>
 
     <div class="perfil-obs">
 
         <strong>
-            Observaciones generales
+            Estado de consolidación
         </strong>
 
-        <p>
-            <?= nl2br($observaciones) ?>
-        </p>
+        <span class="estado <?= claseEstado($ultimoSeguimiento["estado_proceso"]) ?>">
+
+            <?= ucfirst(
+                strtolower(
+                    str_replace(
+                        "_",
+                        " ",
+                        $ultimoSeguimiento["estado_proceso"]
+                    )
+                )
+            ) ?>
+
+        </span>
 
     </div>
 
-    <?php if($ultimoSeguimiento): ?>
-
-        <div class="perfil-obs">
-
-            <strong>
-                Estado de consolidación
-            </strong>
-
-            <span class="estado <?= claseEstado($ultimoSeguimiento["estado_proceso"]) ?>">
-
-                <?= ucfirst(
-                    strtolower(
-                        str_replace(
-                            "_",
-                            " ",
-                            $ultimoSeguimiento["estado_proceso"]
-                        )
-                    )
-                ) ?>
-
-            </span>
-
-        </div>
-
-    <?php endif; ?>
+<?php endif; ?>
 
 </div>
 
@@ -582,7 +582,7 @@ require_once __DIR__ . "/../../includes/header.php";
         class="btn btn-primary btn-seguimiento"
     >
 
-        <i class="fa-solid fa-user-plus"></i>
+        
 
         Registrar seguimiento
 
@@ -594,7 +594,7 @@ require_once __DIR__ . "/../../includes/header.php";
         class="btn btn-pdf <?= $claseGenero ?>"
     >
 
-        <i class="fa-solid fa-file-pdf"></i>
+      
 
         PDF
 
