@@ -96,45 +96,45 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <!-- ESTADÍSTICAS -->
 
-    <div class="stats-grid gx-stats">
+   <div class="gx-stats">
 
-        <div class="stat-card info">
+    <div class="gx-stat-card">
 
-            <span class="stat-number">
-                <?= $totalRoles ?>
-            </span>
-
-            <span class="stat-label">
-                Roles registrados
-            </span>
-
+        <div class="gx-stat-value">
+            <?= $totalRoles ?>
         </div>
 
-        <div class="stat-card success">
-
-            <span class="stat-number">
-                <?= $totalPermisos ?>
-            </span>
-
-            <span class="stat-label">
-                Permisos disponibles
-            </span>
-
-        </div>
-
-        <div class="stat-card warning">
-
-            <span class="stat-number">
-                <?= $totalUsuarios ?>
-            </span>
-
-            <span class="stat-label">
-                Usuarios asignados
-            </span>
-
+        <div class="gx-stat-label">
+            Roles registrados
         </div>
 
     </div>
+
+    <div class="gx-stat-card">
+
+        <div class="gx-stat-value">
+            <?= $totalPermisos ?>
+        </div>
+
+        <div class="gx-stat-label">
+            Permisos disponibles
+        </div>
+
+    </div>
+
+    <div class="gx-stat-card">
+
+        <div class="gx-stat-value">
+            <?= $totalUsuarios ?>
+        </div>
+
+        <div class="gx-stat-label">
+            Usuarios asignados
+        </div>
+
+    </div>
+
+</div>
 
     <!-- TABLA -->
 
