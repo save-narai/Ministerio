@@ -424,23 +424,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', ()=>{
-
-    const tabla =
-        initDataTable(
-            '#tablaSeguimientos'
-        );
-
-    if(tabla){
-
-        initExportButtons(tabla);
-
-    }
-
-});
-
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/index.js">
 </script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

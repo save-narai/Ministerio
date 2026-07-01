@@ -84,6 +84,7 @@ require_once __DIR__ . "/../../includes/header.php";
             </label>
 
             <input
+                id="password"
                 class="form-input"
                 type="password"
                 name="password"
@@ -102,12 +103,18 @@ require_once __DIR__ . "/../../includes/header.php";
             </label>
 
             <input
+                id="confirmarPassword"
                 class="form-input"
                 type="password"
                 name="confirmar_password"
                 minlength="6"
                 required
             >
+
+            <small
+                id="passwordError"
+                class="telefono-error">
+            </small>
 
         </div>
 
@@ -125,6 +132,7 @@ require_once __DIR__ . "/../../includes/header.php";
             </a>
 
             <button
+                id="btnGuardar"
                 type="submit"
                 name="cambiar_password"
                 class="btn btn-primary"
@@ -139,5 +147,9 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/reset-password.js">
+</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

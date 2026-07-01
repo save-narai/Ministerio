@@ -267,38 +267,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-
-<script>
-
-document.addEventListener("DOMContentLoaded", ()=>{
-
-    const fecha =
-        document.getElementById("fecha");
-
-    const edad =
-        document.getElementById("edad");
-
-    function sync(){
-
-        edad.disabled = !!fecha.value;
-
-        fecha.disabled = !!edad.value;
-    }
-
-    fecha.addEventListener(
-        "change",
-        sync
-    );
-
-    edad.addEventListener(
-        "input",
-        sync
-    );
-
-    initPhoneValidation();
-
-});
-
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/jovenes/crear.js">
 </script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

@@ -223,4 +223,8 @@ require_once "../../includes/header.php";
 
 </div>
 
+<script
+    src="<?= BASE_URL ?>/assets/js/modules/usuarios/crear.js">
+</script>
+
 <?php require_once "../../includes/footer.php"; ?>

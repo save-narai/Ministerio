@@ -5,12 +5,10 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const buscador =
-        document.getElementById("buscador");
+        document.getElementById("buscadorJovenes");
 
     const filas =
-        document.querySelectorAll(
-            ".attendance-card"
-        );
+        document.querySelectorAll(".attendance-card");
 
     const filtros =
         document.querySelectorAll(
@@ -29,58 +27,57 @@ document.addEventListener("DOMContentLoaded", () => {
        FILTROS + BUSCADOR
     ===================================================== */
 
-    function aplicarFiltros(){
+    function aplicarFiltros() {
 
-        const texto =
-            buscador
-                ? buscador.value.toLowerCase()
-                : "";
+        const texto = buscador
+            ? buscador.value.trim().toLowerCase()
+            : "";
 
         filas.forEach(fila => {
 
             const nombre =
-                fila.innerText.toLowerCase();
+                fila.querySelector("strong")
+                    ?.textContent
+                    .toLowerCase() ?? "";
 
             const grupo =
-                fila.dataset.edad || "";
+                fila.dataset.edad ?? "";
 
             let visible = true;
 
-            /* BUSCADOR */
-
-            if(
+            if (
                 texto &&
                 !nombre.includes(texto)
-            ){
+            ) {
+
                 visible = false;
+
             }
 
-            /* FILTRO */
-
-            if(
+            if (
                 filtroActivo !== "todos" &&
                 grupo !== filtroActivo
-            ){
+            ) {
+
                 visible = false;
+
             }
 
             fila.style.display =
                 visible ? "" : "none";
+
         });
+
     }
 
     /* =====================================================
        BUSCADOR
     ===================================================== */
 
-    if(buscador){
-
-        buscador.addEventListener(
-            "keyup",
-            aplicarFiltros
-        );
-
-    }
+    buscador?.addEventListener(
+        "input",
+        aplicarFiltros
+    );
 
     /* =====================================================
        FILTROS
@@ -90,13 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btn.addEventListener("click", () => {
 
-            filtros.forEach(item => {
-
+            filtros.forEach(item =>
                 item.classList.remove(
                     "filter-chip--active"
-                );
-
-            });
+                )
+            );
 
             btn.classList.add(
                 "filter-chip--active"
@@ -115,13 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
        MARCAR TODOS
     ===================================================== */
 
-    if(btnCheckAll){
+    btnCheckAll?.addEventListener(
+        "click",
+        () => {
 
-        btnCheckAll.addEventListener(
-            "click",
-            () => {
-
-                document
+            document
                 .querySelectorAll(
                     'input[name="asistencia[]"]'
                 )
@@ -131,22 +124,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 });
 
-            }
-        );
-
-    }
+        }
+    );
 
     /* =====================================================
-       LIMPIAR TODO
+       LIMPIAR SELECCIÓN
     ===================================================== */
 
-    if(btnUncheckAll){
+    btnUncheckAll?.addEventListener(
+        "click",
+        () => {
 
-        btnUncheckAll.addEventListener(
-            "click",
-            () => {
-
-                document
+            document
                 .querySelectorAll(
                     '.checks-grid input[type="checkbox"]'
                 )
@@ -156,9 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 });
 
-            }
-        );
-
-    }
+        }
+    );
 
 });

@@ -487,44 +487,8 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 
-<script>
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    const tabla =
-        initDataTable('#tablaParticipantes');
-
-    if(tabla){
-
-        /* EXPORTACIONES */
-        initExportButtons(tabla);
-
-        /* BUSCADOR */
-        initSearch(
-            'buscarParticipante',
-            tabla
-        );
-
-        /* FILTROS */
-        initFilters(
-            '.filter-chip',
-            tabla,
-            {
-                todos: '',
-                asistio: 'Asistió',
-                falto: 'Faltó',
-                teen: 'Teen',
-                remanente: 'Remanente'
-            }
-        );
-
-    }
-
-});
-
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/reuniones/ver.js">
 </script>
-
-
-
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

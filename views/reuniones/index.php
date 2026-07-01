@@ -377,28 +377,9 @@ require_once "../../includes/header.php";
 
 </div>
 
-<script>
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    const tabla = initDataTable(
-        '#tablaReuniones'
-    );
-
-    if (tabla) {
-
-        initSearch(
-            'buscador',
-            tabla
-        );
-
-        initExportButtons(
-            tabla
-        );
-    }
-
-});
-
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/reuniones/index.js">
 </script>
 
 <?php require_once "../../includes/footer.php"; ?>

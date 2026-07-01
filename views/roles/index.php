@@ -307,20 +307,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', ()=>{
-
-    const tabla =
-        initDataTable('#tablaRoles');
-
-    initSearch(
-        'buscador',
-        tabla
-    );
-
-});
-
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/roles/index.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

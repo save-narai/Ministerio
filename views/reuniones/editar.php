@@ -36,9 +36,7 @@ require_once __DIR__ . "/../../includes/header.php";
     <div class="form-header">
 
         <div class="form-header-icon">
-
             <i class="fa-solid fa-calendar-days"></i>
-
         </div>
 
         <div class="form-header-content">
@@ -65,6 +63,12 @@ require_once __DIR__ . "/../../includes/header.php";
             type="hidden"
             name="id"
             value="<?= $reunion["id"] ?>"
+        >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
         >
 
         <div class="form-grid">
@@ -98,6 +102,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="tipo"
+                    id="tipo"
                     required
                 >
 
@@ -129,7 +134,37 @@ require_once __DIR__ . "/../../includes/header.php";
                         Evento Especial
                     </option>
 
+                    <option
+                        value="OTRO"
+                        <?= $reunion["tipo"] === "OTRO" ? "selected" : "" ?>
+                    >
+                        Otro
+                    </option>
+
                 </select>
+
+            </div>
+
+            <!-- TIPO PERSONALIZADO -->
+            <!-- Elimina este bloque si aún no existe la columna tipo_personalizado -->
+
+            <div
+                class="form-group"
+                id="grupoTipoPersonalizado"
+            >
+
+                <label class="form-label">
+                    Tipo personalizado
+                </label>
+
+                <input
+                    class="form-input"
+                    type="text"
+                    name="tipo_personalizado"
+                    id="tipoPersonalizado"
+                    value="<?= htmlspecialchars($reunion["tipo_personalizado"] ?? "") ?>"
+                    placeholder="Ej: Campamento, Congreso..."
+                >
 
             </div>
 
@@ -158,5 +193,7 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
+<script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/editar.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

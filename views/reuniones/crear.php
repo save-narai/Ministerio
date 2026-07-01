@@ -97,21 +97,24 @@ require_once __DIR__ . "/../../includes/header.php";
 
             <!-- TIPO PERSONALIZADO -->
 
-            <div class="form-group">
+           <div
+    class="form-group"
+    id="grupoTipoPersonalizado"
+>
 
-                <label class="form-label">
-                    Tipo personalizado
-                </label>
+    <label class="form-label">
+        Tipo personalizado
+    </label>
 
-                <input
-                    class="form-input"
-                    type="text"
-                    name="tipo_personalizado"
-                    id="tipoPersonalizado"
-                    placeholder="Ej: Navidad, Campamento..."
-                >
+    <input
+        class="form-input"
+        type="text"
+        name="tipo_personalizado"
+        id="tipoPersonalizado"
+        placeholder="Ej: Navidad, Campamento..."
+    >
 
-            </div>
+</div>
 
             <!-- FECHA -->
 
@@ -160,5 +163,8 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/reuniones/crear.js">
+</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

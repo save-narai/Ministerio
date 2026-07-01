@@ -243,4 +243,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 </div>
 
+<script src="<?= BASE_URL ?>/assets/js/modulos/dashboard/dashboard.js"></script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

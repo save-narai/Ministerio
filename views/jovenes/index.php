@@ -699,10 +699,13 @@ $estadoClase = match($j["estado_actividad"]) {
             <button
                 type="submit"
                 name="eliminar_joven"
-                class="btn-icon btn-delete"
-                data-tooltip="Eliminar"
-                onclick="return confirm('¿Seguro que deseas eliminar este joven?')"
-            >
+               <button
+
+class="btn-icon btn-delete"
+
+data-confirm="¿Seguro que deseas eliminar este joven?"
+
+>
                 <i class="fa-solid fa-trash"></i>
             </button>
 
@@ -798,27 +801,9 @@ $estadoClase = match($j["estado_actividad"]) {
 
 </div>
 
-<script>
 
-document.addEventListener('DOMContentLoaded', () => {
 
-    const tabla =
-    initDataTable('#tablaJovenes');
 
-    if(tabla){
 
-        initSearch(
-            'buscador',
-            tabla
-        );
-
-        initExportButtons(
-            tabla
-        );
-    }
-
-});
-
-</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

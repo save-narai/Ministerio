@@ -171,6 +171,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+        ...
         <!-- =====================================
              PERMISOS
         ====================================== -->
@@ -190,6 +191,28 @@ require_once __DIR__ . "/../../includes/header.php";
                     </p>
 
                 </div>
+
+            </div>
+
+            <!-- Barra de acciones -->
+
+            <div class="permissions-toolbar">
+
+                <button
+                    type="button"
+                    id="seleccionarTodos"
+                    class="btn btn-secondary btn-sm"
+                >
+                    Seleccionar todos
+                </button>
+
+                <button
+                    type="button"
+                    id="limpiarTodos"
+                    class="btn btn-back btn-sm"
+                >
+                    Limpiar
+                </button>
 
             </div>
 
@@ -287,5 +310,9 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/roles/editar.js">
+</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

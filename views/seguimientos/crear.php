@@ -344,5 +344,8 @@ require_once __DIR__ . "/../../includes/header.php";
 </form>
 
 </div>
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/crear.js">
+</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

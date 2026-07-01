@@ -249,4 +249,8 @@ require_once "../../includes/header.php";
 
 </div>
 
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/editar.js">
+</script>
+
 <?php require_once "../../includes/footer.php"; ?>

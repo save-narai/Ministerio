@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
@@ -123,47 +122,69 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- Barra de acciones -->
+
+            <div class="permissions-toolbar">
+
+                <button
+                    type="button"
+                    id="seleccionarTodos"
+                    class="btn btn-secondary btn-sm"
+                >
+                    Seleccionar todos
+                </button>
+
+                <button
+                    type="button"
+                    id="limpiarTodos"
+                    class="btn btn-back btn-sm"
+                >
+                    Limpiar
+                </button>
+
+            </div>
+
             <div class="permissions-grid">
 
-               <?php foreach($permisos as $permiso): ?>
+                <?php foreach ($permisos as $permiso): ?>
 
-    <label class="permission-card">
+                    <label class="permission-card">
 
-        <input
-            type="checkbox"
-            name="permisos[]"
-            value="<?= (int)$permiso["id"] ?>"
-        >
+                        <input
+                            type="checkbox"
+                            name="permisos[]"
+                            value="<?= (int)$permiso["id"] ?>"
+                        >
 
-        <span class="checkmark"></span>
+                        <span class="checkmark"></span>
 
-        <div class="permission-content">
+                        <div class="permission-content">
 
-            <strong>
+                            <strong>
 
-                <?= htmlspecialchars(
-                    $permiso["nombre"]
-                ) ?>
+                                <?= htmlspecialchars(
+                                    $permiso["nombre"]
+                                ) ?>
 
-            </strong>
+                            </strong>
 
-            <?php if(!empty($permiso["descripcion"])): ?>
+                            <?php if (!empty($permiso["descripcion"])): ?>
 
-                <small>
+                                <small>
 
-                    <?= htmlspecialchars(
-                        $permiso["descripcion"]
-                    ) ?>
+                                    <?= htmlspecialchars(
+                                        $permiso["descripcion"]
+                                    ) ?>
 
-                </small>
+                                </small>
 
-            <?php endif; ?>
+                            <?php endif; ?>
 
-        </div>
+                        </div>
 
-    </label>
+                    </label>
 
-<?php endforeach; ?>
+                <?php endforeach; ?>
 
             </div>
 
@@ -192,8 +213,6 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
-               
-
                 Guardar Rol
 
             </button>
@@ -203,5 +222,6 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+<script src="<?= BASE_URL ?>/assets/js/modulos/roles/crear.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

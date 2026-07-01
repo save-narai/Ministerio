@@ -563,7 +563,6 @@ require_once __DIR__ . "/../../includes/header.php";
     <?php endif; ?>
 
 </div>
-
 <div class="btn-group">
 
     <a
@@ -582,9 +581,20 @@ require_once __DIR__ . "/../../includes/header.php";
         class="btn btn-primary btn-seguimiento"
     >
 
-        
+        <i class="fa-solid fa-user-plus"></i>
 
         Registrar seguimiento
+
+    </a>
+
+    <a
+        href="<?= BASE_URL ?>/views/jovenes/historial.php?id=<?= $id ?>"
+        class="btn btn-info"
+    >
+
+        <i class="fa-solid fa-clock-rotate-left"></i>
+
+        Historial
 
     </a>
 
@@ -594,7 +604,7 @@ require_once __DIR__ . "/../../includes/header.php";
         class="btn btn-pdf <?= $claseGenero ?>"
     >
 
-      
+        <i class="fa-solid fa-file-pdf"></i>
 
         PDF
 
@@ -602,5 +612,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 </div>
+
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/jovenes/ver.js">
+</script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

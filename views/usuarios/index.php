@@ -321,20 +321,8 @@ require_once "../../includes/header.php";
 
 </div>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    const tabla = initDataTable('#tablaUsuarios');
-
-    if (!tabla) return;
-
-    initExportButtons(tabla);
-
-    initSearch('buscador', tabla);
-
-});
-
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/index.js">
 </script>
 
 <?php require_once "../../includes/footer.php"; ?>
