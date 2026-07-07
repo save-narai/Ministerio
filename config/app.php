@@ -1,21 +1,37 @@
 <?php
-return [
-    'nombre' => $_ENV['APP_NAME'] ?? 'RUT',
-    'logo' => $_ENV['APP_LOGO'] ?? 'logo.png',
-    'ruta_logo' => '/assets/img/logo.png',
-    'color_principal' => $_ENV['APP_COLOR'] ?? '#ff4b4b',
 
-    'modo' => $_ENV['APP_ENV'] ?? 'production',
-    'timezone' => $_ENV['APP_TIMEZONE'] ?? 'America/Bogota',
+return [
+
+    'nombre' => 'Ministerio',
+
+    'logo' => 'logo.png',
+
+    'ruta_logo' => '/assets/img/logo.png',
+
+    'color_principal' => '#ff4b4b',
+
+    'modo' => 'production',
+
+    'timezone' => 'America/Bogota',
+
+    'version' => '2.0.0',
 
     'modulos' => [
-        'jovenes' => true,
-        'reuniones' => true,
+
+        'jovenes'      => true,
+
+        'reuniones'    => true,
+
         'seguimientos' => true,
+
     ],
 
     'textos' => [
-        'dashboard' => 'Dashboard',
+
+        'dashboard'   => 'Dashboard',
+
         'nuevo_joven' => 'Nuevo Registro',
+
     ]
+
 ];

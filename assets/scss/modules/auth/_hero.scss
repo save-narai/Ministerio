@@ -1,0 +1,507 @@
+/* ==========================================================
+   HERO
+========================================================== */
+
+.login-hero{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:flex-start;
+
+    gap:2rem;
+
+    width:100%;
+
+    max-width:650px;
+
+    color:#ffffff;
+
+    animation:heroFade .8s ease;
+
+}
+
+/* ==========================================================
+   LOGO
+========================================================== */
+
+.login-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1rem;
+
+    margin-bottom:.4rem;
+
+}
+
+/* ==========================================================
+   LOGO IMAGE
+========================================================== */
+
+.login-logo img{
+
+    width:72px;
+
+    height:72px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:2px solid rgba(255,255,255,.18);
+
+    background:rgba(255,255,255,.08);
+
+    padding:6px;
+
+    backdrop-filter:blur(16px);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.35);
+
+}
+
+/* ==========================================================
+   LOGO TEXT
+========================================================== */
+
+.login-logo-text{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:.35rem;
+
+}
+
+.login-logo-text h2{
+
+    margin:0;
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    line-height:1;
+
+    color:#ffffff;
+
+}
+
+.login-logo-text span{
+
+    margin:0;
+
+    font-size:.82rem;
+
+    font-weight:600;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:rgba(255,255,255,.88);
+
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.login-title{
+
+    margin:0;
+
+    max-width:620px;
+
+    font-size:clamp(2.8rem,4vw,4.5rem);
+
+    line-height:1.08;
+
+    font-weight:800;
+
+    letter-spacing:-2px;
+
+    color:#ffffff;
+
+    text-wrap:balance;
+
+}
+
+/* ==========================================================
+   TITLE HIGHLIGHT
+========================================================== */
+
+.login-title strong{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffb347 0%,
+            #ffd66b 50%,
+            #ffffff 100%
+        );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+
+}
+
+/* ==========================================================
+   DESCRIPTION
+========================================================== */
+
+.login-description{
+
+    margin:0;
+
+    margin-top:.3rem;
+
+    margin-bottom:1rem;
+
+    max-width:560px;
+
+    font-size:1.05rem;
+
+    line-height:1.8;
+
+    font-weight:400;
+
+    color:rgba(255,255,255,.78);
+
+}
+
+/* ==========================================================
+   HERO ANIMATION
+========================================================== */
+
+@keyframes heroFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================
+   FEATURES
+========================================================== */
+
+.login-features{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:1rem;
+
+    width:100%;
+
+    max-width:560px;
+
+}
+
+/* ==========================================================
+   FEATURE CARD
+========================================================== */
+
+.login-feature{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1rem;
+
+    padding:1.15rem 1.25rem;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(22px);
+
+    transition:.35s ease;
+
+}
+
+/* ==========================================================
+   FEATURE HOVER
+========================================================== */
+
+.login-feature:hover{
+
+    transform:translateY(-6px);
+
+    border-color:rgba(255,183,77,.30);
+
+    background:rgba(255,255,255,.08);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.28);
+
+}
+
+/* ==========================================================
+   FEATURE ICON
+========================================================== */
+
+.login-feature i{
+
+    flex-shrink:0;
+
+    width:54px;
+
+    height:54px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:16px;
+
+    font-size:1.2rem;
+
+    color:#ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9a3c,
+            #ffc86d
+        );
+
+    box-shadow:
+        0 10px 25px rgba(255,170,40,.28);
+
+}
+
+/* ==========================================================
+   FEATURE CONTENT
+========================================================== */
+
+.login-feature div{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+/* ==========================================================
+   FEATURE TITLE
+========================================================== */
+
+.login-feature h4{
+
+    margin:0;
+
+    font-size:.95rem;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+}
+
+/* ==========================================================
+   FEATURE DESCRIPTION
+========================================================== */
+
+.login-feature p{
+
+    margin-top:.35rem;
+
+    font-size:.82rem;
+
+    line-height:1.45;
+
+    color:rgba(255,255,255,.70);
+
+}
+
+/* ==========================================================
+   VERSE
+========================================================== */
+
+.login-verse{
+
+    position:relative;
+
+    width:100%;
+
+    max-width:560px;
+
+    padding:1.6rem 1.8rem;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(20px);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.22);
+
+    transition:.35s ease;
+
+}
+
+/* ==========================================================
+   GOLD BAR
+========================================================== */
+
+.login-verse::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:18px;
+
+    bottom:18px;
+
+    left:0;
+
+    width:4px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffb347,
+            #ffd36b
+        );
+
+}
+
+/* ==========================================================
+   QUOTE
+========================================================== */
+
+.login-verse::after{
+
+    content:"“";
+
+    position:absolute;
+
+    top:-18px;
+
+    right:18px;
+
+    font-size:5rem;
+
+    font-family:Georgia, serif;
+
+    color:rgba(255,255,255,.06);
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   VERSE TEXT
+========================================================== */
+
+.login-verse p{
+
+    margin:0;
+
+    padding-left:.9rem;
+
+    font-size:1rem;
+
+    line-height:1.8;
+
+    font-style:italic;
+
+    color:rgba(255,255,255,.90);
+
+}
+
+/* ==========================================================
+   VERSE REFERENCE
+========================================================== */
+
+.login-verse span{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:.55rem;
+
+    margin-top:1rem;
+
+    margin-left:.9rem;
+
+    font-size:.88rem;
+
+    font-weight:700;
+
+    letter-spacing:.05em;
+
+    color:#ffd36b;
+
+}
+
+.login-verse span::before{
+
+    content:"";
+
+    width:18px;
+
+    height:2px;
+
+    border-radius:5px;
+
+    background:#ffd36b;
+
+}
+
+/* ==========================================================
+   VERSE HOVER
+========================================================== */
+
+.login-verse:hover{
+
+    transform:translateY(-4px);
+
+    border-color:rgba(255,195,90,.28);
+
+}

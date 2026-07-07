@@ -1,0 +1,487 @@
+/* ==========================================================
+   AUTH BACKGROUND
+========================================================== */
+
+/* ==========================================================
+   LOGIN PAGE
+========================================================== */
+
+.login-page{
+
+    position:relative;
+
+    min-height:100vh;
+
+    overflow:hidden;
+
+    background:#040404;
+
+}
+
+/* ==========================================================
+   BACKGROUND
+========================================================== */
+
+.login-background{
+
+    position:fixed;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    overflow:hidden;
+
+    z-index:1;
+
+}
+
+/* ==========================================================
+   IMAGE
+========================================================== */
+
+.login-background-image{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    object-position:center center;
+
+    filter:
+
+        brightness(.55)
+
+        contrast(1.08)
+
+        saturate(1.08);
+
+    user-select:none;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   OVERLAY
+========================================================== */
+
+.login-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:2;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(5,8,15,.30),
+
+            rgba(5,8,15,.55),
+
+            rgba(0,0,0,.82)
+
+        );
+
+}
+
+/* ==========================================================
+   EFFECTS CANVAS
+========================================================== */
+
+#fx{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    z-index:3;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.login-container{
+
+    position:relative;
+
+    z-index:10;
+
+}
+
+/* ==========================================================
+   AMBIENT LIGHT
+========================================================== */
+
+.login-background::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-18%;
+
+    left:-10%;
+
+    width:700px;
+
+    height:700px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(255,170,40,.22) 0%,
+
+            rgba(255,170,40,.10) 30%,
+
+            transparent 75%
+
+        );
+
+    filter:blur(110px);
+
+    opacity:.9;
+
+    pointer-events:none;
+
+    z-index:2;
+
+}
+
+/* ==========================================================
+   SECOND LIGHT
+========================================================== */
+
+.login-background::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-18%;
+
+    bottom:-25%;
+
+    width:800px;
+
+    height:800px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(0,170,255,.18) 0%,
+
+            rgba(0,170,255,.07) 35%,
+
+            transparent 75%
+
+        );
+
+    filter:blur(130px);
+
+    opacity:.85;
+
+    pointer-events:none;
+
+    z-index:2;
+
+}
+
+/* ==========================================================
+   VIGNETTE
+========================================================== */
+
+.login-page::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:5;
+
+    pointer-events:none;
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            transparent 45%,
+
+            rgba(0,0,0,.10) 72%,
+
+            rgba(0,0,0,.42) 100%
+
+        );
+
+}
+
+/* ==========================================================
+   TOP SHADOW
+========================================================== */
+
+.login-page::after{
+
+    content:"";
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:220px;
+
+    z-index:4;
+
+    pointer-events:none;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(0,0,0,.32),
+
+            transparent
+
+        );
+
+}
+
+/* ==========================================================
+   NOISE LAYER
+========================================================== */
+
+.login-noise{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:4;
+
+    opacity:.025;
+
+    pointer-events:none;
+
+    mix-blend-mode:overlay;
+
+    background-image:
+
+        radial-gradient(
+
+            rgba(255,255,255,.20) 1px,
+
+            transparent 1px
+
+        );
+
+    background-size:4px 4px;
+
+}
+
+/* ==========================================================
+   CINEMATIC BACKGROUND
+========================================================== */
+
+.login-background-image{
+
+    will-change:
+
+        transform,
+
+        filter;
+
+    transform-origin:center;
+
+    animation:
+
+        backgroundFloat
+
+        45s ease-in-out infinite alternate;
+
+}
+
+/* ==========================================================
+   OVERLAY COLOR
+========================================================== */
+
+.login-overlay{
+
+    background:
+
+        radial-gradient(
+
+            circle at top left,
+
+            rgba(255,145,0,.14),
+
+            transparent 35%
+
+        ),
+
+        radial-gradient(
+
+            circle at bottom right,
+
+            rgba(0,160,255,.12),
+
+            transparent 40%
+
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(5,8,15,.30),
+
+            rgba(5,8,15,.55),
+
+            rgba(0,0,0,.86)
+
+        );
+
+    backdrop-filter:
+
+        blur(2px)
+
+        saturate(115%);
+
+}
+
+/* ==========================================================
+   CANVAS
+========================================================== */
+
+#fx{
+
+    opacity:.65;
+
+    mix-blend-mode:screen;
+
+}
+
+/* ==========================================================
+   DEPTH
+========================================================== */
+
+.login-page{
+
+    perspective:1600px;
+
+}
+
+/* ==========================================================
+   PERFORMANCE
+========================================================== */
+
+.login-background,
+
+.login-overlay,
+
+.login-background-image{
+
+    backface-visibility:hidden;
+
+    transform-style:preserve-3d;
+
+}
+
+/* ==========================================================
+   IMAGE QUALITY
+========================================================== */
+
+.login-background-image{
+
+    image-rendering:auto;
+
+}
+
+/* ==========================================================
+   SMOOTH RENDER
+========================================================== */
+
+.login-page *{
+
+    -webkit-font-smoothing:antialiased;
+
+    -moz-osx-font-smoothing:grayscale;
+
+}
+
+/* ==========================================================
+   BACKGROUND FLOAT
+========================================================== */
+
+@keyframes backgroundFloat{
+
+    0%{
+
+        transform:
+
+            scale(1)
+
+            translate3d(0,0,0);
+
+    }
+
+    50%{
+
+        transform:
+
+            scale(1.03)
+
+            translate3d(-12px,-8px,0);
+
+    }
+
+    100%{
+
+        transform:
+
+            scale(1.06)
+
+            translate3d(10px,6px,0);
+
+    }
+
+}

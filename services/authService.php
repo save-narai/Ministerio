@@ -1,7 +1,9 @@
 <?php
 
+require_once __DIR__ . "/SessionService.php";
+
 /* =========================================================
-   OBTENER USUARIO POR USERNAME
+   OBTENER USUARIO
 ========================================================= */
 
 function obtenerUsuarioPorUsername(
@@ -37,14 +39,12 @@ function obtenerUsuarioPorUsername(
         ':usuario' => $usuario
     ]);
 
-    return $stmt->fetch(
-        PDO::FETCH_ASSOC
-    );
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 
 /* =========================================================
-   AUTENTICAR USUARIO
+   VALIDAR CREDENCIALES
 ========================================================= */
 
 function autenticarUsuario(
@@ -70,7 +70,43 @@ function autenticarUsuario(
         throw new Exception(
             'Usuario o contraseña incorrectos.'
         );
+
     }
 
     return $usuarioSistema;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function loginUsuario(
+    PDO $pdo,
+    string $usuario,
+    string $password
+): array {
+
+    $usuarioSistema =
+        autenticarUsuario(
+            $pdo,
+            $usuario,
+            $password
+        );
+
+    iniciarSesionUsuario(
+        $usuarioSistema
+    );
+
+    return $usuarioSistema;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logoutUsuario(): void
+{
+    cerrarSesion();
 }

@@ -2,56 +2,33 @@
 
 session_start();
 
-require_once "../config/conexion.php";
+require_once __DIR__ . "/../config/conexion.php";
 
-require_once "../helpers/redirect.php";
-require_once "../helpers/validaciones.php";
+require_once __DIR__ . "/../helpers/redirect.php";
+require_once __DIR__ . "/../helpers/validaciones.php";
+
+require_once __DIR__ . "/../middleware/csrf.php";
+
+require_once __DIR__ . "/../services/AuthService.php";
 
 try {
 
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
-        redirect(
-            "../index.php",
-            "error",
+        throw new Exception(
             "Acceso inválido."
         );
+
     }
 
-    autenticarUsuario($pdo);
+    validarCSRF();
 
-} catch (PDOException $e) {
-
-    error_log($e->getMessage());
-
-    redirect(
-        "../index.php",
-        "error",
-        "Error interno del sistema."
-    );
-
-} catch (Exception $e) {
-
-    redirect(
-        "../index.php",
-        "error",
-        $e->getMessage()
-    );
-}
-
-
-/* =========================================================
-   AUTENTICAR USUARIO
-========================================================= */
-
-function autenticarUsuario(PDO $pdo): void
-{
     $usuario = limpiarTexto(
-        $_POST["usuario"] ?? ''
+        $_POST["usuario"] ?? ""
     );
 
     $password = trim(
-        $_POST["password"] ?? ''
+        $_POST["password"] ?? ""
     );
 
     if (
@@ -62,66 +39,49 @@ function autenticarUsuario(PDO $pdo): void
         throw new Exception(
             "Debe ingresar usuario y contraseña."
         );
+
     }
 
-    $stmt = $pdo->prepare("
-        SELECT
-
-            u.id,
-            u.nombre,
-            u.password,
-            u.rol_id,
-            r.nombre AS rol_nombre
-
-        FROM usuarios u
-
-        INNER JOIN roles r
-            ON u.rol_id = r.id
-
-        WHERE
-
-            u.usuario = :usuario
-
-            AND u.activo = 1
-
-        LIMIT 1
-    ");
-
-    $stmt->execute([
-        ":usuario" => $usuario
-    ]);
-
-    $user = $stmt->fetch(
-        PDO::FETCH_ASSOC
+    $usuarioSistema = loginUsuario(
+        $pdo,
+        $usuario,
+        $password
     );
-
-    if (
-        !$user
-        || !password_verify(
-            $password,
-            $user["password"]
-        )
-    ) {
-
-        throw new Exception(
-            "Usuario o contraseña incorrectos."
-        );
-    }
-
-    session_regenerate_id(true);
-
-    $_SESSION["user_id"] =
-        $user["id"];
-
-    $_SESSION["nombre"] =
-        $user["nombre"];
-
-    $_SESSION["rol"] =
-        $user["rol_nombre"];
 
     redirect(
+
         "../views/dashboard.php",
+
         "success",
-        "Bienvenido {$user['nombre']}"
+
+        "Bienvenido {$usuarioSistema['nombre']}"
+
     );
+
+} catch (PDOException $e) {
+
+    error_log($e->getMessage());
+
+    redirect(
+
+        "../index.php",
+
+        "error",
+
+        "Error interno del sistema."
+
+    );
+
+} catch (Exception $e) {
+
+    redirect(
+
+        "../index.php",
+
+        "error",
+
+        $e->getMessage()
+
+    );
+
 }

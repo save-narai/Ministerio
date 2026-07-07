@@ -1,20 +1,22 @@
 <?php
 
-require_once __DIR__ . '/../config/conexion.php';
-require_once __DIR__ . '/../helpers/csrf.php';
+declare(strict_types=1);
 
-$config = require __DIR__ . '/../config/app.php';
+/* ==========================================================
+   BOOTSTRAP
+========================================================== */
 
-if (session_status() === PHP_SESSION_NONE) {
+require_once __DIR__ . '/../config/bootstrap.php';
 
-    session_start();
-}
+/* ==========================================================
+   CONFIGURACIÓN GLOBAL
+========================================================== */
 
-/* =====================================================
-   CSRF
-===================================================== */
+$config = $GLOBALS['config'];
 
-generarCsrf();
+$tituloPagina ??= $config['nombre'] ?? 'Ministerio';
+
+$extraCSS ??= '';
 
 ?>
 
@@ -24,9 +26,9 @@ generarCsrf();
 
 <head>
 
-    <!-- =====================================================
+    <!-- ======================================================
        META
-    ===================================================== -->
+    ======================================================= -->
 
     <meta charset="UTF-8">
 
@@ -35,89 +37,130 @@ generarCsrf();
         content="width=device-width, initial-scale=1.0"
     >
 
-    <!-- =====================================================
+    <meta
+        name="description"
+        content="Sistema de Seguimiento Ministerial"
+    >
+
+    <meta
+        name="author"
+        content="Ministerio Remanente"
+    >
+
+    <!-- ======================================================
        TITLE
-    ===================================================== -->
+    ======================================================= -->
 
     <title>
 
-        <?= htmlspecialchars($config['nombre']) ?>
+        <?= htmlspecialchars($tituloPagina) ?>
 
     </title>
 
-    <!-- =====================================================
+    <!-- ======================================================
+       FAVICON
+    ======================================================= -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="<?= BASE_URL ?>/assets/img/favicon.png"
+    >
+
+    <!-- ======================================================
        APP CSS
-    ===================================================== -->
+    ======================================================= -->
 
     <link
         rel="stylesheet"
-        href="<?= BASE_URL ?>/assets/css/app.css?v=<?= time() ?>"
+        href="<?= BASE_URL ?>/assets/css/app.css?v=<?= filemtime(__DIR__ . '/../assets/css/app.css') ?>"
     >
 
-    <!-- =====================================================
+    <!-- ======================================================
        FONT AWESOME
-    ===================================================== -->
+    ======================================================= -->
 
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     >
 
-    <!-- =====================================================
+    <!-- ======================================================
+       GOOGLE FONTS
+    ======================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ======================================================
        DATATABLES CSS
-    ===================================================== -->
+    ======================================================= -->
 
     <link
         rel="stylesheet"
-        href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+        href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"
     >
-
-    <!-- =====================================================
-       DATATABLE BUTTONS CSS
-    ===================================================== -->
 
     <link
         rel="stylesheet"
         href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"
     >
 
-    <!-- =====================================================
-       EXTRA CSS
-    ===================================================== -->
+    <!-- ======================================================
+       CSS ADICIONAL DEL MÓDULO
+    ======================================================= -->
 
-    <?= $extraCSS ?? '' ?>
+    <?= $extraCSS ?>
 
-    <!-- =====================================================
-       THEME INIT
-    ===================================================== -->
+    <!-- ======================================================
+       TEMA (ANTES DE CARGAR LA PÁGINA)
+    ======================================================= -->
 
     <script>
 
-    (() => {
+        (() => {
 
-        const theme = localStorage.getItem('theme');
+            const theme = localStorage.getItem('theme');
 
-        if (theme === 'dark') {
+            if (theme === 'dark') {
 
-            document.documentElement.classList.add('dark');
-        }
+                document.documentElement.classList.add('dark');
 
-    })();
+            }
+
+        })();
 
     </script>
 
-    <!-- =====================================================
-       LIBRERÍAS
-    ===================================================== -->
+    <!-- ======================================================
+       JQUERY
+    ======================================================= -->
 
     <script
         defer
-        src="https://code.jquery.com/jquery-3.6.0.min.js">
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
     </script>
 
+    <!-- ======================================================
+       DATATABLES
+    ======================================================= -->
+
     <script
         defer
-        src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js">
+        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
     </script>
 
     <script
@@ -150,14 +193,18 @@ generarCsrf();
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js">
     </script>
 
+    <!-- ======================================================
+       CHART.JS
+    ======================================================= -->
+
     <script
         defer
         src="https://cdn.jsdelivr.net/npm/chart.js">
     </script>
 
-    <!-- =====================================================
-       COMPONENTES APP
-    ===================================================== -->
+    <!-- ======================================================
+       COMPONENTES GLOBALES
+    ======================================================= -->
 
     <script
         defer
@@ -189,40 +236,187 @@ generarCsrf();
         src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
     </script>
 
+    <!-- ======================================================
+       JAVASCRIPT ADICIONAL DEL MÓDULO
+    ======================================================= -->
+
+    <?= $extraJS ?? '' ?>
+
 </head>
 
 <body>
 
-<!-- =====================================================
+<!-- ======================================================
    APP
-===================================================== -->
+====================================================== -->
 
 <div class="app">
 
-    <!-- =====================================================
+    <!-- ==================================================
        SIDEBAR
-    ===================================================== -->
+    =================================================== -->
 
     <?php require_once __DIR__ . '/sidebar.php'; ?>
 
-    <!-- =====================================================
-       THEME TOGGLE
-    ===================================================== -->
-
-    <button id="themeToggle">
-
-        <i class="fa-solid fa-moon"></i>
-
-    </button>
-
-    <!-- =====================================================
-       MAIN
-    ===================================================== -->
+    <!-- ==================================================
+       CONTENIDO PRINCIPAL
+    =================================================== -->
 
     <main class="main">
 
-        <!-- =====================================================
-           CONTAINER
-        ===================================================== -->
+        <!-- ==============================================
+           TOPBAR
+        =============================================== -->
 
-        <div class="container">
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    id="sidebarToggle"
+                    class="topbar-toggle"
+                    aria-label="Mostrar menú"
+                >
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+                <div class="topbar-title">
+
+                    <h1>
+
+                        <?= htmlspecialchars($tituloPagina) ?>
+
+                    </h1>
+
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <!-- ======================================
+                   CAMBIO DE TEMA
+                ======================================= -->
+
+                <button
+                    type="button"
+                    id="themeToggle"
+                    class="theme-toggle"
+                    aria-label="Cambiar tema"
+                >
+
+                    <i class="fa-solid fa-moon"></i>
+
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- ==============================================
+           CONTENEDOR
+        =============================================== -->
+
+        <section class="container">
+
+            <?php
+
+            if ($mensaje = getFlash('success')):
+
+            ?>
+
+                <div class="alert alert-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <?= htmlspecialchars($mensaje) ?>
+
+                </div>
+
+            <?php endif; ?>
+
+            <?php
+
+            if ($mensaje = getFlash('error')):
+
+            ?>
+
+                <div class="alert alert-danger">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <?= htmlspecialchars($mensaje) ?>
+
+                </div>
+
+            <?php endif; ?>
+
+            <?php
+
+            if ($mensaje = getFlash('warning')):
+
+            ?>
+
+                <div class="alert alert-warning">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <?= htmlspecialchars($mensaje) ?>
+
+                </div>
+
+            <?php endif; ?>
+
+            <?php
+
+            if ($mensaje = getFlash('info')):
+
+            ?>
+
+                <div class="alert alert-info">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <?= htmlspecialchars($mensaje) ?>
+
+                </div>
+
+            <?php endif; ?>
+
+            <!-- ==============================================
+               INICIO DEL CONTENIDO DE LA VISTA
+            =============================================== -->
+
+            <?php
+
+            /*
+            |--------------------------------------------------
+            | A partir de este punto comienza el contenido
+            | específico de cada módulo.
+            |
+            | Dashboard
+            | Usuarios
+            | Roles
+            | Jóvenes
+            | Reuniones
+            | Seguimientos
+            | Configuración
+            |
+            | El cierre de:
+            |
+            | </section>
+            | </main>
+            | </div>
+            | </body>
+            | </html>
+            |
+            | se encuentra en:
+            |
+            | includes/footer.php
+            |--------------------------------------------------
+            */
+
+            ?>
