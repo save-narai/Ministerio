@@ -5803,10 +5803,10 @@ html.dark .form-info i {
 .login-page {
   position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  padding: 2.5rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   overflow: hidden;
 }
 
@@ -5814,8 +5814,6 @@ html.dark .form-info i {
    CONTAINER
 ========================================================== */
 .login-container {
-  position: relative;
-  z-index: 10;
   width: min(1450px, 100%);
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
@@ -5829,8 +5827,8 @@ html.dark .form-info i {
 .login-hero {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: flex-start;
-  justify-content: center;
   gap: 2rem;
 }
 
@@ -5841,7 +5839,7 @@ html.dark .form-info i {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 1rem;
+  transform: translateY(-12px);
 }
 
 /* ==========================================================
@@ -5853,7 +5851,7 @@ html.dark .form-info i {
 }
 
 /* ==========================================================
-   Z INDEX
+   LAYERS
 ========================================================== */
 .login-hero,
 .login-panel {
@@ -5875,6 +5873,7 @@ html.dark .form-info i {
   min-height: 100vh;
   overflow: hidden;
   background: #040404;
+  perspective: 1600px;
 }
 
 /* ==========================================================
@@ -5899,13 +5898,17 @@ html.dark .form-info i {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  -o-object-position: center center;
-     object-position: center center;
+  -o-object-position: center;
+     object-position: center;
   filter: brightness(0.55) contrast(1.08) saturate(1.08);
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
   pointer-events: none;
+  image-rendering: auto;
+  will-change: transform, filter;
+  transform-origin: center;
+  animation: backgroundFloat 45s ease-in-out infinite alternate;
 }
 
 /* ==========================================================
@@ -5915,7 +5918,8 @@ html.dark .form-info i {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(180deg, rgba(5, 8, 15, 0.3), rgba(5, 8, 15, 0.55), rgba(0, 0, 0, 0.82));
+  background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.22), transparent 35%), radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.18), transparent 40%), linear-gradient(180deg, rgba(5, 8, 15, 0.3), rgba(5, 8, 15, 0.55), rgba(0, 0, 0, 0.86));
+  backdrop-filter: blur(2px) saturate(115%);
 }
 
 /* ==========================================================
@@ -5927,7 +5931,9 @@ html.dark .form-info i {
   width: 100%;
   height: 100%;
   z-index: 3;
+  opacity: 0.65;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 /* ==========================================================
@@ -5949,7 +5955,7 @@ html.dark .form-info i {
   width: 700px;
   height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 170, 40, 0.22) 0%, rgba(255, 170, 40, 0.1) 30%, transparent 75%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.22) 0%, rgba(139, 92, 246, 0.1) 30%, transparent 75%);
   filter: blur(110px);
   opacity: 0.9;
   pointer-events: none;
@@ -5967,7 +5973,7 @@ html.dark .form-info i {
   width: 800px;
   height: 800px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 170, 255, 0.18) 0%, rgba(0, 170, 255, 0.07) 35%, transparent 75%);
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.18) 0%, rgba(96, 165, 250, 0.08) 35%, transparent 75%);
   filter: blur(130px);
   opacity: 0.85;
   pointer-events: none;
@@ -6008,43 +6014,11 @@ html.dark .form-info i {
   position: absolute;
   inset: 0;
   z-index: 4;
-  opacity: 0.025;
+  opacity: 0.018;
   pointer-events: none;
   mix-blend-mode: overlay;
   background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
   background-size: 4px 4px;
-}
-
-/* ==========================================================
-   CINEMATIC BACKGROUND
-========================================================== */
-.login-background-image {
-  will-change: transform, filter;
-  transform-origin: center;
-  animation: backgroundFloat 45s ease-in-out infinite alternate;
-}
-
-/* ==========================================================
-   OVERLAY COLOR
-========================================================== */
-.login-overlay {
-  background: radial-gradient(circle at top left, rgba(255, 145, 0, 0.14), transparent 35%), radial-gradient(circle at bottom right, rgba(0, 160, 255, 0.12), transparent 40%), linear-gradient(180deg, rgba(5, 8, 15, 0.3), rgba(5, 8, 15, 0.55), rgba(0, 0, 0, 0.86));
-  backdrop-filter: blur(2px) saturate(115%);
-}
-
-/* ==========================================================
-   CANVAS
-========================================================== */
-#fx {
-  opacity: 0.65;
-  mix-blend-mode: screen;
-}
-
-/* ==========================================================
-   DEPTH
-========================================================== */
-.login-page {
-  perspective: 1600px;
 }
 
 /* ==========================================================
@@ -6055,13 +6029,6 @@ html.dark .form-info i {
 .login-background-image {
   backface-visibility: hidden;
   transform-style: preserve-3d;
-}
-
-/* ==========================================================
-   IMAGE QUALITY
-========================================================== */
-.login-background-image {
-  image-rendering: auto;
 }
 
 /* ==========================================================
@@ -6080,10 +6047,10 @@ html.dark .form-info i {
     transform: scale(1) translate3d(0, 0, 0);
   }
   50% {
-    transform: scale(1.03) translate3d(-12px, -8px, 0);
+    transform: scale(1.02) translate3d(-8px, -4px, 0);
   }
   100% {
-    transform: scale(1.06) translate3d(10px, 6px, 0);
+    transform: scale(1.04) translate3d(8px, 4px, 0);
   }
 }
 /* ==========================================================
@@ -6092,13 +6059,13 @@ html.dark .form-info i {
 .login-hero {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 2rem;
   width: 100%;
-  max-width: 650px;
+  max-width: 620px;
   color: #ffffff;
-  animation: heroFade 0.8s ease;
+  animation: heroFade 0.8s ease-out;
 }
 
 /* ==========================================================
@@ -6107,7 +6074,7 @@ html.dark .form-info i {
 .login-logo {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
   margin-bottom: 0.4rem;
 }
 
@@ -6115,14 +6082,14 @@ html.dark .form-info i {
    LOGO IMAGE
 ========================================================== */
 .login-logo img {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
-  padding: 6px;
+  padding: 5px;
   backdrop-filter: blur(16px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
@@ -6139,7 +6106,7 @@ html.dark .form-info i {
 
 .login-logo-text h2 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.15rem;
   font-weight: 700;
   line-height: 1;
   color: #ffffff;
@@ -6151,7 +6118,7 @@ html.dark .form-info i {
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ==========================================================
@@ -6163,7 +6130,7 @@ html.dark .form-info i {
   font-size: clamp(2.8rem, 4vw, 4.5rem);
   line-height: 1.08;
   font-weight: 800;
-  letter-spacing: -2px;
+  letter-spacing: -1.6px;
   color: #ffffff;
   text-wrap: balance;
 }
@@ -6172,7 +6139,7 @@ html.dark .form-info i {
    TITLE HIGHLIGHT
 ========================================================== */
 .login-title strong {
-  background: linear-gradient(135deg, #ffb347 0%, #ffd66b 50%, #ffffff 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 45%, #f472b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -6182,12 +6149,10 @@ html.dark .form-info i {
    DESCRIPTION
 ========================================================== */
 .login-description {
-  margin: 0;
-  margin-top: 0.3rem;
-  margin-bottom: 1rem;
+  margin: 0.4rem 0 1rem;
   max-width: 560px;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.75;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.78);
 }
@@ -6198,184 +6163,15 @@ html.dark .form-info i {
 @keyframes heroFade {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
   }
 }
-/* ==========================================================
-   FEATURES
-========================================================== */
-.login-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  width: 100%;
-  max-width: 560px;
-}
-
-/* ==========================================================
-   FEATURE CARD
-========================================================== */
-.login-feature {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.15rem 1.25rem;
-  border-radius: 20px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(22px);
-  transition: 0.35s ease;
-}
-
-/* ==========================================================
-   FEATURE HOVER
-========================================================== */
-.login-feature:hover {
-  transform: translateY(-6px);
-  border-color: rgba(255, 183, 77, 0.3);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
-}
-
-/* ==========================================================
-   FEATURE ICON
-========================================================== */
-.login-feature i {
-  flex-shrink: 0;
-  width: 54px;
-  height: 54px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 16px;
-  font-size: 1.2rem;
-  color: #ffffff;
-  background: linear-gradient(135deg, #ff9a3c, #ffc86d);
-  box-shadow: 0 10px 25px rgba(255, 170, 40, 0.28);
-}
-
-/* ==========================================================
-   FEATURE CONTENT
-========================================================== */
-.login-feature div {
-  display: flex;
-  flex-direction: column;
-}
-
-/* ==========================================================
-   FEATURE TITLE
-========================================================== */
-.login-feature h4 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-/* ==========================================================
-   FEATURE DESCRIPTION
-========================================================== */
-.login-feature p {
-  margin-top: 0.35rem;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* ==========================================================
-   VERSE
-========================================================== */
-.login-verse {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  padding: 1.6rem 1.8rem;
-  border-radius: 22px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.22);
-  transition: 0.35s ease;
-}
-
-/* ==========================================================
-   GOLD BAR
-========================================================== */
-.login-verse::before {
-  content: "";
-  position: absolute;
-  top: 18px;
-  bottom: 18px;
-  left: 0;
-  width: 4px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #ffb347, #ffd36b);
-}
-
-/* ==========================================================
-   QUOTE
-========================================================== */
-.login-verse::after {
-  content: "“";
-  position: absolute;
-  top: -18px;
-  right: 18px;
-  font-size: 5rem;
-  font-family: Georgia, serif;
-  color: rgba(255, 255, 255, 0.06);
-  pointer-events: none;
-}
-
-/* ==========================================================
-   VERSE TEXT
-========================================================== */
-.login-verse p {
-  margin: 0;
-  padding-left: 0.9rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* ==========================================================
-   VERSE REFERENCE
-========================================================== */
-.login-verse span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-top: 1rem;
-  margin-left: 0.9rem;
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #ffd36b;
-}
-
-.login-verse span::before {
-  content: "";
-  width: 18px;
-  height: 2px;
-  border-radius: 5px;
-  background: #ffd36b;
-}
-
-/* ==========================================================
-   VERSE HOVER
-========================================================== */
-.login-verse:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 195, 90, 0.28);
-}
-
 /* ==========================================================
    LOGIN PANEL
 ========================================================== */
@@ -6392,14 +6188,15 @@ html.dark .form-info i {
 .login-card {
   position: relative;
   width: 100%;
-  max-width: 620px;
-  padding: 1.3rem 2.4rem;
+  max-width: 650px;
+  padding: 1.4rem 2.5rem;
   border-radius: 26px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(18, 30, 58, 0.3), rgba(10, 20, 42, 0.4));
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, rgba(12, 18, 32, 0.48), rgba(8, 12, 24, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
 /* ==========================================================
@@ -6412,7 +6209,8 @@ html.dark .form-info i {
   left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  opacity: 0.65;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
 }
 
 /* ==========================================================
@@ -6424,7 +6222,7 @@ html.dark .form-info i {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 /* ==========================================================
@@ -6433,25 +6231,27 @@ html.dark .form-info i {
 .login-card-header {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-bottom: 1.2rem;
+  gap: 0.35rem;
+  margin-bottom: 1.3rem;
 }
 
 /* ==========================================================
-   CARD ICON
+   CARD HEADING
 ========================================================== */
-.login-card-icon {
-  width: 64px;
-  height: 64px;
+.login-card-heading {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #ff9f43, #ffbe55);
-  color: #ffffff;
-  font-size: 1.45rem;
-  box-shadow: 0 15px 35px rgba(255, 170, 50, 0.28);
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+/* ==========================================================
+   CARD BODY
+========================================================== */
+.login-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* ==========================================================
@@ -6459,10 +6259,10 @@ html.dark .form-info i {
 ========================================================== */
 .login-card-title {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -1px;
-  background: linear-gradient(135deg, #ffffff 0%, #ffe29a 45%, #ffb347 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 45%, #f472b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -6472,20 +6272,21 @@ html.dark .form-info i {
    CARD DESCRIPTION
 ========================================================== */
 .login-card-description {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.95rem;
-  line-height: 1.7;
+  margin-top: 0.6rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 
 /* ==========================================================
    DIVIDER
 ========================================================== */
 .login-card-divider {
-  width: 100%;
-  height: 1px;
-  margin: 1.8rem 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  width: 90px;
+  height: 3px;
+  margin-top: 0.8rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7dd3fc, #a78bfa, #f472b6);
 }
 
 /* ==========================================================
@@ -6497,19 +6298,18 @@ html.dark .form-info i {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  margin-top: 1.2rem;
-  padding-top: 1rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ==========================================================
-   FOOTER TEXT
+   COPYRIGHT
 ========================================================== */
-.login-card-footer p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.48);
-  font-size: 0.82rem;
-  text-align: center;
+.login-copyright {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
 }
 
 /* ==========================================================
@@ -6519,12 +6319,14 @@ html.dark .form-info i {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.45rem 1rem;
+  padding: 0.5rem 1.1rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 90px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.78rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -6532,9 +6334,9 @@ html.dark .form-info i {
    HOVER
 ========================================================== */
 .login-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 180, 70, 0.2);
-  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.45);
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(124, 140, 255, 0.18);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.22), 0 40px 80px rgba(0, 0, 0, 0.18);
 }
 
 /* ==========================================================
@@ -6544,7 +6346,8 @@ html.dark .form-info i {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-top: 0;
+  width: 100%;
+  margin: 0;
 }
 
 /* ==========================================================
@@ -6553,7 +6356,7 @@ html.dark .form-info i {
 .login-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.55rem;
 }
 
 /* ==========================================================
@@ -6562,16 +6365,21 @@ html.dark .form-info i {
 .login-label {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.88);
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
+/* ==========================================================
+   LABEL ICON
+========================================================== */
 .login-label i {
-  color: #ffb347;
   font-size: 0.82rem;
+  color: #8b5cf6;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 /* ==========================================================
@@ -6579,6 +6387,21 @@ html.dark .form-info i {
 ========================================================== */
 .login-input-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================
+   INPUT WRAPPER ACTIVE
+========================================================== */
+.login-input-wrapper:focus-within .login-label,
+.login-group:focus-within .login-label {
+  color: #ffffff;
+}
+
+.login-group:focus-within .login-label i {
+  color: #a78bfa;
+  transform: scale(1.08);
 }
 
 /* ==========================================================
@@ -6586,49 +6409,48 @@ html.dark .form-info i {
 ========================================================== */
 .login-input {
   width: 100%;
-  height: 50px;
-  padding: 0 52px;
-  border: none;
+  height: 52px;
+  padding: 0 3.2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   outline: none;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
   backdrop-filter: blur(18px);
   color: #ffffff;
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  transition: background 0.3s, border 0.3s, transform 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 /* ==========================================================
    PLACEHOLDER
 ========================================================== */
 .login-input::-moz-placeholder {
-  color: rgba(255, 255, 255, 0.5);
-  -moz-transition: 0.3s;
-  transition: 0.3s;
+  color: rgba(255, 255, 255, 0.42);
+  -moz-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 .login-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-  transition: 0.3s;
+  color: rgba(255, 255, 255, 0.42);
+  transition: opacity 0.3s ease;
 }
 
 /* ==========================================================
    HOVER
 ========================================================== */
 .login-input:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 180, 70, 0.15);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04));
+  border-color: rgba(167, 139, 250, 0.18);
 }
 
 /* ==========================================================
    FOCUS
 ========================================================== */
 .login-input:focus {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: #ffb347;
-  box-shadow: 0 0 0 4px rgba(255, 179, 71, 0.14);
+  border-color: #8b5cf6;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14), 0 10px 30px rgba(124, 58, 237, 0.15);
 }
 
 .login-input:focus::-moz-placeholder {
@@ -6640,20 +6462,24 @@ html.dark .form-info i {
 }
 
 /* ==========================================================
-   ICON LEFT
+   INPUT ICON
 ========================================================== */
 .login-input-icon {
   position: absolute;
+  left: 18px;
   top: 50%;
-  left: 20px;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.45);
-  transition: 0.3s;
+  color: rgba(255, 255, 255, 0.38);
   pointer-events: none;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
+/* ==========================================================
+   INPUT ACTIVE
+========================================================== */
 .login-input-wrapper:focus-within .login-input-icon {
-  color: #ffb347;
+  color: #a78bfa;
+  transform: translateY(-50%) scale(1.08);
 }
 
 /* ==========================================================
@@ -6662,33 +6488,43 @@ html.dark .form-info i {
 .password-toggle {
   position: absolute;
   top: 50%;
-  right: 16px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
   border: none;
   border-radius: 12px;
   background: transparent;
   color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.password-toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffb347;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
 /* ==========================================================
-   OPTIONS
+   PASSWORD HOVER
+========================================================== */
+.password-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #a78bfa;
+}
+
+.password-toggle:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* ==========================================================
+   FORM OPTIONS
 ========================================================== */
 .login-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin-top: 0;
-  padding-top: 0.2rem;
+  margin-top: 0.35rem;
+  padding: 0.15rem 0;
 }
 
 /* ==========================================================
@@ -6697,13 +6533,19 @@ html.dark .form-info i {
 .login-remember {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   cursor: pointer;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 500;
   color: rgba(255, 255, 255, 0.72);
+  transition: color 0.3s ease;
+}
+
+.login-remember:hover {
+  color: #ffffff;
 }
 
 .login-remember input {
@@ -6711,37 +6553,48 @@ html.dark .form-info i {
 }
 
 /* ==========================================================
-   CUSTOM CHECKBOX
+   CUSTOM CHECK
 ========================================================== */
 .login-check {
+  position: relative;
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+/* ==========================================================
+   CHECK ICON
+========================================================== */
+.login-check::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.05);
-  transition: 0.25s;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: all 0.25s ease;
 }
 
-.login-check::after {
-  content: "";
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  background: #ffb347;
-  transform: scale(0);
-  transition: 0.25s;
-}
-
+/* ==========================================================
+   CHECK ACTIVE
+========================================================== */
 .login-remember input:checked + .login-check {
-  border-color: #ffb347;
-  background: rgba(255, 179, 71, 0.12);
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6, #a78bfa);
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.3);
 }
 
 .login-remember input:checked + .login-check::after {
+  opacity: 1;
   transform: scale(1);
 }
 
@@ -6749,15 +6602,38 @@ html.dark .form-info i {
    FORGOT PASSWORD
 ========================================================== */
 .login-forgot {
+  position: relative;
   text-decoration: none;
-  color: #ffbe63;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
-  transition: 0.25s;
+  color: #a78bfa;
+  transition: color 0.3s ease;
 }
 
+/* ==========================================================
+   LINK UNDERLINE
+========================================================== */
+.login-forgot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7dd3fc, #a78bfa);
+  transition: width 0.3s ease;
+}
+
+/* ==========================================================
+   LINK HOVER
+========================================================== */
 .login-forgot:hover {
-  color: #ffd68d;
+  color: #ffffff;
+}
+
+.login-forgot:hover::after {
+  width: 100%;
 }
 
 /* ==========================================================
@@ -6765,20 +6641,92 @@ html.dark .form-info i {
 ========================================================== */
 .login-button {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.9rem;
   width: 100%;
-  height: 50px;
-  margin-top: 0.2rem;
+  height: 52px;
+  margin-top: 0.5rem;
   border: none;
-  border-radius: 18px;
-  cursor: pointer;
+  border-radius: 16px;
   overflow: hidden;
+  cursor: pointer;
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 0.94rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #ff8f3f 0%, #ffb347 50%, #ff8f3f 100%);
-  box-shadow: 0 18px 35px rgba(255, 140, 0, 0.28);
-  transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #ec4899 100%);
+  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+/* ==========================================================
+   BUTTON SHINE
+========================================================== */
+.login-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -120%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: left 0.8s ease;
+}
+
+/* ==========================================================
+   BUTTON TEXT
+========================================================== */
+.login-button span {
+  position: relative;
+  z-index: 2;
+}
+
+/* ==========================================================
+   BUTTON ICON
+========================================================== */
+.login-button-icon {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+/* ==========================================================
+   BUTTON HOVER
+========================================================== */
+.login-button:hover {
+  transform: translateY(-3px) scale(1.01);
+  filter: brightness(1.05);
+  box-shadow: 0 22px 45px rgba(124, 58, 237, 0.4);
+}
+
+.login-button:hover::before {
+  left: 120%;
+}
+
+.login-button:hover .login-button-icon {
+  transform: translateX(6px);
+}
+
+/* ==========================================================
+   BUTTON ACTIVE
+========================================================== */
+.login-button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* ==========================================================
+   BUTTON DISABLED
+========================================================== */
+.login-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.15);
+  box-shadow: none;
 }
 
 /* ==========================================================
@@ -6794,16 +6742,19 @@ html.dark .form-info i {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 22px;
-  height: 22px;
-  margin-top: -11px;
-  margin-left: -11px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.35);
+  border: 3px solid rgba(255, 255, 255, 0.25);
   border-top-color: #ffffff;
   animation: loginSpinner 0.8s linear infinite;
 }
 
+/* ==========================================================
+   SPINNER
+========================================================== */
 @keyframes loginSpinner {
   to {
     transform: rotate(360deg);
@@ -6813,77 +6764,34 @@ html.dark .form-info i {
    INPUT STATES
 ========================================================== */
 .login-input.is-error {
-  border-color: #ff5c6c;
-  background: rgba(255, 92, 108, 0.06);
-  box-shadow: 0 0 0 4px rgba(255, 92, 108, 0.12);
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
 }
 
 .login-input.is-success {
-  border-color: #45d483;
-  background: rgba(69, 212, 131, 0.05);
-  box-shadow: 0 0 0 4px rgba(69, 212, 131, 0.1);
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.08);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
 }
 
 .login-input.is-warning {
-  border-color: #ffbf47;
-  background: rgba(255, 191, 71, 0.05);
-  box-shadow: 0 0 0 4px rgba(255, 191, 71, 0.1);
-}
-
-/* ==========================================================
-   INPUT HELP
-========================================================== */
-.login-help {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.45rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.login-help i {
-  font-size: 0.75rem;
-}
-
-/* ==========================================================
-   ERROR MESSAGE
-========================================================== */
-.login-error {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  margin-top: 0.55rem;
-  color: #ff8c95;
-  font-size: 0.84rem;
-  line-height: 1.5;
-}
-
-.login-error i {
-  margin-top: 2px;
-}
-
-/* ==========================================================
-   SUCCESS MESSAGE
-========================================================== */
-.login-success {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-top: 0.55rem;
-  color: #62d88d;
-  font-size: 0.84rem;
-}
-
-.login-success i {
-  font-size: 0.8rem;
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
 }
 
 /* ==========================================================
    TRANSITIONS
 ========================================================== */
-.login-form * {
-  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+.login-input,
+.login-button,
+.login-check,
+.login-forgot,
+.password-toggle,
+.login-label,
+.login-input-icon {
+  transition: 0.3s ease;
 }
 
 /* ==========================================================

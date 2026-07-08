@@ -1,0 +1,317 @@
+/* ==========================================================
+   GX ALERT
+========================================================== */
+
+.gx-alert{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:1rem;
+
+    width:100%;
+
+    padding:1rem 1.2rem;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    border:1px solid transparent;
+
+    backdrop-filter:blur(18px);
+
+    transition:
+
+        transform .30s ease,
+
+        border-color .30s ease,
+
+        background .30s ease,
+
+        box-shadow .30s ease;
+
+}
+
+/* ==========================================================
+   ICON
+========================================================== */
+
+.gx-alert-icon{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    width:42px;
+
+    height:42px;
+
+    flex-shrink:0;
+
+    border-radius:12px;
+
+    font-size:1rem;
+
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.gx-alert-content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.25rem;
+
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.gx-alert-title{
+
+    margin:0;
+
+    font-size:.92rem;
+
+    font-weight:700;
+
+    letter-spacing:.02em;
+
+}
+
+/* ==========================================================
+   MESSAGE
+========================================================== */
+
+.gx-alert-message{
+
+    margin:0;
+
+    font-size:.88rem;
+
+    line-height:1.6;
+
+    opacity:.90;
+
+}
+
+/* ==========================================================
+   CLOSE BUTTON
+========================================================== */
+
+.gx-alert-close{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    width:34px;
+
+    height:34px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    background:transparent;
+
+    color:inherit;
+
+    opacity:.55;
+
+    transition:
+
+        background .30s ease,
+
+        opacity .30s ease,
+
+        transform .30s ease;
+
+}
+
+.gx-alert-close:hover{
+
+    opacity:1;
+
+    background:rgba(255,255,255,.08);
+
+}
+
+.gx-alert-close:active{
+
+    transform:scale(.94);
+
+}
+
+/* ==========================================================
+   SUCCESS
+========================================================== */
+
+.gx-alert-success{
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(34,197,94,.16),
+
+            rgba(22,163,74,.08)
+
+        );
+
+    border-color:
+
+        rgba(34,197,94,.25);
+
+    color:#dcfce7;
+
+}
+
+.gx-alert-success .gx-alert-icon{
+
+    background:
+
+        rgba(34,197,94,.18);
+
+    color:#4ade80;
+
+}
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.gx-alert-error{
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(239,68,68,.16),
+
+            rgba(185,28,28,.08)
+
+        );
+
+    border-color:
+
+        rgba(239,68,68,.25);
+
+    color:#fee2e2;
+
+}
+
+.gx-alert-error .gx-alert-icon{
+
+    background:
+
+        rgba(239,68,68,.18);
+
+    color:#f87171;
+
+}
+
+/* ==========================================================
+   WARNING
+========================================================== */
+
+.gx-alert-warning{
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(245,158,11,.16),
+
+            rgba(217,119,6,.08)
+
+        );
+
+    border-color:
+
+        rgba(245,158,11,.25);
+
+    color:#fef3c7;
+
+}
+
+.gx-alert-warning .gx-alert-icon{
+
+    background:
+
+        rgba(245,158,11,.18);
+
+    color:#fbbf24;
+
+}
+
+/* ==========================================================
+   INFO
+========================================================== */
+
+.gx-alert-info{
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(59,130,246,.16),
+
+            rgba(37,99,235,.08)
+
+        );
+
+    border-color:
+
+        rgba(59,130,246,.25);
+
+    color:#dbeafe;
+
+}
+
+.gx-alert-info .gx-alert-icon{
+
+    background:
+
+        rgba(59,130,246,.18);
+
+    color:#60a5fa;
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.gx-alert:hover{
+
+    transform:
+
+        translateY(-2px);
+
+}

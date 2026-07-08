@@ -108,360 +108,350 @@ $version = $config['version'] ?? '2.0';
 
 <main class="login-container">
 
-    <!-- ==================================================
-         HERO
-    =================================================== -->
+   <!-- ==================================================
+     HERO
+=================================================== -->
 
-    <section class="login-hero">
+<section class="login-hero">
 
-        <!-- ==============================================
-             LOGO
-        =============================================== -->
+    <!-- ==============================================
+         LOGO
+    =============================================== -->
 
-        <div class="login-logo">
+    <div class="login-logo">
 
-            <img
-                src="<?= BASE_URL ?>/assets/img/logo.png"
-                alt="Ministerio Remanente"
-            >
+        <img
+            src="<?= BASE_URL ?>/assets/img/logo.png"
+            alt="Ministerio Remanente"
+        >
 
-            <div class="login-logo-text">
+        <div class="login-logo-text">
 
-                <h2>
+            <h2>
 
-                    SIG Remanent
+                SIG Remanente
 
-                </h2>
+            </h2>
 
-                <span>
+            <span>
 
-                    Sistema de Seguimiento
+                Sistema de Seguimiento
 
-                </span>
-
-            </div>
+            </span>
 
         </div>
 
-        <!-- ==============================================
-             TÍTULO
-        =============================================== -->
+    </div>
 
-        <h1 class="login-title">
+    <!-- ==============================================
+         TÍTULO
+    =============================================== -->
 
-            Acompañando el crecimiento
-            <strong>espiritual</strong>
-            de cada joven.
+    <h1 class="login-title">
 
-        </h1>
+        Acompañando el crecimiento
+        <strong>espiritual</strong>
+        de cada joven.
 
-        <!-- ==============================================
-             DESCRIPCIÓN
-        =============================================== -->
+    </h1>
 
-        <p class="login-description">
+    <!-- ==============================================
+         DESCRIPCIÓN
+    =============================================== -->
 
-            Plataforma diseñada para fortalecer el discipulado,
-            registrar el proceso espiritual de cada joven
-            y facilitar el acompañamiento del liderazgo.
+    <p class="login-description">
 
-        </p>
-
-    </section>
-
-    <!-- ==================================================
-         LOGIN PANEL
-    =================================================== -->
-
-    <aside class="login-panel">
-
-        <div class="login-card">
-
-            <!-- ==========================================
-                 HEADER
-            =========================================== -->
-
-          <div class="login-card-header">
-
-    <h3 class="login-card-title">
-
-        Bienvenido
-
-    </h3>
-
-    <p class="login-card-description">
-
-        Inicia sesión para acceder al sistema.
+        Plataforma diseñada para fortalecer el discipulado,
+        registrar el proceso espiritual de cada joven
+        y facilitar el acompañamiento del liderazgo.
 
     </p>
 
-    <div class="login-card-divider"></div>
+</section>
 
-</div>
+<!-- ==================================================
+     LOGIN PANEL
+=================================================== -->
 
-                <!-- ==========================================
-                     ERROR
-                =========================================== -->
+<section class="login-panel">
 
-                <?php if (!empty($error)): ?>
+    <div class="login-card">
 
-                    <div class="login-alert">
+        <!-- ==========================================
+             HEADER
+        =========================================== -->
 
-                        <i class="fa-solid fa-circle-exclamation"></i>
+        <div class="login-card-header">
 
-                        <p>
+            <div class="login-card-heading">
 
-                            <?= htmlspecialchars($error) ?>
+                <h3 class="login-card-title">
 
-                        </p>
+                    Bienvenido
 
-                    </div>
+                </h3>
 
-                <?php endif; ?>
+                <p class="login-card-description">
 
-                <!-- ==========================================
-                     FORMULARIO
-                =========================================== -->
+                    Inicia sesión para acceder al sistema.
 
-                <form
-                    id="loginForm"
-                    class="login-form"
-                    action="<?= BASE_URL ?>/controllers/authController.php"
-                    method="POST"
-                    autocomplete="on"
+                </p>
+
+            </div>
+
+            <div class="login-card-divider"></div>
+
+        </div>
+
+        <!-- ==========================================
+             ERROR
+        =========================================== -->
+
+        <?php if (!empty($error)): ?>
+
+            <div class="login-alert">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <p>
+
+                    <?= htmlspecialchars($error) ?>
+
+                </p>
+
+            </div>
+
+        <?php endif; ?>
+
+        <!-- ==========================================
+             FORMULARIO
+        =========================================== -->
+
+<div class="login-card-body">
+
+
+        <form
+            id="loginForm"
+            class="login-form"
+            action="<?= BASE_URL ?>/controllers/authController.php"
+            method="POST"
+            autocomplete="on"
+        >
+
+            <?= csrfField(); ?>
+
+            <!-- ======================================
+                 USUARIO
+            ======================================= -->
+
+            <div class="login-group">
+
+                <label
+                    class="login-label"
+                    for="usuario"
                 >
 
-                    <?= csrfField(); ?>
+                    <i class="fa-solid fa-user"></i>
 
-                    <!-- ======================================
-                         USUARIO
-                    ======================================= -->
+                    Usuario
 
-                    <div class="login-group">
+                </label>
 
-                        <label
-                            class="login-label"
-                            for="usuario"
-                        >
+                <div class="login-input-wrapper">
 
-                            <i class="fa-solid fa-user"></i>
+                    <i class="fa-solid fa-user login-input-icon"></i>
 
-                            Usuario
+                    <input
 
-                        </label>
+                        id="usuario"
 
-                        <div class="login-input-wrapper">
+                        name="usuario"
+ 
+                        type="text"
 
-                            <i class="fa-solid fa-user login-input-icon"></i>
+                        class="login-input"
 
-                            <input
+                        placeholder="Ingresa tu usuario"
 
-                                id="usuario"
+                        autocomplete="username"
 
-                                name="usuario"
+                        autofocus
 
-                                type="text"
+                        required
 
-                                class="login-input"
-
-                                placeholder="Ingresa tu usuario"
-
-                                autocomplete="username"
-
-                                autofocus
-
-                                required
-
-                            >
-
-                        </div>
-
-                    </div>
-
-                    <!-- ======================================
-                         CONTRASEÑA
-                    ======================================= -->
-
-                    <div class="login-group">
-
-                        <label
-                            class="login-label"
-                            for="password"
-                        >
-
-                            <i class="fa-solid fa-lock"></i>
-
-                            Contraseña
-
-                        </label>
-
-                        <div class="login-input-wrapper">
-
-                            <i class="fa-solid fa-lock login-input-icon"></i>
-
-                            <input
-
-                                id="password"
-
-                                name="password"
-
-                                type="password"
-
-                                class="login-input"
-
-                                placeholder="Ingresa tu contraseña"
-
-                                autocomplete="current-password"
-
-                                required
-
-                            >
-
-                            <button
-
-                                type="button"
-
-                                id="togglePassword"
-
-                                class="password-toggle"
-
-                                aria-label="Mostrar contraseña"
-
-                            >
-
-                                <i
-
-                                    id="togglePasswordIcon"
-
-                                    class="fa-solid fa-eye"
-
-                                ></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <!-- ======================================
-                         OPCIONES
-                    ======================================= -->
-
-                    <div class="login-options">
-
-                        <label class="login-remember">
-
-                            <input
-                                type="checkbox"
-                                id="rememberMe"
-                                name="remember"
-                            >
-
-                            <span class="login-check"></span>
-
-                            <span>
-
-                                Recordarme
-
-                            </span>
-
-                        </label>
-
-                        <a
-                            href="<?= BASE_URL ?>/views/auth/forgot-password.php"
-                            class="login-forgot"
-                        >
-
-                            ¿Olvidaste tu contraseña?
-
-                        </a>
-
-                    </div>
-
-                    <!-- ======================================
-                         BOTÓN
-                    ======================================= -->
-
-                    <button
-                        type="submit"
-                        id="btnLogin"
-                        class="login-button"
                     >
-
-                        <span class="login-button-text">
-
-                            Ingresar al sistema
-
-                        </span>
-
-                        <span class="login-button-icon">
-
-                            <i class="fa-solid fa-arrow-right"></i>
-
-                        </span>
-
-                    </button>
-
-                </form>
-
-                <!-- ==========================================
-                     FOOTER
-                =========================================== -->
-
-                <div class="login-card-footer">
-
-                    <p>
-
-                        Sistema de Seguimiento Ministerial
-
-                    </p>
-
-                    <div class="login-version">
-
-                        Versión <?= htmlspecialchars($version) ?>
-
-                    </div>
 
                 </div>
 
             </div>
 
-        </aside>
+            <!-- ======================================
+                 CONTRASEÑA
+            ======================================= -->
 
-    </main>
+            <div class="login-group">
 
-</div>
+                <label
+                    class="login-label"
+                    for="password"
+                >
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    Contraseña
+
+                </label>
+
+                <div class="login-input-wrapper">
+
+                    <i class="fa-solid fa-lock login-input-icon"></i>
+
+                    <input
+
+                        id="password"
+
+                        name="password"
+
+                        type="password"
+
+                        class="login-input"
+
+                        placeholder="Ingresa tu contraseña"
+
+                        autocomplete="current-password"
+
+                        required
+
+                    >
+
+                    <button
+
+                        type="button"
+
+                        id="togglePassword"
+
+                        class="password-toggle"
+
+                        aria-label="Mostrar contraseña"
+
+                    >
+
+                        <i
+
+                            id="togglePasswordIcon"
+
+                            class="fa-solid fa-eye"
+
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ======================================
+                 OPCIONES
+            ======================================= -->
+
+            <div class="login-options">
+
+                <label class="login-remember">
+
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                        name="remember"
+                    >
+
+                    <span class="login-check"></span>
+
+                    <span>
+
+                        Recordarme
+
+                    </span>
+
+                </label>
+
+                <a
+                    href="<?= BASE_URL ?>/views/auth/forgot-password.php"
+                    class="login-forgot"
+                >
+
+                    ¿Olvidaste tu contraseña?
+
+                </a>
+
+            </div>
+
+            <!-- ======================================
+                 BOTÓN
+            ======================================= -->
+
+            <button
+                type="submit"
+                id="btnLogin"
+                class="login-button"
+            >
+
+                <span>
+
+    Ingresar al sistema
+
+</span>
+
+<i
+
+    class="fa-solid fa-arrow-right login-button-icon"
+
+></i>
+            </button>
+
+        </form>
+    
+    </div>
+
+
+
+        <!-- ==========================================
+             FOOTER
+        =========================================== -->
+
+       <footer class="login-card-footer">
+
+    <small class="login-copyright">
+
+        Sistema de Seguimiento Ministerial
+
+    </small>
+
+    <span class="login-version">
+
+        Versión <?= htmlspecialchars($version) ?>
+
+    </span>
+
+</footer>
+
+    </div>
+
+</section>
 
 <!-- ==========================================================
    SCRIPTS
 ========================================================== -->
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/background.js"></script>
 
-<script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/particles.js"></script>
 
-    window.BASE_URL =
-        "<?= BASE_URL ?>";
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/login.js"></script>
 
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/validation.js"></script>
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/background.js">
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/ui.js"></script>
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/particles.js">
-</script>
-
-<script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/login.js">
-</script>
-
-<script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/validation.js">
-</script>
-
-<script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/ui.js">
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/remember.js"></script>
 
 </body>
 

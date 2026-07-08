@@ -1,0 +1,355 @@
+/* ==========================================================
+   GX INPUT GROUP
+========================================================== */
+
+.gx-input-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.55rem;
+
+    width:100%;
+
+}
+
+/* ==========================================================
+   GX LABEL
+========================================================== */
+
+.gx-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.55rem;
+
+    color:rgba(255,255,255,.88);
+
+    font-size:.88rem;
+
+    font-weight:600;
+
+    letter-spacing:.02em;
+
+    transition:.30s ease;
+
+}
+
+.gx-label i{
+
+    color:#8b5cf6;
+
+    font-size:.82rem;
+
+    transition:.30s ease;
+
+}
+
+/* ==========================================================
+   GX INPUT WRAPPER
+========================================================== */
+
+.gx-input-wrapper{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+/* ==========================================================
+   GX INPUT
+========================================================== */
+
+.gx-input{
+
+    width:100%;
+
+    height:52px;
+
+    padding:0 3.2rem;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.05),
+
+            rgba(255,255,255,.03)
+
+        );
+
+    backdrop-filter:blur(18px);
+
+    color:#ffffff;
+
+    font-size:.94rem;
+
+    font-weight:500;
+
+    letter-spacing:.02em;
+
+    transition:
+
+        border-color .30s ease,
+
+        background .30s ease,
+
+        box-shadow .30s ease,
+
+        transform .30s ease;
+
+}
+
+/* ==========================================================
+   PLACEHOLDER
+========================================================== */
+
+.gx-input::placeholder{
+
+    color:rgba(255,255,255,.42);
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.gx-input:hover{
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.07),
+
+            rgba(255,255,255,.04)
+
+        );
+
+    border-color:rgba(167,139,250,.18);
+
+}
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.gx-input:focus{
+
+    border-color:#8b5cf6;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.08),
+
+            rgba(255,255,255,.05)
+
+        );
+
+    box-shadow:
+
+        0 0 0 4px rgba(139,92,246,.14),
+
+        0 10px 25px rgba(124,58,237,.14);
+
+}
+
+.gx-input:focus::placeholder{
+
+    opacity:.55;
+
+}
+
+/* ==========================================================
+   ICON
+========================================================== */
+
+.gx-input-icon{
+
+    position:absolute;
+
+    left:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:rgba(255,255,255,.38);
+
+    pointer-events:none;
+
+    transition:.30s ease;
+
+}
+
+.gx-input-wrapper:focus-within .gx-input-icon{
+
+    color:#a78bfa;
+
+    transform:
+
+        translateY(-50%)
+
+        scale(1.08);
+
+}
+
+/* ==========================================================
+   PASSWORD BUTTON
+========================================================== */
+
+.gx-password-toggle{
+
+    position:absolute;
+
+    right:10px;
+
+    top:50%;
+
+    width:36px;
+
+    height:36px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transform:translateY(-50%);
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:transparent;
+
+    color:rgba(255,255,255,.45);
+
+    transition:.30s ease;
+
+}
+
+.gx-password-toggle:hover{
+
+    background:rgba(255,255,255,.06);
+
+    color:#a78bfa;
+
+}
+
+.gx-password-toggle:active{
+
+    transform:
+
+        translateY(-50%)
+
+        scale(.95);
+
+}
+
+/* ==========================================================
+   HELP TEXT
+========================================================== */
+
+.gx-help{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.45rem;
+
+    color:rgba(255,255,255,.46);
+
+    font-size:.80rem;
+
+}
+
+.gx-help i{
+
+    font-size:.75rem;
+
+}
+
+/* ==========================================================
+   STATES
+========================================================== */
+
+.gx-input-error{
+
+    border-color:#ef4444 !important;
+
+    box-shadow:
+
+        0 0 0 4px rgba(239,68,68,.12);
+
+}
+
+.gx-input-success{
+
+    border-color:#22c55e !important;
+
+    box-shadow:
+
+        0 0 0 4px rgba(34,197,94,.10);
+
+}
+
+.gx-input-warning{
+
+    border-color:#f59e0b !important;
+
+    box-shadow:
+
+        0 0 0 4px rgba(245,158,11,.10);
+
+}
+
+/* ==========================================================
+   DISABLED
+========================================================== */
+
+.gx-input:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+}
+
+/* ==========================================================
+   READONLY
+========================================================== */
+
+.gx-input[readonly]{
+
+    cursor:default;
+
+    background:rgba(255,255,255,.03);
+
+}

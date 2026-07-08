@@ -16,6 +16,8 @@
 
     background:#040404;
 
+    perspective:1600px;
+
 }
 
 /* ==========================================================
@@ -54,7 +56,7 @@
 
     object-fit:cover;
 
-    object-position:center center;
+    object-position:center;
 
     filter:
 
@@ -67,6 +69,22 @@
     user-select:none;
 
     pointer-events:none;
+
+    image-rendering:auto;
+
+    will-change:
+
+        transform,
+
+        filter;
+
+    transform-origin:center;
+
+    animation:
+
+        backgroundFloat
+
+        45s ease-in-out infinite alternate;
 
 }
 
@@ -84,6 +102,26 @@
 
     background:
 
+        radial-gradient(
+
+            circle at top left,
+
+            rgba(139,92,246,.22),
+
+            transparent 35%
+
+        ),
+
+        radial-gradient(
+
+            circle at bottom right,
+
+            rgba(96,165,250,.18),
+
+            transparent 40%
+
+        ),
+
         linear-gradient(
 
             180deg,
@@ -92,9 +130,15 @@
 
             rgba(5,8,15,.55),
 
-            rgba(0,0,0,.82)
+            rgba(0,0,0,.86)
 
         );
+
+    backdrop-filter:
+
+        blur(2px)
+
+        saturate(115%);
 
 }
 
@@ -114,7 +158,11 @@
 
     z-index:3;
 
+    opacity:.65;
+
     pointer-events:none;
+
+    mix-blend-mode:screen;
 
 }
 
@@ -156,9 +204,9 @@
 
             circle,
 
-            rgba(255,170,40,.22) 0%,
+            rgba(139,92,246,.22) 0%,
 
-            rgba(255,170,40,.10) 30%,
+            rgba(139,92,246,.10) 30%,
 
             transparent 75%
 
@@ -200,9 +248,9 @@
 
             circle,
 
-            rgba(0,170,255,.18) 0%,
+            rgba(96,165,250,.18) 0%,
 
-            rgba(0,170,255,.07) 35%,
+            rgba(96,165,250,.08) 35%,
 
             transparent 75%
 
@@ -298,7 +346,7 @@
 
     z-index:4;
 
-    opacity:.025;
+    opacity:.018;
 
     pointer-events:none;
 
@@ -319,98 +367,6 @@
 }
 
 /* ==========================================================
-   CINEMATIC BACKGROUND
-========================================================== */
-
-.login-background-image{
-
-    will-change:
-
-        transform,
-
-        filter;
-
-    transform-origin:center;
-
-    animation:
-
-        backgroundFloat
-
-        45s ease-in-out infinite alternate;
-
-}
-
-/* ==========================================================
-   OVERLAY COLOR
-========================================================== */
-
-.login-overlay{
-
-    background:
-
-        radial-gradient(
-
-            circle at top left,
-
-            rgba(255,145,0,.14),
-
-            transparent 35%
-
-        ),
-
-        radial-gradient(
-
-            circle at bottom right,
-
-            rgba(0,160,255,.12),
-
-            transparent 40%
-
-        ),
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(5,8,15,.30),
-
-            rgba(5,8,15,.55),
-
-            rgba(0,0,0,.86)
-
-        );
-
-    backdrop-filter:
-
-        blur(2px)
-
-        saturate(115%);
-
-}
-
-/* ==========================================================
-   CANVAS
-========================================================== */
-
-#fx{
-
-    opacity:.65;
-
-    mix-blend-mode:screen;
-
-}
-
-/* ==========================================================
-   DEPTH
-========================================================== */
-
-.login-page{
-
-    perspective:1600px;
-
-}
-
-/* ==========================================================
    PERFORMANCE
 ========================================================== */
 
@@ -423,16 +379,6 @@
     backface-visibility:hidden;
 
     transform-style:preserve-3d;
-
-}
-
-/* ==========================================================
-   IMAGE QUALITY
-========================================================== */
-
-.login-background-image{
-
-    image-rendering:auto;
 
 }
 
@@ -468,9 +414,9 @@
 
         transform:
 
-            scale(1.03)
+            scale(1.02)
 
-            translate3d(-12px,-8px,0);
+            translate3d(-8px,-4px,0);
 
     }
 
@@ -478,9 +424,9 @@
 
         transform:
 
-            scale(1.06)
+            scale(1.04)
 
-            translate3d(10px,6px,0);
+            translate3d(8px,4px,0);
 
     }
 
