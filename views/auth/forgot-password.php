@@ -2,16 +2,25 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../config/bootstrap.php';
+
 require_once __DIR__ . '/../../middleware/guest.php';
+
 require_once __DIR__ . '/../../middleware/csrf.php';
-require_once __DIR__ . '/../../helpers/flash.php';
 
 exigirInvitado();
 
 generarCSRF();
 
-$error = flash('error');
-$success = flash('success');
+$config = $GLOBALS['config'];
+
+$error = getFlash('error');
+
+$success = getFlash('success');
+
+$version = $config['version'] ?? '2.0';
+
+
 
 ?>
 
@@ -30,16 +39,18 @@ $success = flash('success');
 
     <meta
         name="description"
-        content="Recuperación de contraseña"
+        content="Recuperación segura de contraseña del Sistema de Seguimiento Ministerial."
     >
 
     <title>
 
-        Recuperar contraseña | Remanente
+        Remanente | Recuperar contraseña
 
     </title>
 
-    <!-- Google Fonts -->
+    <!-- ======================================================
+         GOOGLE FONTS
+    ======================================================= -->
 
     <link
         rel="preconnect"
@@ -57,31 +68,43 @@ $success = flash('success');
         rel="stylesheet"
     >
 
-    <!-- Font Awesome -->
+    <!-- ======================================================
+         FONT AWESOME
+    ======================================================= -->
 
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     >
 
-    <!-- SCSS compilado -->
+    <!-- ======================================================
+         APP CSS
+    ======================================================= -->
 
     <link
         rel="stylesheet"
-        href="<?= BASE_URL ?>/assets/css/main.css"
+        href="<?= BASE_URL ?>/assets/css/app.css"
     >
 
 </head>
 
-<body>
+<body class="auth auth-forgot">
+    
+<!-- ==========================================================
+     LOGIN PAGE
+========================================================== -->
 
 <div class="login-page">
+
+    <!-- ======================================================
+         BACKGROUND
+    ======================================================= -->
 
     <div class="login-background">
 
         <img
             src="<?= BASE_URL ?>/assets/img/1396974.png"
-            alt="Fondo"
+            alt="Background"
             class="login-background-image"
         >
 
@@ -91,187 +114,122 @@ $success = flash('success');
 
     </div>
 
-    <main class="login-container">
+ <!-- ======================================================
+     CONTENT
+====================================================== -->
 
-        <section class="login-hero">
+<main class="login-container">
 
-        <!-- =========================================
-             PANEL IZQUIERDO
-        ========================================== -->
+    <!-- ==================================================
+         HERO
+    =================================================== -->
 
-        <div class="login-hero__content">
+    <section class="login-hero">
 
-            <div class="login-brand">
+        <!-- ==============================================
+             LOGO
+        =============================================== -->
 
-                <div class="login-brand__logo">
+        <div class="login-logo">
 
-                    <i class="fa-solid fa-fire-flame-curved"></i>
+            <img
+                src="<?= BASE_URL ?>/assets/img/logo.png"
+                alt="Ministerio Remanente"
+            >
 
-                </div>
+            <div class="login-logo-text">
 
-                <span class="login-brand__name">
+                <h2>
 
-                    Ministerio Remanente
+                    SIG Remanente
+
+                </h2>
+
+                <span>
+
+                    Sistema de Seguimiento
 
                 </span>
 
             </div>
-
-            <div class="login-hero__text">
-
-                <span class="login-hero__badge">
-
-                    Recuperación de Cuenta
-
-                </span>
-
-                <h1 class="login-hero__title">
-
-                    Recupera el acceso
-                    a tu cuenta de forma segura.
-
-                </h1>
-
-                <p class="login-hero__description">
-
-                    Si olvidaste tu contraseña,
-                    ingresa el correo electrónico
-                    o el usuario asociado a tu cuenta.
-                    Te enviaremos las instrucciones
-                    necesarias para crear una nueva contraseña.
-
-                </p>
-
-            </div>
-
-            <!-- PASOS -->
-
-            <div class="login-features">
-
-                <div class="login-feature">
-
-                    <i class="fa-solid fa-envelope-open-text"></i>
-
-                    <div>
-
-                        <strong>
-
-                            Solicita el enlace
-
-                        </strong>
-
-                        <span>
-
-                            Ingresa tu correo o usuario.
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="login-feature">
-
-                    <i class="fa-solid fa-paper-plane"></i>
-
-                    <div>
-
-                        <strong>
-
-                            Recibe las instrucciones
-
-                        </strong>
-
-                        <span>
-
-                            Verifica tu bandeja de entrada.
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="login-feature">
-
-                    <i class="fa-solid fa-key"></i>
-
-                    <div>
-
-                        <strong>
-
-                            Crea una nueva contraseña
-
-                        </strong>
-
-                        <span>
-
-                            Accede nuevamente al sistema.
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- MENSAJE -->
-
-            <blockquote class="login-verse">
-
-                <i class="fa-solid fa-shield-heart"></i>
-
-                <p>
-
-                    Tu información está protegida.
-                    Solo tú podrás restablecer
-                    el acceso a tu cuenta.
-
-                </p>
-
-            </blockquote>
 
         </div>
 
-        <!-- =========================================
-             PANEL DERECHO
-        ========================================== -->
+        <!-- ==============================================
+             TÍTULO
+        =============================================== -->
 
-        <div class="login-panel">
+        <h1 class="login-title">
 
-            <div class="login-card">
+            Recupera el acceso
+            a tu <strong>cuenta</strong>
+            de forma segura.
 
-                <div class="login-card__header">
+        </h1>
 
-                    <div class="login-card__icon">
+        <!-- ==============================================
+             DESCRIPCIÓN
+        =============================================== -->
 
-                        <i class="fa-solid fa-unlock-keyhole"></i>
+        <p class="login-description">
 
-                    </div>
+            Si olvidaste tu contraseña, ingresa el usuario
+            o correo electrónico asociado a tu cuenta.
+            Te enviaremos las instrucciones necesarias para
+            restablecer el acceso de forma segura.
 
-                    <h2>
+        </p>
+
+    </section>
+
+    <!-- ==================================================
+         LOGIN PANEL
+    =================================================== -->
+
+    <section class="login-panel">
+
+        <div class="login-card">
+
+            <!-- ==========================================
+                 HEADER
+            =========================================== -->
+
+            <div class="login-card-header">
+
+                <div class="login-card-heading">
+
+                    <h3 class="login-card-title">
 
                         Recuperar contraseña
 
-                    </h2>
+                    </h3>
 
-                    <p>
+                    <p class="login-card-description">
 
-                        Ingresa la información de tu cuenta para
-                        enviarte las instrucciones de recuperación.
+                        Ingresa tu usuario o correo para
+                        enviarte el enlace de recuperación.
 
                     </p>
 
                 </div>
 
-                <!-- =========================================
+                <div class="login-card-divider"></div>
+
+            </div>
+
+            <!-- ==========================================
+                 BODY
+            =========================================== -->
+
+            <div class="login-card-body">
+
+                <!-- ==========================================
                      MENSAJES
-                ========================================== -->
+                =========================================== -->
 
                 <?php if (!empty($error)): ?>
 
-                    <div class="login-alert login-alert--error">
+                    <div class="login-alert login-alert-error">
 
                         <i class="fa-solid fa-circle-exclamation"></i>
 
@@ -287,7 +245,7 @@ $success = flash('success');
 
                 <?php if (!empty($success)): ?>
 
-                    <div class="login-alert login-alert--success">
+                    <div class="login-alert login-alert-success">
 
                         <i class="fa-solid fa-circle-check"></i>
 
@@ -301,9 +259,9 @@ $success = flash('success');
 
                 <?php endif; ?>
 
-                <!-- =========================================
+                <!-- ==========================================
                      FORMULARIO
-                ========================================== -->
+                =========================================== -->
 
                 <form
                     id="forgotPasswordForm"
@@ -321,38 +279,52 @@ $success = flash('success');
                         value="forgot_password"
                     >
 
-                    <!-- CORREO O USUARIO -->
+                    <!-- ======================================
+                         USUARIO O CORREO
+                    ======================================= -->
 
-                    <div class="login-field">
+                    <div class="login-group">
 
                         <label
-                            for="usuario"
                             class="login-label"
+                            for="usuario"
                         >
+
+                            <i class="fa-solid fa-envelope"></i>
 
                             Usuario o correo electrónico
 
                         </label>
 
-                        <div class="login-input-group">
+                        <div class="login-input-wrapper">
 
-                            <i class="fa-solid fa-envelope"></i>
+                            <i class="fa-solid fa-envelope login-input-icon"></i>
 
                             <input
+
                                 id="usuario"
-                                type="text"
+
                                 name="usuario"
+
+                                type="text"
+
                                 class="login-input"
+
                                 placeholder="Ingresa tu usuario o correo"
+
                                 autocomplete="username"
+
                                 required
+
                             >
 
                         </div>
 
                     </div>
 
-                    <!-- INFORMACIÓN -->
+    <!-- ======================================
+                         INFORMACIÓN
+                    ======================================= -->
 
                     <div class="login-info">
 
@@ -360,14 +332,17 @@ $success = flash('success');
 
                         <span>
 
-                            Si la cuenta existe, recibirás un enlace para
-                            restablecer tu contraseña.
+                            Si la cuenta existe, recibirás un enlace
+                            para restablecer tu contraseña de forma
+                            segura.
 
                         </span>
 
                     </div>
 
-                    <!-- BOTÓN -->
+                    <!-- ======================================
+                         BOTÓN
+                    ======================================= -->
 
                     <button
                         type="submit"
@@ -375,15 +350,9 @@ $success = flash('success');
                         class="login-button"
                     >
 
-                        <span class="login-button-text">
+                        <span>
 
                             Enviar enlace de recuperación
-
-                        </span>
-
-                        <span class="login-button-loader">
-
-                            <i class="fa-solid fa-spinner fa-spin"></i>
 
                         </span>
 
@@ -393,16 +362,14 @@ $success = flash('success');
 
                 </form>
 
-                <!-- =========================================
+                <!-- ==========================================
                      ACCIONES
-                ========================================== -->
+                =========================================== -->
 
-                <div class="login-card__actions">
+                <div class="login-links">
 
                     <a
                         href="<?= BASE_URL ?>/views/auth/login.php"
-                        class="login-link"
-
                     >
 
                         <i class="fa-solid fa-arrow-left"></i>
@@ -413,30 +380,27 @@ $success = flash('success');
 
                 </div>
 
-                <!-- =========================================
-                     FOOTER
-                ========================================== -->
+            </div>
 
-                <div class="login-card__footer">
+            <!-- ==========================================
+                 FOOTER CARD
+            =========================================== -->
 
-                    <span>
+            <footer class="login-card-footer">
 
-                        ¿Recordaste tu contraseña?
+                <small class="login-copyright">
 
-                    </span>
+                    Sistema de Seguimiento Ministerial
 
-                    <a
-                        href="<?= BASE_URL ?>/views/auth/login.php"
-                        class="login-link"
+                </small>
 
-                    >
+                <span class="login-version">
 
-                        Iniciar sesión
+                    Versión <?= htmlspecialchars($version) ?>
 
-                    </a>
+                </span>
 
-                </div>
-                </div>
+            </footer>
 
         </div>
 
@@ -444,47 +408,22 @@ $success = flash('success');
 
 </main>
 
-<!-- =========================================
-     FOOTER GENERAL
-========================================== -->
+<!-- ======================================================
+     FOOTER
+====================================================== -->
 
 <footer class="login-footer">
 
-    <div class="login-footer__left">
+    <p>
 
-        <span>
+        © <?= date('Y') ?>
 
-            © <?= date('Y') ?>
+        Ministerio Remanente · Todos los derechos reservados.
 
-            Ministerio Remanente
-
-        </span>
-
-    </div>
-
-    <div class="login-footer__center">
-
-        <span>
-
-            Sistema de Seguimiento Ministerial
-
-        </span>
-
-    </div>
-
-    <div class="login-footer__right">
-
-        <span>
-
-            Versión 2.0
-
-        </span>
-
-    </div>
+    </p>
 
 </footer>
 
-</div>
 
 <!-- =========================================
      VARIABLES GLOBALES
@@ -501,23 +440,23 @@ window.BASE_URL = "<?= BASE_URL ?>";
 ========================================== -->
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/background.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/background.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/particles.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/particles.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/login.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/login.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/validation.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/validation.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/ui.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/ui.js">
 </script>
 
 </body>

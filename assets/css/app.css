@@ -5860,6 +5860,98 @@ html.dark .form-info i {
 }
 
 /* ==========================================================
+   FORGOT PASSWORD
+========================================================== */
+/* ==========================================================
+   PAGE
+========================================================== */
+.auth-forgot .login-container {
+  width: min(1380px, 100%);
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 3rem;
+}
+
+/* ==========================================================
+   HERO
+========================================================== */
+.auth-forgot .login-hero {
+  max-width: 560px;
+  padding-top: 1rem;
+  padding-left: 1rem;
+}
+.auth-forgot .login-description {
+  max-width: 500px;
+}
+
+/* ==========================================================
+   PANEL
+========================================================== */
+.auth-forgot .login-panel {
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 1rem;
+}
+.auth-forgot .login-card {
+  max-width: 480px;
+}
+
+/* ==========================================================
+   INFO
+========================================================== */
+.forgot-password .login-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0.4rem 0 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.72);
+}
+.forgot-password .login-info i {
+  margin-top: 2px;
+  color: #7dd3fc;
+  flex-shrink: 0;
+}
+.forgot-password .login-info span {
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* ==========================================================
+   LINKS
+========================================================== */
+.forgot-password .login-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.4rem;
+}
+.forgot-password .login-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #a78bfa;
+  transition: 0.3s;
+}
+.forgot-password .login-links a:hover {
+  color: #7dd3fc;
+  transform: translateX(-3px);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+.forgot-password .login-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* ==========================================================
    AUTH LOGIN
 ========================================================== */
 /* ==========================================================

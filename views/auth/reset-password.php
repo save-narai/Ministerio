@@ -85,8 +85,8 @@ $token = trim($_GET['token'] ?? '');
 
 </head>
 
-<body>
-
+<body class="auth auth-reset">
+    
 <div class="login-page">
 
     <!-- =====================================

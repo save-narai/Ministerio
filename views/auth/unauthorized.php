@@ -31,8 +31,8 @@ Acceso denegado
 
 </head>
 
-<body>
-
+<body class="auth auth-verify">
+    
 <div class="auth-message">
 
     <h1>
