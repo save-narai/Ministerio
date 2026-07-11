@@ -3,6 +3,7 @@
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
 require_once "../../config/conexion.php";
+require_once "../../services/usuarioService.php";
 
 if (!tienePermiso('gestionar_usuarios')) {
 
@@ -10,21 +11,8 @@ if (!tienePermiso('gestionar_usuarios')) {
     exit;
 }
 
-/* =====================================
-   CONSULTA
-===================================== */
+$usuarios = obtenerUsuarios($pdo);
 
-$stmt = $pdo->query("
-    SELECT
-        u.*,
-        r.nombre AS rol
-    FROM usuarios u
-    LEFT JOIN roles r
-        ON u.rol_id = r.id
-    ORDER BY u.nombre ASC
-");
-
-$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =====================================
    ESTADÍSTICAS
@@ -189,13 +177,13 @@ require_once "../../includes/header.php";
                 <thead>
 
                     <tr>
-
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Usuario</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
+<th>ID</th>
+<th>Nombre</th>
+<th>Usuario</th>
+<th>Correo</th>
+<th>Rol</th>
+<th>Estado</th>
+<th>Acciones</th>
 
                     </tr>
 
@@ -214,17 +202,21 @@ require_once "../../includes/header.php";
                             <td>
                                 <?= htmlspecialchars($u["nombre"]) ?>
                             </td>
+<td>
+    <?= htmlspecialchars($u["usuario"]) ?>
+</td>
 
-                            <td>
-                                <?= htmlspecialchars($u["usuario"]) ?>
-                            </td>
+<td>
+    <?= htmlspecialchars(
+        $u["correo"] ?? "-"
+    ) ?>
+</td>
 
-                            <td>
-                                <?= htmlspecialchars(
-                                    $u["rol"] ?? "Sin rol"
-                                ) ?>
-                            </td>
-
+<td>
+    <?= htmlspecialchars(
+        $u["rol"] ?? "Sin rol"
+    ) ?>
+</td>
                             <td>
 
                                 <?php if ($u["activo"]): ?>

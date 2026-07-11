@@ -2,28 +2,49 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../config/bootstrap.php';
+
 require_once __DIR__ . '/../../middleware/guest.php';
 require_once __DIR__ . '/../../middleware/csrf.php';
-require_once __DIR__ . '/../../helpers/flash.php';
 
 exigirInvitado();
 
 generarCSRF();
 
-$error = flash('error');
-$success = flash('success');
+/* ==========================================================
+   CONFIG
+========================================================== */
+
+$config = $GLOBALS['config'];
+
+$version = $config['version'] ?? '2.0';
+
+/* ==========================================================
+   FLASH
+========================================================== */
+
+$error = getFlash('error');
+
+$success = getFlash('success');
+
+/* ==========================================================
+   TOKEN
+========================================================== */
+
+$token = trim($_GET['token'] ?? '');
 
 /*
 |--------------------------------------------------------------------------
-| Token
+| TODO
 |--------------------------------------------------------------------------
 |
-| Aquí posteriormente validaremos que el token exista en la base
-| de datos y no haya expirado.
+| Validar posteriormente:
+|
+| • El token exista.
+| • No haya expirado.
+| • Pertenezca a un usuario válido.
 |
 */
-
-$token = trim($_GET['token'] ?? '');
 
 ?>
 
@@ -69,29 +90,33 @@ $token = trim($_GET['token'] ?? '');
         rel="stylesheet"
     >
 
-    <!-- FontAwesome -->
+    <!-- Font Awesome -->
 
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     >
 
-    <!-- CSS -->
+    <!-- APP CSS -->
 
     <link
         rel="stylesheet"
-        href="<?= BASE_URL ?>/assets/css/main.css"
+        href="<?= BASE_URL ?>/assets/css/app.css"
     >
 
 </head>
 
 <body class="auth auth-reset">
-    
+
+<!-- ==========================================================
+     RESET PASSWORD
+========================================================== -->
+
 <div class="login-page">
 
-    <!-- =====================================
+    <!-- ======================================================
          BACKGROUND
-    ====================================== -->
+    ======================================================= -->
 
     <div class="login-background">
 
@@ -107,558 +132,498 @@ $token = trim($_GET['token'] ?? '');
 
     </div>
 
-    <!-- =====================================
-         CONTENEDOR
-    ====================================== -->
+    <!-- ======================================================
+         CONTENT
+    ======================================================= -->
 
     <main class="login-container">
 
-        <section class="login-hero">
+    <!-- ==================================================
+     HERO
+=================================================== -->
 
-        <!-- =========================================
-             PANEL IZQUIERDO
-        ========================================== -->
+<section class="login-hero">
 
-        <div class="login-hero__content">
+    <!-- ==============================================
+         LOGO
+    =============================================== -->
 
-            <div class="login-brand">
+    <div class="login-logo">
 
-                <div class="login-brand__logo">
+        <img
+            src="<?= BASE_URL ?>/assets/img/logo.png"
+            alt="Ministerio Remanente"
+        >
 
-                    <i class="fa-solid fa-shield-halved"></i>
+        <div class="login-logo-text">
 
-                </div>
+            <h2>
 
-                <span class="login-brand__name">
+                SIG Remanente
 
-                    Ministerio Remanente
+            </h2>
 
-                </span>
+            <span>
 
-            </div>
+                Sistema de Seguimiento
 
-            <div class="login-hero__text">
+            </span>
 
-                <span class="login-hero__badge">
+        </div>
 
-                    Seguridad de la Cuenta
+    </div>
 
-                </span>
+    <!-- ==============================================
+         TÍTULO
+    =============================================== -->
 
-                <h1 class="login-hero__title">
+    <h1 class="login-title">
 
-                    Crea una nueva contraseña
-                    para proteger tu cuenta.
+        Crea una nueva
+        <strong>contraseña</strong>
+        segura.
 
-                </h1>
+    </h1>
 
-                <p class="login-hero__description">
+    <!-- ==============================================
+         DESCRIPCIÓN
+    =============================================== -->
 
-                    Estás a un paso de recuperar el acceso.
-                    Utiliza una contraseña segura que solo tú
-                    conozcas y evita reutilizar claves de otros
-                    servicios.
+    <p class="login-description">
+
+        Estás a un paso de recuperar el acceso a tu cuenta.
+        Define una contraseña segura y continúa utilizando
+        el Sistema de Seguimiento Ministerial con total confianza.
+
+    </p>
+
+</section>
+<!-- ==================================================
+     LOGIN PANEL
+=================================================== -->
+
+<section class="login-panel">
+
+    <div class="login-card">
+
+        <!-- ==========================================
+             HEADER
+        =========================================== -->
+
+        <div class="login-card-header">
+
+            <div class="login-card-heading">
+
+                <h3 class="login-card-title">
+
+                    Nueva contraseña
+
+                </h3>
+
+                <p class="login-card-description">
+
+                    Define una nueva contraseña para recuperar
+                    el acceso a tu cuenta.
 
                 </p>
 
             </div>
 
-            <!-- RECOMENDACIONES -->
+            <div class="login-card-divider"></div>
 
-            <div class="login-features">
+        </div>
 
-                <div class="login-feature">
+        <!-- ==========================================
+             MENSAJES
+        =========================================== -->
 
-                    <i class="fa-solid fa-lock"></i>
+        <?php if (!empty($error)): ?>
 
-                    <div>
+            <div class="login-alert">
 
-                        <strong>
+                <i class="fa-solid fa-circle-exclamation"></i>
 
-                            Contraseña segura
+                <p>
 
-                        </strong>
+                    <?= htmlspecialchars($error) ?>
 
-                        <span>
-
-                            Usa mínimo 8 caracteres.
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="login-feature">
-
-                    <i class="fa-solid fa-user-shield"></i>
-
-                    <div>
-
-                        <strong>
-
-                            Solo para ti
-
-                        </strong>
-
-                        <span>
-
-                            No compartas tu contraseña.
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="login-feature">
-
-                    <i class="fa-solid fa-shield-heart"></i>
-
-                    <div>
-
-                        <strong>
-
-                            Protección continua
-
-                        </strong>
-
-                        <span>
-
-                            Mantén tu cuenta siempre segura.
-
-                        </span>
-
-                    </div>
-
-                </div>
+                </p>
 
             </div>
 
-            <!-- MENSAJE -->
+        <?php endif; ?>
 
-            <blockquote class="login-verse">
+        <?php if (!empty($success)): ?>
+
+            <div class="login-alert login-alert-success">
 
                 <i class="fa-solid fa-circle-check"></i>
 
                 <p>
 
-                    Una contraseña fuerte es la primera
-                    línea de defensa para proteger
-                    tu información.
+                    <?= htmlspecialchars($success) ?>
 
                 </p>
 
-            </blockquote>
+            </div>
 
-        </div>
+        <?php endif; ?>
 
-        <!-- =========================================
-             PANEL DERECHO
-        ========================================== -->
+        <!-- ==========================================
+             FORMULARIO
+        =========================================== -->
 
-        <div class="login-panel">
+        <div class="login-card-body">
 
-            <div class="login-card">
+            <form
+                id="resetPasswordForm"
+                class="login-form"
+                action="<?= BASE_URL ?>/controllers/authController.php"
+                method="POST"
+                autocomplete="off"
+            >
 
-                <div class="login-card__header">
+                <?= csrfField(); ?>
 
-                    <div class="login-card__icon">
-
-                        <i class="fa-solid fa-key"></i>
-
-                    </div>
-
-                    <h2>
-
-                        Nueva contraseña
-
-                    </h2>
-
-                    <p>
-
-                        Define una nueva contraseña
-                        para recuperar el acceso a tu cuenta.
-
-                    </p>
-
-                </div>
-
-                <!-- =========================================
-                     MENSAJES
-                ========================================== -->
-
-                <?php if (!empty($error)): ?>
-
-                    <div class="login-alert login-alert--error">
-
-                        <i class="fa-solid fa-circle-exclamation"></i>
-
-                        <span>
-
-                            <?= htmlspecialchars($error) ?>
-
-                        </span>
-
-                    </div>
-
-                <?php endif; ?>
-
-                <?php if (!empty($success)): ?>
-
-                    <div class="login-alert login-alert--success">
-
-                        <i class="fa-solid fa-circle-check"></i>
-
-                        <span>
-
-                            <?= htmlspecialchars($success) ?>
-
-                        </span>
-
-                    </div>
-
-                <?php endif; ?>
-
-                <!-- =========================================
-                     FORMULARIO
-                ========================================== -->
-
-                <form
-                    id="resetPasswordForm"
-                    class="login-form"
-                    action="<?= BASE_URL ?>/controllers/authController.php"
-                    method="POST"
-                    autocomplete="off"
+                <input
+                    type="hidden"
+                    name="action"
+                    value="reset_password"
                 >
 
-                    <?= csrfField(); ?>
+                <input
+                    type="hidden"
+                    name="token"
+                    value="<?= htmlspecialchars($token) ?>"
+                >
 
-                    <input
-                        type="hidden"
-                        name="action"
-                        value="reset_password"
-                    >
+                <!-- ======================================
+     NUEVA CONTRASEÑA
+====================================== -->
 
-                    <input
-                        type="hidden"
-                        name="token"
-                        value="<?= htmlspecialchars($token) ?>"
-                    >
+<div class="login-group">
 
-                    <!-- NUEVA CONTRASEÑA -->
+    <label
+        class="login-label"
+        for="password"
+    >
 
-                    <div class="login-field">
+        <i class="fa-solid fa-lock"></i>
 
-                        <label
-                            for="password"
-                            class="login-label"
-                        >
+        Nueva contraseña
 
-                            Nueva contraseña
+    </label>
 
-                        </label>
+    <div class="login-input-wrapper">
 
-                        <div class="login-input-group">
+        <i class="fa-solid fa-lock login-input-icon"></i>
 
-                            <i class="fa-solid fa-lock"></i>
+        <input
 
-                            <input
-                                id="password"
-                                type="password"
-                                name="password"
-                                class="login-input"
-                                placeholder="Nueva contraseña"
-                                autocomplete="new-password"
-                                required
-                            >
+            id="password"
 
-                            <button
-                                type="button"
-                                class="login-password-toggle"
-                                data-toggle="#password"
-                            >
+            name="password"
 
-                                <i class="fa-solid fa-eye"></i>
+            type="password"
 
-                            </button>
+            class="login-input"
 
-                        </div>
+            placeholder="Ingresa tu nueva contraseña"
 
-                    </div>
+            autocomplete="new-password"
 
-                    <!-- BARRA DE SEGURIDAD -->
+            required
 
-                    <div class="password-strength">
+        >
 
-                        <div
-                            class="password-strength__bar"
-                            id="passwordStrengthBar"
-                        ></div>
+        <button
 
-                    </div>
+            type="button"
 
-                    <div
-                        class="password-strength__text"
-                        id="passwordStrengthText"
-                    >
+            class="password-toggle"
 
-                        Seguridad de la contraseña
+            data-toggle="#password"
 
-                    </div>
+            aria-label="Mostrar contraseña"
 
-                    <!-- CONFIRMAR -->
+        >
 
-                    <div class="login-field">
+            <i class="fa-solid fa-eye"></i>
 
-                        <label
-                            for="confirm_password"
-                            class="login-label"
-                        >
-
-                            Confirmar contraseña
-
-                        </label>
-
-                        <div class="login-input-group">
-
-                            <i class="fa-solid fa-lock"></i>
-
-                            <input
-                                id="confirm_password"
-                                type="password"
-                                name="confirm_password"
-                                class="login-input"
-                                placeholder="Repite la contraseña"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="login-password-toggle"
-                                data-toggle="#confirm_password"
-                            >
-
-                                <i class="fa-solid fa-eye"></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <!-- CHECKLIST -->
-
-                    <div class="password-checklist">
-
-                        <div
-                            class="password-check"
-                            data-check="length"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Mínimo 8 caracteres
-
-                        </div>
-
-                        <div
-                            class="password-check"
-                            data-check="upper"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Una letra mayúscula
-
-                        </div>
-
-                        <div
-                            class="password-check"
-                            data-check="lower"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Una letra minúscula
-
-                        </div>
-
-                        <div
-                            class="password-check"
-                            data-check="number"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Un número
-
-                        </div>
-
-                        <div
-                            class="password-check"
-                            data-check="symbol"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Un carácter especial
-
-                        </div>
-
-                        <div
-                            class="password-check"
-                            data-check="match"
-                        >
-
-                            <i class="fa-solid fa-circle"></i>
-
-                            Las contraseñas coinciden
-
-                        </div>
-
-                    </div>
-
-                    <!-- BOTÓN -->
-
-                    <button
-                        type="submit"
-                        id="btnResetPassword"
-                        class="login-button"
-                    >
-
-                        <span class="login-button-text">
-
-                            Guardar nueva contraseña
-
-                        </span>
-
-                        <span class="login-button-loader">
-
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-
-                        </span>
-
-                        <i class="fa-solid fa-floppy-disk"></i>
-
-                    </button>
-
-                </form>
-
-                <!-- ACCIONES -->
-
-                <div class="login-card__actions">
-
-                    <a
-                        href="<?= BASE_URL ?>/views/auth/login.php"
-                        class="login-link"
-                    >
-
-                        <i class="fa-solid fa-arrow-left"></i>
-
-                        Volver al inicio de sesión
-
-                    </a>
-
-                </div>
-
-                <!-- FOOTER -->
-
-                <div class="login-card__footer">
-
-                    <span>
-
-                        Tu contraseña será actualizada inmediatamente.
-
-                    </span>
-
-                </div>
-
-                </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-<!-- =========================================
-     FOOTER GENERAL
-========================================== -->
-
-<footer class="login-footer">
-
-    <div class="login-footer__left">
-
-        <span>
-
-            © <?= date('Y') ?>
-
-            Ministerio Remanente
-
-        </span>
+        </button>
 
     </div>
-
-    <div class="login-footer__center">
-
-        <span>
-
-            Sistema de Seguimiento Ministerial
-
-        </span>
-
-    </div>
-
-    <div class="login-footer__right">
-
-        <span>
-
-            Versión 2.0
-
-        </span>
-
-    </div>
-
-</footer>
 
 </div>
 
-<!-- =========================================
+<!-- ======================================
+     SEGURIDAD
+====================================== -->
+
+<div class="password-strength">
+
+    <div
+
+        id="passwordStrengthBar"
+
+        class="password-strength-bar"
+
+    ></div>
+
+</div>
+
+<div
+    id="passwordStrengthText"
+    class="password-strength-text"
+    aria-live="polite"
+>
+
+    Seguridad de la contraseña
+
+</div>
+
+<!-- ======================================
+     CONFIRMAR CONTRASEÑA
+====================================== -->
+
+<div class="login-group">
+
+    <label
+        class="login-label"
+        for="confirm_password"
+    >
+
+        <i class="fa-solid fa-lock"></i>
+
+        Confirmar contraseña
+
+    </label>
+
+    <div class="login-input-wrapper">
+
+        <i class="fa-solid fa-lock login-input-icon"></i>
+
+        <input
+
+            id="confirm_password"
+
+            name="confirm_password"
+
+            type="password"
+
+            class="login-input"
+
+            placeholder="Confirma tu contraseña"
+
+            autocomplete="new-password"
+
+            required
+
+        >
+
+        <button
+
+            type="button"
+
+            class="password-toggle"
+
+            data-toggle="#confirm_password"
+
+            aria-label="Mostrar contraseña"
+
+        >
+
+            <i class="fa-solid fa-eye"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ======================================
+     CHECKLIST
+====================================== -->
+
+<div class="password-checklist">
+
+    <div
+        class="password-check"
+        data-check="length"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Mínimo 8 caracteres</span>
+
+    </div>
+
+    <div
+        class="password-check"
+        data-check="upper"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Una letra mayúscula</span>
+
+    </div>
+
+    <div
+        class="password-check"
+        data-check="lower"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Una letra minúscula</span>
+
+    </div>
+
+    <div
+        class="password-check"
+        data-check="number"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Un número</span>
+
+    </div>
+
+    <div
+        class="password-check"
+        data-check="symbol"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Un carácter especial</span>
+
+    </div>
+
+    <div
+        class="password-check"
+        data-check="match"
+    >
+
+        <i class="fa-solid fa-circle"></i>
+
+        <span>Las contraseñas coinciden</span>
+
+    </div>
+
+</div>
+
+<!-- ======================================
+     BOTÓN
+====================================== -->
+
+<button
+    type="submit"
+    id="btnResetPassword"
+    class="login-button"
+>
+
+    <span>
+
+        Guardar nueva contraseña
+
+    </span>
+
+    <i class="fa-solid fa-floppy-disk login-button-icon"></i>
+
+</button>
+
+</form>
+
+</div>
+
+<!-- ==========================================
+             FOOTER CARD
+        =========================================== -->
+
+        <footer class="login-card-footer">
+
+            <small class="login-copyright">
+
+                Tu contraseña será actualizada
+                inmediatamente después de guardarla.
+
+            </small>
+
+            <span class="login-version">
+
+                Versión <?= htmlspecialchars($version) ?>
+
+            </span>
+
+        </footer>
+
+    </div>
+
+</section>
+
+</main>
+
+</div>
+
+<!-- ======================================================
+     FOOTER
+====================================================== -->
+
+<footer class="login-footer">
+
+    <p>
+
+        © <?= date('Y') ?>
+
+        Ministerio Remanente · Todos los derechos reservados.
+
+    </p>
+
+</footer>
+
+<!-- ==========================================================
      VARIABLES GLOBALES
-========================================== -->
+========================================================== -->
 
 <script>
 
-window.BASE_URL = "<?= BASE_URL ?>";
+    window.BASE_URL =
+        "<?= BASE_URL ?>";
 
-window.RESET_PASSWORD = true;
+    window.RESET_PASSWORD =
+        true;
 
 </script>
 
-<!-- =========================================
+<!-- ==========================================================
      AUTH MODULE
-========================================== -->
+========================================================== -->
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/background.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/background.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/particles.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/particles.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/login.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/login.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/validation.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/validation.js">
 </script>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/auth/ui.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/ui.js">
+</script>
+
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/auth/reset-password.js">
 </script>
 
 </body>

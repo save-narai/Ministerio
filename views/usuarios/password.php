@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
+require_once __DIR__ . "/../../middleware/csrf.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 if (!tienePermiso('gestionar_usuarios')) {
 
     header("Location: ../dashboard.php");
     exit;
+
 }
 
-$id = (int)($_GET['id'] ?? 0);
+$id = (int) ($_GET['id'] ?? 0);
 
 $stmt = $pdo->prepare("
     SELECT
@@ -28,6 +32,7 @@ if (!$usuario) {
 
     header("Location: index.php");
     exit;
+
 }
 
 require_once __DIR__ . "/../../includes/header.php";
@@ -47,14 +52,19 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="form-header-content">
 
             <h1 class="form-title">
+
                 Cambiar Contraseña
+
             </h1>
 
             <p class="form-subtitle">
 
                 Actualiza la contraseña del usuario
+
                 <strong>
+
                     <?= htmlspecialchars($usuario['nombre']) ?>
+
                 </strong>
 
             </p>
@@ -69,10 +79,18 @@ require_once __DIR__ . "/../../includes/header.php";
         method="POST"
     >
 
+        <?= csrfField(); ?>
+
+        <input
+            type="hidden"
+            name="action"
+            value="cambiar_password"
+        >
+
         <input
             type="hidden"
             name="id"
-            value="<?= $usuario['id'] ?>"
+            value="<?= (int) $usuario['id'] ?>"
         >
 
         <div class="form-group">
@@ -89,6 +107,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 type="password"
                 name="password"
                 minlength="6"
+                autocomplete="new-password"
                 required
             >
 
@@ -108,13 +127,14 @@ require_once __DIR__ . "/../../includes/header.php";
                 type="password"
                 name="confirmar_password"
                 minlength="6"
+                autocomplete="new-password"
                 required
             >
 
             <small
                 id="passwordError"
-                class="telefono-error">
-            </small>
+                class="telefono-error"
+            ></small>
 
         </div>
 
@@ -134,7 +154,6 @@ require_once __DIR__ . "/../../includes/header.php";
             <button
                 id="btnGuardar"
                 type="submit"
-                name="cambiar_password"
                 class="btn btn-primary"
             >
 

@@ -20,8 +20,6 @@ $success = getFlash('success');
 
 $version = $config['version'] ?? '2.0';
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -89,9 +87,9 @@ $version = $config['version'] ?? '2.0';
 </head>
 
 <body class="auth auth-forgot">
-    
+
 <!-- ==========================================================
-     LOGIN PAGE
+     FORGOT PASSWORD PAGE
 ========================================================== -->
 
 <div class="login-page">
@@ -114,315 +112,314 @@ $version = $config['version'] ?? '2.0';
 
     </div>
 
- <!-- ======================================================
-     CONTENT
-====================================================== -->
+    <!-- ======================================================
+         CONTENT
+    ======================================================= -->
 
-<main class="login-container">
+    <main class="login-container">
 
-    <!-- ==================================================
-         HERO
-    =================================================== -->
+        <!-- ==================================================
+             HERO
+        =================================================== -->
 
-    <section class="login-hero">
+        <section class="login-hero">
 
-        <!-- ==============================================
-             LOGO
-        =============================================== -->
+            <!-- ==============================================
+                 LOGO
+            =============================================== -->
 
-        <div class="login-logo">
+            <div class="login-logo">
 
-            <img
-                src="<?= BASE_URL ?>/assets/img/logo.png"
-                alt="Ministerio Remanente"
-            >
+                <img
+                    src="<?= BASE_URL ?>/assets/img/logo.png"
+                    alt="Ministerio Remanente"
+                >
 
-            <div class="login-logo-text">
+                <div class="login-logo-text">
 
-                <h2>
+                    <h2>
 
-                    SIG Remanente
+                        SIG Remanente
 
-                </h2>
+                    </h2>
 
-                <span>
+                    <span>
 
-                    Sistema de Seguimiento
+                        Sistema de Seguimiento
 
-                </span>
-
-            </div>
-
-        </div>
-
-        <!-- ==============================================
-             TÍTULO
-        =============================================== -->
-
-        <h1 class="login-title">
-
-            Recupera el acceso
-            a tu <strong>cuenta</strong>
-            de forma segura.
-
-        </h1>
-
-        <!-- ==============================================
-             DESCRIPCIÓN
-        =============================================== -->
-
-        <p class="login-description">
-
-            Si olvidaste tu contraseña, ingresa el usuario
-            o correo electrónico asociado a tu cuenta.
-            Te enviaremos las instrucciones necesarias para
-            restablecer el acceso de forma segura.
-
-        </p>
-
-    </section>
-
-    <!-- ==================================================
-         LOGIN PANEL
-    =================================================== -->
-
-    <section class="login-panel">
-
-        <div class="login-card">
-
-            <!-- ==========================================
-                 HEADER
-            =========================================== -->
-
-            <div class="login-card-header">
-
-                <div class="login-card-heading">
-
-                    <h3 class="login-card-title">
-
-                        Recuperar contraseña
-
-                    </h3>
-
-                    <p class="login-card-description">
-
-                        Ingresa tu usuario o correo para
-                        enviarte el enlace de recuperación.
-
-                    </p>
+                    </span>
 
                 </div>
 
-                <div class="login-card-divider"></div>
-
             </div>
 
-            <!-- ==========================================
-                 BODY
-            =========================================== -->
+            <!-- ==============================================
+                 TÍTULO
+            =============================================== -->
 
-            <div class="login-card-body">
+            <h1 class="login-title">
+
+                Recupera el acceso
+                a tu <strong>cuenta</strong>
+                de forma segura.
+
+            </h1>
+
+            <!-- ==============================================
+                 DESCRIPCIÓN
+            =============================================== -->
+
+            <p class="login-description">
+
+                Recuperar el acceso es sencillo.
+                Ingresa tu usuario o correo electrónico y,
+                si existe una cuenta asociada, recibirás un
+                enlace seguro para restablecer tu contraseña.
+
+            </p>
+
+        </section>
+
+        <!-- ==================================================
+             RECOVERY PANEL
+        =================================================== -->
+
+        <section class="login-panel">
+
+            <div class="login-card">
 
                 <!-- ==========================================
-                     MENSAJES
+                     HEADER
                 =========================================== -->
 
-                <?php if (!empty($error)): ?>
+                <div class="login-card-header">
 
-                    <div class="login-alert login-alert-error">
+                    <div class="login-card-heading">
 
-                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <h3 class="login-card-title">
 
-                        <span>
+                            Recuperar contraseña
 
-                            <?= htmlspecialchars($error) ?>
+                        </h3>
 
-                        </span>
+                        <p class="login-card-description">
+
+                            Ingresa tu usuario o correo para
+                            enviarte el enlace de recuperación.
+
+                        </p>
 
                     </div>
 
-                <?php endif; ?>
+                    <div class="login-card-divider"></div>
 
-                <?php if (!empty($success)): ?>
-
-                    <div class="login-alert login-alert-success">
-
-                        <i class="fa-solid fa-circle-check"></i>
-
-                        <span>
-
-                            <?= htmlspecialchars($success) ?>
-
-                        </span>
-
-                    </div>
-
-                <?php endif; ?>
+                </div>
 
                 <!-- ==========================================
-                     FORMULARIO
+                     BODY
                 =========================================== -->
 
-                <form
-                    id="forgotPasswordForm"
-                    class="login-form"
-                    action="<?= BASE_URL ?>/controllers/authController.php"
-                    method="POST"
-                    autocomplete="off"
-                >
+                <div class="login-card-body">
 
-                    <?= csrfField(); ?>
+                    <!-- ==========================================
+                         MENSAJES
+                    =========================================== -->
 
-                    <input
-                        type="hidden"
-                        name="action"
-                        value="forgot_password"
-                    >
+                    <?php if (!empty($error)): ?>
 
-                    <!-- ======================================
-                         USUARIO O CORREO
-                    ======================================= -->
+                        <div class="login-alert login-alert-error">
 
-                    <div class="login-group">
+                            <i class="fa-solid fa-circle-exclamation"></i>
 
-                        <label
-                            class="login-label"
-                            for="usuario"
-                        >
+                            <span>
 
-                            <i class="fa-solid fa-envelope"></i>
+                                <?= htmlspecialchars($error) ?>
 
-                            Usuario o correo electrónico
-
-                        </label>
-
-                        <div class="login-input-wrapper">
-
-                            <i class="fa-solid fa-envelope login-input-icon"></i>
-
-                            <input
-
-                                id="usuario"
-
-                                name="usuario"
-
-                                type="text"
-
-                                class="login-input"
-
-                                placeholder="Ingresa tu usuario o correo"
-
-                                autocomplete="username"
-
-                                required
-
-                            >
+                            </span>
 
                         </div>
 
-                    </div>
+                    <?php endif; ?>
 
-    <!-- ======================================
-                         INFORMACIÓN
-                    ======================================= -->
+                    <?php if (!empty($success)): ?>
 
-                    <div class="login-info">
+                        <div class="login-alert login-alert-success">
 
-                        <i class="fa-solid fa-circle-info"></i>
+                            <i class="fa-solid fa-circle-check"></i>
 
-                        <span>
+                            <span>
 
-                            Si la cuenta existe, recibirás un enlace
-                            para restablecer tu contraseña de forma
-                            segura.
+                                <?= htmlspecialchars($success) ?>
 
-                        </span>
+                            </span>
 
-                    </div>
+                        </div>
 
-                    <!-- ======================================
-                         BOTÓN
-                    ======================================= -->
+                    <?php endif; ?>
 
-                    <button
-                        type="submit"
-                        id="btnForgotPassword"
-                        class="login-button"
+                    <!-- ==========================================
+                         FORMULARIO
+                    =========================================== -->
+
+                    <form
+                        id="forgotPasswordForm"
+                        class="login-form"
+                        action="<?= BASE_URL ?>/controllers/authController.php"
+                        method="POST"
+                        autocomplete="off"
                     >
 
-                        <span>
+                        <?= csrfField(); ?>
 
-                            Enviar enlace de recuperación
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="forgot_password"
+                        >
 
-                        </span>
+                        <!-- ======================================
+                             USUARIO O CORREO
+                        ======================================= -->
 
-                        <i class="fa-solid fa-paper-plane"></i>
+                        <div class="login-group">
 
-                    </button>
+                            <label
+                                class="login-label"
+                                for="credencial"
+                            >
 
-                </form>
+                                <i class="fa-solid fa-user"></i>
 
-                <!-- ==========================================
-                     ACCIONES
-                =========================================== -->
+                                Usuario o correo electrónico
 
-                <div class="login-links">
+                            </label>
 
-                    <a
-                        href="<?= BASE_URL ?>/views/auth/login.php"
-                    >
+                            <div class="login-input-wrapper">
 
-                        <i class="fa-solid fa-arrow-left"></i>
+                                <i class="fa-solid fa-user login-input-icon"></i>
 
-                        Volver al inicio de sesión
+                                <input
 
-                    </a>
+                                    id="credencial"
+
+                                    name="credencial"
+
+                                    type="text"
+
+                                    class="login-input"
+
+                                    placeholder="Usuario o correo electrónico"
+
+                                    autocomplete="username"
+
+                                    spellcheck="false"
+
+                                    maxlength="150"
+
+                                    required
+
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <!-- ======================================
+                             INFORMACIÓN
+                        ======================================= -->
+
+                        <div class="login-info">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            <span>
+
+                                Por seguridad, si existe una cuenta asociada
+                                al usuario o correo ingresado, recibirás un
+                                enlace para restablecer tu contraseña.
+
+                            </span>
+
+                        </div>
+
+                        <!-- ======================================
+                             BOTÓN
+                        ======================================= -->
+
+                        <button
+                            type="submit"
+                            id="btnForgotPassword"
+                            class="login-button"
+                            aria-label="Enviar enlace de recuperación"
+                        >
+
+                            <span>
+
+                                Enviar enlace de recuperación
+
+                            </span>
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                        </button>
+
+                    </form>
+
+                    <div class="login-help">
+
+
+            
+
+                    </div>
+
+                    <!-- ==========================================
+                         ACCIONES
+                    =========================================== -->
+
+                    <div class="login-links">
+
+                        <a
+                            href="<?= BASE_URL ?>/views/auth/login.php"
+                        >
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Volver al inicio de sesión
+
+                        </a>
+
+                    </div>
 
                 </div>
 
+                <!-- ==========================================
+                     FOOTER CARD
+                =========================================== -->
+
+                <footer class="login-card-footer">
+
+                    <small class="login-copyright">
+
+                        Sistema de Seguimiento Ministerial
+
+                    </small>
+
+                    <span class="login-version">
+
+                        Versión <?= htmlspecialchars($version) ?>
+
+                    </span>
+
+                </footer>
+
             </div>
 
-            <!-- ==========================================
-                 FOOTER CARD
-            =========================================== -->
+        </section>
 
-            <footer class="login-card-footer">
+    </main>
 
-                <small class="login-copyright">
+</div>
 
-                    Sistema de Seguimiento Ministerial
-
-                </small>
-
-                <span class="login-version">
-
-                    Versión <?= htmlspecialchars($version) ?>
-
-                </span>
-
-            </footer>
-
-        </div>
-
-    </section>
-
-</main>
-
-<!-- ======================================================
-     FOOTER
-====================================================== -->
-
-<footer class="login-footer">
-
-    <p>
-
-        © <?= date('Y') ?>
-
-        Ministerio Remanente · Todos los derechos reservados.
-
-    </p>
-
-</footer>
 
 
 <!-- =========================================
@@ -436,7 +433,7 @@ window.BASE_URL = "<?= BASE_URL ?>";
 </script>
 
 <!-- =========================================
-     AUTH MODULE
+     AUTH SCRIPTS
 ========================================== -->
 
 <script

@@ -3,6 +3,9 @@
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
 require_once "../../config/conexion.php";
+require_once __DIR__ . '/../../middleware/csrf.php';
+
+generarCSRF();
 
 if (!tienePermiso('gestionar_usuarios')) {
 
@@ -70,161 +73,192 @@ require_once "../../includes/header.php";
 
     </div>
 
-    <!-- =====================================
-         FORMULARIO
-    ====================================== -->
 
-    <form
-        action="../../controllers/usuarioController.php"
-        method="POST"
-        class="form"
+<!-- =====================================
+     FORMULARIO
+====================================== -->
+
+<form
+    action="../../controllers/usuarioController.php"
+    method="POST"
+    class="form"
+>
+
+    <?= csrfField(); ?>
+
+    <input
+        type="hidden"
+        name="action"
+        value="crear_usuario"
     >
 
-        <div class="form-grid">
+    <div class="form-grid">
 
-            <!-- NOMBRE -->
+        <!-- NOMBRE -->
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label class="form-label">
+            <label class="form-label">
 
-                    <i class="fa-solid fa-user"></i>
+                <i class="fa-solid fa-user"></i>
 
-                    Nombre completo
+                Nombre completo
 
-                </label>
+            </label>
 
-                <input
-                    type="text"
-                    name="nombre"
-                    class="form-input"
-                    placeholder="Nombre completo del usuario"
-                    required
-                >
+            <input
+                type="text"
+                name="nombre"
+                class="form-input"
+                placeholder="Nombre completo del usuario"
+                required
+            >
 
-            </div>
+        </div>
 
-            <!-- USUARIO -->
+        <!-- USUARIO -->
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label class="form-label">
+            <label class="form-label">
 
-                    <i class="fa-solid fa-at"></i>
+                <i class="fa-solid fa-at"></i>
 
-                    Usuario
+                Usuario
 
-                </label>
+            </label>
 
-                <input
-                    type="text"
-                    name="usuario"
-                    class="form-input"
-                    placeholder="Nombre de usuario"
-                    autocomplete="off"
-                    required
-                >
+            <input
+                type="text"
+                name="usuario"
+                class="form-input"
+                placeholder="Nombre de usuario"
+                autocomplete="off"
+                required
+            >
 
-            </div>
+        </div>
 
-            <!-- CONTRASEÑA -->
+        <!-- CORREO ELECTRÓNICO -->
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label class="form-label">
+            <label class="form-label">
 
-                    <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-envelope"></i>
 
-                    Contraseña
+                Correo electrónico
 
-                </label>
+            </label>
 
-                <input
-                    type="password"
-                    name="password"
-                    class="form-input"
-                    placeholder="Ingrese una contraseña"
-                    autocomplete="new-password"
-                    required
-                >
+            <input
+                type="email"
+                name="correo"
+                class="form-input"
+                placeholder="correo@ejemplo.com"
+                autocomplete="email"
+                required
+            >
 
-            </div>
+        </div>
 
-            <!-- ROL -->
+        <!-- CONTRASEÑA -->
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label class="form-label">
+            <label class="form-label">
 
-                    <i class="fa-solid fa-shield-halved"></i>
+                <i class="fa-solid fa-lock"></i>
 
-                    Rol
+                Contraseña
 
-                </label>
+            </label>
 
-                <select
-                    name="rol_id"
-                    class="form-select"
-                    required
-                >
+            <input
+                type="password"
+                name="password"
+                class="form-input"
+                placeholder="Ingrese una contraseña"
+                autocomplete="new-password"
+                required
+            >
 
-                    <option value="">
-                        Seleccionar rol
+        </div>
+
+        <!-- ROL -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                Rol
+
+            </label>
+
+            <select
+                name="rol_id"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Seleccionar rol
+                </option>
+
+                <?php foreach ($roles as $rol): ?>
+
+                    <option
+                        value="<?= (int) $rol['id'] ?>"
+                    >
+
+                        <?= htmlspecialchars(
+                            $rol['nombre']
+                        ) ?>
+
                     </option>
 
-                    <?php foreach($roles as $rol): ?>
+                <?php endforeach; ?>
 
-                        <option
-                            value="<?= (int)$rol['id'] ?>"
-                        >
-
-                            <?= htmlspecialchars(
-                                $rol['nombre']
-                            ) ?>
-
-                        </option>
-
-                    <?php endforeach; ?>
-
-                </select>
-
-            </div>
+            </select>
 
         </div>
 
-        <!-- BOTONES -->
+    </div>
 
-        <div class="form-actions">
+    <!-- BOTONES -->
 
-            <a
-                href="index.php"
-                class="btn btn-back"
-            >
+    <div class="form-actions">
 
-                <i class="fa-solid fa-arrow-left"></i>
+        <a
+            href="index.php"
+            class="btn btn-back"
+        >
 
-                Volver
+            <i class="fa-solid fa-arrow-left"></i>
 
-            </a>
+            Volver
 
-            <button
-                type="submit"
-                name="crear_usuario"
-                class="btn btn-primary"
-            >
+        </a>
 
-                Guardar Usuario
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
 
-            </button>
+            Guardar Usuario
 
-        </div>
+        </button>
 
-    </form>
+    </div>
+
+</form>
 
 </div>
 
 <script
-    src="<?= BASE_URL ?>/assets/js/modules/usuarios/crear.js">
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/crear.js">
 </script>
 
 <?php require_once "../../includes/footer.php"; ?>

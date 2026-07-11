@@ -3,6 +3,11 @@
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
 require_once "../../config/conexion.php";
+require_once __DIR__ . '/../../middleware/csrf.php';
+
+generarCSRF();
+
+
 
 if (!tienePermiso('gestionar_usuarios')) {
 
@@ -96,156 +101,191 @@ require_once "../../includes/header.php";
 
     </div>
 
-    <!-- =====================================
-         FORMULARIO
-    ====================================== -->
+<!-- =====================================
+     FORMULARIO
+====================================== -->
 
-    <form
-        action="../../controllers/usuarioController.php"
-        method="POST"
-        class="form"
+<form
+    action="../../controllers/usuarioController.php"
+    method="POST"
+    class="form"
+>
+
+    <?= csrfField(); ?>
+
+    <input
+        type="hidden"
+        name="action"
+        value="editar_usuario"
     >
 
-        <input
-            type="hidden"
-            name="id"
-            value="<?= (int)$usuario['id'] ?>"
+    <input
+        type="hidden"
+        name="id"
+        value="<?= (int) $usuario['id'] ?>"
+    >
+
+    <div class="form-grid">
+
+        <!-- NOMBRE -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-user"></i>
+
+                Nombre completo
+
+            </label>
+
+            <input
+                type="text"
+                name="nombre"
+                class="form-input"
+                value="<?= htmlspecialchars($usuario['nombre']) ?>"
+                required
+            >
+
+        </div>
+
+        <!-- USUARIO -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-at"></i>
+
+                Usuario
+
+            </label>
+
+            <input
+                type="text"
+                name="usuario"
+                class="form-input"
+                value="<?= htmlspecialchars($usuario['usuario']) ?>"
+                required
+            >
+
+        </div>
+
+        <!-- CORREO ELECTRÓNICO -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                Correo electrónico
+
+            </label>
+
+            <input
+                type="email"
+                name="correo"
+                class="form-input"
+                value="<?= htmlspecialchars($usuario['correo']) ?>"
+                placeholder="correo@ejemplo.com"
+                autocomplete="email"
+                required
+            >
+
+        </div>
+
+        <!-- CONTRASEÑA -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-lock"></i>
+
+                Nueva contraseña
+
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                class="form-input"
+                placeholder="Dejar vacío para conservar la actual"
+                autocomplete="new-password"
+            >
+
+        </div>
+
+        <!-- ROL -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                Rol
+
+            </label>
+
+            <select
+                name="rol_id"
+                class="form-select"
+                required
+            >
+
+                <?php foreach ($roles as $rol): ?>
+
+                    <option
+                        value="<?= (int) $rol['id'] ?>"
+                        <?= $usuario['rol_id'] == $rol['id']
+                            ? 'selected'
+                            : '' ?>
+                    >
+
+                        <?= htmlspecialchars($rol['nombre']) ?>
+
+                    </option>
+
+                <?php endforeach; ?>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <!-- BOTONES -->
+
+    <div class="form-actions">
+
+        <a
+            href="index.php"
+            class="btn btn-back"
         >
 
-        <div class="form-grid">
+            <i class="fa-solid fa-arrow-left"></i>
 
-            <!-- NOMBRE -->
+            Volver
 
-            <div class="form-group">
+        </a>
 
-                <label class="form-label">
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
 
-                    <i class="fa-solid fa-user"></i>
+            Guardar Cambios
 
-                    Nombre completo
+        </button>
 
-                </label>
+    </div>
 
-                <input
-                    type="text"
-                    name="nombre"
-                    class="form-input"
-                    value="<?= htmlspecialchars($usuario['nombre']) ?>"
-                    required
-                >
+</form>
 
-            </div>
 
-            <!-- USUARIO -->
 
-            <div class="form-group">
-
-                <label class="form-label">
-
-                    <i class="fa-solid fa-at"></i>
-
-                    Usuario
-
-                </label>
-
-                <input
-                    type="text"
-                    name="usuario"
-                    class="form-input"
-                    value="<?= htmlspecialchars($usuario['usuario']) ?>"
-                    required
-                >
-
-            </div>
-
-            <!-- CONTRASEÑA -->
-
-            <div class="form-group">
-
-                <label class="form-label">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    Nueva contraseña
-
-                </label>
-
-                <input
-                    type="password"
-                    name="password"
-                    class="form-input"
-                    placeholder="Dejar vacío para conservar la actual"
-                >
-
-            </div>
-
-            <!-- ROL -->
-
-            <div class="form-group">
-
-                <label class="form-label">
-
-                    <i class="fa-solid fa-shield-halved"></i>
-
-                    Rol
-
-                </label>
-
-                <select
-                    name="rol_id"
-                    class="form-select"
-                    required
-                >
-
-                    <?php foreach($roles as $rol): ?>
-
-                        <option
-                            value="<?= (int)$rol['id'] ?>"
-                            <?= $usuario['rol_id'] == $rol['id']
-                                ? 'selected'
-                                : '' ?>
-                        >
-
-                            <?= htmlspecialchars($rol['nombre']) ?>
-
-                        </option>
-
-                    <?php endforeach; ?>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <!-- BOTONES -->
-
-        <div class="form-actions">
-
-            <a
-                href="index.php"
-                class="btn btn-back"
-            >
-
-                <i class="fa-solid fa-arrow-left"></i>
-
-                Volver
-
-            </a>
-
-            <button
-                type="submit"
-                name="editar_usuario"
-                class="btn btn-primary"
-            >
-
-                Guardar Cambios
-
-            </button>
-
-        </div>
-
-    </form>
 
 </div>
 
