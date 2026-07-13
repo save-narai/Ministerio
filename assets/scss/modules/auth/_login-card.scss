@@ -24,9 +24,9 @@
 
     width:100%;
 
-    max-width:650px;
+    max-width:560px;
 
-    padding:1.4rem 2.5rem;
+    padding:1.2rem 5rem;
 
     border-radius:26px;
 
@@ -134,7 +134,7 @@
 
     gap:.35rem;
 
-    margin-bottom:1.3rem;
+    margin-bottom:.9rem;
 
 }
 
@@ -164,7 +164,7 @@
 
     flex-direction:column;
 
-    gap:1.5rem;
+    gap:1rem;
 
 }
 
@@ -176,7 +176,7 @@
 
     margin:0;
 
-    font-size:2.2rem;
+    font-size:2rem;
 
     font-weight:800;
 
@@ -212,7 +212,7 @@
 
     margin-top:.6rem;
 
-    color:rgba(255,255,255,.65);
+    color:rgba(255,255,255,.82);
 
     font-size:.92rem;
 
@@ -266,11 +266,26 @@
 
     gap:.8rem;
 
-    margin-top:.8rem;
+    margin-top:.4rem;
 
-    padding-top:.8rem;
+    padding-top:.6rem;
 
     border-top:1px solid rgba(255,255,255,.08);
+
+}
+
+
+/* ==========================================================
+   FOOTER EFFECT
+========================================================== */
+
+.login-card-footer{
+
+    transition:
+
+        border-color .30s ease,
+
+        color .30s ease;
 
 }
 
@@ -280,7 +295,7 @@
 
 .login-copyright{
 
-    color:rgba(255,255,255,.45);
+    color:rgba(255,255,255,.72);
 
     font-size:.80rem;
 
@@ -310,7 +325,7 @@
 
 border:1px solid rgba(255,255,255,.06);
 
-    color:rgba(255,255,255,.60);
+    color:#E5E7EB;
 
     font-size:.78rem;
 

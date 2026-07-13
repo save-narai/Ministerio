@@ -7,6 +7,7 @@ session_start();
 require_once __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/../helpers/redirect.php';
 require_once __DIR__ . '/../helpers/validaciones.php';
+require_once __DIR__ . '/../services/MailService.php';
 require_once __DIR__ . '/../middleware/csrf.php';
 require_once __DIR__ . '/../services/AuthService.php';
 require_once __DIR__ . '/../services/UsuarioService.php';
@@ -26,9 +27,14 @@ $action = strtolower(trim((string) ($_POST['action'] ?? 'login')));
 */
 
 $redirectError = match ($action) {
+
     'forgot_password' => '../views/auth/forgot-password.php',
-    'reset_password'  => '../views/auth/reset-password.php',
-    default           => '../index.php',
+
+    'reset_password' => '../views/auth/reset-password.php?token=' .
+        urlencode($_POST['token'] ?? ''),
+
+    default => '../index.php',
+
 };
 
 try {

@@ -199,19 +199,3 @@ function limpiarTokensExpirados(PDO $pdo): void
 
     $stmt->execute();
 }
-
-/**
- * Envía el correo de recuperación.
- *
- * Pendiente de implementar con PHPMailer.
- */
-function enviarCorreoRecuperacion(
-    array $usuario,
-    string $token
-): void {
-
-    // TODO: Implementar PHPMailer.
-    //
-    // URL esperada:
-    // BASE_URL/views/auth/reset-password.php?token=...
-}

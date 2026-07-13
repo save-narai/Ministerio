@@ -1,16 +1,56 @@
 <?php
+
+declare(strict_types=1);
+
 $host = "localhost";
-$db = "ministerio_jovenes";
+$db   = "ministerio_jovenes";
 $user = "root";
 $pass = "";
 
-// 🔥 BASE URL del proyecto
-define('BASE_URL', 'http://localhost/ministerio');
+/* ==========================================================
+   BASE URL
+========================================================== */
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+if (!defined('BASE_URL')) {
+
+    define(
+
+        'BASE_URL',
+
+        'http://localhost/ministerio'
+
+    );
+
 }
 
+try {
+
+    $pdo = new PDO(
+
+        "mysql:host=$host;dbname=$db;charset=utf8",
+
+        $user,
+
+        $pass
+
+    );
+
+    $pdo->setAttribute(
+
+        PDO::ATTR_ERRMODE,
+
+        PDO::ERRMODE_EXCEPTION
+
+    );
+
+} catch (PDOException $e) {
+
+    die(
+
+        "Error de conexión: " .
+
+        $e->getMessage()
+
+    );
+
+}

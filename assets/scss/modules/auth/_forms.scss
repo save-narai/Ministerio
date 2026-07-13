@@ -338,6 +338,22 @@
 
 }
 
+.password-toggle i{
+
+    transition:
+
+        transform .25s ease,
+
+        color .25s ease;
+
+}
+
+.password-toggle:hover i{
+
+    transform:scale(1.15);
+
+}
+
 
 /* ==========================================================
    FORM OPTIONS
@@ -887,3 +903,152 @@
         .30s ease;
 
 }
+
+/* ==========================================================
+   PASSWORD STRENGTH
+========================================================== */
+
+.password-strength{
+
+    width:100%;
+
+    height:6px;
+
+    margin-top:.35rem;
+
+    overflow:hidden;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.08);
+
+}
+
+.password-strength-bar{
+
+    width:0;
+
+    height:100%;
+
+    border-radius:999px;
+
+    transition:
+
+        width .35s ease,
+
+        background .35s ease;
+
+}
+
+/* ==========================================================
+   COLORS
+========================================================== */
+
+.password-strength-bar.weak{
+
+    background:#ef4444;
+
+}
+
+.password-strength-bar.medium{
+
+    background:#f59e0b;
+
+}
+
+.password-strength-bar.strong{
+
+    background:#22c55e;
+
+}
+
+.password-strength-bar.very-strong{
+
+    background:#10b981;
+
+}
+
+/* ==========================================================
+   STRENGTH TEXT
+========================================================== */
+
+.password-strength-text{
+
+    margin-top:.45rem;
+
+    font-size:.82rem;
+
+    font-weight:600;
+
+    color:rgba(255,255,255,.72);
+
+    transition:
+
+        color .30s ease;
+
+}
+
+/* ==========================================================
+   PASSWORD CHECKLIST
+========================================================== */
+
+.password-checklist{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.45rem;
+
+}
+
+/* ==========================================================
+   ITEM
+========================================================== */
+
+.password-check{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.65rem;
+
+    font-size:.84rem;
+
+    color:rgba(255,255,255,.45);
+
+    transition:.30s ease;
+
+}
+
+/* ==========================================================
+   ICON
+========================================================== */
+
+.password-check i{
+
+    font-size:.72rem;
+
+    color:#64748b;
+
+    transition:.30s ease;
+
+}
+
+/* ==========================================================
+   ACTIVE
+========================================================== */
+
+.password-check.active{
+
+    color:#ffffff;
+
+}
+
+.password-check.active i{
+
+    color:#22c55e;
+
+}
+

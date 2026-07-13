@@ -461,6 +461,8 @@ $version = $config['version'] ?? '2.0';
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/auth/remember.js"></script>
 
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/password-toggle.js"></script>
+
 </body>
 
 </html>

@@ -1,11 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
 require_once __DIR__ . '/../../config/bootstrap.php';
+
+require_once __DIR__ . '/../../config/conexion.php';
 
 require_once __DIR__ . '/../../middleware/guest.php';
 require_once __DIR__ . '/../../middleware/csrf.php';
+
+require_once __DIR__ . '/../../services/AuthService.php';
 
 exigirInvitado();
 
@@ -33,18 +36,53 @@ $success = getFlash('success');
 
 $token = trim($_GET['token'] ?? '');
 
-/*
-|--------------------------------------------------------------------------
-| TODO
-|--------------------------------------------------------------------------
-|
-| Validar posteriormente:
-|
-| • El token exista.
-| • No haya expirado.
-| • Pertenezca a un usuario válido.
-|
-*/
+/* ==========================================================
+   VALIDAR TOKEN
+========================================================== */
+
+if (
+
+    empty($token)
+
+) {
+
+    redirect(
+
+        'login.php',
+
+        'error',
+
+        'El enlace de recuperación no es válido.'
+
+    );
+
+}
+
+$usuario = validarTokenRecuperacion(
+
+    $pdo,
+
+    $token
+
+);
+
+if (
+
+    !$usuario
+
+) {
+
+    redirect(
+
+        'login.php',
+
+        'error',
+
+        'El enlace de recuperación ha expirado o no es válido.'
+
+    );
+
+}
 
 ?>
 
@@ -568,22 +606,6 @@ $token = trim($_GET['token'] ?? '');
 
 </div>
 
-<!-- ======================================================
-     FOOTER
-====================================================== -->
-
-<footer class="login-footer">
-
-    <p>
-
-        © <?= date('Y') ?>
-
-        Ministerio Remanente · Todos los derechos reservados.
-
-    </p>
-
-</footer>
-
 <!-- ==========================================================
      VARIABLES GLOBALES
 ========================================================== -->
@@ -625,6 +647,10 @@ $token = trim($_GET['token'] ?? '');
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/auth/reset-password.js">
 </script>
+
+<script src="<?= BASE_URL ?>/assets/js/modulos/auth/password-toggle.js"></script>
+
+
 
 </body>
 
