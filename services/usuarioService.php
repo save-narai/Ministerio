@@ -9,7 +9,7 @@ declare(strict_types=1);
 /*
 |--------------------------------------------------------------------------
 | Este servicio centraliza toda la lógica relacionada con la
-| administración de usuarios.
+| administración de usuarios del sistema.
 |
 | Responsabilidades
 |
@@ -17,7 +17,10 @@ declare(strict_types=1);
 | • Validar información
 | • Crear usuarios
 | • Editar usuarios
-| • Cambiar contraseña
+| • Eliminar usuarios
+| • Activar y desactivar usuarios
+| • Cambiar contraseñas
+| • Generar contraseñas temporales
 |
 |--------------------------------------------------------------------------
 */
@@ -26,17 +29,75 @@ declare(strict_types=1);
    CONSULTAS
 ========================================================== */
 
+/*
+|--------------------------------------------------------------------------
+| Todas las funciones de este bloque tienen únicamente la
+| responsabilidad de consultar información.
+|
+| No realizan validaciones.
+| No modifican registros.
+| No insertan información.
+|
+|--------------------------------------------------------------------------
+*/
+
 /* ==========================================================
-   OBTENER USUARIO POR ID
+   VALIDACIONES
 ========================================================== */
 
-function obtenerUsuarioPorId(
-    PDO $pdo,
-    int $id
-): array|false
-{
+/*
+|--------------------------------------------------------------------------
+| Este bloque contiene todas las reglas de negocio para
+| validar usuarios, correos, roles y restricciones del
+| sistema.
+|--------------------------------------------------------------------------
+*/
 
-    $stmt = $pdo->prepare("
+/* ==========================================================
+   UTILIDADES
+========================================================== */
+
+/*
+|--------------------------------------------------------------------------
+| Funciones auxiliares reutilizables por todo el servicio.
+|
+| Ejemplos:
+|
+| • Encriptar contraseñas
+| • Generar contraseñas temporales
+| • Obtener información de apoyo
+|
+|--------------------------------------------------------------------------
+*/
+
+/* ==========================================================
+   GESTIÓN DE USUARIOS
+========================================================== */
+
+/*
+|--------------------------------------------------------------------------
+| Este bloque contiene únicamente acciones sobre usuarios.
+|
+| • Crear
+| • Editar
+| • Eliminar
+| • Activar
+| • Desactivar
+| • Cambiar contraseña
+|
+|--------------------------------------------------------------------------
+*/
+
+/* ==========================================================
+   CONSULTA BASE
+========================================================== */
+
+/**
+ * Construye la consulta base de usuarios.
+ */
+function obtenerConsultaUsuarios(): string
+{
+    return "
 
         SELECT
 
@@ -48,6 +109,7 @@ function obtenerUsuarioPorId(
             u.rol_id,
             u.activo,
             u.fecha_creacion,
+
             r.nombre AS rol_nombre
 
         FROM usuarios u
@@ -55,12 +117,28 @@ function obtenerUsuarioPorId(
         INNER JOIN roles r
             ON r.id = u.rol_id
 
-        WHERE
-            u.id = :id
+    ";
+}
+
+/* ==========================================================
+   OBTENER USUARIO POR ID
+========================================================== */
+
+function obtenerUsuarioPorId(
+    PDO $pdo,
+    int $id
+): array|false
+{
+
+    $sql = obtenerConsultaUsuarios() . "
+
+        WHERE u.id = :id
 
         LIMIT 1
 
-    ");
+    ";
+
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
 
@@ -82,34 +160,15 @@ function obtenerUsuarioPorUsername(
 ): array|false
 {
 
-    $stmt = $pdo->prepare("
+    $sql = obtenerConsultaUsuarios() . "
 
-        SELECT
-
-            u.id,
-            u.nombre,
-            u.usuario,
-            u.correo,
-            u.password,
-            u.rol_id,
-            u.activo,
-            u.fecha_creacion,
-            r.nombre AS rol_nombre
-
-        FROM usuarios u
-
-        INNER JOIN roles r
-            ON r.id = u.rol_id
-
-        WHERE
-
-            u.usuario = :usuario
-
-            AND u.activo = 1
+        WHERE u.usuario = :usuario
 
         LIMIT 1
 
-    ");
+    ";
+
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
 
@@ -131,34 +190,15 @@ function obtenerUsuarioPorCorreo(
 ): array|false
 {
 
-    $stmt = $pdo->prepare("
+    $sql = obtenerConsultaUsuarios() . "
 
-        SELECT
-
-            u.id,
-            u.nombre,
-            u.usuario,
-            u.correo,
-            u.password,
-            u.rol_id,
-            u.activo,
-            u.fecha_creacion,
-            r.nombre AS rol_nombre
-
-        FROM usuarios u
-
-        INNER JOIN roles r
-            ON r.id = u.rol_id
-
-        WHERE
-
-            u.correo = :correo
-
-            AND u.activo = 1
+        WHERE u.correo = :correo
 
         LIMIT 1
 
-    ");
+    ";
+
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
 
@@ -213,6 +253,29 @@ function obtenerUsuarioPorCredencial(
 }
 
 /* ==========================================================
+   OBTENER TODOS LOS USUARIOS
+========================================================== */
+
+function obtenerUsuarios(
+    PDO $pdo
+): array
+{
+
+    $sql = obtenerConsultaUsuarios() . "
+
+        ORDER BY
+
+            u.nombre ASC
+
+    ";
+
+    $stmt = $pdo->query($sql);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+}
+
+/* ==========================================================
    EXISTE USUARIO
 ========================================================== */
 
@@ -233,10 +296,6 @@ function existeUsuario(
 }
 
 /* ==========================================================
-   VALIDACIONES
-========================================================== */
-
-/* ==========================================================
    VALIDAR USERNAME DISPONIBLE
 ========================================================== */
 
@@ -246,25 +305,13 @@ function validarUsernameDisponible(
 ): bool
 {
 
-    $stmt = $pdo->prepare("
+    return obtenerUsuarioPorUsername(
 
-        SELECT id
+        $pdo,
 
-        FROM usuarios
+        $usuario
 
-        WHERE usuario = :usuario
-
-        LIMIT 1
-
-    ");
-
-    $stmt->execute([
-
-        ':usuario' => $usuario
-
-    ]);
-
-    return !$stmt->fetch();
+    ) === false;
 
 }
 
@@ -279,31 +326,21 @@ function validarUsernameEdicion(
 ): bool
 {
 
-    $stmt = $pdo->prepare("
+    $usuarioExistente = obtenerUsuarioPorUsername(
 
-        SELECT id
+        $pdo,
 
-        FROM usuarios
+        $usuario
 
-        WHERE
+    );
 
-            usuario = :usuario
+    if (!$usuarioExistente) {
 
-            AND id != :id
+        return true;
 
-        LIMIT 1
+    }
 
-    ");
-
-    $stmt->execute([
-
-        ':usuario' => $usuario,
-
-        ':id' => $id
-
-    ]);
-
-    return !$stmt->fetch();
+    return (int) $usuarioExistente['id'] === $id;
 
 }
 
@@ -317,25 +354,13 @@ function validarCorreoDisponible(
 ): bool
 {
 
-    $stmt = $pdo->prepare("
+    return obtenerUsuarioPorCorreo(
 
-        SELECT id
+        $pdo,
 
-        FROM usuarios
+        $correo
 
-        WHERE correo = :correo
-
-        LIMIT 1
-
-    ");
-
-    $stmt->execute([
-
-        ':correo' => $correo
-
-    ]);
-
-    return !$stmt->fetch();
+    ) === false;
 
 }
 
@@ -350,17 +375,44 @@ function validarCorreoEdicion(
 ): bool
 {
 
+    $usuarioExistente = obtenerUsuarioPorCorreo(
+
+        $pdo,
+
+        $correo
+
+    );
+
+    if (!$usuarioExistente) {
+
+        return true;
+
+    }
+
+    return (int) $usuarioExistente['id'] === $id;
+
+}
+
+/* ==========================================================
+   OBTENER ROL
+========================================================== */
+
+function obtenerRolPorId(
+    PDO $pdo,
+    int $rolId
+): array|false
+{
+
     $stmt = $pdo->prepare("
 
-        SELECT id
+        SELECT
 
-        FROM usuarios
+            id,
+            nombre
 
-        WHERE
+        FROM roles
 
-            correo = :correo
-
-            AND id != :id
+        WHERE id = :id
 
         LIMIT 1
 
@@ -368,19 +420,250 @@ function validarCorreoEdicion(
 
     $stmt->execute([
 
-        ':correo' => $correo,
-
-        ':id' => $id
+        ':id' => $rolId
 
     ]);
 
-    return !$stmt->fetch();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 
 }
 
 /* ==========================================================
-   USUARIOS
+   VALIDAR ROL
 ========================================================== */
+
+function validarRol(
+    PDO $pdo,
+    int $rolId
+): array
+{
+
+    $rol = obtenerRolPorId(
+
+        $pdo,
+
+        $rolId
+
+    );
+
+    if (!$rol) {
+
+        throw new Exception(
+
+            'El rol seleccionado no existe.'
+
+        );
+
+    }
+
+    return $rol;
+
+}
+
+/* ==========================================================
+   ES ROL ADMINISTRADOR
+========================================================== */
+
+function esRolAdministrador(
+    PDO $pdo,
+    int $rolId
+): bool
+{
+
+    $rol = obtenerRolPorId(
+
+        $pdo,
+
+        $rolId
+
+    );
+
+    if (!$rol) {
+
+        return false;
+
+    }
+
+    return in_array(
+
+        mb_strtolower(trim($rol['nombre'])),
+
+        [
+
+            'admin',
+
+            'administrador'
+
+        ],
+
+        true
+
+    );
+
+}
+
+/* ==========================================================
+   ENCRIPTAR CONTRASEÑA
+========================================================== */
+
+function encriptarPassword(
+    string $password
+): string
+{
+
+    return password_hash(
+
+        $password,
+
+        PASSWORD_DEFAULT
+
+    );
+
+}
+
+/* ==========================================================
+   VERIFICAR CONTRASEÑA
+========================================================== */
+
+function verificarPassword(
+    string $password,
+    string $hash
+): bool
+{
+
+    return password_verify(
+
+        $password,
+
+        $hash
+
+    );
+
+}
+
+/* ==========================================================
+   GENERAR CONTRASEÑA TEMPORAL
+========================================================== */
+
+function generarPasswordTemporal(
+    int $longitud = 12
+): string
+{
+
+    $caracteres =
+        'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@#$%';
+
+    $password = '';
+
+    $maximo = strlen($caracteres) - 1;
+
+    for (
+
+        $i = 0;
+
+        $i < $longitud;
+
+        $i++
+
+    ) {
+
+        $password .= $caracteres[
+
+            random_int(
+
+                0,
+
+                $maximo
+
+            )
+
+        ];
+
+    }
+
+    return $password;
+
+}
+
+/* ==========================================================
+   NORMALIZAR USUARIO
+========================================================== */
+
+function normalizarUsuario(
+    string $usuario
+): string
+{
+
+    return strtolower(
+
+        trim($usuario)
+
+    );
+
+}
+
+/* ==========================================================
+   NORMALIZAR CORREO
+========================================================== */
+
+function normalizarCorreo(
+    string $correo
+): string
+{
+
+    return strtolower(
+
+        trim($correo)
+
+    );
+
+}
+
+/* ==========================================================
+   NORMALIZAR NOMBRE
+========================================================== */
+
+function normalizarNombre(
+    string $nombre
+): string
+{
+
+    return trim(
+
+        preg_replace(
+
+            '/\s+/',
+
+            ' ',
+
+            $nombre
+
+        )
+
+    );
+
+}
+
+/* ==========================================================
+   GENERAR TOKEN
+========================================================== */
+
+function generarTokenSeguro(
+    int $bytes = 32
+): string
+{
+
+    return bin2hex(
+
+        random_bytes(
+
+            $bytes
+
+        )
+
+    );
+
+}
 
 /* ==========================================================
    CREAR USUARIO
@@ -389,30 +672,28 @@ function validarCorreoEdicion(
 function crearUsuario(
     PDO $pdo,
     array $datos
-): void
+): array
 {
 
-    $nombre = trim(
+    /* ======================================================
+       NORMALIZAR DATOS
+    ====================================================== */
+
+    $nombre = normalizarNombre(
 
         $datos['nombre'] ?? ''
 
     );
 
-    $usuario = trim(
+    $usuario = normalizarUsuario(
 
         $datos['usuario'] ?? ''
 
     );
 
-    $correo = trim(
+    $correo = normalizarCorreo(
 
         $datos['correo'] ?? ''
-
-    );
-
-    $password = trim(
-
-        $datos['password'] ?? ''
 
     );
 
@@ -422,19 +703,23 @@ function crearUsuario(
 
     );
 
+    $activo = (int) (
+
+        $datos['activo'] ?? 1
+
+    );
+
     /* ======================================================
        VALIDACIONES
     ====================================================== */
 
     if (
 
-        empty($nombre) ||
+        $nombre === '' ||
 
-        empty($usuario) ||
+        $usuario === '' ||
 
-        empty($correo) ||
-
-        empty($password) ||
+        $correo === '' ||
 
         $rolId <= 0
 
@@ -482,7 +767,7 @@ function crearUsuario(
 
         throw new Exception(
 
-            'El nombre de usuario ya existe.'
+            'El nombre de usuario ya se encuentra registrado.'
 
         );
 
@@ -502,11 +787,59 @@ function crearUsuario(
 
         throw new Exception(
 
-            'El correo electrónico ya está registrado.'
+            'El correo electrónico ya se encuentra registrado.'
 
         );
 
     }
+
+    /* ======================================================
+       VALIDAR ROL
+    ====================================================== */
+
+    validarRol(
+
+        $pdo,
+
+        $rolId
+
+    );
+
+    if (
+
+        esRolAdministrador(
+
+            $pdo,
+
+            $rolId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'No está permitido crear otro Administrador.'
+
+        );
+
+    }
+
+    /* ======================================================
+       CONTRASEÑA
+    ====================================================== */
+
+    $passwordTemporal =
+
+        generarPasswordTemporal();
+
+    $passwordHash =
+
+        encriptarPassword(
+
+            $passwordTemporal
+
+        );
 
     /* ======================================================
        INSERTAR
@@ -532,7 +865,7 @@ function crearUsuario(
             :correo,
             :password,
             :rol_id,
-            1
+            :activo
 
         )
 
@@ -546,15 +879,35 @@ function crearUsuario(
 
         ':correo'   => $correo,
 
-        ':password' => encriptarPassword(
+        ':password' => $passwordHash,
 
-            $password
+        ':rol_id'   => $rolId,
 
-        ),
-
-        ':rol_id'   => $rolId
+        ':activo'   => $activo
 
     ]);
+
+    /* ======================================================
+       RESPUESTA
+    ====================================================== */
+
+    return [
+
+        'id' => (int) $pdo->lastInsertId(),
+
+        'nombre' => $nombre,
+
+        'usuario' => $usuario,
+
+        'correo' => $correo,
+
+        'rol_id' => $rolId,
+
+        'activo' => $activo,
+
+        'password_temporal' => $passwordTemporal
+
+    ];
 
 }
 
@@ -568,39 +921,49 @@ function editarUsuario(
 ): void
 {
 
+    /* ======================================================
+       NORMALIZAR DATOS
+    ====================================================== */
+
     $id = (int) (
 
         $datos['id'] ?? 0
 
     );
 
-    $nombre = trim(
+    $nombre = normalizarNombre(
 
         $datos['nombre'] ?? ''
 
     );
 
-    $usuario = trim(
+    $usuario = normalizarUsuario(
 
         $datos['usuario'] ?? ''
 
     );
 
-    $correo = trim(
+    $correo = normalizarCorreo(
 
         $datos['correo'] ?? ''
-
-    );
-
-    $password = trim(
-
-        $datos['password'] ?? ''
 
     );
 
     $rolId = (int) (
 
         $datos['rol_id'] ?? 0
+
+    );
+
+    $activo = (int) (
+
+        $datos['activo'] ?? 1
+
+    );
+
+    $password = trim(
+
+        $datos['password'] ?? ''
 
     );
 
@@ -616,7 +979,7 @@ function editarUsuario(
 
         throw new Exception(
 
-            'ID de usuario inválido.'
+            'Usuario inválido.'
 
         );
 
@@ -644,11 +1007,11 @@ function editarUsuario(
 
     if (
 
-        empty($nombre) ||
+        $nombre === '' ||
 
-        empty($usuario) ||
+        $usuario === '' ||
 
-        empty($correo) ||
+        $correo === '' ||
 
         $rolId <= 0
 
@@ -698,7 +1061,7 @@ function editarUsuario(
 
         throw new Exception(
 
-            'El nombre de usuario ya existe.'
+            'El nombre de usuario ya está registrado.'
 
         );
 
@@ -726,15 +1089,61 @@ function editarUsuario(
 
     }
 
+    validarRol(
+
+        $pdo,
+
+        $rolId
+
+    );
+
+    /* ======================================================
+       PROTEGER ADMINISTRADOR
+    ====================================================== */
+
+    if (
+
+        esAdministradorPrincipal(
+
+            $pdo,
+
+            $id
+
+        ) &&
+
+        !esRolAdministrador(
+
+            $pdo,
+
+            $rolId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'No es posible modificar el rol del Administrador principal.'
+
+        );
+
+    }
+
     /* ======================================================
        ACTUALIZAR
     ====================================================== */
 
     if (
 
-        !empty($password)
+        $password !== ''
 
     ) {
+
+        $password = encriptarPassword(
+
+            $password
+
+        );
 
         $stmt = $pdo->prepare("
 
@@ -742,11 +1151,12 @@ function editarUsuario(
 
             SET
 
-                nombre   = :nombre,
-                usuario  = :usuario,
-                correo   = :correo,
+                nombre = :nombre,
+                usuario = :usuario,
+                correo = :correo,
                 password = :password,
-                rol_id   = :rol_id
+                rol_id = :rol_id,
+                activo = :activo
 
             WHERE id = :id
 
@@ -754,21 +1164,19 @@ function editarUsuario(
 
         $stmt->execute([
 
-            ':nombre'   => $nombre,
+            ':nombre' => $nombre,
 
-            ':usuario'  => $usuario,
+            ':usuario' => $usuario,
 
-            ':correo'   => $correo,
+            ':correo' => $correo,
 
-            ':password' => encriptarPassword(
+            ':password' => $password,
 
-                $password
+            ':rol_id' => $rolId,
 
-            ),
+            ':activo' => $activo,
 
-            ':rol_id'   => $rolId,
-
-            ':id'       => $id
+            ':id' => $id
 
         ]);
 
@@ -782,10 +1190,11 @@ function editarUsuario(
 
         SET
 
-            nombre  = :nombre,
+            nombre = :nombre,
             usuario = :usuario,
-            correo  = :correo,
-            rol_id  = :rol_id
+            correo = :correo,
+            rol_id = :rol_id,
+            activo = :activo
 
         WHERE id = :id
 
@@ -793,15 +1202,17 @@ function editarUsuario(
 
     $stmt->execute([
 
-        ':nombre'  => $nombre,
+        ':nombre' => $nombre,
 
         ':usuario' => $usuario,
 
-        ':correo'  => $correo,
+        ':correo' => $correo,
 
-        ':rol_id'  => $rolId,
+        ':rol_id' => $rolId,
 
-        ':id'      => $id
+        ':activo' => $activo,
+
+        ':id' => $id
 
     ]);
 
@@ -817,6 +1228,10 @@ function cambiarPassword(
     string $password
 ): void
 {
+
+    /* ======================================================
+       VALIDACIONES
+    ====================================================== */
 
     if (
 
@@ -852,19 +1267,47 @@ function cambiarPassword(
 
     }
 
+    $password = trim(
+
+        $password
+
+    );
+
     if (
 
-        empty($password)
+        $password === ''
 
     ) {
 
         throw new Exception(
 
-            'La contraseña es obligatoria.'
+            'Debe ingresar una contraseña.'
 
         );
 
     }
+
+    if (
+
+        strlen(
+
+            $password
+
+        ) < 8
+
+    ) {
+
+        throw new Exception(
+
+            'La contraseña debe tener al menos 8 caracteres.'
+
+        );
+
+    }
+
+    /* ======================================================
+       ACTUALIZAR
+    ====================================================== */
 
     $stmt = $pdo->prepare("
 
@@ -874,7 +1317,9 @@ function cambiarPassword(
 
             password = :password
 
-        WHERE id = :id
+        WHERE
+
+            id = :id
 
     ");
 
@@ -893,48 +1338,296 @@ function cambiarPassword(
 }
 
 /* ==========================================================
-   UTILIDADES
+   ES ADMINISTRADOR PRINCIPAL
 ========================================================== */
 
-/* ==========================================================
-   ENCRIPTAR CONTRASEÑA
-========================================================== */
-
-function encriptarPassword(
-    string $password
-): string
+function esAdministradorPrincipal(
+    PDO $pdo,
+    int $usuarioId
+): bool
 {
 
-    return password_hash(
+    $usuario = obtenerUsuarioPorId(
 
-        $password,
+        $pdo,
 
-        PASSWORD_DEFAULT
+        $usuarioId
+
+    );
+
+    if (
+
+        !$usuario
+
+    ) {
+
+        return false;
+
+    }
+
+    return esRolAdministrador(
+
+        $pdo,
+
+        (int) $usuario['rol_id']
 
     );
 
 }
 
-
 /* ==========================================================
-   OBTENER TODOS LOS USUARIOS
+   PUEDE GESTIONAR USUARIO
 ========================================================== */
 
-function obtenerUsuarios(PDO $pdo): array
+function puedeGestionarUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId
+): bool
 {
-    $stmt = $pdo->query("
-        SELECT
-            u.*,
-            r.nombre AS rol
-        FROM usuarios u
-        LEFT JOIN roles r
-            ON r.id = u.rol_id
-        ORDER BY u.nombre ASC
-    ");
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    /*
+    |--------------------------------------------------------------------------
+    | El mismo usuario siempre puede editar su información.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+
+        $usuarioActualId === $usuarioDestinoId
+
+    ) {
+
+        return true;
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nadie puede administrar al Administrador principal,
+    | excepto él mismo.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+
+        esAdministradorPrincipal(
+
+            $pdo,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        return false;
+
+    }
+
+    return true;
+
 }
 
 /* ==========================================================
-   FIN DEL SERVICIO
+   PUEDE ELIMINAR USUARIO
 ========================================================== */
+
+function puedeEliminarUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId
+): bool
+{
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nunca permitir eliminar la propia cuenta.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+
+        $usuarioActualId === $usuarioDestinoId
+
+    ) {
+
+        return false;
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nunca permitir eliminar al Administrador.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+
+        esAdministradorPrincipal(
+
+            $pdo,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+/* ==========================================================
+   CAMBIAR ESTADO DEL USUARIO
+========================================================== */
+
+function cambiarEstadoUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId,
+    bool $activo
+): void
+{
+
+    /* ======================================================
+       VALIDACIONES
+    ====================================================== */
+
+    if (
+
+        $usuarioDestinoId <= 0
+
+    ) {
+
+        throw new Exception(
+
+            'Usuario inválido.'
+
+        );
+
+    }
+
+    if (
+
+        !existeUsuario(
+
+            $pdo,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'El usuario no existe.'
+
+        );
+
+    }
+
+    if (
+
+        !puedeGestionarUsuario(
+
+            $pdo,
+
+            $usuarioActualId,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'No tiene permisos para modificar este usuario.'
+
+        );
+
+    }
+
+    /* ======================================================
+       ACTUALIZAR
+    ====================================================== */
+
+    $stmt = $pdo->prepare("
+
+        UPDATE usuarios
+
+        SET
+
+            activo = :activo
+
+        WHERE
+
+            id = :id
+
+    ");
+
+    $stmt->execute([
+
+        ':activo' => $activo ? 1 : 0,
+
+        ':id' => $usuarioDestinoId
+
+    ]);
+
+}
+
+/* ==========================================================
+   ACTIVAR USUARIO
+========================================================== */
+
+function activarUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId
+): void
+{
+
+    cambiarEstadoUsuario(
+
+        $pdo,
+
+        $usuarioActualId,
+
+        $usuarioDestinoId,
+
+        true
+
+    );
+
+}
+
+/* ==========================================================
+   DESACTIVAR USUARIO
+========================================================== */
+
+function desactivarUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId
+): void
+{
+
+    cambiarEstadoUsuario(
+
+        $pdo,
+
+        $usuarioActualId,
+
+        $usuarioDestinoId,
+
+        false
+
+    );
+
+}

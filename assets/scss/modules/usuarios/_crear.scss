@@ -4,11 +4,18 @@
 
 .form-info{
 
-    max-width:650px;
+    display:flex;
 
-    margin:30px auto;
+    gap:12px;
+
+    align-items:flex-start;
+
+    padding:14px 16px;
+
+    margin-bottom:0 22px 18px;
+
+    border-radius:16px;
 }
-
 
 /* =========================================================
    INFO BOX
@@ -38,4 +45,5 @@
     color:#3b82f6;
 
     font-size:18px;
+    margin-top:2px;
 }

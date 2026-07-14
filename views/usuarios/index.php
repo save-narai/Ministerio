@@ -1,41 +1,135 @@
 <?php
 
+declare(strict_types=1);
+
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
+
 require_once "../../config/conexion.php";
-require_once "../../services/usuarioService.php";
 
-if (!tienePermiso('gestionar_usuarios')) {
+require_once "../../services/UsuarioService.php";
+require_once __DIR__ . "/../../middleware/csrf.php";
 
-    header("Location: ../dashboard.php");
+generarCSRF();
+
+
+
+/*
+|--------------------------------------------------------------------------
+| TODO
+|--------------------------------------------------------------------------
+|
+| Cuando el RolService esté terminado,
+| simplemente descomentar:
+|
+| require_once "../../services/RolService.php";
+|
+*/
+
+// require_once "../../services/RolService.php";
+
+/* ==========================================================
+   PERMISOS
+========================================================== */
+
+if (
+
+    !tienePermiso(
+
+        'gestionar_usuarios'
+
+    )
+
+) {
+
+    header(
+
+        "Location: ../dashboard.php"
+
+    );
+
     exit;
+
 }
 
-$usuarios = obtenerUsuarios($pdo);
+/* ==========================================================
+   USUARIOS
+========================================================== */
 
+$usuarios = obtenerUsuarios(
 
-/* =====================================
-   ESTADÍSTICAS
-===================================== */
+    $pdo
 
-$totalUsuarios = count($usuarios);
-
-$totalActivos = count(
-    array_filter(
-        $usuarios,
-        fn($u) => $u['activo']
-    )
 );
 
-$totalInactivos = $totalUsuarios - $totalActivos;
+/* ==========================================================
+   ESTADÍSTICAS
+========================================================== */
 
-$totalRoles = $pdo
-    ->query("SELECT COUNT(*) FROM roles")
-    ->fetchColumn();
+$totalUsuarios = count(
 
-/* =====================================
+    $usuarios
+
+);
+
+$totalActivos = count(
+
+    array_filter(
+
+        $usuarios,
+
+        fn(array $usuario): bool =>
+
+            (bool) $usuario['activo']
+
+    )
+
+);
+
+$totalInactivos =
+
+    $totalUsuarios -
+
+    $totalActivos;
+
+/*
+|--------------------------------------------------------------------------
+| Temporalmente se mantiene esta consulta aquí.
+|--------------------------------------------------------------------------
+|
+| Más adelante será:
+|
+| $totalRoles = obtenerTotalRoles($pdo);
+|
+*/
+
+$totalRoles = (int)
+
+    $pdo
+
+        ->query(
+
+            "SELECT COUNT(*) FROM roles"
+
+        )
+
+        ->fetchColumn();
+
+/* ==========================================================
+   CONFIGURACIÓN
+========================================================== */
+
+$titulo =
+
+    'Usuarios';
+
+$subtitulo =
+
+    'Administra cuentas, accesos y permisos del sistema.';
+
+/* ==========================================================
    HEADER
-===================================== */
+========================================================== */
 
 require_once "../../includes/header.php";
 
@@ -43,278 +137,589 @@ require_once "../../includes/header.php";
 
 <div class="usuarios-page">
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
+    <!-- ======================================================
+         ENCABEZADO
+    ======================================================= -->
 
-    <div class="page-header">
+    <header class="page-header">
 
         <div class="page-header-left">
 
             <h1 class="page-title">
-                Usuarios
+
+                <?= htmlspecialchars($titulo) ?>
+
             </h1>
 
-            <div class="page-subtitle">
-                Administra accesos, cuentas y permisos del sistema.
-            </div>
+            <p class="page-subtitle">
+
+                <?= htmlspecialchars($subtitulo) ?>
+
+            </p>
 
         </div>
 
         <div class="page-header-right">
 
             <a
+
                 href="crear.php"
+
                 class="btn btn-primary"
+
             >
 
                 <i class="fa-solid fa-user-plus"></i>
 
-                Nuevo Usuario
+                Nuevo usuario
 
             </a>
 
         </div>
 
-    </div>
+    </header>
 
-    <!-- =====================================
-         STATS
-    ====================================== -->
+    <!-- ======================================================
+         ESTADÍSTICAS
+    ======================================================= -->
 
-    <div class="stats-grid gx-stats">
+    <section class="stats-grid gx-stats">
 
-        <div class="stat-card info">
+        <article class="stat-card info">
 
             <span class="stat-number">
+
                 <?= $totalUsuarios ?>
+
             </span>
 
             <span class="stat-label">
-                Total usuarios
+
+                Usuarios registrados
+
             </span>
 
-        </div>
+        </article>
 
-        <div class="stat-card success">
+        <article class="stat-card success">
 
             <span class="stat-number">
+
                 <?= $totalActivos ?>
+
             </span>
 
             <span class="stat-label">
-                Activos
+
+                Usuarios activos
+
             </span>
 
-        </div>
+        </article>
 
-        <div class="stat-card danger">
+        <article class="stat-card danger">
 
             <span class="stat-number">
+
                 <?= $totalInactivos ?>
+
             </span>
 
             <span class="stat-label">
-                Inactivos
+
+                Usuarios suspendidos
+
             </span>
+
+        </article>
+
+        <article class="stat-card purple">
+
+            <span class="stat-number">
+
+                <?= $totalRoles ?>
+
+            </span>
+
+            <span class="stat-label">
+
+                Roles registrados
+
+            </span>
+
+        </article>
+
+    </section>
+
+  <!-- ======================================================
+     TABLA
+====================================================== -->
+
+<section class="page-section">
+
+    <div class="section-header">
+
+        <div class="section-heading">
+
+            <h2 class="section-title">
+                Gestión General de Cuentas
+            </h2>
+
+            <p class="section-description">
+                Administra usuarios, roles, estados y permisos del sistema.
+            </p>
 
         </div>
 
-        <div class="stat-card purple">
+        <div class="gx-toolbar">
 
-            <span class="stat-number">
-                <?= $totalRoles ?>
-            </span>
+            <div class="search-wrapper">
 
-            <span class="stat-label">
-                Roles registrados
-            </span>
+                <input
+                    id="buscador"
+                    type="search"
+                    class="search-input"
+                    placeholder="Buscar por nombre, usuario, correo o rol..."
+                    autocomplete="off"
+                >
+
+            </div>
 
         </div>
 
     </div>
 
-    <!-- =====================================
-         TABLA
-    ====================================== -->
+    <div class="table-responsive">
 
-    <div class="page-section">
+        <table
+            id="tablaUsuarios"
+            class="table gx-table"
+        >
 
-        <div class="section-header">
+            <thead>
 
-            <div>
+                <tr>
 
-                <h2 class="section-title">
-                    Gestión general de cuentas
-                </h2>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th class="text-center">
+                        Acciones
+                    </th>
 
-            </div>
+                </tr>
 
-            <div class="gx-toolbar">
+            </thead>
 
-                <div class="search-wrapper">
+            <tbody>
 
-                    <input
-                        type="text"
-                        id="buscador"
-                        class="search-input"
-                        placeholder="Buscar usuario..."
-                    >
+            <?php foreach ($usuarios as $u): ?>
 
-                </div>
+                <?php
 
-            </div>
+                $esMiCuenta =
 
-        </div>
+                    (int) $_SESSION['user_id'] === (int) $u['id'];
 
-        <div class="table-responsive">
+                $esAdministrador =
 
-            <table
-                id="tablaUsuarios"
-                class="table gx-table"
-            >
+                    esAdministradorPrincipal(
+                        $pdo,
+                        (int) $u['id']
+                    );
 
-                <thead>
+                $puedeGestionar =
 
-                    <tr>
-<th>ID</th>
-<th>Nombre</th>
-<th>Usuario</th>
-<th>Correo</th>
-<th>Rol</th>
-<th>Estado</th>
-<th>Acciones</th>
+                    puedeGestionarUsuario(
+                        $pdo,
+                        (int) $_SESSION['user_id'],
+                        (int) $u['id']
+                    );
 
-                    </tr>
+                $puedeEliminar =
 
-                </thead>
+                    puedeEliminarUsuario(
+                        $pdo,
+                        (int) $_SESSION['user_id'],
+                        (int) $u['id']
+                    );
 
-                <tbody>
+                ?>
 
-                    <?php foreach ($usuarios as $u): ?>
+                <tr>
 
-                        <tr>
+                    <td>
 
-                            <td>
-                                <?= (int) $u["id"] ?>
-                            </td>
+                        <?= (int) $u['id'] ?>
 
-                            <td>
-                                <?= htmlspecialchars($u["nombre"]) ?>
-                            </td>
-<td>
-    <?= htmlspecialchars($u["usuario"]) ?>
-</td>
+                    </td>
 
-<td>
-    <?= htmlspecialchars(
-        $u["correo"] ?? "-"
-    ) ?>
-</td>
+                    <td>
 
-<td>
-    <?= htmlspecialchars(
-        $u["rol"] ?? "Sin rol"
-    ) ?>
-</td>
-                            <td>
+                        <?= htmlspecialchars($u['nombre']) ?>
 
-                                <?php if ($u["activo"]): ?>
+                    </td>
 
-                                    <span class="badge badge-success">
-                                        Activo
-                                    </span>
+                    <td>
 
-                                <?php else: ?>
+                        <?= htmlspecialchars($u['usuario']) ?>
 
-                                    <span class="badge badge-danger">
-                                        Inactivo
-                                    </span>
+                    </td>
 
-                                <?php endif; ?>
+                    <td>
 
-                            </td>
+                        <?= htmlspecialchars($u['correo'] ?? '-') ?>
 
-                            <td>
+                    </td>
 
-                                <div class="table-actions">
+                    <!-- ======================================
+                         ROL
+                    ======================================= -->
 
-                                    <!-- EDITAR -->
+                    <td>
 
-                                    <a
-                                        href="editar.php?id=<?= (int) $u['id'] ?>"
-                                        class="btn-icon btn-edit"
-                                        data-tooltip="Editar usuario"
+                        <div class="role-cell">
+
+                            <span>
+
+                                <?= htmlspecialchars($u['rol_nombre']) ?>
+
+                            </span>
+
+                            <?php if ($esAdministrador): ?>
+
+                                <span class="badge badge-admin">
+
+                                    Principal
+
+                                </span>
+
+                            <?php endif; ?>
+
+                        </div>
+
+                    </td>
+
+                    <!-- ======================================
+                         ESTADO
+                    ======================================= -->
+
+                    <td>
+
+                        <?php if ((bool) $u['activo']): ?>
+
+                            <span class="badge badge-success">
+
+                                Activo
+
+                            </span>
+
+                        <?php else: ?>
+
+                            <span class="badge badge-danger">
+
+                                Suspendido
+
+                            </span>
+
+                        <?php endif; ?>
+
+                    </td>
+
+                    <!-- ======================================
+                         ACCIONES
+                    ======================================= -->
+
+                    <td>
+
+                        <div class="table-actions">
+
+                            <?php if ($esAdministrador && !$esMiCuenta): ?>
+
+                                <span
+                                    class="btn-icon btn-disabled"
+                                    data-tooltip="Cuenta protegida"
+                                >
+
+                                    <i class="fa-solid fa-shield-halved"></i>
+
+                                </span>
+
+                            <?php elseif (!$puedeGestionar): ?>
+
+                                <span
+                                    class="btn-icon btn-disabled"
+                                    data-tooltip="No tienes permisos"
+                                >
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </span>
+
+                            <?php else: ?>
+
+                                <!-- EDITAR -->
+
+                                <a
+                                    href="editar.php?id=<?= (int) $u['id'] ?>"
+                                    class="btn-icon btn-edit"
+                                    data-tooltip="Editar usuario"
+                                >
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <!-- ACTIVAR / SUSPENDER -->
+
+                                <?php if (!$esMiCuenta): ?>
+
+                                    <form
+                                        action="../../controllers/usuarioController.php"
+                                        method="POST"
+                                        class="inline-form"
                                     >
 
-                                        <i class="fa-solid fa-pen"></i>
+                                        <?= csrfField(); ?>
 
-                                    </a>
+                                        <input
+                                            type="hidden"
+                                            name="id"
+                                            value="<?= (int) $u['id'] ?>"
+                                        >
 
-                                    <!-- ACTIVAR / DESACTIVAR -->
+                                        <input
+                                            type="hidden"
+                                            name="action"
+                                            value="<?= $u['activo']
+                                                ? 'desactivar_usuario'
+                                                : 'activar_usuario' ?>"
+                                        >
 
-                                    <?php if ($_SESSION['user_id'] != $u['id']): ?>
-
-                                        <a
-                                            href="../../controllers/toggleUsuario.php?id=<?= (int) $u['id'] ?>"
-                                            class="btn-icon btn-danger"
+                                        <button
+                                            type="submit"
+                                            class="btn-icon <?= $u['activo']
+                                                ? 'btn-danger'
+                                                : 'btn-warning' ?>"
                                             data-tooltip="<?= $u['activo']
-                                                ? 'Desactivar usuario'
+                                                ? 'Suspender usuario'
                                                 : 'Activar usuario' ?>"
+                                            data-confirm="true"
+                                            data-message="<?= $u['activo']
+                                                ? '¿Deseas suspender este usuario?'
+                                                : '¿Deseas activar este usuario?' ?>"
                                         >
 
                                             <i class="fa-solid fa-power-off"></i>
 
-                                        </a>
+                                        </button>
 
-                                    <?php else: ?>
+                                    </form>
 
-                                        <span
-                                            class="btn-icon btn-disabled"
-                                            data-tooltip="No puedes desactivar tu propia cuenta"
+                                <?php endif; ?>
+
+                                <!-- ELIMINAR -->
+
+                                <?php if ($puedeEliminar): ?>
+
+                                    <form
+                                        action="../../controllers/usuarioController.php"
+                                        method="POST"
+                                        class="inline-form"
+                                    >
+
+                                        <?= csrfField(); ?>
+
+                                        <input
+                                            type="hidden"
+                                            name="action"
+                                            value="eliminar_usuario"
                                         >
 
-                                            <i class="fa-solid fa-lock"></i>
+                                        <input
+                                            type="hidden"
+                                            name="id"
+                                            value="<?= (int) $u['id'] ?>"
+                                        >
 
-                                        </span>
+                                        <button
+                                            type="submit"
+                                            class="btn-icon btn-delete"
+                                            data-tooltip="Eliminar usuario"
+                                            data-confirm="true"
+                                            data-message="¿Deseas eliminar definitivamente este usuario?"
+                                        >
 
-                                    <?php endif; ?>
+                                            <i class="fa-solid fa-trash"></i>
 
-                                </div>
+                                        </button>
 
-                            </td>
+                                    </form>
 
-                        </tr>
+                                <?php endif; ?>
 
-                    <?php endforeach; ?>
+                            <?php endif; ?>
 
-                </tbody>
+                        </div>
 
-            </table>
+                    </td>
 
-        </div>
+                </tr>
+
+            <?php endforeach; ?>
+
+            </tbody>
+
+        </table>
 
     </div>
 
-    <div class="form-actions">
+</section>
 
-        <a
-            href="../dashboard.php"
-            class="btn btn-back"
-        >
+<!-- ======================================================
+     BOTONES
+====================================================== -->
 
-            <i class="fa-solid fa-arrow-left"></i>
+<footer class="form-actions">
 
-            Volver
+   <a
+    href="../dashboard.php"
+    class="btn btn-back-dashboard"
+>
+    Volver al Dashboard
+</a>
 
-        </a>
+</footer>
+
+</div>
+
+<!-- ==========================================================
+     MODAL DE CONFIRMACIÓN
+========================================================== -->
+
+<div
+
+    id="confirmModal"
+
+    class="confirm-modal"
+
+    hidden
+
+>
+
+    <div class="confirm-modal-content">
+
+        <!-- ==============================================
+             ICONO
+        =============================================== -->
+
+        <div class="confirm-modal-icon">
+
+            <i class="fa-solid fa-circle-question"></i>
+
+        </div>
+
+        <!-- ==============================================
+             TÍTULO
+        =============================================== -->
+
+        <h3>
+
+            Confirmar acción
+
+        </h3>
+
+        <!-- ==============================================
+             MENSAJE
+        =============================================== -->
+
+        <p id="confirmMessage">
+
+            ¿Deseas continuar?
+
+        </p>
+
+        <!-- ==============================================
+             BOTONES
+        =============================================== -->
+
+        <div class="confirm-modal-actions">
+
+            <button
+
+                id="btnCancel"
+
+                type="button"
+
+                class="btn btn-back"
+
+            >
+
+                Cancelar
+
+            </button>
+
+            <button
+
+                id="btnConfirm"
+
+                type="button"
+
+                class="btn btn-primary"
+
+            >
+
+                Continuar
+
+            </button>
+
+        </div>
 
     </div>
 
 </div>
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/index.js">
+<!-- ==========================================================
+     CONFIGURACIÓN JAVASCRIPT
+========================================================== -->
+
+<script>
+
+window.USUARIOS_CONFIG = {
+
+    usarModal: true,
+
+    confirmarActivacion:
+
+        "¿Deseas activar este usuario?",
+
+    confirmarDesactivacion:
+
+        "¿Deseas suspender este usuario?",
+
+    administradorProtegido:
+
+        "La cuenta Administrador Principal está protegida."
+
+};
+
 </script>
 
-<?php require_once "../../includes/footer.php"; ?>
+<!-- ==========================================================
+     MÓDULO USUARIOS
+========================================================== -->
+
+<script
+
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/index.js"
+
+></script>
+
+<?php
+
+require_once "../../includes/footer.php";
+
+?>

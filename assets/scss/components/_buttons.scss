@@ -113,25 +113,27 @@
 
     background:var(--surface);
 
-    color:var(--text);
+    color:var(--primary);
 
-    border:1px solid rgba(0,0,0,.08);
+    border:1px solid rgba(255,95,46,.22);
 
     box-shadow:
-        0 4px 12px rgba(0,0,0,.05);
+        0 8px 18px rgba(255,95,46,.10);
 
-    transition:var(--transition);
 }
 
 .btn-secondary:hover,
 .btn-back:hover{
 
-    transform:translateY(-2px);
+    color:#fff;
 
-    border-color:var(--primary);
+    background:var(--card-gradient);
+
+    border-color:transparent;
 
     box-shadow:
-        0 10px 24px rgba(255,95,46,.15);
+        0 14px 28px rgba(255,95,46,.22);
+
 }
 
 
@@ -283,6 +285,68 @@ html.dark .btn-back:hover{
 
     box-shadow:
         0 14px 28px rgba(255,176,32,.28);
+}
+
+/* =========================================================
+   DELETE ICON
+========================================================= */
+
+.btn-icon.btn-delete{
+
+    background:
+        rgba(255,77,109,.12);
+
+    color:#ff4d6d;
+
+    border:
+        1px solid rgba(255,77,109,.22);
+
+    box-shadow:
+        0 4px 12px rgba(255,77,109,.10);
+
+}
+
+.btn-icon.btn-delete:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d6d,
+            #ff355d
+        );
+
+    color:#fff;
+
+    border-color:transparent;
+
+    box-shadow:
+        0 12px 24px rgba(255,77,109,.24);
+
+}
+
+html.dark .btn-icon.btn-delete{
+
+    background:
+        rgba(255,77,109,.15);
+
+    color:#ff8ea2;
+
+    border:
+        1px solid rgba(255,77,109,.18);
+
+}
+
+html.dark .btn-icon.btn-delete:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d6d,
+            #ff355d
+        );
+
+    color:#fff;
+
 }
 
 /* =========================================================
@@ -676,7 +740,7 @@ html.dark .export-option:hover{
    DARK MODE
 ========================================================= */
 
-hhtml.dark .btn-secondary{
+html.dark .btn-secondary{
 
     background:
         rgba(255,255,255,.04);

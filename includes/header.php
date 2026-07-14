@@ -262,65 +262,36 @@ $extraCSS ??= '';
        CONTENIDO PRINCIPAL
     =================================================== -->
 
-    <main class="main">
+<main class="main">
 
-        <!-- ==============================================
-           TOPBAR
-        =============================================== -->
+    <!-- ==============================================
+       TOPBAR
+    =============================================== -->
 
-        <header class="topbar">
+    <header class="topbar topbar-minimal">
 
-            <div class="topbar-left">
+        <div class="topbar-right">
 
-                <button
-                    type="button"
-                    id="sidebarToggle"
-                    class="topbar-toggle"
-                    aria-label="Mostrar menú"
-                >
+            <button
+                type="button"
+                id="themeToggle"
+                class="theme-toggle"
+                aria-label="Cambiar tema"
+            >
 
-                    <i class="fa-solid fa-bars"></i>
+                <i class="fa-solid fa-moon"></i>
 
-                </button>
+            </button>
 
-                <div class="topbar-title">
+        </div>
 
-                    <h1>
+    </header>
 
-                        <?= htmlspecialchars($tituloPagina) ?>
+    <!-- ==============================================
+       CONTENEDOR
+    =============================================== -->
 
-                    </h1>
-
-                </div>
-
-            </div>
-
-            <div class="topbar-right">
-
-                <!-- ======================================
-                   CAMBIO DE TEMA
-                ======================================= -->
-
-                <button
-                    type="button"
-                    id="themeToggle"
-                    class="theme-toggle"
-                    aria-label="Cambiar tema"
-                >
-
-                    <i class="fa-solid fa-moon"></i>
-
-                </button>
-
-            </div>
-
-        </header>
-
-        <!-- ==============================================
-           CONTENEDOR
-        =============================================== -->
-
-        <section class="container">
+    <section class="container">
 
             <?php
 

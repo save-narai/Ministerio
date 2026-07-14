@@ -1,61 +1,189 @@
 <?php
 
+declare(strict_types=1);
+
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
+
 require_once "../../config/conexion.php";
-require_once __DIR__ . '/../../middleware/csrf.php';
+
+require_once "../../services/UsuarioService.php";
+
+require_once __DIR__ . "/../../middleware/csrf.php";
 
 generarCSRF();
 
+/*
+|--------------------------------------------------------------------------
+| TODO
+|--------------------------------------------------------------------------
+|
+| Cuando RolService esté terminado,
+| reemplazar la consulta de roles por:
+|
+| obtenerRoles($pdo);
+|
+*/
 
+// require_once "../../services/RolService.php";
 
-if (!tienePermiso('gestionar_usuarios')) {
+/* ==========================================================
+   PERMISOS
+========================================================== */
 
-    header("Location: ../dashboard.php");
+if (
+
+    !tienePermiso(
+
+        'gestionar_usuarios'
+
+    )
+
+) {
+
+    header(
+
+        "Location: ../dashboard.php"
+
+    );
+
     exit;
+
 }
 
-/* =====================================
+/* ==========================================================
    ID
-===================================== */
+========================================================== */
 
-$id = (int)($_GET['id'] ?? 0);
+$id = (int) (
 
-/* =====================================
-   USUARIO
-===================================== */
+    $_GET['id'] ?? 0
 
-$stmt = $pdo->prepare("
-    SELECT *
-    FROM usuarios
-    WHERE id = ?
-");
+);
 
-$stmt->execute([$id]);
+if (
 
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $id <= 0
 
-if (!$usuario) {
+) {
 
-    header("Location: index.php");
+    header(
+
+        "Location: index.php"
+
+    );
+
     exit;
+
 }
 
-/* =====================================
+/* ==========================================================
+   USUARIO
+========================================================== */
+
+$usuario = obtenerUsuarioPorId(
+
+    $pdo,
+
+    $id
+
+);
+
+if (
+
+    !$usuario
+
+) {
+
+    header(
+
+        "Location: index.php"
+
+    );
+
+    exit;
+
+}
+
+/* ==========================================================
+   PROTECCIÓN
+========================================================== */
+
+$esAdministradorPrincipal =
+
+    esAdministradorPrincipal(
+
+        $pdo,
+
+        $id
+
+    );
+
+$esMiCuenta =
+
+    (int) $_SESSION['user_id'] === $id;
+
+$puedeGestionar =
+
+    puedeGestionarUsuario(
+
+        $pdo,
+
+        (int) $_SESSION['user_id'],
+
+        $id
+
+    );
+
+if (
+
+    !$puedeGestionar
+
+) {
+
+    header(
+
+        "Location: index.php"
+
+    );
+
+    exit;
+
+}
+
+/* ==========================================================
    ROLES
-===================================== */
+========================================================== */
 
 $roles = $pdo->query("
+
     SELECT
+
         id,
+
         nombre
+
     FROM roles
+
     ORDER BY nombre ASC
+
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-/* =====================================
+/* ==========================================================
+   CONFIGURACIÓN
+========================================================== */
+
+$titulo =
+
+    'Editar Usuario';
+
+$subtitulo =
+
+    'Actualiza la información, el rol y los permisos del usuario seleccionado.';
+
+/* ==========================================================
    HEADER
-===================================== */
+========================================================== */
 
 require_once "../../includes/header.php";
 
@@ -63,71 +191,47 @@ require_once "../../includes/header.php";
 
 <div class="form-card">
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
-
-    <div class="form-header">
-
-        <div class="form-header-icon">
-
-            <i class="fa-solid fa-user-gear"></i>
-
-        </div>
-
-        <div class="form-header-content">
-
-            <h1 class="form-title">
-                Editar Usuario
-            </h1>
-
-            <p class="form-subtitle">
-                Actualiza la información del usuario y modifica sus permisos dentro del sistema.
-            </p>
-
-        </div>
-
-    </div>
-
-    <!-- =====================================
-         INFORMACIÓN
-    ====================================== -->
-
-    <div class="form-info">
-
-        <i class="fa-solid fa-circle-info"></i>
-
-        Los cambios realizados se aplicarán inmediatamente al usuario seleccionado.
-
-    </div>
-
-<!-- =====================================
+<!-- =====================================================
      FORMULARIO
-====================================== -->
+===================================================== -->
 
 <form
+
     action="../../controllers/usuarioController.php"
+
     method="POST"
+
     class="form"
+
 >
 
     <?= csrfField(); ?>
 
     <input
+
         type="hidden"
+
         name="action"
+
         value="editar_usuario"
+
     >
 
     <input
+
         type="hidden"
+
         name="id"
+
         value="<?= (int) $usuario['id'] ?>"
+
     >
 
     <div class="form-grid">
 
-        <!-- NOMBRE -->
+        <!-- =====================================
+             NOMBRE
+        ====================================== -->
 
         <div class="form-group">
 
@@ -140,16 +244,24 @@ require_once "../../includes/header.php";
             </label>
 
             <input
+
                 type="text"
+
                 name="nombre"
+
                 class="form-input"
+
                 value="<?= htmlspecialchars($usuario['nombre']) ?>"
+
                 required
+
             >
 
         </div>
 
-        <!-- USUARIO -->
+        <!-- =====================================
+             USUARIO
+        ====================================== -->
 
         <div class="form-group">
 
@@ -162,16 +274,26 @@ require_once "../../includes/header.php";
             </label>
 
             <input
+
                 type="text"
+
                 name="usuario"
+
                 class="form-input"
+
                 value="<?= htmlspecialchars($usuario['usuario']) ?>"
+
+                autocomplete="off"
+
                 required
+
             >
 
         </div>
 
-        <!-- CORREO ELECTRÓNICO -->
+        <!-- =====================================
+             CORREO
+        ====================================== -->
 
         <div class="form-group">
 
@@ -184,18 +306,26 @@ require_once "../../includes/header.php";
             </label>
 
             <input
+
                 type="email"
+
                 name="correo"
+
                 class="form-input"
+
                 value="<?= htmlspecialchars($usuario['correo']) ?>"
-                placeholder="correo@ejemplo.com"
+
                 autocomplete="email"
+
                 required
+
             >
 
         </div>
 
-        <!-- CONTRASEÑA -->
+        <!-- =====================================
+             CONTRASEÑA
+        ====================================== -->
 
         <div class="form-group">
 
@@ -208,16 +338,30 @@ require_once "../../includes/header.php";
             </label>
 
             <input
+
                 type="password"
+
                 name="password"
+
                 class="form-input"
-                placeholder="Dejar vacío para conservar la actual"
+
+                placeholder="Déjalo vacío para conservar la contraseña actual"
+
                 autocomplete="new-password"
+
             >
+
+            <small class="form-help">
+
+                Solo diligéncialo si deseas cambiar la contraseña.
+
+            </small>
 
         </div>
 
-        <!-- ROL -->
+        <!-- =====================================
+             ROL
+        ====================================== -->
 
         <div class="form-group">
 
@@ -229,40 +373,119 @@ require_once "../../includes/header.php";
 
             </label>
 
-            <select
-                name="rol_id"
-                class="form-select"
-                required
-            >
+            <?php if (
 
-                <?php foreach ($roles as $rol): ?>
+                $esAdministradorPrincipal
 
-                    <option
-                        value="<?= (int) $rol['id'] ?>"
-                        <?= $usuario['rol_id'] == $rol['id']
+                &&
+
+                !$esMiCuenta
+
+            ): ?>
+
+                <input
+
+                    type="text"
+
+                    class="form-input"
+
+                    value="<?= htmlspecialchars($usuario['rol_nombre']) ?>"
+
+                    readonly
+
+                >
+
+                <input
+
+                    type="hidden"
+
+                    name="rol_id"
+
+                    value="<?= (int) $usuario['rol_id'] ?>"
+
+                >
+
+                <small class="form-help">
+
+                    El rol del Administrador Principal no puede modificarse.
+
+                </small>
+
+            <?php else: ?>
+
+                <select
+
+                    name="rol_id"
+
+                    class="form-select"
+
+                    required
+
+                >
+
+                    <?php foreach ($roles as $rol): ?>
+
+                        <option
+
+                            value="<?= (int) $rol['id'] ?>"
+
+                            <?=
+
+                            (int) $usuario['rol_id'] === (int) $rol['id']
+
                             ? 'selected'
-                            : '' ?>
-                    >
 
-                        <?= htmlspecialchars($rol['nombre']) ?>
+                            : ''
 
-                    </option>
+                            ?>
 
-                <?php endforeach; ?>
+                        >
 
-            </select>
+                            <?= htmlspecialchars($rol['nombre']) ?>
+
+                        </option>
+
+                    <?php endforeach; ?>
+
+                </select>
+
+            <?php endif; ?>
 
         </div>
 
     </div>
 
-    <!-- BOTONES -->
+    <!-- =====================================================
+         INFORMACIÓN ADICIONAL
+    ====================================================== -->
+
+    <?php if ($esAdministradorPrincipal): ?>
+
+        <div class="form-info">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            Esta cuenta corresponde al
+            <strong>Administrador Principal</strong>.
+            Algunas opciones se encuentran protegidas por
+            razones de seguridad.
+
+        </div>
+
+    <?php endif; ?>
+
+    <!-- =====================================================
+         BOTONES
+    ====================================================== -->
 
     <div class="form-actions">
 
         <a
+
             href="index.php"
+
             class="btn btn-back"
+
         >
 
             <i class="fa-solid fa-arrow-left"></i>
@@ -272,11 +495,14 @@ require_once "../../includes/header.php";
         </a>
 
         <button
+
             type="submit"
+
             class="btn btn-primary"
+
         >
 
-            Guardar Cambios
+            Guardar cambios
 
         </button>
 
@@ -284,13 +510,41 @@ require_once "../../includes/header.php";
 
 </form>
 
-
-
-
 </div>
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/editar.js">
+<!-- ==========================================================
+     CONFIGURACIÓN JAVASCRIPT
+========================================================== -->
+
+<script>
+
+window.USUARIO_EDITAR = {
+
+    esAdministradorPrincipal:
+
+        <?= $esAdministradorPrincipal ? 'true' : 'false' ?>,
+
+    esMiCuenta:
+
+        <?= $esMiCuenta ? 'true' : 'false' ?>
+
+};
+
 </script>
 
-<?php require_once "../../includes/footer.php"; ?>
+<!-- ==========================================================
+     MÓDULO
+========================================================== -->
+
+<script
+
+    src="<?= BASE_URL ?>/assets/js/modulos/usuarios/editar.js"
+
+></script>
+
+<?php
+
+require_once "../../includes/footer.php";
+
+?>
+
