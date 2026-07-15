@@ -28,16 +28,15 @@
 
 .login-container{
 
-    width:min(1450px,100%);
+    width:min(1320px,100%);
 
     display:grid;
 
-    grid-template-columns:1.25fr .75fr;
+    grid-template-columns:1.2fr .8fr;
 
     align-items:center;
 
-    gap:4rem;
-
+    gap:2.5rem;
 }
 
 /* ==========================================================
@@ -68,12 +67,7 @@
 
     justify-content:center;
 
-    align-items:flex-start;
-
-    transform:
-
-        translateY(-12px);
-
+    align-items:center;
 }
 
 /* ==========================================================
@@ -84,8 +78,7 @@
 
     width:100%;
 
-    max-width:520px;
-
+    max-width:480px;
 }
 
 /* ==========================================================

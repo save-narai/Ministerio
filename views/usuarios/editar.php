@@ -191,263 +191,72 @@ require_once "../../includes/header.php";
 
 <div class="form-card">
 
-<!-- =====================================================
-     FORMULARIO
-===================================================== -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-<form
+    <div class="form-header">
 
-    action="../../controllers/usuarioController.php"
+        <div class="form-header-icon">
 
-    method="POST"
-
-    class="form"
-
->
-
-    <?= csrfField(); ?>
-
-    <input
-
-        type="hidden"
-
-        name="action"
-
-        value="editar_usuario"
-
-    >
-
-    <input
-
-        type="hidden"
-
-        name="id"
-
-        value="<?= (int) $usuario['id'] ?>"
-
-    >
-
-    <div class="form-grid">
-
-        <!-- =====================================
-             NOMBRE
-        ====================================== -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                <i class="fa-solid fa-user"></i>
-
-                Nombre completo
-
-            </label>
-
-            <input
-
-                type="text"
-
-                name="nombre"
-
-                class="form-input"
-
-                value="<?= htmlspecialchars($usuario['nombre']) ?>"
-
-                required
-
-            >
+            <i class="fa-solid fa-user-pen"></i>
 
         </div>
 
-        <!-- =====================================
-             USUARIO
-        ====================================== -->
+        <div class="form-header-content">
 
-        <div class="form-group">
+            <h1 class="form-title">
 
-            <label class="form-label">
+                Editar usuario
 
-                <i class="fa-solid fa-at"></i>
+            </h1>
 
-                Usuario
+            <p class="form-subtitle">
 
-            </label>
+                Actualiza la información del usuario y modifica su rol o contraseña cuando sea necesario.
 
-            <input
-
-                type="text"
-
-                name="usuario"
-
-                class="form-input"
-
-                value="<?= htmlspecialchars($usuario['usuario']) ?>"
-
-                autocomplete="off"
-
-                required
-
-            >
+            </p>
 
         </div>
 
-        <!-- =====================================
-             CORREO
-        ====================================== -->
+    </div>
 
-        <div class="form-group">
+    <!-- =====================================================
+         INFORMACIÓN
+    ====================================================== -->
 
-            <label class="form-label">
+    <div class="form-info">
 
-                <i class="fa-solid fa-envelope"></i>
+        <i class="fa-solid fa-circle-info"></i>
 
-                Correo electrónico
+        <div>
 
-            </label>
+            <strong>
 
-            <input
+                Actualización de información
 
-                type="email"
+            </strong>
 
-                name="correo"
+            <p>
 
-                class="form-input"
+                Modifica los datos del usuario según sea necesario.
+                Si dejas el campo de contraseña vacío, se conservará
+                la contraseña actual.
 
-                value="<?= htmlspecialchars($usuario['correo']) ?>"
+            </p>
 
-                autocomplete="email"
+            <?php if ($esAdministradorPrincipal): ?>
 
-                required
+                <p>
 
-            >
+                    <strong>Importante:</strong>
 
-        </div>
+                    Esta cuenta corresponde al
+                    <strong>Administrador Principal</strong>.
+                    Algunas opciones se encuentran protegidas por
+                    motivos de seguridad.
 
-        <!-- =====================================
-             CONTRASEÑA
-        ====================================== -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                <i class="fa-solid fa-lock"></i>
-
-                Nueva contraseña
-
-            </label>
-
-            <input
-
-                type="password"
-
-                name="password"
-
-                class="form-input"
-
-                placeholder="Déjalo vacío para conservar la contraseña actual"
-
-                autocomplete="new-password"
-
-            >
-
-            <small class="form-help">
-
-                Solo diligéncialo si deseas cambiar la contraseña.
-
-            </small>
-
-        </div>
-
-        <!-- =====================================
-             ROL
-        ====================================== -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                <i class="fa-solid fa-shield-halved"></i>
-
-                Rol
-
-            </label>
-
-            <?php if (
-
-                $esAdministradorPrincipal
-
-                &&
-
-                !$esMiCuenta
-
-            ): ?>
-
-                <input
-
-                    type="text"
-
-                    class="form-input"
-
-                    value="<?= htmlspecialchars($usuario['rol_nombre']) ?>"
-
-                    readonly
-
-                >
-
-                <input
-
-                    type="hidden"
-
-                    name="rol_id"
-
-                    value="<?= (int) $usuario['rol_id'] ?>"
-
-                >
-
-                <small class="form-help">
-
-                    El rol del Administrador Principal no puede modificarse.
-
-                </small>
-
-            <?php else: ?>
-
-                <select
-
-                    name="rol_id"
-
-                    class="form-select"
-
-                    required
-
-                >
-
-                    <?php foreach ($roles as $rol): ?>
-
-                        <option
-
-                            value="<?= (int) $rol['id'] ?>"
-
-                            <?=
-
-                            (int) $usuario['rol_id'] === (int) $rol['id']
-
-                            ? 'selected'
-
-                            : ''
-
-                            ?>
-
-                        >
-
-                            <?= htmlspecialchars($rol['nombre']) ?>
-
-                        </option>
-
-                    <?php endforeach; ?>
-
-                </select>
+                </p>
 
             <?php endif; ?>
 
@@ -456,59 +265,309 @@ require_once "../../includes/header.php";
     </div>
 
     <!-- =====================================================
-         INFORMACIÓN ADICIONAL
+         FORMULARIO
     ====================================================== -->
 
-    <?php if ($esAdministradorPrincipal): ?>
+    <form
 
-        <div class="form-info">
+        action="../../controllers/usuarioController.php"
 
-            <i class="fa-solid fa-shield-halved"></i>
+        method="POST"
 
-            Esta cuenta corresponde al
-            <strong>Administrador Principal</strong>.
-            Algunas opciones se encuentran protegidas por
-            razones de seguridad.
+        class="form"
+
+        autocomplete="off"
+
+    >
+
+        <?= csrfField(); ?>
+
+        <input
+
+            type="hidden"
+
+            name="action"
+
+            value="editar_usuario"
+
+        >
+
+        <input
+
+            type="hidden"
+
+            name="id"
+
+            value="<?= (int) $usuario['id'] ?>"
+
+        >
+
+        <div class="form-grid">
+
+            <!-- =====================================
+                 NOMBRE
+            ====================================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Nombre completo
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    name="nombre"
+
+                    class="form-input"
+
+                    value="<?= htmlspecialchars($usuario['nombre']) ?>"
+
+                    required
+
+                >
+
+            </div>
+
+            <!-- =====================================
+                 USUARIO
+            ====================================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-at"></i>
+
+                    Usuario
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    name="usuario"
+
+                    class="form-input"
+
+                    value="<?= htmlspecialchars($usuario['usuario']) ?>"
+
+                    autocomplete="off"
+
+                    required
+
+                >
+
+            </div>
+
+            <!-- =====================================
+                 CORREO
+            ====================================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    Correo electrónico
+
+                </label>
+
+                <input
+
+                    type="email"
+
+                    name="correo"
+
+                    class="form-input"
+
+                    value="<?= htmlspecialchars($usuario['correo']) ?>"
+
+                    autocomplete="email"
+
+                    required
+
+                >
+
+            </div>
+
+            <!-- =====================================
+                 CONTRASEÑA
+            ====================================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    Nueva contraseña
+
+                </label>
+
+                <input
+
+                    type="password"
+
+                    name="password"
+
+                    class="form-input"
+
+                    placeholder="Déjalo vacío para conservar la contraseña actual"
+
+                    autocomplete="new-password"
+
+                >
+
+                <small class="form-help">
+
+                    Solo diligéncialo si deseas cambiar la contraseña.
+
+                </small>
+
+            </div>
+
+            <!-- =====================================
+                 ROL
+            ====================================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Rol del usuario
+
+                </label>
+
+                <?php if (
+
+                    $esAdministradorPrincipal
+
+                    &&
+
+                    !$esMiCuenta
+
+                ): ?>
+
+                    <input
+
+                        type="text"
+
+                        class="form-input"
+
+                        value="<?= htmlspecialchars($usuario['rol_nombre']) ?>"
+
+                        readonly
+
+                    >
+
+                    <input
+
+                        type="hidden"
+
+                        name="rol_id"
+
+                        value="<?= (int) $usuario['rol_id'] ?>"
+
+                    >
+
+                    <small class="form-help">
+
+                        El rol del Administrador Principal no puede modificarse.
+
+                    </small>
+
+                <?php else: ?>
+
+                    <select
+
+                        name="rol_id"
+
+                        class="form-select"
+
+                        required
+
+                    >
+
+                        <?php foreach ($roles as $rol): ?>
+
+                            <option
+
+                                value="<?= (int) $rol['id'] ?>"
+
+                                <?=
+
+                                (int) $usuario['rol_id'] === (int) $rol['id']
+
+                                    ? 'selected'
+
+                                    : ''
+
+                                ?>
+
+                            >
+
+                                <?= htmlspecialchars($rol['nombre']) ?>
+
+                            </option>
+
+                        <?php endforeach; ?>
+
+                    </select>
+
+                <?php endif; ?>
+
+            </div>
 
         </div>
 
-    <?php endif; ?>
+        <!-- =====================================================
+             BOTONES
+        ====================================================== -->
 
-    <!-- =====================================================
-         BOTONES
-    ====================================================== -->
+        <div class="form-actions">
 
-    <div class="form-actions">
+            <a
 
-        <a
+                href="index.php"
 
-            href="index.php"
+                class="btn btn-back"
 
-            class="btn btn-back"
+            >
 
-        >
 
-            <i class="fa-solid fa-arrow-left"></i>
+                Volver
 
-            Volver
+            </a>
 
-        </a>
+            <button
 
-        <button
+                type="submit"
 
-            type="submit"
+                class="btn btn-primary"
 
-            class="btn btn-primary"
+            >
 
-        >
+               
 
-            Guardar cambios
+                Guardar cambios
 
-        </button>
+            </button>
 
-    </div>
+        </div>
 
-</form>
+    </form>
+
+</div>
 
 </div>
 

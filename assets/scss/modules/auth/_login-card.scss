@@ -17,31 +17,25 @@
 /* ==========================================================
    LOGIN CARD
 ========================================================== */
-
 .login-card{
 
     position:relative;
 
     width:100%;
 
-    max-width:560px;
+    max-width:500px;
 
-    padding:1.2rem 5rem;
+    padding:1.4rem 2.4rem;
 
-    border-radius:26px;
+    border-radius:24px;
 
     overflow:hidden;
 
     background:
-
         linear-gradient(
-
             180deg,
-
             rgba(12,18,32,.48),
-
             rgba(8,12,24,.55)
-
         );
 
     border:1px solid rgba(255,255,255,.07);
@@ -49,17 +43,12 @@
     backdrop-filter:blur(18px);
 
     box-shadow:
-
         0 18px 50px rgba(0,0,0,.28);
 
     transition:
-
         transform .35s ease,
-
         box-shadow .35s ease,
-
         border-color .35s ease;
-
 }
 
 /* ==========================================================
@@ -176,7 +165,7 @@
 
     margin:0;
 
-    font-size:2rem;
+    font-size:1.75rem;
 
     font-weight:800;
 
@@ -264,14 +253,13 @@
 
     justify-content:center;
 
-    gap:.8rem;
+    gap:.45rem;
 
-    margin-top:.4rem;
+    margin-top:.2rem;
 
-    padding-top:.6rem;
+    padding-top:.45rem;
 
     border-top:1px solid rgba(255,255,255,.08);
-
 }
 
 

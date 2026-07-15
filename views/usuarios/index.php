@@ -265,10 +265,7 @@ require_once "../../includes/header.php";
                 Gestión General de Cuentas
             </h2>
 
-            <p class="section-description">
-                Administra usuarios, roles, estados y permisos del sistema.
-            </p>
-
+            
         </div>
 
         <div class="gx-toolbar">
@@ -585,12 +582,6 @@ require_once "../../includes/header.php";
 
 <footer class="form-actions">
 
-   <a
-    href="../dashboard.php"
-    class="btn btn-back-dashboard"
->
-    Volver al Dashboard
-</a>
 
 </footer>
 

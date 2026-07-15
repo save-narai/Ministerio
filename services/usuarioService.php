@@ -1631,3 +1631,94 @@ function desactivarUsuario(
     );
 
 }
+
+/* ==========================================================
+   ELIMINAR USUARIO
+========================================================== */
+
+function eliminarUsuario(
+    PDO $pdo,
+    int $usuarioActualId,
+    int $usuarioDestinoId
+): void
+{
+
+    /* ======================================================
+       VALIDACIONES
+    ====================================================== */
+
+    if (
+
+        $usuarioDestinoId <= 0
+
+    ) {
+
+        throw new Exception(
+
+            'Usuario inválido.'
+
+        );
+
+    }
+
+    if (
+
+        !existeUsuario(
+
+            $pdo,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'El usuario no existe.'
+
+        );
+
+    }
+
+    if (
+
+        !puedeEliminarUsuario(
+
+            $pdo,
+
+            $usuarioActualId,
+
+            $usuarioDestinoId
+
+        )
+
+    ) {
+
+        throw new Exception(
+
+            'No tiene permisos para eliminar este usuario.'
+
+        );
+
+    }
+
+    /* ======================================================
+       ELIMINAR
+    ====================================================== */
+
+    $stmt = $pdo->prepare("
+
+        DELETE FROM usuarios
+
+        WHERE id = :id
+
+    ");
+
+    $stmt->execute([
+
+        ':id' => $usuarioDestinoId
+
+    ]);
+
+}

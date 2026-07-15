@@ -358,21 +358,19 @@
 /* ==========================================================
    FORM OPTIONS
 ========================================================== */
-
 .login-options{
 
     display:flex;
 
-    justify-content:space-between;
-
     align-items:center;
 
-    gap:1rem;
+    justify-content:space-between;
 
-    margin-top:.35rem;
+    gap:1.8rem;
 
-    padding:.15rem 0;
+    margin-top:.45rem;
 
+    padding:.35rem 0;
 }
 
 /* ==========================================================
@@ -514,23 +512,15 @@
 /* ==========================================================
    FORGOT PASSWORD
 ========================================================== */
-
 .login-forgot{
 
-    position:relative;
+    margin-left:auto;
 
-    text-decoration:none;
+    display:inline-flex;
 
-    font-size:.86rem;
+    align-items:center;
 
-    font-weight:600;
-
-    color:#a78bfa;
-
-    transition:
-
-        color .30s ease;
-
+    white-space:nowrap;
 }
 
 /* ==========================================================
