@@ -62,7 +62,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <div class="roles-page">
 
-    <!-- HEADER -->
+    <!-- =====================================
+         PAGE HEADER
+    ===================================== -->
 
     <div class="page-header">
 
@@ -94,49 +96,53 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <!-- ESTADÍSTICAS -->
+    <!-- =====================================
+         ESTADÍSTICAS
+    ===================================== -->
 
-   <div class="gx-stats">
+    <div class="gx-stats">
 
-    <div class="gx-stat-card">
+        <div class="gx-stat-card info">
 
-        <div class="gx-stat-value">
-            <?= $totalRoles ?>
+            <div class="gx-stat-value">
+                <?= $totalRoles ?>
+            </div>
+
+            <div class="gx-stat-label">
+                Roles registrados
+            </div>
+
         </div>
 
-        <div class="gx-stat-label">
-            Roles registrados
+        <div class="gx-stat-card success">
+
+            <div class="gx-stat-value">
+                <?= $totalPermisos ?>
+            </div>
+
+            <div class="gx-stat-label">
+                Permisos disponibles
+            </div>
+
+        </div>
+
+        <div class="gx-stat-card warning">
+
+            <div class="gx-stat-value">
+                <?= $totalUsuarios ?>
+            </div>
+
+            <div class="gx-stat-label">
+                Usuarios asignados
+            </div>
+
         </div>
 
     </div>
 
-    <div class="gx-stat-card">
-
-        <div class="gx-stat-value">
-            <?= $totalPermisos ?>
-        </div>
-
-        <div class="gx-stat-label">
-            Permisos disponibles
-        </div>
-
-    </div>
-
-    <div class="gx-stat-card">
-
-        <div class="gx-stat-value">
-            <?= $totalUsuarios ?>
-        </div>
-
-        <div class="gx-stat-label">
-            Usuarios asignados
-        </div>
-
-    </div>
-
-</div>
-
-    <!-- TABLA -->
+    <!-- =====================================
+         TABLA
+    ===================================== -->
 
     <div class="page-section">
 
@@ -186,7 +192,7 @@ require_once __DIR__ . "/../../includes/header.php";
                     <tr>
 
                         <th>ID</th>
-                        <th>Rol</th>
+                        <th>Nombre del Rol</th>
                         <th>Permisos</th>
                         <th>Usuarios</th>
                         <th>Acciones</th>
@@ -197,90 +203,108 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 <tbody>
 
-                    <?php foreach($roles as $rol): ?>
+                    <?php if(empty($roles)): ?>
 
                         <tr>
 
-                            <td>
-                                #<?= (int)$rol["id"] ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($rol["nombre"]) ?>
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-info">
-
-                                    <?= $rol["total_permisos"] ?>
-
-                                    permisos
-
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-success">
-
-                                    <?= $rol["total_usuarios"] ?>
-
-                                    usuarios
-
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <div class="table-actions">
-
-                                    <a
-                                        href="editar.php?id=<?= (int)$rol['id'] ?>"
-                                        class="btn btn-primary btn-sm"
-                                    >
-
-                                        Editar
-
-                                    </a>
-
-                                    <?php if($rol["nombre"] !== "ADMIN"): ?>
-
-                                        <form
-                                            action="<?= BASE_URL ?>/controllers/rolController.php"
-                                            method="POST"
-                                            onsubmit="return confirm('¿Deseas eliminar este rol?');"
-                                        >
-
-                                            <input
-                                                type="hidden"
-                                                name="id"
-                                                value="<?= (int)$rol['id'] ?>"
-                                            >
-
-                                            <button
-                                                type="submit"
-                                                name="eliminar_rol"
-                                                class="btn btn-back btn-sm"
-                                            >
-
-                                                Eliminar
-
-                                            </button>
-
-                                        </form>
-
-                                    <?php endif; ?>
-
-                                </div>
-
+                            <td colspan="5" class="text-center">
+                                No existen roles registrados.
                             </td>
 
                         </tr>
 
-                    <?php endforeach; ?>
+                    <?php else: ?>
+
+                        <?php foreach($roles as $rol): ?>
+
+                            <tr>
+
+                                <td>
+                                    #<?= (int)$rol["id"] ?>
+                                </td>
+
+                                <td>
+                                    <?= htmlspecialchars($rol["nombre"]) ?>
+                                </td>
+
+                                <td>
+
+                                    <span class="badge badge-info">
+
+                                        <?= (int)$rol["total_permisos"] ?>
+
+                                        Permisos
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge badge-success">
+
+                                        <?= (int)$rol["total_usuarios"] ?>
+
+                                        Usuarios
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="table-actions">
+
+                                        <a
+                                            href="editar.php?id=<?= (int)$rol['id'] ?>"
+                                            class="btn btn-primary btn-sm"
+                                        >
+
+                                            <i class="fa-solid fa-pen"></i>
+
+                                            Editar
+
+                                        </a>
+
+                                        <?php if($rol["nombre"] !== "ADMIN"): ?>
+
+                                            <form
+                                                action="<?= BASE_URL ?>/controllers/rolController.php"
+                                                method="POST"
+                                                onsubmit="return confirm('¿Deseas eliminar este rol?');"
+                                            >
+
+                                                <input
+                                                    type="hidden"
+                                                    name="id"
+                                                    value="<?= (int)$rol['id'] ?>"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    name="eliminar_rol"
+                                                    class="btn btn-back btn-sm"
+                                                >
+
+                                                    <i class="fa-solid fa-trash"></i>
+
+                                                    Eliminar
+
+                                                </button>
+
+                                            </form>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
 
                 </tbody>
 

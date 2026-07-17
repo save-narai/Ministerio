@@ -13,12 +13,12 @@
 
 .roles-page .gx-stats{
 
-    margin:24px 0 32px;
+    margin:28px 0 34px;
 }
 
 .roles-page .stat-card{
 
-    min-height:120px;
+    min-height:126px;
 
     display:flex;
 
@@ -29,25 +29,9 @@
     align-items:center;
 }
 
-.roles-page .stat-card.info .stat-number{
-
-    color:#3b82f6;
-}
-
-.roles-page .stat-card.success .stat-number{
-
-    color:#22c55e;
-}
-
-.roles-page .stat-card.warning .stat-number{
-
-    color:#f97316;
-}
-
 /* =========================================================
    BADGES
 ========================================================= */
-
 
 .gx-stats .stat-card.info .stat-number{
 
@@ -59,6 +43,11 @@
     color:#22c55e;
 }
 
+.gx-stats .stat-card.warning .stat-number{
+
+    color:#f97316;
+}
+
 .gx-stats .stat-card.danger .stat-number{
 
     color:#ef4444;
@@ -68,7 +57,6 @@
 
     color:#a855f7;
 }
-
 
 /* =========================================================
    TABLE
@@ -97,7 +85,7 @@
 
     justify-content:center;
 
-    gap:10px;
+    gap:8px;
 
     flex-wrap:wrap;
 }
@@ -113,7 +101,7 @@
 
 .table-actions .btn{
 
-    min: width 90px;
+    min-width:90px;
 }
 
 /* =========================================================

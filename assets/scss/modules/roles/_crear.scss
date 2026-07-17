@@ -9,9 +9,9 @@
     grid-template-columns:
         repeat(auto-fit,minmax(300px,1fr));
 
-    gap:20px;
+    gap:22px;
 
-    margin-top:24px;
+    margin-top:28px;
 }
 
 /* =========================================================
@@ -28,9 +28,9 @@
 
     gap:16px;
 
-    padding:22px;
+    padding:24px;
 
-    border-radius:22px;
+    border-radius:20px;
 
     background:var(--container);
 
@@ -49,7 +49,7 @@
 
 .permission-card:hover{
 
-    transform:translateY(-3px);
+    transform:translateY(-2px);
 
     border-color:
         rgba(255,95,46,.25);
@@ -82,11 +82,11 @@ html.dark .permission-card:hover{
 
 .checkmark{
 
-    width:28px;
+    width:30px;
 
-    height:28px;
+    height:30px;
 
-    min-width:28px;
+    min-width:30px;
 
     border-radius:10px;
 
@@ -98,11 +98,14 @@ html.dark .permission-card:hover{
 
     justify-content:center;
 
-    transition:.25s ease;
-
     background:transparent;
 
     margin-top:2px;
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        transform .25s ease;
 }
 
 html.dark .checkmark{
@@ -121,7 +124,7 @@ html.dark .checkmark{
 
     color:#fff;
 
-    font-size:13px;
+    font-size:14px;
 
     font-weight:900;
 
@@ -167,6 +170,11 @@ input:checked + .checkmark::after{
     transform:scale(1);
 }
 
+.permission-card:has(input:checked) .checkmark{
+
+    transform:scale(1.05);
+}
+
 /* =========================================================
    CONTENT
 ========================================================= */
@@ -177,14 +185,14 @@ input:checked + .checkmark::after{
 
     flex-direction:column;
 
-    gap:6px;
+    gap:8px;
 
     flex:1;
 }
 
 .permission-content strong{
 
-    font-size:15px;
+    font-size:15.5px;
 
     font-weight:800;
 
@@ -197,7 +205,7 @@ input:checked + .checkmark::after{
 
     color:var(--text-soft);
 
-    font-size:12px;
+    font-size:12.5px;
 
     line-height:1.6;
 }
@@ -213,6 +221,9 @@ input:checked + .checkmark::after{
 
     background:
         rgba(255,95,46,.05);
+
+    box-shadow:
+        0 10px 24px rgba(255,95,46,.08);
 }
 
 html.dark
@@ -223,6 +234,9 @@ html.dark
 
     background:
         rgba(0,229,255,.06);
+
+    box-shadow:
+        0 10px 24px rgba(0,229,255,.08);
 }
 
 /* =========================================================

@@ -3,6 +3,14 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../helpers/csrf.php";
+
+/* =====================================
+   CSRF TOKEN
+===================================== */
+
+generarCsrf();
+
 
 /* =====================================
    PERMISOS
@@ -18,14 +26,18 @@ if (!tienePermiso('gestionar_roles')) {
    OBTENER PERMISOS DISPONIBLES
 ===================================== */
 
-$permisos = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT
         id,
         nombre,
         descripcion
     FROM permisos
     ORDER BY nombre ASC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+
+$stmt->execute();
+
+$permisos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =====================================
    HEADER
@@ -71,11 +83,18 @@ require_once __DIR__ . "/../../includes/header.php";
     ====================================== -->
 
     <form
-        action="<?= BASE_URL ?>/controllers/rolController.php"
-        method="POST"
-        class="form"
+    action="<?= BASE_URL ?>/controllers/rolController.php"
+    method="POST"
+    class="form"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
     >
 
+    
         <!-- NOMBRE DEL ROL -->
 
         <div class="form-grid">
@@ -93,6 +112,8 @@ require_once __DIR__ . "/../../includes/header.php";
                     name="nombre"
                     class="form-input"
                     placeholder="Ej: Coordinador"
+                    maxlength="80"
+                    autocomplete="off"
                     required
                 >
 
@@ -122,6 +143,16 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <div class="form-info">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>
+                    Un rol sin permisos no podrá realizar acciones dentro del sistema.
+                </span>
+
+            </div>
+
             <!-- Barra de acciones -->
 
             <div class="permissions-toolbar">
@@ -131,7 +162,11 @@ require_once __DIR__ . "/../../includes/header.php";
                     id="seleccionarTodos"
                     class="btn btn-secondary btn-sm"
                 >
+
+                    <i class="fa-solid fa-check-double"></i>
+
                     Seleccionar todos
+
                 </button>
 
                 <button
@@ -139,54 +174,82 @@ require_once __DIR__ . "/../../includes/header.php";
                     id="limpiarTodos"
                     class="btn btn-back btn-sm"
                 >
+
+                    <i class="fa-solid fa-eraser"></i>
+
                     Limpiar
+
                 </button>
 
             </div>
 
-            <div class="permissions-grid">
+            <?php if(empty($permisos)): ?>
 
-                <?php foreach ($permisos as $permiso): ?>
+                <div class="empty-state">
 
-                    <label class="permission-card">
+                    No existen permisos registrados.
 
-                        <input
-                            type="checkbox"
-                            name="permisos[]"
-                            value="<?= (int)$permiso["id"] ?>"
+                </div>
+
+            <?php else: ?>
+
+                <div class="permissions-grid">
+
+                    <?php foreach ($permisos as $permiso): ?>
+
+                        <label
+                            class="permission-card"
+                            for="permiso_<?= (int)$permiso["id"] ?>"
                         >
 
-                        <span class="checkmark"></span>
+                            <input
+                                id="permiso_<?= (int)$permiso["id"] ?>"
+                                type="checkbox"
+                                name="permisos[]"
+                                value="<?= (int)$permiso["id"] ?>"
+                            >
 
-                        <div class="permission-content">
+                            <span class="checkmark"></span>
 
-                            <strong>
+                            <div class="permission-content">
 
-                                <?= htmlspecialchars(
-                                    $permiso["nombre"]
-                                ) ?>
+                                <strong>
 
-                            </strong>
+    <?= htmlspecialchars(
 
-                            <?php if (!empty($permiso["descripcion"])): ?>
+        ucwords(
 
-                                <small>
+            str_replace(
+                '_',
+                ' ',
+                $permiso["nombre"]
+            )
 
-                                    <?= htmlspecialchars(
-                                        $permiso["descripcion"]
-                                    ) ?>
+        )
 
-                                </small>
+    ) ?>
 
-                            <?php endif; ?>
+</strong>
 
-                        </div>
+                                <?php if (!empty($permiso["descripcion"])): ?>
 
-                    </label>
+                                    <small>
 
-                <?php endforeach; ?>
+                                        <?= htmlspecialchars($permiso["descripcion"]) ?>
 
-            </div>
+                                    </small>
+
+                                <?php endif; ?>
+
+                            </div>
+
+                        </label>
+
+                    <?php endforeach; ?>
+
+                </div>
+
+            <?php endif; ?>
 
         </div>
 
@@ -201,7 +264,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-back"
             >
 
-                <i class="fa-solid fa-arrow-left"></i>
+                
 
                 Volver
 
@@ -213,6 +276,8 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
+            
+
                 Guardar Rol
 
             </button>
@@ -222,6 +287,7 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
 <script src="<?= BASE_URL ?>/assets/js/modulos/roles/crear.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

@@ -5500,27 +5500,15 @@ html.dark .form-info i {
    STATS
 ========================================================= */
 .roles-page .gx-stats {
-  margin: 24px 0 32px;
+  margin: 28px 0 34px;
 }
 
 .roles-page .stat-card {
-  min-height: 120px;
+  min-height: 126px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.roles-page .stat-card.info .stat-number {
-  color: #3b82f6;
-}
-
-.roles-page .stat-card.success .stat-number {
-  color: #22c55e;
-}
-
-.roles-page .stat-card.warning .stat-number {
-  color: #f97316;
 }
 
 /* =========================================================
@@ -5532,6 +5520,10 @@ html.dark .form-info i {
 
 .gx-stats .stat-card.success .stat-number {
   color: #22c55e;
+}
+
+.gx-stats .stat-card.warning .stat-number {
+  color: #f97316;
 }
 
 .gx-stats .stat-card.danger .stat-number {
@@ -5561,7 +5553,7 @@ html.dark .form-info i {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -5573,7 +5565,7 @@ html.dark .form-info i {
    BUTTONS
 ========================================================= */
 .table-actions .btn {
-  min: width 90px;
+  min-width: 90px;
 }
 
 /* =========================================================
@@ -5636,8 +5628,8 @@ html.dark .form-info i {
 .permissions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 24px;
+  gap: 22px;
+  margin-top: 28px;
 }
 
 /* =========================================================
@@ -5648,8 +5640,8 @@ html.dark .form-info i {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 22px;
-  border-radius: 22px;
+  padding: 24px;
+  border-radius: 20px;
   background: var(--container);
   border: var(--border);
   cursor: pointer;
@@ -5661,7 +5653,7 @@ html.dark .form-info i {
    HOVER
 ========================================================= */
 .permission-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   border-color: rgba(255, 95, 46, 0.25);
   box-shadow: var(--shadow-hover);
 }
@@ -5683,17 +5675,17 @@ html.dark .permission-card:hover {
    CHECKMARK
 ========================================================= */
 .checkmark {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
   border-radius: 10px;
   border: 2px solid rgba(255, 95, 46, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: 0.25s ease;
   background: transparent;
   margin-top: 2px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
 
 html.dark .checkmark {
@@ -5706,7 +5698,7 @@ html.dark .checkmark {
 .checkmark::after {
   content: "✓";
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   opacity: 0;
   transform: scale(0.4);
@@ -5730,18 +5722,22 @@ html.dark .permission-card input:checked + .checkmark {
   transform: scale(1);
 }
 
+.permission-card:has(input:checked) .checkmark {
+  transform: scale(1.05);
+}
+
 /* =========================================================
    CONTENT
 ========================================================= */
 .permission-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
 }
 
 .permission-content strong {
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 800;
   color: var(--text);
   text-transform: capitalize;
@@ -5749,7 +5745,7 @@ html.dark .permission-card input:checked + .checkmark {
 
 .permission-content small {
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.6;
 }
 
@@ -5759,11 +5755,13 @@ html.dark .permission-card input:checked + .checkmark {
 .permission-card:has(input:checked) {
   border-color: rgba(255, 95, 46, 0.35);
   background: rgba(255, 95, 46, 0.05);
+  box-shadow: 0 10px 24px rgba(255, 95, 46, 0.08);
 }
 
 html.dark .permission-card:has(input:checked) {
   border-color: rgba(0, 229, 255, 0.35);
   background: rgba(0, 229, 255, 0.06);
+  box-shadow: 0 10px 24px rgba(0, 229, 255, 0.08);
 }
 
 /* =========================================================
@@ -5781,20 +5779,21 @@ html.dark .permission-card:has(input:checked) {
    INFO BOX
 ========================================================= */
 .form-info {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 12px;
   width: -moz-fit-content;
   width: fit-content;
   max-width: 650px;
-  margin: 30px 0 40px 28px;
-  padding: 14px 18px;
+  margin: 28px 0 36px;
+  padding: 16px 20px;
   border-radius: 16px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 .form-info i {
   color: #3b82f6;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* =========================================================
@@ -5823,7 +5822,7 @@ html.dark .form-info i {
   .form-info {
     width: 100%;
     max-width: 100%;
-    margin: 24px 0 32px 0;
+    margin: 24px 0 32px;
   }
 }
 /* ==========================================================
