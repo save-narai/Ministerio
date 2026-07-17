@@ -14,9 +14,7 @@
 
     min-height:100vh;
 
-    padding:
-
-        clamp(1.5rem,3vw,2.5rem);
+    padding:clamp(1.5rem,3vw,2.5rem);
 
     overflow:hidden;
 
@@ -28,15 +26,22 @@
 
 .login-container{
 
+    position:relative;
+
+    z-index:10;
+
     width:min(1320px,100%);
+
+    margin:0 auto;
 
     display:grid;
 
-    grid-template-columns:1.2fr .8fr;
+    grid-template-columns:1.15fr .85fr;
 
     align-items:center;
 
-    gap:2.5rem;
+    gap:56px;
+
 }
 
 /* ==========================================================
@@ -45,15 +50,21 @@
 
 .login-hero{
 
+    position:relative;
+
+    z-index:5;
+
     display:flex;
 
     flex-direction:column;
 
-    justify-content:flex-start;
+    justify-content:center;
 
     align-items:flex-start;
 
-    gap:2rem;
+    width:100%;
+
+    min-width:0;
 
 }
 
@@ -63,34 +74,337 @@
 
 .login-panel{
 
+    position:relative;
+
+    z-index:5;
+
     display:flex;
 
     justify-content:center;
 
     align-items:center;
+
+    width:100%;
+
+    min-width:0;
+
 }
 
 /* ==========================================================
-   CARD
+   CARD WRAPPER
 ========================================================== */
 
 .login-panel .login-card{
 
     width:100%;
 
-    max-width:480px;
+    max-width:520px;
+
 }
 
 /* ==========================================================
    LAYERS
 ========================================================== */
 
-.login-hero,
+.login-background{
 
-.login-panel{
+    z-index:1;
 
-    position:relative;
+}
 
-    z-index:5;
+.login-overlay{
+
+    z-index:2;
+
+}
+
+.login-page::before,
+
+.login-page::after{
+
+    pointer-events:none;
+
+}
+
+.login-page *{
+
+    box-sizing:border-box;
+
+}
+
+/* ==========================================================
+   DESKTOP XL
+========================================================== */
+
+@media (max-width:1400px){
+
+    .login-container{
+
+        width:min(1240px,100%);
+
+        gap:52px;
+    }
+
+    .login-panel .login-card{
+
+        max-width:510px;
+    }
+
+}
+
+/* ==========================================================
+   LAPTOP
+========================================================== */
+
+@media (max-width:1200px){
+
+    .login-page{
+
+        padding:32px;
+    }
+
+    .login-container{
+
+        width:100%;
+
+        grid-template-columns:1.1fr .9fr;
+
+        gap:44px;
+    }
+
+    .login-panel{
+
+        justify-content:center;
+    }
+
+    .login-panel .login-card{
+
+        max-width:500px;
+    }
+
+}
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width:992px){
+
+    .login-page{
+
+        padding:30px 24px;
+    }
+
+    .login-container{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+
+        justify-content:center;
+
+        width:100%;
+
+        max-width:760px;
+
+        margin:0 auto;
+
+        gap:40px;
+    }
+
+    .login-hero{
+
+        align-items:center;
+
+        text-align:center;
+
+        max-width:100%;
+    }
+
+    .login-logo{
+
+        justify-content:center;
+    }
+
+    .login-panel{
+
+        width:100%;
+
+        justify-content:center;
+    }
+
+    .login-panel .login-card{
+
+        width:100%;
+
+        max-width:520px;
+    }
+
+}
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width:768px){
+
+    .login-page{
+
+        padding:22px 18px;
+    }
+
+    .login-container{
+
+        gap:30px;
+    }
+
+    .login-hero{
+
+        align-items:center;
+
+        text-align:center;
+    }
+
+    .login-logo{
+
+        justify-content:center;
+    }
+
+    .login-panel{
+
+        width:100%;
+    }
+
+    .login-panel .login-card{
+
+        width:100%;
+
+        max-width:480px;
+    }
+
+}
+
+/* ==========================================================
+   MOBILE SMALL
+========================================================== */
+
+@media (max-width:576px){
+
+    .login-page{
+
+        padding:18px 16px;
+    }
+
+    .login-container{
+
+        gap:26px;
+    }
+
+    .login-panel{
+
+        width:100%;
+    }
+
+    .login-panel .login-card{
+
+        width:100%;
+
+        max-width:100%;
+    }
+
+}
+
+/* ==========================================================
+   EXTRA SMALL
+========================================================== */
+
+@media (max-width:480px){
+
+    .login-page{
+
+        padding:14px;
+    }
+
+    .login-container{
+
+        gap:22px;
+    }
+
+    .login-hero{
+
+        width:100%;
+    }
+
+    .login-panel{
+
+        width:100%;
+    }
+
+    .login-panel .login-card{
+
+        width:100%;
+
+        max-width:100%;
+    }
+
+}
+
+/* ==========================================================
+   LOW HEIGHT
+========================================================== */
+
+@media (max-height:700px){
+
+    .login-page{
+
+        padding:20px 16px;
+    }
+
+    .login-container{
+
+        gap:22px;
+
+        align-items:center;
+    }
+
+}
+
+/* ==========================================================
+   LANDSCAPE
+========================================================== */
+
+@media (max-width:900px) and (orientation:landscape){
+
+    .login-page{
+
+        min-height:auto;
+
+        padding:24px;
+    }
+
+    .login-container{
+
+        gap:30px;
+    }
+
+}
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion:reduce){
+
+    .login-page *{
+
+        animation:none !important;
+
+        transition:none !important;
+
+        scroll-behavior:auto !important;
+
+    }
 
 }

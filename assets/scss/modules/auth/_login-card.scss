@@ -11,43 +11,50 @@
     align-items:center;
 
     width:100%;
-
 }
 
 /* ==========================================================
    LOGIN CARD
 ========================================================== */
+
 .login-card{
 
     position:relative;
 
     width:100%;
 
-    max-width:500px;
+    max-width:520px;
 
-    padding:1.4rem 2.4rem;
-
-    border-radius:24px;
+    padding:30px 32px;
 
     overflow:hidden;
 
+    border-radius:24px;
+
     background:
+
         linear-gradient(
             180deg,
-            rgba(12,18,32,.48),
-            rgba(8,12,24,.55)
+            rgba(12,18,32,.52),
+            rgba(8,12,24,.58)
         );
 
     border:1px solid rgba(255,255,255,.07);
 
-    backdrop-filter:blur(18px);
+    backdrop-filter:blur(22px);
+
+    -webkit-backdrop-filter:blur(22px);
 
     box-shadow:
-        0 18px 50px rgba(0,0,0,.28);
+
+        0 20px 60px rgba(0,0,0,.28);
 
     transition:
+
         transform .35s ease,
+
         box-shadow .35s ease,
+
         border-color .35s ease;
 }
 
@@ -69,7 +76,7 @@
 
     height:1px;
 
-    opacity:.65;
+    opacity:.75;
 
     background:
 
@@ -79,16 +86,15 @@
 
             transparent,
 
-            rgba(255,255,255,.60),
+            rgba(255,255,255,.65),
 
             transparent
 
         );
-
 }
 
 /* ==========================================================
-   INNER BORDER
+   INNER GLOW
 ========================================================== */
 
 .login-card::after{
@@ -99,16 +105,36 @@
 
     inset:0;
 
-    border-radius:inherit;
-
     pointer-events:none;
 
-   box-shadow:
+    border-radius:inherit;
 
-    inset 0 1px 0 rgba(255,255,255,.08),
+    box-shadow:
 
-    inset 0 0 0 1px rgba(255,255,255,.03);
+        inset 0 1px 0 rgba(255,255,255,.08),
 
+        inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+/* ==========================================================
+   CARD HOVER
+========================================================== */
+
+.login-card:hover{
+
+    transform:
+
+        translateY(-6px)
+
+        scale(1.01);
+
+    border-color:
+
+        rgba(139,92,246,.18);
+
+    box-shadow:
+
+        0 26px 70px rgba(0,0,0,.30);
 }
 
 /* ==========================================================
@@ -121,10 +147,9 @@
 
     flex-direction:column;
 
-    gap:.35rem;
+    gap:8px;
 
-    margin-bottom:.9rem;
-
+    margin-bottom:18px;
 }
 
 /* ==========================================================
@@ -137,10 +162,9 @@
 
     flex-direction:column;
 
-    gap:.35rem;
-
     align-items:flex-start;
 
+    gap:6px;
 }
 
 /* ==========================================================
@@ -153,8 +177,7 @@
 
     flex-direction:column;
 
-    gap:1rem;
-
+    gap:18px;
 }
 
 /* ==========================================================
@@ -165,9 +188,11 @@
 
     margin:0;
 
-    font-size:1.75rem;
+    font-size:1.90rem;
 
     font-weight:800;
+
+    line-height:1.1;
 
     letter-spacing:-1px;
 
@@ -190,7 +215,6 @@
     -webkit-text-fill-color:transparent;
 
     background-clip:text;
-
 }
 
 /* ==========================================================
@@ -199,14 +223,15 @@
 
 .login-card-description{
 
-    margin-top:.6rem;
+    margin:0;
 
-    color:rgba(255,255,255,.82);
+    max-width:420px;
+
+    color:rgba(255,255,255,.78);
 
     font-size:.92rem;
 
-    line-height:1.6;
-
+    line-height:1.65;
 }
 
 /* ==========================================================
@@ -215,11 +240,11 @@
 
 .login-card-divider{
 
-    width:90px;
+    width:82px;
 
-    height:3px;
+    height:4px;
 
-    margin-top:.8rem;
+    margin-top:4px;
 
     border-radius:999px;
 
@@ -237,6 +262,9 @@
 
         );
 
+    box-shadow:
+
+        0 0 16px rgba(167,139,250,.25);
 }
 
 /* ==========================================================
@@ -253,28 +281,17 @@
 
     justify-content:center;
 
-    gap:.45rem;
+    gap:10px;
 
-    margin-top:.2rem;
+    margin-top:18px;
 
-    padding-top:.45rem;
+    padding-top:16px;
 
     border-top:1px solid rgba(255,255,255,.08);
-}
-
-
-/* ==========================================================
-   FOOTER EFFECT
-========================================================== */
-
-.login-card-footer{
 
     transition:
-
         border-color .30s ease,
-
-        color .30s ease;
-
+        opacity .30s ease;
 }
 
 /* ==========================================================
@@ -283,12 +300,17 @@
 
 .login-copyright{
 
-    color:rgba(255,255,255,.72);
+    margin:0;
 
-    font-size:.80rem;
+    color:rgba(255,255,255,.66);
+
+    font-size:.78rem;
+
+    font-weight:500;
 
     letter-spacing:.03em;
 
+    text-align:center;
 }
 
 /* ==========================================================
@@ -303,46 +325,119 @@
 
     justify-content:center;
 
-    padding:.5rem 1.1rem;
+    gap:8px;
+
+    min-width:92px;
+
+    padding:8px 16px;
 
     border-radius:999px;
 
-    min-width:90px;
+    background:
 
-    background:rgba(255,255,255,.04);
+        rgba(255,255,255,.045);
 
-border:1px solid rgba(255,255,255,.06);
+    border:
+
+        1px solid rgba(255,255,255,.08);
 
     color:#E5E7EB;
 
-    font-size:.78rem;
+    font-size:.76rem;
 
-    font-weight:600;
+    font-weight:700;
 
-    letter-spacing:.04em;
+    letter-spacing:.05em;
 
+    backdrop-filter:blur(10px);
+
+    transition:
+
+        all .30s ease;
 }
 
 /* ==========================================================
-   HOVER
+   VERSION HOVER
 ========================================================== */
 
-.login-card:hover{
-
-    transform:
-
-        translateY(-6px)
-
-        scale(1.01);
+.login-version:hover{
 
     border-color:
 
-        rgba(124,140,255,.18);
+        rgba(167,139,250,.25);
 
-box-shadow:
+    background:
 
-    0 15px 35px rgba(0,0,0,.22),
+        rgba(167,139,250,.08);
 
-    0 40px 80px rgba(0,0,0,.18);
+    transform:
+
+        translateY(-2px);
+}
+
+/* ==========================================================
+   FOOTER HOVER
+========================================================== */
+
+.login-card:hover .login-card-footer{
+
+    border-top-color:
+
+        rgba(167,139,250,.12);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+    .login-card{
+
+        padding:22px;
+    }
+
+    .login-card-header{
+
+        margin-bottom:18px;
+    }
+
+    .login-card-title{
+
+        font-size:1.60rem;
+    }
+
+    .login-card-description{
+
+        font-size:.88rem;
+    }
+
+    .login-card-footer{
+
+        margin-top:20px;
+
+        padding-top:18px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .login-card{
+
+        border-radius:20px;
+
+        padding:18px;
+    }
+
+    .login-card-title{
+
+        font-size:1.45rem;
+    }
+
+    .login-version{
+
+        width:100%;
+    }
 
 }

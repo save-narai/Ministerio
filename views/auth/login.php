@@ -207,21 +207,36 @@ $version = $config['version'] ?? '2.0';
              ERROR
         =========================================== -->
 
-        <?php if (!empty($error)): ?>
+        
+<?php if (!empty($error)): ?>
 
-            <div class="login-alert">
+<div class="login-alert gx-alert gx-alert-error">
 
-                <i class="fa-solid fa-circle-exclamation"></i>
+    <div class="gx-alert-icon">
 
-                <p>
+        <i class="fa-solid fa-circle-exclamation"></i>
 
-                    <?= htmlspecialchars($error) ?>
+    </div>
 
-                </p>
+    <div class="gx-alert-content">
 
-            </div>
+        <h4 class="gx-alert-title">
 
-        <?php endif; ?>
+            Error de autenticación
+
+        </h4>
+
+        <p class="gx-alert-message">
+
+            <?= htmlspecialchars($error) ?>
+
+        </p>
+
+    </div>
+
+</div>
+
+<?php endif; ?>
 
         <!-- ==========================================
              FORMULARIO
@@ -388,25 +403,17 @@ $version = $config['version'] ?? '2.0';
             <!-- ======================================
                  BOTÓN
             ======================================= -->
+<button
+    type="submit"
+    id="btnLogin"
+    class="login-button"
+>
 
-            <button
-                type="submit"
-                id="btnLogin"
-                class="login-button"
-            >
+    <span>Ingresar al sistema</span>
 
-                <span>
+   
 
-    Ingresar al sistema
-
-</span>
-
-<i
-
-    class="fa-solid fa-arrow-right login-button-icon"
-
-></i>
-            </button>
+</button>
 
         </form>
     

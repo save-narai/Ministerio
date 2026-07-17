@@ -1,4 +1,73 @@
 /* ==========================================================
+   LOGIN ALERT
+========================================================== */
+
+.login-alert{
+
+    margin-bottom:22px;
+
+    animation:
+        loginAlertIn .35s ease;
+
+    color:rgba(255, 255, 255,.90);
+}
+
+/* ==========================================================
+   ALERT ICON
+========================================================== */
+
+.login-alert .gx-alert-icon{
+
+    flex-shrink:0;
+}
+
+/* ==========================================================
+   ALERT CONTENT
+========================================================== */
+
+.login-alert .gx-alert-content{
+
+    flex:1;
+}
+
+/* ==========================================================
+   ALERT MESSAGE
+========================================================== */
+
+.login-alert p{
+
+    margin:0;
+
+    font-size:.90rem;
+
+    line-height:1.6;
+}
+
+/* ==========================================================
+   ALERT ANIMATION
+========================================================== */
+
+@keyframes loginAlertIn{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(-12px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+/* ==========================================================
    LOGIN FORM
 ========================================================== */
 
@@ -8,12 +77,11 @@
 
     flex-direction:column;
 
-    gap:1rem;
+    gap:20px;
 
     width:100%;
 
     margin:0;
-
 }
 
 /* ==========================================================
@@ -26,8 +94,11 @@
 
     flex-direction:column;
 
-    gap:.55rem;
+    gap:8px;
 
+    width:100%;
+
+    position:relative;
 }
 
 /* ==========================================================
@@ -40,22 +111,21 @@
 
     align-items:center;
 
-    gap:.6rem;
+    gap:8px;
 
-    font-size:.88rem;
+    padding-left:2px;
 
-    font-weight:600;
+    font-size:.84rem;
+
+    font-weight:700;
 
     letter-spacing:.03em;
 
-    color:rgba(255,255,255,.88);
+    color:rgba(255,255,255,.82);
 
     transition:
-
-        color .30s ease,
-
-        transform .30s ease;
-
+        color .28s ease,
+        transform .28s ease;
 }
 
 /* ==========================================================
@@ -64,16 +134,43 @@
 
 .login-label i{
 
+    width:16px;
+
+    text-align:center;
+
     font-size:.82rem;
 
     color:#8b5cf6;
 
     transition:
+        color .28s ease,
+        transform .28s ease;
+}
 
-        color .30s ease,
+/* ==========================================================
+   ACTIVE LABEL
+========================================================== */
 
-        transform .30s ease;
+.login-group:focus-within .login-label{
 
+    color:#ffffff;
+
+}
+
+.login-group:focus-within .login-label i{
+
+    color:#a78bfa;
+
+    transform:scale(1.08);
+}
+
+/* ==========================================================
+   GROUP SPACING
+========================================================== */
+
+.login-group + .login-group{
+
+    margin-top:2px;
 }
 
 /* ==========================================================
@@ -88,26 +185,7 @@
 
     align-items:center;
 
-}
-
-/* ==========================================================
-   INPUT WRAPPER ACTIVE
-========================================================== */
-
-.login-input-wrapper:focus-within .login-label,
-
-.login-group:focus-within .login-label{
-
-    color:#ffffff;
-
-}
-
-.login-group:focus-within .login-label i{
-
-    color:#a78bfa;
-
-    transform:scale(1.08);
-
+    width:100%;
 }
 
 /* ==========================================================
@@ -118,29 +196,28 @@
 
     width:100%;
 
-    height:52px;
+    height:54px;
 
-    padding:0 3.2rem;
+    padding:0 52px 0 50px;
+
+    border:none;
 
     border-radius:16px;
-
-    border:1px solid rgba(255,255,255,.06);
 
     outline:none;
 
     background:
-
         linear-gradient(
-
             180deg,
-
-            rgba(255,255,255,.05),
-
-            rgba(255,255,255,.03)
-
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.030)
         );
 
+    border:1px solid rgba(255,255,255,.08);
+
     backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
 
     color:#ffffff;
 
@@ -151,15 +228,10 @@
     letter-spacing:.02em;
 
     transition:
-
         border-color .30s ease,
-
         background .30s ease,
-
         box-shadow .30s ease,
-
         transform .30s ease;
-
 }
 
 /* ==========================================================
@@ -170,34 +242,28 @@
 
     color:rgba(255,255,255,.42);
 
-    transition:opacity .30s ease;
-
+    transition:opacity .25s ease;
 }
 
 /* ==========================================================
-   HOVER
+   INPUT HOVER
 ========================================================== */
 
 .login-input:hover{
 
+    border-color:
+        rgba(167,139,250,.28);
+
     background:
-
         linear-gradient(
-
             180deg,
-
-            rgba(255,255,255,.07),
-
-            rgba(255,255,255,.04)
-
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.040)
         );
-
-    border-color:rgba(167,139,250,.18);
-
 }
 
 /* ==========================================================
-   FOCUS
+   INPUT FOCUS
 ========================================================== */
 
 .login-input:focus{
@@ -205,29 +271,28 @@
     border-color:#8b5cf6;
 
     background:
-
         linear-gradient(
-
             180deg,
-
-            rgba(255,255,255,.08),
-
-            rgba(255,255,255,.05)
-
+            rgba(255,255,255,.085),
+            rgba(255,255,255,.050)
         );
 
     box-shadow:
 
-        0 0 0 4px rgba(139,92,246,.14),
+        0 0 0 4px rgba(139,92,246,.13),
 
-        0 10px 30px rgba(124,58,237,.15);
+        0 14px 35px rgba(124,58,237,.16);
 
+    transform:translateY(-1px);
 }
+
+/* ==========================================================
+   PLACEHOLDER FOCUS
+========================================================== */
 
 .login-input:focus::placeholder{
 
     opacity:.55;
-
 }
 
 /* ==========================================================
@@ -248,12 +313,11 @@
 
     pointer-events:none;
 
+    font-size:.92rem;
+
     transition:
-
         color .30s ease,
-
         transform .30s ease;
-
 }
 
 /* ==========================================================
@@ -265,15 +329,40 @@
     color:#a78bfa;
 
     transform:
-
         translateY(-50%)
-
         scale(1.08);
-
 }
 
 /* ==========================================================
-   PASSWORD BUTTON
+   INPUT STATES
+========================================================== */
+
+.login-input.is-error{
+
+    border-color:#ef4444;
+
+    box-shadow:
+        0 0 0 4px rgba(239,68,68,.12);
+}
+
+.login-input.is-success{
+
+    border-color:#22c55e;
+
+    box-shadow:
+        0 0 0 4px rgba(34,197,94,.10);
+}
+
+.login-input.is-warning{
+
+    border-color:#f59e0b;
+
+    box-shadow:
+        0 0 0 4px rgba(245,158,11,.10);
+}
+
+/* ==========================================================
+   PASSWORD TOGGLE
 ========================================================== */
 
 .password-toggle{
@@ -284,9 +373,9 @@
 
     right:10px;
 
-    width:36px;
+    width:38px;
 
-    height:36px;
+    height:38px;
 
     display:flex;
 
@@ -307,17 +396,13 @@
     cursor:pointer;
 
     transition:
-
-        background .30s ease,
-
-        color .30s ease,
-
-        transform .30s ease;
-
+        background .28s ease,
+        color .28s ease,
+        transform .28s ease;
 }
 
 /* ==========================================================
-   PASSWORD HOVER
+   PASSWORD TOGGLE HOVER
 ========================================================== */
 
 .password-toggle:hover{
@@ -325,39 +410,31 @@
     background:rgba(255,255,255,.06);
 
     color:#a78bfa;
+}
 
+.password-toggle:hover i{
+
+    transform:scale(1.12);
 }
 
 .password-toggle:active{
 
     transform:
-
         translateY(-50%)
-
-        scale(.95);
-
+        scale(.94);
 }
 
 .password-toggle i{
 
     transition:
-
         transform .25s ease,
-
         color .25s ease;
-
 }
-
-.password-toggle:hover i{
-
-    transform:scale(1.15);
-
-}
-
 
 /* ==========================================================
-   FORM OPTIONS
+   LOGIN OPTIONS
 ========================================================== */
+
 .login-options{
 
     display:flex;
@@ -366,11 +443,9 @@
 
     justify-content:space-between;
 
-    gap:1.8rem;
+    gap:24px;
 
-    margin-top:.45rem;
-
-    padding:.35rem 0;
+    margin-top:4px;
 }
 
 /* ==========================================================
@@ -383,7 +458,7 @@
 
     align-items:center;
 
-    gap:.75rem;
+    gap:12px;
 
     cursor:pointer;
 
@@ -393,28 +468,24 @@
 
     font-weight:500;
 
-    color:rgba(255,255,255,.72);
+    color:rgba(255,255,255,.74);
 
     transition:
-
-        color .30s ease;
-
+        color .28s ease;
 }
 
 .login-remember:hover{
 
     color:#ffffff;
-
 }
 
 .login-remember input{
 
     display:none;
-
 }
 
 /* ==========================================================
-   CUSTOM CHECK
+   CUSTOM CHECKBOX
 ========================================================== */
 
 .login-check{
@@ -429,14 +500,12 @@
 
     border-radius:7px;
 
+    border:1px solid rgba(255,255,255,.10);
+
     background:rgba(255,255,255,.04);
 
-    border:1px solid rgba(255,255,255,.08);
-
     transition:
-
-        all .30s ease;
-
+        all .28s ease;
 }
 
 /* ==========================================================
@@ -457,20 +526,18 @@
 
     align-items:center;
 
+    color:#ffffff;
+
     font-size:.72rem;
 
     font-weight:700;
 
-    color:#ffffff;
-
     opacity:0;
 
-    transform:scale(.4);
+    transform:scale(.45);
 
     transition:
-
-        all .25s ease;
-
+        all .22s ease;
 }
 
 /* ==========================================================
@@ -479,26 +546,20 @@
 
 .login-remember input:checked + .login-check{
 
+    border-color:transparent;
+
     background:
 
         linear-gradient(
-
             135deg,
-
             #7c3aed,
-
             #8b5cf6,
-
             #a78bfa
-
         );
-
-    border-color:transparent;
 
     box-shadow:
 
-        0 8px 18px rgba(124,58,237,.30);
-
+        0 8px 18px rgba(124,58,237,.28);
 }
 
 .login-remember input:checked + .login-check::after{
@@ -506,21 +567,36 @@
     opacity:1;
 
     transform:scale(1);
-
 }
 
 /* ==========================================================
    FORGOT PASSWORD
 ========================================================== */
+
 .login-forgot{
 
-    margin-left:auto;
+    position:relative;
 
     display:inline-flex;
 
     align-items:center;
 
+    padding-left:10px;
+
+    margin-left:auto;
+
     white-space:nowrap;
+
+    text-decoration:none;
+
+    font-size:.86rem;
+
+    font-weight:600;
+
+    color:#a78bfa;
+
+    transition:
+        color .28s ease;
 }
 
 /* ==========================================================
@@ -546,19 +622,13 @@
     background:
 
         linear-gradient(
-
             90deg,
-
             #7dd3fc,
-
             #a78bfa
-
         );
 
     transition:
-
-        width .30s ease;
-
+        width .28s ease;
 }
 
 /* ==========================================================
@@ -568,22 +638,18 @@
 .login-forgot:hover{
 
     color:#ffffff;
-
 }
 
 .login-forgot:hover::after{
 
     width:100%;
-
 }
 
 /* ==========================================================
-   BUTTON
+   LOGIN BUTTON
 ========================================================== */
 
 .login-button{
-
-    position:relative;
 
     display:flex;
 
@@ -591,123 +657,87 @@
 
     align-items:center;
 
-    gap:.9rem;
+    gap:12px;
 
     width:100%;
 
-    height:52px;
+    height:40px !important;
 
-    margin-top:.5rem;
+    min-height:40px;
+
+    padding:0 24px;
+
+    flex-shrink:0;
+
+    margin-top:6px;
 
     border:none;
 
     border-radius:16px;
 
-    overflow:hidden;
-
     cursor:pointer;
+
+    user-select:none;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    background:linear-gradient(
+        135deg,
+        #6366f1 0%,
+        #8b5cf6 45%,
+        #ec4899 100%
+    );
 
     color:#ffffff;
 
-    font-size:.94rem;
+    font-size:.95rem;
 
     font-weight:700;
 
+    line-height:54px;
+
     letter-spacing:.03em;
 
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #6366f1 0%,
-
-            #8b5cf6 45%,
-
-            #ec4899 100%
-
-        );
-
     box-shadow:
-
-        0 15px 30px rgba(124,58,237,.30);
+        0 16px 34px rgba(124,58,237,.28);
 
     transition:
-
-        transform .30s ease,
-
-        box-shadow .30s ease,
-
-        filter .30s ease;
-
+        transform .25s ease,
+        box-shadow .25s ease,
+        filter .25s ease,
+        background .25s ease;
 }
 
 /* ==========================================================
-   BUTTON SHINE
-========================================================== */
-
-.login-button::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    left:-120%;
-
-    background:
-
-        linear-gradient(
-
-            120deg,
-
-            transparent,
-
-            rgba(255,255,255,.28),
-
-            transparent
-
-        );
-
-    transition:left .8s ease;
-
-}
-
-/* ==========================================================
-   BUTTON TEXT
+   BUTTON CONTENT
 ========================================================== */
 
 .login-button span{
 
-    position:relative;
-
-    z-index:2;
-
-}
-
-/* ==========================================================
-   BUTTON ICON
-========================================================== */
-
-.login-button-icon{
-
-    position:relative;
-
-    z-index:2;
-
     display:flex;
+
+    align-items:center;
 
     justify-content:center;
 
+    line-height:1;
+
+}
+
+.login-button-icon{
+
+    display:flex;
+
     align-items:center;
+
+    justify-content:center;
 
     font-size:.90rem;
 
     transition:
-
-        transform .30s ease;
+        transform .25s ease;
 
 }
 
@@ -717,29 +747,18 @@
 
 .login-button:hover{
 
-    transform:
+    transform:translateY(-2px);
 
-        translateY(-3px)
-
-        scale(1.01);
-
-    filter:brightness(1.05);
+    filter:brightness(1.08);
 
     box-shadow:
-
-        0 22px 45px rgba(124,58,237,.40);
-
-}
-
-.login-button:hover::before{
-
-    left:120%;
+        0 22px 42px rgba(124,58,237,.36);
 
 }
 
 .login-button:hover .login-button-icon{
 
-    transform:translateX(6px);
+    transform:translateX(5px);
 
 }
 
@@ -749,11 +768,24 @@
 
 .login-button:active{
 
-    transform:
+    transform:translateY(0) scale(.98);
 
-        translateY(1px)
+    box-shadow:
+        0 12px 24px rgba(124,58,237,.24);
 
-        scale(.99);
+}
+
+/* ==========================================================
+   BUTTON FOCUS
+========================================================== */
+
+.login-button:focus-visible{
+
+    outline:none;
+
+    box-shadow:
+        0 0 0 4px rgba(167,139,250,.22),
+        0 18px 36px rgba(124,58,237,.30);
 
 }
 
@@ -763,7 +795,7 @@
 
 .login-button:disabled{
 
-    opacity:.65;
+    opacity:.70;
 
     cursor:not-allowed;
 
@@ -775,9 +807,8 @@
 
 }
 
-
 /* ==========================================================
-   LOADING
+   BUTTON LOADING
 ========================================================== */
 
 .login-button.loading{
@@ -787,6 +818,48 @@
     color:transparent;
 
 }
+
+.login-button.loading span,
+
+.login-button.loading .login-button-icon{
+
+    opacity:0;
+
+}
+
+.login-button.loading::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:20px;
+
+    height:20px;
+
+    border-radius:50%;
+
+    border:3px solid rgba(255,255,255,.25);
+
+    border-top-color:#ffffff;
+
+    animation:loginSpinner .8s linear infinite;
+
+}
+
+@keyframes loginSpinner{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/* ==========================================================
+   SPINNER
+========================================================== */
 
 .login-button.loading::after{
 
@@ -808,16 +881,17 @@
 
     border-radius:50%;
 
-    border:3px solid rgba(255,255,255,.25);
+    border:3px solid rgba(255,255,255,.30);
 
     border-top-color:#ffffff;
 
-    animation:loginSpinner .8s linear infinite;
+    animation:
 
+        loginSpinner .75s linear infinite;
 }
 
 /* ==========================================================
-   SPINNER
+   KEYFRAMES
 ========================================================== */
 
 @keyframes loginSpinner{
@@ -825,220 +899,146 @@
     to{
 
         transform:rotate(360deg);
-
     }
 
 }
 
 /* ==========================================================
-   INPUT STATES
+   GLOBAL TRANSITIONS
 ========================================================== */
-
-.login-input.is-error{
-
-    border-color:#ef4444;
-
-    background:rgba(239,68,68,.08);
-
-    box-shadow:
-
-        0 0 0 4px rgba(239,68,68,.12);
-
-}
-
-.login-input.is-success{
-
-    border-color:#22c55e;
-
-    background:rgba(34,197,94,.08);
-
-    box-shadow:
-
-        0 0 0 4px rgba(34,197,94,.10);
-
-}
-
-.login-input.is-warning{
-
-    border-color:#f59e0b;
-
-    background:rgba(245,158,11,.08);
-
-    box-shadow:
-
-        0 0 0 4px rgba(245,158,11,.10);
-
-}
-
-/* ==========================================================
-   TRANSITIONS
-========================================================== */
-
-.login-input,
-
-.login-button,
-
-.login-check,
-
-.login-forgot,
-
-.password-toggle,
 
 .login-label,
-
-.login-input-icon{
-
-    transition:
-
-        .30s ease;
-
-}
-
-/* ==========================================================
-   PASSWORD STRENGTH
-========================================================== */
-
-.password-strength{
-
-    width:100%;
-
-    height:6px;
-
-    margin-top:.35rem;
-
-    overflow:hidden;
-
-    border-radius:999px;
-
-    background:rgba(255,255,255,.08);
-
-}
-
-.password-strength-bar{
-
-    width:0;
-
-    height:100%;
-
-    border-radius:999px;
+.login-input,
+.login-input-icon,
+.password-toggle,
+.login-check,
+.login-forgot,
+.login-button{
 
     transition:
-
-        width .35s ease,
-
-        background .35s ease;
-
+        all .28s ease;
 }
 
 /* ==========================================================
-   COLORS
+   REDUCED MOTION
 ========================================================== */
 
-.password-strength-bar.weak{
+@media (prefers-reduced-motion: reduce){
 
-    background:#ef4444;
+    .login-form *{
 
-}
+        animation:none !important;
 
-.password-strength-bar.medium{
-
-    background:#f59e0b;
-
-}
-
-.password-strength-bar.strong{
-
-    background:#22c55e;
-
-}
-
-.password-strength-bar.very-strong{
-
-    background:#10b981;
-
+        transition:none !important;
+    }
 }
 
 /* ==========================================================
-   STRENGTH TEXT
+   TABLET
 ========================================================== */
 
-.password-strength-text{
+@media (max-width:992px){
 
-    margin-top:.45rem;
+    .login-form{
 
-    font-size:.82rem;
+        gap:18px;
+    }
 
-    font-weight:600;
+    .login-options{
 
-    color:rgba(255,255,255,.72);
-
-    transition:
-
-        color .30s ease;
-
+        gap:14px;
+    }
 }
 
 /* ==========================================================
-   PASSWORD CHECKLIST
+   MOBILE
 ========================================================== */
 
-.password-checklist{
+@media (max-width:768px){
 
-    display:flex;
+    .login-form{
 
-    flex-direction:column;
+        gap:16px;
+    }
 
-    gap:.45rem;
+    .login-input{
 
+        height:52px;
+
+        font-size:.92rem;
+
+        padding:0 48px 0 46px;
+    }
+
+    .login-input-icon{
+
+        left:16px;
+
+        font-size:.88rem;
+    }
+
+    .password-toggle{
+
+        right:8px;
+
+        width:36px;
+
+        height:36px;
+    }
+
+    .login-options{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:12px;
+    }
+
+    .login-forgot{
+
+        margin-left:0;
+    }
+
+    .login-button{
+
+        height:52px;
+
+        margin-top:4px;
+    }
 }
 
 /* ==========================================================
-   ITEM
+   SMALL MOBILE
 ========================================================== */
 
-.password-check{
+@media (max-width:480px){
 
-    display:flex;
+    .login-label{
 
-    align-items:center;
+        font-size:.82rem;
+    }
 
-    gap:.65rem;
+    .login-input{
 
-    font-size:.84rem;
+        height:50px;
 
-    color:rgba(255,255,255,.45);
+        font-size:.90rem;
+    }
 
-    transition:.30s ease;
+    .login-button{
 
+        height:50px;
+
+        font-size:.90rem;
+    }
+
+    .login-check{
+
+        width:18px;
+
+        height:18px;
+    }
 }
 
-/* ==========================================================
-   ICON
-========================================================== */
-
-.password-check i{
-
-    font-size:.72rem;
-
-    color:#64748b;
-
-    transition:.30s ease;
-
-}
-
-/* ==========================================================
-   ACTIVE
-========================================================== */
-
-.password-check.active{
-
-    color:#ffffff;
-
-}
-
-.password-check.active i{
-
-    color:#22c55e;
-
-}
 
