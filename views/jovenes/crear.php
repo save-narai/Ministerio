@@ -1,18 +1,38 @@
 <?php
+
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
+require_once __DIR__ . "/../../helpers/csrf.php";
+
+/* =====================================
+   CSRF
+===================================== */
+
+generarCsrf();
+
+/* =====================================
+   PERMISOS
+===================================== */
 
 if (!tienePermiso('gestionar_jovenes')) {
+
     header("Location: ../dashboard.php");
     exit;
 }
 
+/* =====================================
+   HEADER
+===================================== */
 
 require_once __DIR__ . "/../../includes/header.php";
+
 ?>
 
-
 <div class="form-card">
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
 
     <div class="form-header">
 
@@ -36,20 +56,41 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+    <!-- =====================================
+         INFORMACIÓN
+    ====================================== -->
+
+    <div class="form-info">
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        <span>
+            Registra la información básica del joven. Posteriormente podrás editar sus datos y consultar su historial de asistencia y seguimiento.
+        </span>
+
+    </div>
+
+    <!-- =====================================
+         FORMULARIO
+    ====================================== -->
+
     <form
         id="formJoven"
         class="form"
         action="<?= BASE_URL ?>/controllers/jovenController.php"
         method="POST"
+        autocomplete="off"
     >
 
         <input
             type="hidden"
             name="csrf_token"
-            value="<?= $_SESSION['csrf_token'] ?>"
+            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
         >
 
         <div class="form-grid">
+
+            <!-- NOMBRE -->
 
             <div class="form-group form-group-full">
 
@@ -61,10 +102,14 @@ require_once __DIR__ . "/../../includes/header.php";
                     class="form-input"
                     type="text"
                     name="nombre_completo"
+                    maxlength="120"
+                    autocomplete="off"
                     required
                 >
 
             </div>
+
+            <!-- FECHA NACIMIENTO -->
 
             <div class="form-group">
 
@@ -81,6 +126,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- EDAD -->
+
             <div class="form-group">
 
                 <label class="form-label">
@@ -92,9 +139,13 @@ require_once __DIR__ . "/../../includes/header.php";
                     type="number"
                     name="edad_manual"
                     id="edad"
+                    min="1"
+                    max="120"
                 >
 
             </div>
+
+            <!-- TELÉFONO -->
 
             <div class="form-group">
 
@@ -108,6 +159,8 @@ require_once __DIR__ . "/../../includes/header.php";
                     name="telefono"
                     id="telefono"
                     maxlength="10"
+                    inputmode="numeric"
+                    autocomplete="off"
                 >
 
                 <small
@@ -137,6 +190,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- FECHA INGRESO -->
+
             <div class="form-group">
 
                 <label class="form-label">
@@ -147,11 +202,13 @@ require_once __DIR__ . "/../../includes/header.php";
                     class="form-input"
                     type="date"
                     name="fecha_ingreso"
-                    value="<?= date('Y-m-d') ?>"
+                    value="<?= htmlspecialchars(date('Y-m-d')) ?>"
                     required
                 >
 
             </div>
+
+            <!-- GÉNERO -->
 
             <div class="form-group">
 
@@ -162,6 +219,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="genero"
+                    required
                 >
 
                     <option value="">
@@ -180,6 +238,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- ESTADO ESPIRITUAL -->
+
             <div class="form-group">
 
                 <label class="form-label">
@@ -189,6 +249,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="estado_espiritual"
+                    required
                 >
 
                     <option value="">
@@ -219,6 +280,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- SERVIDOR -->
+
             <div class="form-group form-group-full">
 
                 <label class="form-label">
@@ -244,22 +307,31 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+        <!-- BOTONES -->
+
         <div class="form-actions">
 
- <a
-    href="index.php"
-    class="btn btn-back"
->
-    <i class="fa-solid fa-arrow-left"></i>
-    Volver
-</a>
+            <a
+                href="index.php"
+                class="btn btn-back"
+            >
 
-<button
-    type="submit"
-    class="btn btn-primary"
->
-    Guardar Joven
-</button>
+                
+
+                Volver
+
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                
+
+                Guardar Joven
+
+            </button>
 
         </div>
 
@@ -267,8 +339,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
 </div>
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modulos/jovenes/crear.js">
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/jovenes/crear.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

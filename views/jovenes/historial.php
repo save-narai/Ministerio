@@ -4,6 +4,11 @@ require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../services/actividadService.php";
+require_once __DIR__ . "/../../helpers/fechas.php";
+
+/* =========================
+   PERMISOS
+========================= */
 
 if (!tienePermiso('gestionar_jovenes')) {
 
@@ -24,7 +29,7 @@ actualizarEstadoActividad($pdo);
    ID
 ========================= */
 
-$joven_id = (int)($_GET["id"] ?? 0);
+$joven_id = (int) ($_GET["id"] ?? 0);
 
 if ($joven_id <= 0) {
 
@@ -41,13 +46,19 @@ if ($joven_id <= 0) {
 
 $stmt = $pdo->prepare("
     SELECT
+
         id,
+
         nombre_completo
+
     FROM jovenes
-    WHERE id = ?
+
+    WHERE id = :id
 ");
 
-$stmt->execute([$joven_id]);
+$stmt->execute([
+    ':id' => $joven_id
+]);
 
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -65,25 +76,29 @@ if (!$joven) {
 ========================= */
 
 $stmt = $pdo->prepare("
-SELECT
+    SELECT
 
-    r.tipo,
+        r.id,
 
-    r.fecha,
+        r.tipo,
 
-    a.asistio
+        r.fecha,
 
-FROM asistencia a
+        a.asistio
 
-INNER JOIN reuniones r
-ON r.id = a.reunion_id
+    FROM asistencia a
 
-WHERE a.joven_id = ?
+    INNER JOIN reuniones r
+        ON r.id = a.reunion_id
 
-ORDER BY r.fecha DESC
+    WHERE a.joven_id = :id
+
+    ORDER BY r.fecha DESC
 ");
 
-$stmt->execute([$joven_id]);
+$stmt->execute([
+    ':id' => $joven_id
+]);
 
 $historial = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -94,16 +109,23 @@ $historial = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total = count($historial);
 
 $presentes = count(
+
     array_filter(
+
         $historial,
-        fn($h) => (int)$h["asistio"] === 1
+
+        fn ($h) => (int) $h["asistio"] === 1
+
     )
+
 );
 
 $ausencias = $total - $presentes;
 
-$porcentaje = $total
+$porcentaje = $total > 0
+
     ? round(($presentes / $total) * 100)
+
     : 0;
 
 /* =========================
@@ -117,7 +139,7 @@ $con = estadoConexionJoven(
 
 $estadoConexion = $con["estado"];
 
-$claseConexion = match($con["color"]) {
+$claseConexion = match ($con["color"]) {
 
     "danger" => "conexion-danger",
 
@@ -126,22 +148,14 @@ $claseConexion = match($con["color"]) {
     default => "conexion-ok"
 };
 
-$faltasConsecutivas =
-    faltasConsecutivasConexion(
-        $pdo,
-        $joven_id
-    );
+$faltasConsecutivas = faltasConsecutivasConexion(
+    $pdo,
+    $joven_id
+);
 
 /* =========================
-   CSS
+   HEADER
 ========================= */
-
-$extraCSS = '
-
-<link rel="stylesheet"
-href="' . BASE_URL . '/assets/css/modules/jovenes/historial.css">
-
-';
 
 require_once __DIR__ . "/../../includes/header.php";
 
@@ -150,7 +164,7 @@ require_once __DIR__ . "/../../includes/header.php";
 <div class="page">
 
     <!-- =====================================================
-       HEADER
+         HEADER
     ===================================================== -->
 
     <div class="page-header">
@@ -194,9 +208,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
-    </div>
-
-    <!-- =====================================================
+    </div>                                                                                                                                                                     <!-- =====================================================
        STATS
     ===================================================== -->
 
@@ -268,7 +280,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-
     <!-- =====================================================
        ALERTA
     ===================================================== -->
@@ -284,7 +295,9 @@ require_once __DIR__ . "/../../includes/header.php";
                 <div>
 
                     <strong>
+
                         Riesgo de desconexión
+
                     </strong>
 
                     <p>
@@ -297,7 +310,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
                         </strong>
 
-                        faltas consecutivas. Se recomienda realizar un seguimiento.
+                        faltas consecutivas.
+
+                        Se recomienda realizar un seguimiento.
 
                     </p>
 
@@ -309,41 +324,41 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <?php endif; ?>
 
-
-
     <!-- =====================================================
        HISTORIAL
     ===================================================== -->
 
     <div class="page-section">
 
-   <div class="section-header">
+        <div class="section-header">
 
-    <h3>
+            <h3>
 
-        Historial de reuniones
+                Historial de reuniones
 
-    </h3>
+            </h3>
 
-    <input
-        type="text"
-        id="buscadorHistorial"
-        class="search-input"
-        placeholder="Buscar reunión..."
-    >
+            <div class="search-wrapper">
 
-</div>
+                <input
+                    type="text"
+                    id="buscadorHistorial"
+                    class="search-input"
+                    placeholder="Buscar reunión..."
+                    autocomplete="off"
+                >
 
+            </div>
+
+        </div>
 
         <?php if (!empty($historial)): ?>
-
-
 
             <div class="table-wrapper">
 
                 <table
                     id="tablaHistorial"
-                    class="table"
+                    class="table gx-table"
                 >
 
                     <thead>
@@ -360,9 +375,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     </thead>
 
-                    <tbody>
-
-                        <?php foreach ($historial as $h): ?>
+                    <tbody>                                                                                                                                                <?php foreach ($historial as $h): ?>
 
                             <tr>
 
@@ -370,7 +383,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
                                     <?php
 
-                                    $tipo = match($h["tipo"]) {
+                                    $tipo = match ($h["tipo"]) {
 
                                         "REUNION_JOVENES" => "Reunión",
 
@@ -381,35 +394,40 @@ require_once __DIR__ . "/../../includes/header.php";
                                         "EVENTO_ESPECIAL" => "Evento",
 
                                         default => ucfirst(
+
                                             strtolower(
+
                                                 str_replace(
+
                                                     "_",
+
                                                     " ",
+
                                                     $h["tipo"]
+
                                                 )
+
                                             )
+
                                         )
 
                                     };
 
                                     ?>
 
-                                    <?= $tipo ?>
+                                    <?= htmlspecialchars($tipo) ?>
 
                                 </td>
 
                                 <td>
 
-                                    <?= date(
-                                        "d/m/Y",
-                                        strtotime($h["fecha"])
-                                    ) ?>
+                                    <?= formatearFecha($h["fecha"]) ?>
 
                                 </td>
 
                                 <td>
 
-                                    <?php if ((int)$h["asistio"] === 1): ?>
+                                    <?php if ((int) $h["asistio"] === 1): ?>
 
                                         <span class="badge badge-success">
 
@@ -443,11 +461,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-
-
         <?php else: ?>
-
-
 
             <div class="empty-state">
 
@@ -469,9 +483,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <?php endif; ?>
 
-    </div>
-
-    <!-- =====================================================
+    </div>                                                                                                                                                            <!-- =====================================================
        BOTONES
     ===================================================== -->
 
@@ -511,4 +523,8 @@ require_once __DIR__ . "/../../includes/header.php";
     src="<?= BASE_URL ?>/assets/js/modulos/jovenes/historial.js">
 </script>
 
-<?php require_once __DIR__ . "/../../includes/footer.php"; ?>
+<?php
+
+require_once __DIR__ . "/../../includes/footer.php";
+
+?>

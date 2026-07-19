@@ -1,90 +1,97 @@
 <?php
+
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../helpers/format.php";
+require_once __DIR__ . "/../../helpers/fechas.php";
 
+/* =========================
+   ACTIVIDAD
+========================= */
 
 actualizarEstadoActividad($pdo);
 
+/* =========================
+   PERMISOS
+========================= */
 
 if (!tienePermiso('gestionar_jovenes')) {
 
-    $_SESSION["error"] = "No tienes permiso";
+    $_SESSION["error"] = "No tienes permiso.";
 
     header("Location: ../dashboard.php");
 
     exit;
 }
 
-
 /* =========================
    ID
 ========================= */
 
-$id = (int)($_GET["id"] ?? 0);
-
+$id = (int) ($_GET["id"] ?? 0);
 
 if ($id <= 0) {
 
-    header("Location:index.php");
+    header("Location: index.php");
 
     exit;
 }
-
-
 
 /* =========================
    JOVEN
 ========================= */
 
 $stmt = $pdo->prepare("
-    SELECT *
+    SELECT
+        id,
+        nombre_completo,
+        telefono,
+        genero,
+        fecha_nacimiento,
+        edad_manual,
+        fecha_actualizacion_edad,
+        estado_espiritual,
+        estado_actividad,
+        observaciones,
+        fecha_ingreso
     FROM jovenes
-    WHERE id = ?
+    WHERE id = :id
+    LIMIT 1
 ");
 
-$stmt->execute([$id]);
-
+$stmt->execute([
+    ':id' => $id
+]);
 
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
 
+if (!$joven) {
 
-if (!$joven){
+    $_SESSION["error"] = "Joven no encontrado.";
 
-    $_SESSION["error"] = "Joven no encontrado";
-
-    header("Location:index.php");
+    header("Location: index.php");
 
     exit;
-
 }
-
-
 
 /* =========================
    DATOS PREPARADOS
 ========================= */
 
+$nombre = e($joven["nombre_completo"]);
 
-$nombre =
-htmlspecialchars($joven["nombre_completo"]);
-
-
-
-$telefono =
-htmlspecialchars($joven["telefono"] ?? "—");
-
-
-
-$observaciones =
-htmlspecialchars(
-    $joven["observaciones"] ?? "Sin observaciones"
+$telefono = e(
+    $joven["telefono"] ?: "—"
 );
 
+$observaciones = e(
+    $joven["observaciones"]
+    ?? "Sin observaciones"
+);
 
-
-$genero = match($joven["genero"] ?? ''){
+$genero = match ($joven["genero"] ?? '') {
 
     "M" => "Masculino",
 
@@ -94,116 +101,85 @@ $genero = match($joven["genero"] ?? ''){
 
 };
 
-
-
-$estadoEspiritual =
-ucfirst(
+$estadoEspiritual = ucfirst(
     strtolower(
         $joven["estado_espiritual"] ?? "—"
     )
 );
 
-
-
 /* =========================
-   GENERO PERFIL
+   GÉNERO PERFIL
 ========================= */
 
-
 $claseGenero =
-($joven["genero"] ?? '') === "F"
+    ($joven["genero"] ?? '') === "F"
 
-? "perfil-chica"
+    ? "perfil-chica"
 
-: "perfil-chico";
-
-
-
-
+    : "perfil-chico";
 
 /* =========================
    EDAD
 ========================= */
 
-
 $edad = "—";
 
-$edadAprox=false;
+$edadAprox = false;
 
+if (!empty($joven["fecha_nacimiento"])) {
 
+    $edad = (
+        new DateTime($joven["fecha_nacimiento"])
+    )->diff(new DateTime())->y;
 
-if(!empty($joven["fecha_nacimiento"])){
+} elseif (!empty($joven["edad_manual"])) {
 
-    $edad =
-    (new DateTime($joven["fecha_nacimiento"]))
-    ->diff(new DateTime())
-    ->y;
+    $edad = (int) $joven["edad_manual"];
 
+    if (!empty($joven["fecha_actualizacion_edad"])) {
 
-}
-elseif(!empty($joven["edad_manual"])){
+        $edad += (
+            new DateTime($joven["fecha_actualizacion_edad"])
+        )->diff(new DateTime())->y;
+    }
 
-    $edad =
-    (int)$joven["edad_manual"];
-
-    $edadAprox=true;
-
-}
-
-
-
-/* =========================
+    $edadAprox = true;
+}                                                                                                                                                       /* =========================
    ASISTENCIA
 ========================= */
 
+$stmt = $pdo->prepare("
+    SELECT
 
-$stmt=$pdo->prepare("
-SELECT
+        SUM(asistio = 1) AS presentes,
 
-SUM(asistio = 1) presentes,
+        SUM(asistio = 0) AS ausentes
 
-SUM(asistio = 0) ausentes
+    FROM asistencia
 
-FROM asistencia
-
-WHERE joven_id=?
-
+    WHERE joven_id = :id
 ");
 
+$stmt->execute([
+    ':id' => $id
+]);
 
-$stmt->execute([$id]);
+$asistencia = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$presentes = (int) ($asistencia["presentes"] ?? 0);
 
-$asistencia =
-$stmt->fetch(PDO::FETCH_ASSOC);
+$ausentes = (int) ($asistencia["ausentes"] ?? 0);
 
+$total = $presentes + $ausentes;
 
+$porcentaje = $total > 0
 
-$presentes =
-(int)($asistencia["presentes"] ?? 0);
+    ? round(($presentes / $total) * 100)
 
-
-$ausentes =
-(int)($asistencia["ausentes"] ?? 0);
-
-
-
-$total =
-$presentes+$ausentes;
-
-
-
-$porcentaje =
-$total > 0
-
-? round(($presentes/$total)*100)
-
-:0;
-
-
+    : 0;
 
 /* =========================
-   CONEXION
+   CONEXIÓN
 ========================= */
 
 $con = estadoConexionJoven(
@@ -211,406 +187,473 @@ $con = estadoConexionJoven(
     $id
 );
 
-$estadoConexion =
-    $con["estado"];
+$estadoConexion = $con["estado"];
 
-$claseConexion =
-match($con["color"]) {
+$claseConexion = match ($con["color"]) {
 
-    "danger" =>
-        "conexion-danger",
+    "danger"  => "conexion-danger",
 
-    "warning" =>
-        "conexion-warning",
+    "warning" => "conexion-warning",
 
-    default =>
-        "conexion-ok"
+    default   => "conexion-ok"
 };
-
-
 
 /* =========================
    SEGUIMIENTOS
 ========================= */
 
+$stmt = $pdo->prepare("
+    SELECT
 
-$stmt=$pdo->prepare("
-SELECT
+        s.id,
+        s.fecha_contacto,
+        s.modalidad_contacto,
+        s.estado_proceso,
+        s.observaciones,
 
-s.*,
+        u.nombre AS responsable_nombre
 
-u.nombre responsable_nombre
+    FROM seguimientos s
 
-FROM seguimientos s
+    LEFT JOIN usuarios u
+        ON s.responsable_id = u.id
 
-LEFT JOIN usuarios u
+    WHERE s.joven_id = :id
 
-ON s.responsable_id=u.id
+    ORDER BY s.fecha_contacto DESC
 
-WHERE s.joven_id=?
-
-ORDER BY s.fecha_contacto DESC
-
-LIMIT 5
+    LIMIT 5
 ");
 
+$stmt->execute([
+    ':id' => $id
+]);
 
-$stmt->execute([$id]);
+$seguimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$totalSeguimientos = count($seguimientos);
 
-$seguimientos =
-$stmt->fetchAll(PDO::FETCH_ASSOC);
+$ultimoSeguimiento = $seguimientos[0] ?? null;
 
+/* =========================
+   PERFIL
+========================= */
 
+$fechaIngreso = "—";
 
-$totalSeguimientos =
-count($seguimientos);
+if (!empty($joven["fecha_ingreso"])) {
 
-
-
-$ultimoSeguimiento =
-$seguimientos[0] ?? null;
-
-
-
-function claseEstado($estado){
-
-    return strtolower(
-        str_replace("_","-",$estado)
+    $fechaIngreso = formatearFecha(
+        $joven["fecha_ingreso"]
     );
-
 }
 
+$datosPerfil = [
 
+    "Edad" =>
+        $edad . ($edadAprox ? " (aprox.)" : ""),
 
+    "Género" =>
+        $genero,
 
-$datosPerfil=[
+    "Teléfono" =>
+        $telefono,
 
-"Edad" =>
-$edad . ($edadAprox ? " (aprox)" : ""),
+    "Estado espiritual" =>
+        $estadoEspiritual,
 
-"Género" =>
-$genero,
-
-"Teléfono" =>
-$telefono,
-
-"Estado espiritual" =>
-$estadoEspiritual
+    "Fecha de ingreso" =>
+        $fechaIngreso
 
 ];
 
-
-
+/* =========================
+   HEADER
+========================= */
 
 require_once __DIR__ . "/../../includes/header.php";
 
 ?>
 
-
-
 <div class="ver-wrapper">
 
-<div class="perfil-card <?= $claseGenero ?>">
+    <div class="perfil-card <?= $claseGenero ?>">
 
-<header class="perfil-header">
+        <header class="perfil-header">
 
-    <div class="perfil-header-info">
+            <div class="perfil-header-info">
 
-        <h2>
-            <?= $nombre ?>
-        </h2>
+                <h2>
 
-        <span class="perfil-conexion <?= $claseConexion ?>">
+                    <?= $nombre ?>
 
-            <i class="fa-solid fa-circle"></i>
+                </h2>
 
-            <?= $estadoConexion ?>
+                <span class="perfil-conexion <?= $claseConexion ?>">
 
-        </span>
+                    <i class="fa-solid fa-circle"></i>
 
-    </div>
+                    <?= e($estadoConexion) ?>
 
-    <span class="badge <?= ($joven['estado_actividad'] ?? '') === 'ACTIVO'
-        ? 'badge-activo'
-        : 'badge-inactivo' ?>">
-
-        <?= ucfirst(
-            strtolower(
-                $joven["estado_actividad"] ?? "Activo"
-            )
-        ) ?>
-
-    </span>
-
-</header>
-
-    <div class="perfil-grid">
-
-        <?php foreach($datosPerfil as $titulo => $valor): ?>
-
-            <div>
-
-                <strong>
-                    <?= $titulo ?>
-                </strong>
-
-                <?= $valor ?>
+                </span>
 
             </div>
 
-        <?php endforeach; ?>
+            <?php
 
-    </div>
+            $badgeClase = match ($joven["estado_actividad"]) {
 
-  <div class="perfil-stats">
+                "ACTIVO"    => "badge-activo",
 
-    <div class="perfil-stat-card presente">
+                "INACTIVO"  => "badge-inactivo",
 
-        <b><?= $presentes ?></b>
+                "ELIMINADO" => "badge-eliminado",
 
-        <span>Presentes</span>
+                default     => "badge-inactivo"
+            };
 
-    </div>
+            ?>
 
-    <div class="perfil-stat-card ausente">
+            <span class="badge <?= $badgeClase ?>">
 
-        <b><?= $ausentes ?></b>
-
-        <span>Ausencias</span>
-
-    </div>
-
-    <div class="perfil-stat-card porcentaje">
-
-        <b><?= $porcentaje ?>%</b>
-
-        <span>Asistencia</span>
-
-    </div>
-
-    <div class="perfil-stat-card seguimiento">
-
-        <b><?= $totalSeguimientos ?></b>
-
-        <span>Seguimientos</span>
-
-    </div>
-
-</div>
-
-<div class="perfil-obs">
-
-    <strong>
-        Observaciones generales
-    </strong>
-
-    <p>
-        <?= nl2br($observaciones) ?>
-    </p>
-
-</div>
-
-<?php if($ultimoSeguimiento): ?>
-
-    <div class="perfil-obs">
-
-        <strong>
-            Estado de consolidación
-        </strong>
-
-        <span class="estado <?= claseEstado($ultimoSeguimiento["estado_proceso"]) ?>">
-
-            <?= ucfirst(
-                strtolower(
-                    str_replace(
-                        "_",
-                        " ",
-                        $ultimoSeguimiento["estado_proceso"]
+                <?= ucfirst(
+                    strtolower(
+                        e($joven["estado_actividad"])
                     )
-                )
-            ) ?>
+                ) ?>
 
-        </span>
+            </span>
 
-    </div>
+        </header>
 
-<?php endif; ?>
+        <div class="perfil-grid">
 
-</div>
+            <?php foreach ($datosPerfil as $titulo => $valor): ?>
 
-<div class="card">
+                <div>
 
-    <div class="section-header">
+                    <strong>
 
-        <h3>
-            Últimos Seguimientos
-        </h3>
+                        <?= e($titulo) ?>
 
-        <a
-            href="<?= BASE_URL ?>/views/seguimientos/index.php?joven_id=<?= $id ?>"
-            class="btn-mini"
-        >
+                    </strong>
 
-            <i class="fa-solid fa-list"></i>
-
-            Ver todos
-
-        </a>
-
-    </div>
-
-    <?php if($seguimientos): ?>
-
-        <div class="timeline">
-
-            <?php foreach($seguimientos as $s): ?>
-
-                <div class="timeline-item">
-
-                    <div class="timeline-dot"></div>
-
-                    <div class="timeline-content">
-
-                        <div class="timeline-header">
-
-                            <strong>
-
-                                <?= ucfirst(
-                                    strtolower(
-                                        $s["modalidad_contacto"]
-                                    )
-                                ) ?>
-
-                            </strong>
-
-                            <span class="estado <?= claseEstado($s["estado_proceso"]) ?>">
-
-                                <?= ucfirst(
-                                    strtolower(
-                                        str_replace(
-                                            "_",
-                                            " ",
-                                            $s["estado_proceso"]
-                                        )
-                                    )
-                                ) ?>
-
-                            </span>
-
-                        </div>
-
-                        <div class="timeline-meta">
-
-                            <span>
-
-                                <i class="fa-solid fa-calendar"></i>
-
-                                <?= $s["fecha_contacto"] ?>
-
-                            </span>
-
-                            <span>
-
-                                <i class="fa-solid fa-user"></i>
-
-                                <?= htmlspecialchars(
-                                    $s["responsable_nombre"] ?? "—"
-                                ) ?>
-
-                            </span>
-
-                        </div>
-
-                        <p>
-
-                            <?= nl2br(
-                                htmlspecialchars(
-                                    $s["observaciones"] ?? "Sin observaciones"
-                                )
-                            ) ?>
-
-                        </p>
-
-                    </div>
+                    <?= $valor ?>
 
                 </div>
 
             <?php endforeach; ?>
 
+        </div>                                                                                                                                           <div class="perfil-stats">
+
+            <div class="perfil-stat-card presente">
+
+                <b><?= $presentes ?></b>
+
+                <span>Presentes</span>
+
+            </div>
+
+            <div class="perfil-stat-card ausente">
+
+                <b><?= $ausentes ?></b>
+
+                <span>Ausencias</span>
+
+            </div>
+
+            <div class="perfil-stat-card porcentaje">
+
+                <b><?= $porcentaje ?>%</b>
+
+                <span>Asistencia</span>
+
+            </div>
+
+            <div class="perfil-stat-card seguimiento">
+
+                <b><?= $totalSeguimientos ?></b>
+
+                <span>Seguimientos</span>
+
+            </div>
+
         </div>
 
-    <?php else: ?>
+        <div class="perfil-obs">
 
-        <div class="empty-state">
+            <strong>
 
-            <i class="fa-solid fa-clipboard-list"></i>
+                Observaciones generales
 
-            <h4>
-                No hay seguimientos registrados
-            </h4>
+            </strong>
 
             <p>
-                Este joven aún no tiene seguimientos asociados.
+
+                <?= nl2br($observaciones) ?>
+
             </p>
 
         </div>
 
-    <?php endif; ?>
+        <?php if ($ultimoSeguimiento): ?>
 
-</div>
-<div class="btn-group">
+            <div class="perfil-obs">
 
-    <a
-        href="<?= BASE_URL ?>/views/jovenes/index.php"
-        class="btn btn-secondary"
-    >
+                <strong>
 
-        <i class="fa-solid fa-arrow-left"></i>
+                    Estado de consolidación
 
-        Volver
+                </strong>
 
-    </a>
+                <span class="estado <?= claseEstado($ultimoSeguimiento["estado_proceso"]) ?>">
 
-    <a
-        href="<?= BASE_URL ?>/views/seguimientos/crear.php?id=<?= $id ?>"
-        class="btn btn-primary btn-seguimiento"
-    >
+                    <?= ucfirst(
 
-        <i class="fa-solid fa-user-plus"></i>
+                        strtolower(
 
-        Registrar seguimiento
+                            str_replace(
 
-    </a>
+                                "_",
 
-    <a
-        href="<?= BASE_URL ?>/views/jovenes/historial.php?id=<?= $id ?>"
-        class="btn btn-info"
-    >
+                                " ",
 
-        <i class="fa-solid fa-clock-rotate-left"></i>
+                                e($ultimoSeguimiento["estado_proceso"])
 
-        Historial
+                            )
 
-    </a>
+                        )
 
-    <a
-        href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $id ?>"
-        target="_blank"
-        class="btn btn-pdf <?= $claseGenero ?>"
-    >
+                    ) ?>
 
-        <i class="fa-solid fa-file-pdf"></i>
+                </span>
 
-        PDF
+            </div>
 
-    </a>
+        <?php endif; ?>
 
-</div>
+    </div>
+
+    <!-- =====================================
+         ÚLTIMOS SEGUIMIENTOS
+    ====================================== -->
+
+    <div class="card">
+
+        <div class="section-header">
+
+            <h3>
+
+                Últimos Seguimientos
+
+            </h3>
+
+            <a
+
+                href="<?= BASE_URL ?>/views/seguimientos/index.php?joven_id=<?= $id ?>"
+
+                class="btn-mini"
+
+            >
+
+                <i class="fa-solid fa-list"></i>
+
+                Ver todos
+
+            </a>
+
+        </div>
+
+        <?php if ($seguimientos): ?>
+
+            <div class="timeline">
+
+                <?php foreach ($seguimientos as $s): ?>
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-dot"></div>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-header">
+
+                                <strong>
+
+                                    <?= ucfirst(
+
+                                        strtolower(
+
+                                            e($s["modalidad_contacto"])
+
+                                        )
+
+                                    ) ?>
+
+                                </strong>
+
+                                <span class="estado <?= claseEstado($s["estado_proceso"]) ?>">
+
+                                    <?= ucfirst(
+
+                                        strtolower(
+
+                                            str_replace(
+
+                                                "_",
+
+                                                " ",
+
+                                                e($s["estado_proceso"])
+
+                                            )
+
+                                        )
+
+                                    ) ?>
+
+                                </span>
+
+                            </div>
+
+                            <div class="timeline-meta">
+
+                                <span>
+
+                                    <i class="fa-solid fa-calendar"></i>
+
+                                    <?= formatearFecha($s["fecha_contacto"]) ?>
+
+                                </span>
+
+                                <span>
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <?= e($s["responsable_nombre"] ?? "—") ?>
+
+                                </span>
+
+                            </div>
+
+                            <p>
+
+                                <?= nl2br(
+
+                                    e(
+
+                                        $s["observaciones"]
+
+                                        ?? "Sin observaciones"
+
+                                    )
+
+                                ) ?>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
+
+            </div>
+
+        <?php else: ?>
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-clipboard-list"></i>
+
+                <h4>
+
+                    No hay seguimientos registrados
+
+                </h4>
+
+                <p>
+
+                    Este joven aún no tiene seguimientos asociados.
+
+                </p>
+
+            </div>
+
+        <?php endif; ?>
+
+    </div>                                                                                                                                                    <!-- =====================================
+         BOTONES
+    ====================================== -->
+
+    <div class="btn-group">
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/index.php"
+            class="btn btn-secondary"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Volver
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= $id ?>"
+            class="btn btn-warning"
+        >
+
+            <i class="fa-solid fa-pen"></i>
+
+            Editar joven
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/seguimientos/crear.php?id=<?= $id ?>"
+            class="btn btn-primary btn-seguimiento"
+        >
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Registrar seguimiento
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/historial.php?id=<?= $id ?>"
+            class="btn btn-info"
+        >
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            Historial
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $id ?>"
+            target="_blank"
+            class="btn btn-pdf <?= $claseGenero ?>"
+        >
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            PDF
+
+        </a>
+
+    </div>
+
 </div>
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/jovenes/ver.js">
 </script>
 
-<?php require_once __DIR__ . "/../../includes/footer.php"; ?>
+<?php
+
+require_once __DIR__ . "/../../includes/footer.php";
+
+?>

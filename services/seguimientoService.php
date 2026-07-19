@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . "/../config/conexion.php";
@@ -49,14 +48,14 @@ function obtenerResumenSeguimientosMes() {
     */
 
     $totalActivos = (int)$pdo
-    ->query("
-        SELECT COUNT(*)
+        ->query("
+            SELECT COUNT(*)
 
-        FROM jovenes
+            FROM jovenes
 
-        WHERE estado_actividad != 'ELIMINADO'
-    ")
-    ->fetchColumn();
+            WHERE estado_actividad != 'ELIMINADO'
+        ")
+        ->fetchColumn();
 
     /*
     |--------------------------------------------------------------------------
@@ -185,7 +184,7 @@ function obtenerResumenSeguimientosMes() {
 
     if ($porcentaje >= 90) {
 
-        $color = "ok";
+        $color = "success";
 
     } elseif ($porcentaje >= 70) {
 
@@ -247,7 +246,6 @@ function obtenerSeguimientosPorJoven($joven_id) {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 /* ======================================================
    CONTAR SEGUIMIENTOS DEL MES
 ====================================================== */
@@ -283,8 +281,8 @@ function contarSeguimientosMes($joven_id) {
    JÓVENES SIN SEGUIMIENTO
 ====================================================== */
 
-function obtenerJovenesSinSeguimiento() {
-
+function obtenerJovenesSinSeguimiento(): array
+{
     global $pdo;
 
     $stmt = $pdo->prepare("
@@ -297,7 +295,7 @@ function obtenerJovenesSinSeguimiento() {
 
         FROM jovenes
 
-        WHERE estado_actividad != 'ELIMINADO'
+        WHERE estado_actividad = 'ACTIVO'
 
         AND id NOT IN (
 
@@ -312,6 +310,7 @@ function obtenerJovenesSinSeguimiento() {
                 CURDATE(),
                 '%Y-%m'
             )
+
         )
 
         ORDER BY nombre_completo ASC
@@ -321,3 +320,4 @@ function obtenerJovenesSinSeguimiento() {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+

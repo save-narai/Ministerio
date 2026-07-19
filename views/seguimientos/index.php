@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
@@ -17,7 +16,6 @@ require_once __DIR__ . "/../../helpers/fechas.php";
 if (!tienePermiso('gestionar_seguimientos')) {
 
     header("Location: ../dashboard.php");
-
     exit;
 }
 
@@ -26,8 +24,6 @@ if (!tienePermiso('gestionar_seguimientos')) {
 ========================= */
 
 actualizarEstadoActividad($pdo);
-
-
 
 /* =========================
    RESUMEN
@@ -90,193 +86,228 @@ require_once __DIR__ . "/../../includes/header.php";
 ?>
 
 <div class="seguimientos-page">
-<div class="page-header">
 
-    <div class="page-header-left">
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
 
-        <h1 class="page-title">
-            Seguimientos
-        </h1>
+    <div class="page-header">
 
-        <div class="page-subtitle">
-            Consolidado mensual del acompañamiento Ministerial.
+        <div class="page-header-left">
+
+            <h1 class="page-title">
+                Seguimientos
+            </h1>
+
+            <div class="page-subtitle">
+                Consolidado mensual del acompañamiento ministerial.
+            </div>
+
+        </div>
+
+        <div class="page-header-right">
+
+            <span class="badge badge-primary">
+
+                <?= e($mesTexto) ?>
+
+            </span>
+
+            <a
+                href="reporte_pdf.php"
+                target="_blank"
+                class="btn btn-primary"
+            >
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                Exportar PDF
+
+            </a>
+
         </div>
 
     </div>
 
-    <div class="page-header-right">
+    <!-- =====================================
+         ESTADÍSTICAS
+    ====================================== -->
 
-        <span class="badge badge-info">
-            <?= e($mesTexto) ?>
-        </span>
+    <div class="gx-stats">
 
-        <a
-            href="reporte_pdf.php"
-            target="_blank"
-            class="btn btn-primary"
-        >
-            <i class="fa-solid fa-download"></i>
-            Exportar
-        </a>
+        <div class="stat-card info">
 
-    </div>
+            <span class="stat-number">
 
-</div>
+                <?= $totalActivos ?>
 
-<br>
-<br>
+            </span>
 
-<!-- =====================================
-     ESTADÍSTICAS
-===================================== -->
+            <span class="stat-label">
 
-<div class="stats-grid gx-stats">
+                Jóvenes activos
 
-    <div class="stat-card info">
+            </span>
 
-        <span class="stat-number">
-            <?= $totalActivos ?>
-        </span>
+        </div>
 
-        <span class="stat-label">
-            Jóvenes activos
-        </span>
+        <div class="stat-card success">
 
-    </div>
+            <span class="stat-number">
 
-    <div class="stat-card success">
+                <?= $totalConSeguimiento ?>
 
-        <span class="stat-number">
-            <?= $totalConSeguimiento ?>
-        </span>
+            </span>
 
-        <span class="stat-label">
-            Con seguimiento
-        </span>
+            <span class="stat-label">
 
-    </div>
+                Con seguimiento
 
-    <div class="stat-card danger">
+            </span>
 
-        <span class="stat-number">
-            <?= $totalSinSeguimiento ?>
-        </span>
+        </div>
 
-        <span class="stat-label">
-            Sin seguimiento
-        </span>
+        <div class="stat-card danger">
 
-    </div>
+            <span class="stat-number">
 
-    <div class="stat-card <?= e($color ?: 'orange') ?>">
+                <?= $totalSinSeguimiento ?>
 
-        <span class="stat-number">
-            <?= $porcentaje ?>%
-        </span>
+            </span>
 
-        <span class="stat-label">
-            Cumplimiento
-        </span>
+            <span class="stat-label">
+
+                Sin seguimiento
+
+            </span>
+
+        </div>
+
+        <div class="stat-card <?= e($color ?: 'orange') ?>">
+
+            <span class="stat-number">
+
+                <?= number_format($porcentaje, 0) ?>%
+
+            </span>
+
+            <span class="stat-label">
+
+                Cumplimiento
+
+            </span>
+
+        </div>
 
     </div>
 
-</div>
+    <!-- =====================================
+         ALERTAS
+    ====================================== -->
 
-<!-- =====================================
-     ALERTAS
-===================================== -->
+    <?php if(count($alertas) > 0): ?>
 
-<?php if(count($alertas) > 0): ?>
+        <div class="page-section">
 
-<div class="page-section">
+            <div class="section-header">
 
-  <div class="section-header">
+                <h2 class="section-title">
 
-  <h2 class="section-title">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
 
-    Jóvenes sin seguimiento
+                    Jóvenes sin seguimiento
 
-    <span class="section-counter">
+                    <span class="section-counter">
 
-        <?= count($alertas) ?>
-
-    </span>
-
-</h2>
-
-</div>
-
-    <div class="seguimientos-alertas">
-
-        <?php foreach($alertas as $j): ?>
-
-        <div class="seguimiento-alerta-card">
-
-            <div class="seguimiento-alerta-left">
-
-                <div class="avatar">
-
-                    <?= mb_strtoupper(
-                        mb_substr(
-                            $j["nombre_completo"],
-                            0,
-                            1
-                        )
-                    ) ?>
-
-                </div>
-
-                <div>
-
-                    <h4>
-
-                        <?= e($j["nombre_completo"]) ?>
-
-                    </h4>
-
-                    <span>
-
-                        <?= e(
-                            $j["telefono"]
-                            ?: "Sin teléfono"
-                        ) ?>
+                        <?= count($alertas) ?>
 
                     </span>
 
-                </div>
+                </h2>
 
             </div>
 
-            <div class="seguimiento-alerta-right">
+            <p class="section-subtitle">
 
-                <span class="badge badge-danger">
+                Estos jóvenes aún no registran seguimiento durante el mes actual.
 
-                    Pendiente
+            </p>
 
-                </span>
+            <div class="seguimientos-alertas">
 
-                <a
-                    href="../jovenes/ver.php?id=<?= $j["id"] ?>"
-                    class="btn-mini <?= ($j["genero"] ?? '') === 'F'
-                        ? 'chica'
-                        : 'chico' ?>"
-                >
-                    Ver perfil
-                </a>
+                <?php foreach($alertas as $j): ?>
+
+                    <div class="seguimiento-alerta-card">
+
+                        <div class="seguimiento-alerta-left">
+
+                            <div class="avatar">
+
+                                <?= mb_strtoupper(
+                                    mb_substr(
+                                        $j["nombre_completo"],
+                                        0,
+                                        1
+                                    )
+                                ) ?>
+
+                            </div>
+
+                            <div>
+
+                                <h4>
+
+                                    <?= e($j["nombre_completo"]) ?>
+
+                                </h4>
+
+                                <span>
+
+                                    <?= e(
+                                        $j["telefono"]
+                                        ?: "Sin teléfono"
+                                    ) ?>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="seguimiento-alerta-right">
+
+                            <span class="badge badge-danger">
+
+                                Pendiente
+
+                            </span>
+
+                            <a
+                                href="../jovenes/ver.php?id=<?= $j["id"] ?>"
+                                class="btn-mini <?= ($j["genero"] ?? '') === 'F'
+                                    ? 'chica'
+                                    : 'chico' ?>"
+                            >
+
+                                <i class="fa-solid fa-user"></i>
+
+                                Ver perfil
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
 
             </div>
 
         </div>
 
-        <?php endforeach; ?>
+        <div class="section-divider"></div>
 
-    </div>
-
-</div>
-
-<div class="section-divider"></div>
-
-<?php endif; ?>
+    <?php endif; ?>
 
     <!-- =====================================
          TABLA
@@ -286,22 +317,27 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <div class="section-header historial-header">
 
-    <h2 class="section-title">
-        Historial de seguimientos
-    </h2>
+            <h2 class="section-title">
 
-    <div class="search-wrapper historial-search">
+                <i class="fa-solid fa-clock-rotate-left"></i>
 
-        <input
-            type="text"
-            id="buscador"
-            class="search-input"
-            placeholder="Buscar seguimiento..."
-        >
+                Historial de seguimientos
 
-    </div>
+            </h2>
 
-</div>
+            <div class="search-wrapper historial-search">
+
+                <input
+                    type="text"
+                    id="buscador"
+                    class="search-input"
+                    placeholder="Buscar seguimiento..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+        </div>
 
         <div class="table-responsive">
 
@@ -330,70 +366,89 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 <tbody>
 
-                    <?php foreach($seguimientosMes as $s): ?>
+                <?php if(empty($seguimientosMes)): ?>
 
-                    <tr>
+                        <tr>
 
-                        <td>
+                            <td
+                                colspan="5"
+                                class="text-center"
+                            >
 
-                            <?= e($s["nombre_completo"]) ?>
+                                No existen seguimientos registrados este mes.
 
-                        </td>
+                            </td>
 
-                        <td>
+                        </tr>
 
-                            <?= ucfirst(
-                                strtolower(
-                                    e($s["modalidad_contacto"])
-                                )
-                            ) ?>
+                    <?php else: ?>
 
-                        </td>
+                        <?php foreach($seguimientosMes as $s): ?>
 
-                        <td>
+                            <tr>
 
-                            <span class="estado <?= strtolower(
-                                str_replace(
-                                    '_',
-                                    '-',
-                                    $s["estado_proceso"]
-                                )
-                            ) ?>">
+                                <td>
 
-                                <?= ucfirst(
-                                    strtolower(
+                                    <?= e($s["nombre_completo"]) ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?= ucfirst(
+                                        strtolower(
+                                            e($s["modalidad_contacto"])
+                                        )
+                                    ) ?>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="estado <?= strtolower(
                                         str_replace(
                                             '_',
-                                            ' ',
-                                            e($s["estado_proceso"])
+                                            '-',
+                                            $s["estado_proceso"]
                                         )
-                                    )
-                                ) ?>
+                                    ) ?>">
 
-                            </span>
+                                        <?= ucfirst(
+                                            strtolower(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    e($s["estado_proceso"])
+                                                )
+                                            )
+                                        ) ?>
 
-                        </td>
+                                    </span>
 
-                        <td>
+                                </td>
 
-                            <?= e(
-                                $s["responsable_nombre"]
-                                ?? "-"
-                            ) ?>
+                                <td>
 
-                        </td>
+                                    <?= e(
+                                        $s["responsable_nombre"]
+                                        ?? "-"
+                                    ) ?>
 
-                        <td>
+                                </td>
 
-                            <?= formatearFecha(
-                                $s["fecha_contacto"]
-                            ) ?>
+                                <td>
 
-                        </td>
+                                    <?= formatearFecha(
+                                        $s["fecha_contacto"]
+                                    ) ?>
 
-                    </tr>
+                                </td>
 
-                    <?php endforeach; ?>
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
 
                 </tbody>
 

@@ -1,19 +1,38 @@
+
 <?php
+
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../helpers/csrf.php";
+require_once __DIR__ . "/../../helpers/format.php";
+
+/* =====================================
+   CSRF
+===================================== */
+
+generarCsrf();
+
+/* =====================================
+   PERMISOS
+===================================== */
 
 if (!tienePermiso('gestionar_jovenes')) {
+
     header("Location: ../dashboard.php");
     exit;
 }
 
+/* =====================================
+   ACTUALIZAR ACTIVIDAD
+===================================== */
+
 actualizarEstadoActividad($pdo);
 
-/* =========================
+/* =====================================
    FILTROS
-========================= */
+===================================== */
 
 $permitidos = [
     "todos",
@@ -26,13 +45,13 @@ $permitidos = [
 
 $filtro = $_GET["filtro"] ?? "todos";
 
-if (!in_array($filtro, $permitidos)) {
+if (!in_array($filtro, $permitidos, true)) {
     $filtro = "todos";
 }
 
-/* =========================
-   QUERY
-========================= */
+/* =====================================
+   CONSULTA
+===================================== */
 
 $query = "
 SELECT
@@ -171,150 +190,169 @@ if ($filtro === "riesgo3") {
 $query .= " ORDER BY j.nombre_completo ASC";
 
 $stmt = $pdo->prepare($query);
-
 $stmt->execute();
 
 $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
+/* =====================================
+   HEADER
+===================================== */
 
 require_once __DIR__ . "/../../includes/header.php";
+
 ?>
 
 <div class="page">
 
-    <?php if(isset($_SESSION["success"])): ?>
+    <?php if (isset($_SESSION["success"])): ?>
 
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            showToast(
+                <?= json_encode($_SESSION["success"]); ?>,
+                "success"
+            );
+        });
+        </script>
 
-        showToast(
-            <?= json_encode($_SESSION["success"]); ?>,
-            "success"
-        );
+        <?php unset($_SESSION["success"]); ?>
 
-    });
-    </script>
+    <?php endif; ?>
 
-    <?php unset($_SESSION["success"]); endif; ?>
+    <?php if (isset($_SESSION["error"])): ?>
 
-<!-- HEADER -->
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            showToast(
+                <?= json_encode($_SESSION["error"]); ?>,
+                "error"
+            );
+        });
+        </script>
 
-<div class="page-header">
+        <?php unset($_SESSION["error"]); ?>
 
-    <div class="page-header-left">
+    <?php endif; ?>
 
-        <h1 class="page-title">
-            Gestión de Jóvenes
-        </h1>
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
 
-        <div class="page-subtitle">
-            Administra registros, seguimiento y actividad juvenil
+    <div class="page-header">
+
+        <div class="page-header-left">
+
+            <h1 class="page-title">
+                Gestión de Jóvenes
+            </h1>
+
+            <p class="page-subtitle">
+                Administra registros, seguimiento y actividad juvenil.
+            </p>
+
         </div>
 
-    </div>
+        <div class="page-header-right">
 
-    <div class="page-header-right">
-
-        <!-- NUEVO -->
-
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/crear.php"
-            class="btn btn-primary"
-        >
-
-            <i class="fa-solid fa-plus"></i>
-
-            Nuevo
-
-        </a>
-
-        <!-- EXPORT -->
-
-        <div class="export-dropdown">
-
-            <button
-                type="button"
-                class="export-dropdown__trigger"
+            <a
+                href="<?= BASE_URL ?>/views/jovenes/crear.php"
+                class="btn btn-primary"
             >
 
-                <i class="fa-solid fa-download"></i>
+                <i class="fa-solid fa-plus"></i>
 
-                Exportar
+                Nuevo
 
-                <i class="fa-solid fa-chevron-down"></i>
+            </a>
 
-            </button>
-
-            <div class="export-dropdown__menu">
+            <div class="export-dropdown">
 
                 <button
                     type="button"
-                    class="export-option"
-                    id="exportPdf"
+                    class="export-dropdown__trigger"
                 >
 
-                    <i class="fa-solid fa-file-pdf"></i>
+                    <i class="fa-solid fa-download"></i>
 
-                    PDF
+                    Exportar
+
+                    <i class="fa-solid fa-chevron-down"></i>
 
                 </button>
 
-                <button
-                    type="button"
-                    class="export-option"
-                    id="exportExcel"
-                >
+                <div class="export-dropdown__menu">
 
-                    <i class="fa-solid fa-file-excel"></i>
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportPdf"
+                    >
 
-                    Excel
+                        <i class="fa-solid fa-file-pdf"></i>
 
-                </button>
+                        PDF
 
+                    </button>
 
-                <button
-    type="button"
-    class="export-option"
-    id="exportWord"
->
-    <i class="fa-solid fa-file-word"></i>
-    Word
-</button>
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportExcel"
+                    >
 
-                <button
-                    type="button"
-                    class="export-option"
-                    id="exportCsv"
-                >
+                        <i class="fa-solid fa-file-excel"></i>
 
-                    <i class="fa-solid fa-file-csv"></i>
+                        Excel
 
-                    CSV
+                    </button>
 
-                </button>
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportWord"
+                    >
 
-                <button
-                    type="button"
-                    class="export-option"
-                    id="exportPrint"
-                >
+                        <i class="fa-solid fa-file-word"></i>
 
-                    <i class="fa-solid fa-print"></i>
+                        Word
 
-                    Imprimir
+                    </button>
 
-                </button>
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportCsv"
+                    >
+
+                        <i class="fa-solid fa-file-csv"></i>
+
+                        CSV
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="export-option"
+                        id="exportPrint"
+                    >
+
+                        <i class="fa-solid fa-print"></i>
+
+                        Imprimir
+
+                    </button>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </div>                                                                                                                                          <?php
 
-</div>
-
-   <?php
+/* =====================================
+   ESTADÍSTICAS
+===================================== */
 
 $totalJovenes = count($jovenes);
 
@@ -339,17 +377,11 @@ foreach ($jovenes as $item) {
     $mes1 = (int)($item["asistencias_mes_1"] ?? 0);
     $mes2 = (int)($item["asistencias_mes_2"] ?? 0);
 
-    if (
-        $mes1 <= 1 &&
-        $mes2 <= 1
-    ) {
+    if ($mes1 <= 1 && $mes2 <= 1) {
 
         $totalAltoRiesgo++;
 
-    } elseif (
-        $mes0 <= 1 ||
-        $faltas >= 3
-    ) {
+    } elseif ($mes0 <= 1 || $faltas >= 3) {
 
         $totalRiesgo++;
     }
@@ -357,7 +389,9 @@ foreach ($jovenes as $item) {
 
 ?>
 
-<!-- TOOLBAR -->
+<!-- =====================================
+     TOOLBAR
+===================================== -->
 
 <div class="gx-toolbar">
 
@@ -414,21 +448,24 @@ foreach ($jovenes as $item) {
             id="buscador"
             class="search-input"
             placeholder="Buscar joven..."
+            autocomplete="off"
         >
 
     </div>
 
 </div>
 
-    <!-- TABLA -->
+<!-- =====================================
+     TABLA
+===================================== -->
 
-    <div class="page-section">
+<div class="page-section">
 
     <div class="table-container">
 
         <table
             id="tablaJovenes"
-            class="table"
+            class="table gx-table"
         >
 
             <thead>
@@ -450,7 +487,21 @@ foreach ($jovenes as $item) {
 
             <tbody>
 
-            <?php foreach($jovenes as $j): ?>
+            <?php if (empty($jovenes)): ?>
+
+                <tr>
+
+                    <td colspan="8" class="text-center">
+
+                        No existen jóvenes registrados.
+
+                    </td>
+
+                </tr>
+
+            <?php else: ?>
+
+            <?php foreach ($jovenes as $j): ?>
 
             <?php
 
@@ -516,7 +567,9 @@ foreach ($jovenes as $item) {
             <tr>
 
                 <td>
-                    <?= htmlspecialchars($j["nombre_completo"]) ?>
+
+                    <?= e($j["nombre_completo"]) ?>
+
                 </td>
 
                 <td data-order="<?= $edad ?? 0 ?>">
@@ -529,39 +582,44 @@ foreach ($jovenes as $item) {
 
                 <td>
 
-                    <?= ucfirst(strtolower(
-                        htmlspecialchars($j["estado_espiritual"] ?? "-")
-                    )) ?>
+                    <?= ucfirst(
+                        strtolower(
+                            e($j["estado_espiritual"] ?? "-")
+                        )
+                    ) ?>
 
                 </td>
-<td
-<?= $j["estado_actividad"] === "ACTIVO"
-    ? 'data-order="1"'
-    : 'data-order="2"' ?>
->
+
+                <td
+                    <?= $j["estado_actividad"] === "ACTIVO"
+                        ? 'data-order="1"'
+                        : 'data-order="2"' ?>
+                >
 
 <?php
 
-$estadoClase = match($j["estado_actividad"]) {
-    "ACTIVO" => "estado--activo",
+$estadoClase = match ($j["estado_actividad"]) {
+
+    "ACTIVO"   => "estado--activo",
+
     "INACTIVO" => "estado--inactivo",
-    default => "estado--eliminado"
+
+    default    => "estado--eliminado"
+
 };
 
 ?>
 
-<span class="estado-label">
+                    <span class="estado-label">
 
-    <span class="estado <?= $estadoClase ?>"></span>
+                        <span class="estado <?= $estadoClase ?>"></span>
 
-    <?= ucfirst(strtolower($j["estado_actividad"])) ?>
+                        <?= ucfirst(strtolower($j["estado_actividad"])) ?>
 
-</span>
+                    </span>
 
-</td>
-
-                <td
-                    title="<?= htmlspecialchars($conexionReal) ?>"
+                </td>                                                                                                                                                        <td
+                    title="<?= e($conexionReal) ?>"
 
                 <?php
 
@@ -582,6 +640,7 @@ $estadoClase = match($j["estado_actividad"]) {
                 }
 
                 ?>
+
                 </td>
 
                 <td data-order="<?= $dias ?>">
@@ -589,13 +648,17 @@ $estadoClase = match($j["estado_actividad"]) {
                     <?php if ($dias <= 7): ?>
 
                         <span class="joven-tiempo-main">
+
                             Muy nuevo
+
                         </span>
 
                     <?php elseif ($dias <= 30): ?>
 
                         <span class="joven-tiempo-main">
+
                             Nuevo
+
                         </span>
 
                     <?php else: ?>
@@ -646,142 +709,149 @@ $estadoClase = match($j["estado_actividad"]) {
                 }
 
                 ?>
+
                 </td>
 
                 <td>
 
-                   <div class="table-actions">
+                    <div class="table-actions">
 
-    <!-- VER -->
+                        <!-- VER -->
 
-    <a
-        href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $j["id"] ?>"
-        class="btn-icon btn-view"
-        data-tooltip="Ver detalles"
-    >
-        <i class="fa-solid fa-eye"></i>
-    </a>
+                        <a
+                            href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= (int)$j["id"] ?>"
+                            class="btn-icon btn-view"
+                            data-tooltip="Ver detalles"
+                        >
 
-    <?php if($filtro !== 'eliminados'): ?>
+                            <i class="fa-solid fa-eye"></i>
 
-        <!-- EDITAR -->
+                        </a>
 
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= $j["id"] ?>"
-            class="btn-icon btn-edit"
-            data-tooltip="Editar"
-        >
-            <i class="fa-solid fa-pen"></i>
-        </a>
+                        <?php if ($filtro !== "eliminados"): ?>
 
-        <?php if(tienePermiso('eliminar_jovenes')): ?>
+                            <!-- EDITAR -->
 
-        <!-- ELIMINAR -->
+                            <a
+                                href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= (int)$j["id"] ?>"
+                                class="btn-icon btn-edit"
+                                data-tooltip="Editar"
+                            >
 
-        <form
-            method="POST"
-            class="inline-form"
-            action="<?= BASE_URL ?>/controllers/jovenController.php"
-        >
+                                <i class="fa-solid fa-pen"></i>
 
-            <input
-                type="hidden"
-                name="id"
-                value="<?= $j["id"] ?>"
-            >
+                            </a>
 
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="<?= $_SESSION['csrf_token'] ?>"
-            >
+                            <?php if (tienePermiso("eliminar_jovenes")): ?>
 
-            <button
-                type="submit"
-                name="eliminar_joven"
-               <button
+                                <!-- ELIMINAR -->
 
-class="btn-icon btn-delete"
+                                <form
+                                    method="POST"
+                                    class="inline-form"
+                                    action="<?= BASE_URL ?>/controllers/jovenController.php"
+                                >
 
-data-confirm="¿Seguro que deseas eliminar este joven?"
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="<?= (int)$j["id"] ?>"
+                                    >
 
->
-                <i class="fa-solid fa-trash"></i>
-            </button>
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="<?= e($_SESSION["csrf_token"]) ?>"
+                                    >
 
-        </form>
+                                    <button
+                                        type="submit"
+                                        name="eliminar_joven"
+                                        class="btn-icon btn-delete"
+                                        data-confirm="¿Seguro que deseas eliminar este joven?"
+                                    >
 
-        <?php endif; ?>
+                                        <i class="fa-solid fa-trash"></i>
 
-    <?php else: ?>
+                                    </button>
 
-        <!-- RECUPERAR -->
+                                </form>
 
-        <form
-            method="POST"
-            class="inline-form"
-            action="<?= BASE_URL ?>/controllers/jovenController.php"
-        >
+                            <?php endif; ?>
 
-            <input
-                type="hidden"
-                name="id"
-                value="<?= $j["id"] ?>"
-            >
+                        <?php else: ?>
 
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="<?= $_SESSION['csrf_token'] ?>"
-            >
+                            <!-- RECUPERAR -->
 
-            <button
-                type="submit"
-                name="recuperar_joven"
-                class="btn-icon btn-success"
-                data-tooltip="Recuperar"
-                onclick="return confirm('¿Recuperar este joven?')"
-            >
-                <i class="fa-solid fa-rotate-left"></i>
-            </button>
+                            <form
+                                method="POST"
+                                class="inline-form"
+                                action="<?= BASE_URL ?>/controllers/jovenController.php"
+                            >
 
-        </form>
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value="<?= (int)$j["id"] ?>"
+                                >
 
-        <!-- ELIMINAR DEFINITIVO -->
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="<?= e($_SESSION["csrf_token"]) ?>"
+                                >
 
-        <form
-            method="POST"
-            class="inline-form"
-            action="<?= BASE_URL ?>/controllers/jovenController.php"
-        >
+                                <button
+                                    type="submit"
+                                    name="recuperar_joven"
+                                    class="btn-icon btn-success"
+                                    data-tooltip="Recuperar"
+                                    onclick="return confirm('¿Recuperar este joven?')"
+                                >
 
-            <input
-                type="hidden"
-                name="id"
-                value="<?= $j["id"] ?>"
-            >
+                                    <i class="fa-solid fa-rotate-left"></i>
 
-            <input
-                type="hidden"
-                name="csrf_token"
-                value="<?= $_SESSION['csrf_token'] ?>"
-            >
+                                </button>
 
-            <button
-                type="submit"
-                name="eliminar_definitivo"
-                class="btn-icon btn-delete"
-                data-tooltip="Eliminar definitivamente"
-                onclick="return confirm('Esta acción no se puede deshacer. ¿Continuar?')"
-            >
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
+                            </form>
 
-        </form>
+                            <!-- ELIMINAR DEFINITIVO -->
 
-    <?php endif; ?>
+                            <form
+                                method="POST"
+                                class="inline-form"
+                                action="<?= BASE_URL ?>/controllers/jovenController.php"
+                            >
 
-</div>
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value="<?= (int)$j["id"] ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="<?= e($_SESSION["csrf_token"]) ?>"
+                                >
+
+                                <button
+                                    type="submit"
+                                    name="eliminar_definitivo"
+                                    class="btn-icon btn-delete"
+                                    data-tooltip="Eliminar definitivamente"
+                                    onclick="return confirm('Esta acción no se puede deshacer. ¿Continuar?')"
+                                >
+
+                                    <i class="fa-solid fa-trash-can"></i>
+
+                                </button>
+
+                            </form>
+
+                        <?php endif; ?>
+
+                    </div>
 
                 </td>
 
@@ -789,17 +859,47 @@ data-confirm="¿Seguro que deseas eliminar este joven?"
 
             <?php endforeach; ?>
 
+            <?php endif; ?>
+
             </tbody>
 
         </table>
 
     </div>
-    
-    </div>
 
 </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const tabla = initDataTable("#tablaJovenes");
+
+    console.log(tabla);
+
+});
+
+
+/* ===============================
+   BUSCADOR
+=============================== */
+
+
+
+const buscador = document.getElementById("buscador");
+
+if (tabla && buscador) {
+
+    buscador.addEventListener("input", function () {
+
+        tabla.search(this.value).draw();
+
+    });
+
+}
+
+</script>
 
 
 

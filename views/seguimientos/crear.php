@@ -4,6 +4,13 @@ require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../middleware/actividad.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../helpers/csrf.php";
+
+/* =========================
+   CSRF
+========================= */
+
+generarCsrf();
 
 /* =========================
    PERMISOS
@@ -32,26 +39,34 @@ $jovenSeleccionado =
    JÓVENES ACTIVOS
 ========================= */
 
-$jovenes = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT
         id,
         nombre_completo
     FROM jovenes
-    WHERE estado_actividad != 'ELIMINADO'
+    WHERE estado_actividad = 'ACTIVO'
     ORDER BY nombre_completo ASC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+
+$stmt->execute();
+
+$jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =========================
    RESPONSABLES
 ========================= */
 
-$responsables = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT
         id,
         nombre
     FROM usuarios
     ORDER BY nombre ASC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+
+$stmt->execute();
+
+$responsables = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =========================
    USUARIO ACTUAL
@@ -60,7 +75,6 @@ $responsables = $pdo->query("
 $usuarioActual =
     (int)($_SESSION["user_id"] ?? 0);
 
-
 /* =========================
    HEADER
 ========================= */
@@ -68,6 +82,7 @@ $usuarioActual =
 require_once __DIR__ . "/../../includes/header.php";
 
 ?>
+
 <div class="form-card">
 
     <!-- =====================================
@@ -104,7 +119,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <i class="fa-solid fa-circle-info"></i>
 
-        Cada seguimiento permite registrar el acompañamiento realizado a un joven durante el mes.
+        Cada seguimiento registra el acompañamiento realizado, los acuerdos alcanzados y el estado actual del proceso del joven.
 
     </div>
 
@@ -113,10 +128,16 @@ require_once __DIR__ . "/../../includes/header.php";
     ====================================== -->
 
     <form
-        action="../../controllers/seguimientoController.php"
+        action="<?= BASE_URL ?>/controllers/seguimientoController.php"
         method="POST"
         class="form"
     >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+        >
 
         <div class="form-grid">
 
@@ -135,6 +156,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="joven_id"
+                    autocomplete="off"
                     required
                 >
 
@@ -145,7 +167,7 @@ require_once __DIR__ . "/../../includes/header.php";
                     <?php foreach($jovenes as $j): ?>
 
                         <option
-                            value="<?= $j["id"] ?>"
+                            value="<?= (int)$j["id"] ?>"
                             <?= $jovenSeleccionado === (int)$j["id"]
                                 ? 'selected'
                                 : '' ?>
@@ -179,7 +201,7 @@ require_once __DIR__ . "/../../includes/header.php";
                     class="form-input"
                     type="date"
                     name="fecha_contacto"
-                    value="<?= date('Y-m-d') ?>"
+                    value="<?= htmlspecialchars(date('Y-m-d')) ?>"
                     required
                 >
 
@@ -200,6 +222,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="modalidad_contacto"
+                    autocomplete="off"
                     required
                 >
 
@@ -234,6 +257,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="estado_proceso"
+                    autocomplete="off"
                     required
                 >
 
@@ -268,6 +292,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 <select
                     class="form-select"
                     name="responsable_id"
+                    autocomplete="off"
                 >
 
                     <option value="">
@@ -277,7 +302,7 @@ require_once __DIR__ . "/../../includes/header.php";
                     <?php foreach($responsables as $r): ?>
 
                         <option
-                            value="<?= $r["id"] ?>"
+                            value="<?= (int)$r["id"] ?>"
                             <?= $usuarioActual === (int)$r["id"]
                                 ? 'selected'
                                 : '' ?>
@@ -297,53 +322,61 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+        <!-- OBSERVACIONES -->
 
-<!-- OBSERVACIONES -->
+        <div class="form-group form-group-full">
 
-<div class="form-group form-group-full">
+            <label class="form-label">
 
-    <label class="form-label">
+                <i class="fa-solid fa-comment-dots"></i>
 
-        <i class="fa-solid fa-comment-dots"></i>
+                Observaciones
 
-        Observaciones
+            </label>
 
-    </label>
+            <textarea
+                class="form-textarea"
+                name="observaciones"
+                rows="6"
+                maxlength="2000"
+                placeholder="Describe la conversación, acuerdos, necesidades detectadas o compromisos establecidos..."
+            ></textarea>
 
-    <textarea
-        class="form-textarea"
-        name="observaciones"
-        rows="6"
-        placeholder="Describe la conversación, acuerdos, necesidades detectadas o compromisos establecidos..."
-    ></textarea>
+        </div>
+
+        <!-- BOTONES -->
+
+        <div class="form-actions">
+
+            <a
+                href="index.php"
+                class="btn btn-back"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Volver
+
+            </a>
+
+            <button
+                type="submit"
+                name="crear_seguimiento"
+                class="btn btn-primary"
+            >
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                Guardar Seguimiento
+
+            </button>
+
+        </div>
+
+    </form>
 
 </div>
 
-<!-- BOTONES -->
-
-<div class="form-actions">
-
-    <a
-        href="index.php"
-        class="btn btn-back"
-    >
-        <i class="fa-solid fa-arrow-left"></i>
-        Volver
-    </a>
-
-    <button
-        type="submit"
-        name="crear_seguimiento"
-        class="btn btn-primary"
-    >
-        Guardar Seguimiento
-    </button>
-
-</div>
-
-</form>
-
-</div>
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/crear.js">
 </script>

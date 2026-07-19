@@ -20,8 +20,7 @@ require_once "../services/jovenService.php";
 const MODALIDADES_VALIDAS = [
     'WHATSAPP',
     'LLAMADA',
-    'VISITA',
-    'MENSAJE'
+    'VISITA'
 ];
 
 const ESTADOS_VALIDOS = [
@@ -47,7 +46,7 @@ try {
     error_log($e->getMessage());
 
     redirect(
-        "../views/jovenes/index.php",
+        "../views/seguimientos/index.php",
         "error",
         "Error en base de datos."
     );
@@ -55,7 +54,7 @@ try {
 } catch (Exception $e) {
 
     redirect(
-        "../views/jovenes/index.php",
+        "../views/seguimientos/index.php",
         "error",
         $e->getMessage()
     );
@@ -106,10 +105,10 @@ function crearSeguimiento(PDO $pdo): void
         ? $observaciones
         : null;
 
-    if ($responsable_id <= 0) {
-
-        $responsable_id = null;
-    }
+    $responsable_id =
+        $responsable_id > 0
+        ? $responsable_id
+        : null;
 
     /* =========================
        VALIDACIONES
@@ -154,6 +153,16 @@ function crearSeguimiento(PDO $pdo): void
         $estado = 'PENDIENTE';
     }
 
+    if (
+        $observaciones !== null
+        && mb_strlen($observaciones) > 2000
+    ) {
+
+        throw new Exception(
+            'Las observaciones son demasiado largas.'
+        );
+    }
+
     /* =========================
        VALIDAR JOVEN
     ========================= */
@@ -192,6 +201,39 @@ function crearSeguimiento(PDO $pdo): void
                 'El responsable seleccionado no existe.'
             );
         }
+    }
+
+    /* =========================
+       EVITAR DUPLICADOS
+    ========================= */
+
+    $stmt = $pdo->prepare("
+        SELECT id
+
+        FROM seguimientos
+
+        WHERE joven_id = :joven_id
+
+        AND MONTH(fecha_contacto) = MONTH(:fecha)
+
+        AND YEAR(fecha_contacto) = YEAR(:fecha)
+
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+
+        ':joven_id' => $joven_id,
+
+        ':fecha' => $fecha_contacto
+
+    ]);
+
+    if ($stmt->fetch()) {
+
+        throw new Exception(
+            'Este joven ya tiene un seguimiento registrado durante este mes.'
+        );
     }
 
     /* =========================
@@ -242,6 +284,7 @@ function crearSeguimiento(PDO $pdo): void
 
             'observaciones' =>
                 $observaciones
+
         ]);
 
         $stmt = $pdo->prepare("
@@ -271,7 +314,7 @@ function crearSeguimiento(PDO $pdo): void
 
     redirect(
         "../views/jovenes/ver.php?id={$joven_id}",
-        'success',
-        'Seguimiento registrado correctamente.'
+        "success",
+        "Seguimiento registrado correctamente."
     );
 }

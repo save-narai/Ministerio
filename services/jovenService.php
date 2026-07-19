@@ -26,12 +26,66 @@ function prepararDatosJoven(
        GÉNERO
     ===================================================== */
 
-    $genero = $_POST["genero"] ?? null;
+    $genero = strtoupper(
+        trim($_POST["genero"] ?? '')
+    );
 
     if (!validarGenero($genero)) {
 
         throw new Exception(
             "Género inválido."
+        );
+    }
+
+    /* =====================================================
+       ESTADO ESPIRITUAL
+    ===================================================== */
+
+    $estadoEspiritual = strtoupper(
+        trim($_POST["estado_espiritual"] ?? '')
+    );
+
+    $estadosValidos = [
+
+        "NUEVO",
+
+        "CONGREGANTE",
+
+        "DISCIPULADO",
+
+        "SERVIDOR",
+
+        "LIDER"
+
+    ];
+
+    if (!in_array(
+        $estadoEspiritual,
+        $estadosValidos,
+        true
+    )) {
+
+        throw new Exception(
+            "Estado espiritual inválido."
+        );
+    }
+
+    /* =====================================================
+       SERVIDOR
+    ===================================================== */
+
+    $esServidor = (int) (
+        $_POST["es_servidor"] ?? 0
+    );
+
+    if (!in_array(
+        $esServidor,
+        [0, 1],
+        true
+    )) {
+
+        throw new Exception(
+            "Valor de servidor inválido."
         );
     }
 
@@ -60,9 +114,13 @@ function prepararDatosJoven(
         $_POST["edad_manual"] ?: null;
 
     if (
+
         empty($fechaNacimiento)
+
         &&
+
         empty($edadManual)
+
     ) {
 
         throw new Exception(
@@ -97,7 +155,7 @@ function prepararDatosJoven(
         isset($_POST["sinTelefono"]);
 
     $telefono =
-        $_POST["telefono"] ?? '';
+        trim($_POST["telefono"] ?? '');
 
     if ($sinTelefono) {
 
@@ -134,8 +192,8 @@ function prepararDatosJoven(
         $sql = "
             SELECT COUNT(*)
             FROM jovenes
-            WHERE nombre_completo = :nombre
-            AND telefono = :tel
+            WHERE telefono = :tel
+            AND nombre_completo = :nombre
         ";
 
         if ($id > 0) {
@@ -147,9 +205,10 @@ function prepararDatosJoven(
 
         $params = [
 
-            "nombre" => $nombre,
+            "tel" => $telefonoFinal,
 
-            "tel" => $telefonoFinal
+            "nombre" => $nombre
+
         ];
 
         if ($id > 0) {
@@ -165,12 +224,17 @@ function prepararDatosJoven(
 
                 $id > 0
 
-                ? "Ya existe otro joven con ese nombre y teléfono."
+                    ? "Ya existe otro joven con ese nombre y teléfono."
 
-                : "Este joven ya existe."
+                    : "Este joven ya existe."
+
             );
         }
     }
+
+    /* =====================================================
+       RESPUESTA
+    ===================================================== */
 
     return [
 
@@ -192,17 +256,18 @@ function prepararDatosJoven(
             $genero,
 
         "estadoEspiritual" =>
-            $_POST["estado_espiritual"] ?? null,
+            $estadoEspiritual,
 
         "fechaIngreso" =>
             $fechaIngreso,
 
         "esServidor" =>
-            $_POST["es_servidor"] ?? 0,
+            $esServidor,
 
         "observaciones" =>
             trim(
                 $_POST["observaciones"] ?? ''
             ) ?: null
+
     ];
 }

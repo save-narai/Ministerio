@@ -89,17 +89,7 @@ function eliminarJoven(PDO $pdo): void
         );
     }
 
-    $stmt = $pdo->prepare("
-        SELECT id
-        FROM jovenes
-        WHERE id = :id
-    ");
-
-    $stmt->execute([
-        "id" => $id
-    ]);
-
-    if (!$stmt->fetch()) {
+    if (!existeJoven($pdo, $id)) {
 
         throw new Exception(
             "El joven no existe."
@@ -121,10 +111,7 @@ function eliminarJoven(PDO $pdo): void
         "success",
         "Joven eliminado correctamente."
     );
-}
-
-
-/* =========================================================
+}                                                                                                                                                        /* =========================================================
    RECUPERAR JOVEN
 ========================================================= */
 
@@ -145,6 +132,13 @@ function recuperarJoven(PDO $pdo): void
 
         throw new Exception(
             "ID inválido."
+        );
+    }
+
+    if (!existeJoven($pdo, $id)) {
+
+        throw new Exception(
+            "El joven no existe."
         );
     }
 
@@ -187,6 +181,13 @@ function eliminarDefinitivo(PDO $pdo): void
 
         throw new Exception(
             "ID inválido."
+        );
+    }
+
+    if (!existeJoven($pdo, $id)) {
+
+        throw new Exception(
+            "El joven no existe."
         );
     }
 
@@ -235,10 +236,7 @@ function eliminarDefinitivo(PDO $pdo): void
         "success",
         "Joven eliminado definitivamente."
     );
-}
-
-
-/* =========================================================
+}                                                                                                                                                   /* =========================================================
    CREAR JOVEN
 ========================================================= */
 
@@ -255,65 +253,91 @@ function crearJoven(PDO $pdo): void
 
     $datos = prepararDatosJoven($pdo);
 
-    $stmt = $pdo->prepare("
-        INSERT INTO jovenes (
+    $pdo->beginTransaction();
 
-            nombre_completo,
-            fecha_nacimiento,
-            edad_manual,
-            fecha_actualizacion_edad,
-            telefono,
-            genero,
-            estado_espiritual,
-            fecha_ingreso,
-            es_servidor,
-            estado_actividad
+    try {
 
-        ) VALUES (
+        $stmt = $pdo->prepare("
+            INSERT INTO jovenes (
 
-            :nombre,
-            :fn,
-            :edad,
-            :fa,
-            :tel,
-            :genero,
-            :estado,
-            :fi,
-            :serv,
-            'ACTIVO'
-        )
-    ");
+                nombre_completo,
+                fecha_nacimiento,
+                edad_manual,
+                fecha_actualizacion_edad,
+                telefono,
+                genero,
+                estado_espiritual,
+                fecha_ingreso,
+                es_servidor,
+                observaciones,
+                estado_actividad
 
-    $stmt->execute([
+            ) VALUES (
 
-        "nombre" => $datos["nombre"],
+                :nombre,
+                :fn,
+                :edad,
+                :fa,
+                :tel,
+                :genero,
+                :estado,
+                :fi,
+                :serv,
+                :obs,
+                'ACTIVO'
+            )
+        ");
 
-        "fn" => $datos["fechaNacimiento"],
+        $stmt->execute([
 
-        "edad" => $datos["edadManual"],
+            "nombre" => $datos["nombre"],
 
-        "fa" => $datos["fechaActualizacionEdad"],
+            "fn" => $datos["fechaNacimiento"],
 
-        "tel" => $datos["telefono"],
+            "edad" => $datos["edadManual"],
 
-        "genero" => $datos["genero"],
+            "fa" => $datos["fechaActualizacionEdad"],
 
-        "estado" => $datos["estadoEspiritual"],
+            "tel" => $datos["telefono"],
 
-        "fi" => $datos["fechaIngreso"],
+            "genero" => $datos["genero"],
 
-        "serv" => $datos["esServidor"]
-    ]);
+            "estado" => $datos["estadoEspiritual"],
+
+            "fi" => $datos["fechaIngreso"],
+
+            "serv" => $datos["esServidor"],
+
+            "obs" => $datos["observaciones"]
+
+        ]);
+
+        /* =====================================
+           ID DEL NUEVO JOVEN
+        ===================================== */
+
+        $jovenId = (int)$pdo->lastInsertId();
+
+        // Reservado para futuras ampliaciones:
+        // - Auditoría
+        // - Historial
+        // - Registro de actividad
+
+        $pdo->commit();
+
+    } catch (Exception $e) {
+
+        $pdo->rollBack();
+
+        throw $e;
+    }
 
     redirect(
         "../views/jovenes/index.php",
         "success",
         "Joven creado correctamente."
     );
-}
-
-
-/* =========================================================
+}                                                                                                                                                         /* =========================================================
    EDITAR JOVEN
 ========================================================= */
 
@@ -337,17 +361,7 @@ function editarJoven(PDO $pdo): void
         );
     }
 
-    $stmt = $pdo->prepare("
-        SELECT id
-        FROM jovenes
-        WHERE id = :id
-    ");
-
-    $stmt->execute([
-        "id" => $id
-    ]);
-
-    if (!$stmt->fetch()) {
+    if (!existeJoven($pdo, $id)) {
 
         throw new Exception(
             "El joven no existe."
@@ -408,4 +422,28 @@ function editarJoven(PDO $pdo): void
         "success",
         "Joven actualizado correctamente."
     );
+}
+
+
+/* =========================================================
+   EXISTE JOVEN
+========================================================= */
+
+function existeJoven(
+    PDO $pdo,
+    int $id
+): bool {
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM jovenes
+        WHERE id = :id
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        "id" => $id
+    ]);
+
+    return (bool)$stmt->fetchColumn();
 }
