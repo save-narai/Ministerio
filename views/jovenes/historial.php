@@ -165,9 +165,15 @@ require_once __DIR__ . "/../../includes/header.php";
 
     <!-- =====================================================
          HEADER
+<<<<<<< HEAD
     ===================================================== -->
 
     <div class="page-header">
+=======
+    ====================================================== -->
+
+    <div class="page-header gx-history-header">
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         <div class="page-header-left">
 
@@ -185,6 +191,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+<<<<<<< HEAD
         <div class="page-header-right">
 
             <span class="perfil-conexion <?= $claseConexion ?>">
@@ -213,6 +220,38 @@ require_once __DIR__ . "/../../includes/header.php";
     ===================================================== -->
 
     <div class="gx-stats">
+=======
+       <div class="page-header-right">
+
+    <span class="perfil-conexion <?= $claseConexion ?>">
+
+        <i class="fa-solid fa-circle"></i>
+
+        <?= $estadoConexion ?>
+
+    </span>
+
+    <a
+        href="<?= BASE_URL ?>/views/jovenes/index.php"
+        class="btn btn-primary"
+    >
+
+        <i class="fa-solid fa-users"></i>
+
+        Todos los jóvenes
+
+    </a>
+
+</div>
+
+    </div>
+
+    <!-- =====================================================
+         ESTADÍSTICAS
+    ====================================================== -->
+
+    <div class="gx-stats gx-history-stats">
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         <div class="gx-stat-card">
 
@@ -281,8 +320,13 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
     <!-- =====================================================
+<<<<<<< HEAD
        ALERTA
     ===================================================== -->
+=======
+         ALERTA
+    ====================================================== -->
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     <?php if ($faltasConsecutivas >= 3): ?>
 
@@ -325,18 +369,41 @@ require_once __DIR__ . "/../../includes/header.php";
     <?php endif; ?>
 
     <!-- =====================================================
+<<<<<<< HEAD
        HISTORIAL
     ===================================================== -->
+=======
+         HISTORIAL
+    ====================================================== -->
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     <div class="page-section">
 
         <div class="section-header">
 
+<<<<<<< HEAD
             <h3>
 
                 Historial de reuniones
 
             </h3>
+=======
+            <div>
+
+                <h3 class="page-section-title">
+
+                    Historial de reuniones
+
+                </h3>
+
+                <span class="section-subtitle">
+
+                    Registro completo de asistencia del joven.
+
+                </span>
+
+            </div>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
             <div class="search-wrapper">
 
@@ -375,6 +442,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     </thead>
 
+<<<<<<< HEAD
                     <tbody>                                                                                                                                                <?php foreach ($historial as $h): ?>
 
                             <tr>
@@ -454,16 +522,105 @@ require_once __DIR__ . "/../../includes/header.php";
                             </tr>
 
                         <?php endforeach; ?>
+=======
+                    <tbody>                                                                                                                            <?php foreach ($historial as $h): ?>
+
+    <tr>
+
+        <td>
+
+            <?php
+
+            $tipo = match ($h["tipo"]) {
+
+                "REUNION_JOVENES" => "Reunión",
+
+                "GRUPO_CONEXION" => "Grupo Conexión",
+
+                "DISCIPULADO" => "Discipulado",
+
+                "EVENTO_ESPECIAL" => "Evento",
+
+                default => ucfirst(
+
+                    strtolower(
+
+                        str_replace(
+
+                            "_",
+
+                            " ",
+
+                            $h["tipo"]
+
+                        )
+
+                    )
+
+                )
+
+            };
+
+            ?>
+
+            <?= htmlspecialchars($tipo) ?>
+
+        </td>
+
+        <td>
+
+            <?= formatearFecha($h["fecha"]) ?>
+
+        </td>
+
+        <td>
+
+            <?php if ((int) $h["asistio"] === 1): ?>
+
+                <span class="badge badge-success">
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Presente
+
+                </span>
+
+            <?php else: ?>
+
+                <span class="badge badge-danger">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Ausente
+
+                </span>
+
+            <?php endif; ?>
+
+        </td>
+
+    </tr>
+
+<?php endforeach; ?>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                     </tbody>
 
                 </table>
 
+<<<<<<< HEAD
             </div>
 
         <?php else: ?>
 
             <div class="empty-state">
+=======
+            </div> <!-- /.table-wrapper -->
+
+        <?php else: ?>
+
+            <div class="empty-state gx-history-empty">
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                 <i class="fa-solid fa-calendar-xmark"></i>
 
@@ -483,6 +640,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <?php endif; ?>
 
+<<<<<<< HEAD
     </div>                                                                                                                                                            <!-- =====================================================
        BOTONES
     ===================================================== -->
@@ -510,6 +668,32 @@ require_once __DIR__ . "/../../includes/header.php";
             Todos los jóvenes
 
         </a>
+=======
+    </div> 
+    
+    <!-- /.page-section -->  
+     
+    <!-- =====================================================
+         BOTONES
+    ====================================================== -->
+
+
+
+        <div class="gx-actions">
+
+    <a
+        href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $joven_id ?>"
+        class="btn btn-secondary"
+    >
+
+        
+
+        Volver al perfil
+
+    </a>
+
+</div>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     </div>
 
@@ -527,4 +711,8 @@ require_once __DIR__ . "/../../includes/header.php";
 
 require_once __DIR__ . "/../../includes/footer.php";
 
+<<<<<<< HEAD
 ?>
+=======
+?>
+>>>>>>> 3e2d89c (Actualización del proyecto)

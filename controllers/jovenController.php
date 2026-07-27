@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 session_start();
 
 require_once "../middleware/auth.php";
@@ -43,6 +44,139 @@ try {
     if (isset($_POST["editar_joven"])) {
 
         editarJoven($pdo);
+=======
+declare(strict_types=1);
+
+session_start();
+
+require_once __DIR__ . "/../config/conexion.php";
+
+require_once __DIR__ . "/../helpers/redirect.php";
+require_once __DIR__ . "/../helpers/csrf.php";
+require_once __DIR__ . "/../helpers/validaciones.php";
+
+require_once __DIR__ . "/../middleware/auth.php";
+require_once __DIR__ . "/../middleware/permiso.php";
+
+require_once __DIR__ . "/../services/jovenService.php";
+
+/* =========================================================
+   SOLO PETICIONES POST
+========================================================= */
+
+echo "1 - Entró al controlador<br>";
+
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+
+    die("NO ES POST");
+
+}
+
+echo "2 - Es POST<br>";
+
+/* =========================================================
+   CSRF
+========================================================= */
+
+validarCsrf();
+
+echo "3 - Pasó CSRF<br>";
+
+/* =========================================================
+   ACCIÓN
+========================================================= */
+
+$action = strtolower(
+
+    trim(
+
+        (string) ($_POST["action"] ?? "")
+
+    )
+
+);
+
+/* =========================================================
+   RUTA
+========================================================= */
+
+$redirect = "../views/jovenes/index.php";
+
+/* =========================================================
+   CONTROLADOR
+========================================================= */
+
+try {
+
+    switch ($action) {
+
+        case "crear_joven":
+
+            crearJoven($pdo, $_POST);
+
+            redirect(
+                $redirect,
+                "success",
+                "Joven creado correctamente."
+            );
+
+            break;
+
+        case "editar_joven":
+
+            editarJoven($pdo, $_POST);
+
+            redirect(
+                $redirect,
+                "success",
+                "Joven actualizado correctamente."
+            );
+
+            break;
+
+        case "eliminar_joven":
+
+            eliminarJoven($pdo, $_POST);
+
+            redirect(
+                $redirect,
+                "success",
+                "Joven eliminado correctamente."
+            );
+
+            break;
+
+        case "recuperar_joven":
+
+            recuperarJoven($pdo, $_POST);
+
+            redirect(
+                $redirect . "?filtro=eliminados",
+                "success",
+                "Joven recuperado correctamente."
+            );
+
+            break;
+
+        case "eliminar_definitivo":
+
+            eliminarDefinitivo($pdo, $_POST);
+
+            redirect(
+                $redirect . "?filtro=eliminados",
+                "success",
+                "Joven eliminado definitivamente."
+            );
+
+            break;
+
+        default:
+
+            throw new Exception(
+                "Acción no válida."
+            );
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
     }
 
 } catch (PDOException $e) {
@@ -50,14 +184,21 @@ try {
     error_log($e->getMessage());
 
     redirect(
+<<<<<<< HEAD
         "../views/jovenes/index.php",
         "error",
         "Error en base de datos."
+=======
+        $redirect,
+        "error",
+        "Ocurrió un error interno del sistema."
+>>>>>>> 3e2d89c (Actualización del proyecto)
     );
 
 } catch (Exception $e) {
 
     redirect(
+<<<<<<< HEAD
         "../views/jovenes/index.php",
         "error",
         $e->getMessage()
@@ -446,4 +587,11 @@ function existeJoven(
     ]);
 
     return (bool)$stmt->fetchColumn();
+=======
+        $redirect,
+        "error",
+        $e->getMessage()
+    );
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
 }

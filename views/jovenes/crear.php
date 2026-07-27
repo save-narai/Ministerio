@@ -3,6 +3,10 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../helpers/csrf.php";
+<<<<<<< HEAD
+=======
+require_once __DIR__ . "/../../services/actividadService.php";
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 /* =====================================
    CSRF

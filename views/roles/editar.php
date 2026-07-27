@@ -117,6 +117,7 @@ require_once __DIR__ . "/../../includes/header.php";
             <h1 class="form-title">
                 Editar Rol
             </h1>
+<<<<<<< HEAD
 
             <p class="form-subtitle">
 
@@ -141,6 +142,19 @@ require_once __DIR__ . "/../../includes/header.php";
 </strong>
 
             </p>
+=======
+<p class="form-subtitle">
+
+    Gestiona los permisos asignados al rol:
+
+    <strong>
+
+        <?= htmlspecialchars($rol["nombre"]) ?>
+
+    </strong>
+
+</p>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         </div>
 

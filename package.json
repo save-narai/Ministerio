@@ -1,0 +1,17 @@
+{
+  "name": "ministerio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "sass --watch assets/scss/app.scss:assets/css/app.css",
+    "build": "sass assets/scss/app.scss assets/css/app.css --style=compressed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "sass": "^1.102.0"
+  }
+}

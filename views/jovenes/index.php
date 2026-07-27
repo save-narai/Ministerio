@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 <?php
 
 require_once __DIR__ . "/../../middleware/auth.php";
@@ -18,7 +21,11 @@ generarCsrf();
    PERMISOS
 ===================================== */
 
+<<<<<<< HEAD
 if (!tienePermiso('gestionar_jovenes')) {
+=======
+if (!tienePermiso("gestionar_jovenes")) {
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     header("Location: ../dashboard.php");
     exit;
@@ -87,8 +94,13 @@ SELECT
         SUM(
             CASE
                 WHEN a.asistio = 1
+<<<<<<< HEAD
                 AND MONTH(r.fecha) = MONTH(CURDATE())
                 AND YEAR(r.fecha) = YEAR(CURDATE())
+=======
+                AND MONTH(r.fecha)=MONTH(CURDATE())
+                AND YEAR(r.fecha)=YEAR(CURDATE())
+>>>>>>> 3e2d89c (Actualización del proyecto)
                 THEN 1
                 ELSE 0
             END
@@ -100,8 +112,13 @@ SELECT
         SUM(
             CASE
                 WHEN a.asistio = 1
+<<<<<<< HEAD
                 AND MONTH(r.fecha) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
                 AND YEAR(r.fecha) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+=======
+                AND MONTH(r.fecha)=MONTH(DATE_SUB(CURDATE(),INTERVAL 1 MONTH))
+                AND YEAR(r.fecha)=YEAR(DATE_SUB(CURDATE(),INTERVAL 1 MONTH))
+>>>>>>> 3e2d89c (Actualización del proyecto)
                 THEN 1
                 ELSE 0
             END
@@ -113,8 +130,13 @@ SELECT
         SUM(
             CASE
                 WHEN a.asistio = 1
+<<<<<<< HEAD
                 AND MONTH(r.fecha) = MONTH(DATE_SUB(CURDATE(), INTERVAL 2 MONTH))
                 AND YEAR(r.fecha) = YEAR(DATE_SUB(CURDATE(), INTERVAL 2 MONTH))
+=======
+                AND MONTH(r.fecha)=MONTH(DATE_SUB(CURDATE(),INTERVAL 2 MONTH))
+                AND YEAR(r.fecha)=YEAR(DATE_SUB(CURDATE(),INTERVAL 2 MONTH))
+>>>>>>> 3e2d89c (Actualización del proyecto)
                 THEN 1
                 ELSE 0
             END
@@ -136,6 +158,7 @@ $where = [];
 $where[] = "j.estado_actividad != 'ELIMINADO'";
 
 if ($filtro === "activos") {
+<<<<<<< HEAD
     $where[] = "j.estado_actividad = 'ACTIVO'";
 }
 
@@ -145,6 +168,17 @@ if ($filtro === "inactivos") {
 
 if ($filtro === "eliminados") {
     $where = ["j.estado_actividad = 'ELIMINADO'"];
+=======
+    $where[] = "j.estado_actividad='ACTIVO'";
+}
+
+if ($filtro === "inactivos") {
+    $where[] = "j.estado_actividad='INACTIVO'";
+}
+
+if ($filtro === "eliminados") {
+    $where = ["j.estado_actividad='ELIMINADO'"];
+>>>>>>> 3e2d89c (Actualización del proyecto)
 }
 
 if (!empty($where)) {
@@ -195,6 +229,7 @@ $stmt->execute();
 $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* =====================================
+<<<<<<< HEAD
    HEADER
 ===================================== */
 
@@ -351,6 +386,8 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>                                                                                                                                          <?php
 
 /* =====================================
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
    ESTADÍSTICAS
 ===================================== */
 
@@ -387,6 +424,7 @@ foreach ($jovenes as $item) {
     }
 }
 
+<<<<<<< HEAD
 ?>
 
 <!-- =====================================
@@ -450,22 +488,188 @@ foreach ($jovenes as $item) {
             placeholder="Buscar joven..."
             autocomplete="off"
         >
+=======
+require_once __DIR__ . "/../../includes/header.php";
+?>
+
+<div class="page">
+
+<?php if (isset($_SESSION["success"])): ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    showToast(
+        <?= json_encode($_SESSION["success"]); ?>,
+        "success"
+    );
+});
+</script>
+
+<?php unset($_SESSION["success"]); ?>
+
+<?php endif; ?>
+
+<?php if (isset($_SESSION["error"])): ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    showToast(
+        <?= json_encode($_SESSION["error"]); ?>,
+        "error"
+    );
+});
+</script>
+
+<?php unset($_SESSION["error"]); ?>
+
+<?php endif; ?>
+
+
+
+
+<div class="page-header">
+
+    <div class="page-header-left">
+
+        <h1 class="page-title">
+            Gestión de Jóvenes
+        </h1>
+
+        <p class="page-subtitle">
+            Administra registros, seguimiento y actividad juvenil.
+        </p>
+
+    </div>
+
+    <div class="page-header-right">
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/crear.php"
+            class="btn btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            Nuevo
+        </a>
+
+        <div class="export-dropdown">
+
+            <button
+                type="button"
+                class="export-dropdown__trigger"
+            >
+                <i class="fa-solid fa-download"></i>
+                Exportar
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="export-dropdown__menu">
+
+                <button id="exportPdf" class="export-option">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </button>
+
+                <button id="exportExcel" class="export-option">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </button>
+
+                <button id="exportWord" class="export-option">
+                    <i class="fa-solid fa-file-word"></i> Word
+                </button>
+
+                <button id="exportCsv" class="export-option">
+                    <i class="fa-solid fa-file-csv"></i> CSV
+                </button>
+
+                <button id="exportPrint" class="export-option">
+                    <i class="fa-solid fa-print"></i> Imprimir
+                </button>
+
+            </div>
+
+        </div>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     </div>
 
 </div>
 
+<<<<<<< HEAD
+=======
+
+
+    <div class="gx-toolbar">
+
+        <div class="filters-bar">
+
+            <a href="?filtro=todos"
+               class="filter-chip filter-chip--default <?= $filtro === "todos" ? "filter-chip--active" : "" ?>">
+                Todos
+            </a>
+
+            <a href="?filtro=activos"
+               class="filter-chip filter-chip--success <?= $filtro === "activos" ? "filter-chip--active" : "" ?>">
+                Activos
+            </a>
+
+            <a href="?filtro=inactivos"
+               class="filter-chip filter-chip--danger <?= $filtro === "inactivos" ? "filter-chip--active" : "" ?>">
+                Inactivos
+            </a>
+
+            <a href="?filtro=eliminados"
+               class="filter-chip filter-chip--danger <?= $filtro === "eliminados" ? "filter-chip--active" : "" ?>">
+                Eliminados
+            </a>
+
+            <a href="?filtro=riesgo2"
+               class="filter-chip filter-chip--warning <?= $filtro === "riesgo2" ? "filter-chip--active" : "" ?>">
+                Riesgo
+            </a>
+
+            <a href="?filtro=riesgo3"
+               class="filter-chip filter-chip--critical <?= $filtro === "riesgo3" ? "filter-chip--active" : "" ?>">
+                Alto Riesgo
+            </a>
+
+        </div>
+
+        <div class="search-bar">
+
+            <input
+                type="text"
+                id="buscador"
+                class="search-input"
+                placeholder="Buscar joven..."
+                autocomplete="off"
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
 <!-- =====================================
      TABLA
 ===================================== -->
 
 <div class="page-section">
 
+<<<<<<< HEAD
     <div class="table-container">
+=======
+    <div class="table-wrapper">
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         <table
             id="tablaJovenes"
             class="table gx-table"
+<<<<<<< HEAD
+=======
+            style="width:100%"
+>>>>>>> 3e2d89c (Actualización del proyecto)
         >
 
             <thead>
@@ -473,12 +677,28 @@ foreach ($jovenes as $item) {
                 <tr>
 
                     <th>Nombre</th>
+<<<<<<< HEAD
                     <th>Edad</th>
                     <th>Estado</th>
                     <th>Actividad</th>
                     <th>Conexión</th>
                     <th>Tiempo</th>
                     <th>Seguimiento</th>
+=======
+
+                    <th>Edad</th>
+
+                    <th>Estado Espiritual</th>
+
+                    <th>Actividad</th>
+
+                    <th>Última Asistencia</th>
+
+                    <th>Riesgo</th>
+
+                    <th>Ingreso</th>
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
                     <th>Acciones</th>
 
                 </tr>
@@ -487,6 +707,7 @@ foreach ($jovenes as $item) {
 
             <tbody>
 
+<<<<<<< HEAD
             <?php if (empty($jovenes)): ?>
 
                 <tr>
@@ -858,6 +1079,291 @@ $estadoClase = match ($j["estado_actividad"]) {
             </tr>
 
             <?php endforeach; ?>
+=======
+            <?php if (!empty($jovenes)): ?>
+
+                <?php foreach ($jovenes as $j): ?>
+
+                    <?php
+
+                    /* ===============================
+                       EDAD
+                    =============================== */
+
+                    if (!empty($j["fecha_nacimiento"])) {
+
+                        $edad = date_diff(
+                            date_create($j["fecha_nacimiento"]),
+                            date_create("today")
+                        )->y;
+
+                    } else {
+
+                        $edad = $j["edad_manual"] ?? "-";
+
+                    }
+
+                    /* ===============================
+                       ÚLTIMA ASISTENCIA
+                    =============================== */
+
+                    $ultimaAsistencia = !empty($j["ultima_asistencia"])
+                        ? date(
+                            "d/m/Y",
+                            strtotime($j["ultima_asistencia"])
+                        )
+                        : "Sin registro";
+
+                    /* ===============================
+                       RIESGO
+                    =============================== */
+
+                    $faltas = (int)$j["faltas_recientes"];
+
+                    $mes0 = (int)($j["asistencias_mes_actual"] ?? 0);
+                    $mes1 = (int)($j["asistencias_mes_1"] ?? 0);
+                    $mes2 = (int)($j["asistencias_mes_2"] ?? 0);
+
+                    $riesgoTexto = "Normal";
+                    $riesgoClase = "badge-success";
+
+                    if ($mes1 <= 1 && $mes2 <= 1) {
+
+                        $riesgoTexto = "Alto";
+                        $riesgoClase = "badge-danger";
+
+                    } elseif ($mes0 <= 1 || $faltas >= 3) {
+
+                        $riesgoTexto = "Medio";
+                        $riesgoClase = "badge-warning";
+
+                    }
+
+                    ?>
+
+                    <tr>
+
+                        <!-- NOMBRE -->
+
+                        <td>
+
+                            <strong>
+
+                                <?= e($j["nombre_completo"]) ?>
+
+                            </strong>
+
+                        </td>
+
+                        <!-- EDAD -->
+
+                        <td>
+
+                            <?= e($edad) ?>
+
+                        </td>
+
+                        <!-- ESTADO ESPIRITUAL -->
+
+                        <td>
+
+                            <?= e($j["estado_espiritual"] ?: "Sin registrar") ?>
+
+                        </td>
+
+                        <!-- ACTIVIDAD -->
+
+                        <td>
+
+                            <?php if ($j["estado_actividad"] === "ACTIVO"): ?>
+
+                                <span class="badge badge-success">
+
+                                    Activo
+
+                                </span>
+
+                            <?php elseif ($j["estado_actividad"] === "INACTIVO"): ?>
+
+                                <span class="badge badge-warning">
+
+                                    Inactivo
+
+                                </span>
+
+                            <?php else: ?>
+
+                                <span class="badge badge-danger">
+
+                                    Eliminado
+
+                                </span>
+
+                            <?php endif; ?>
+
+                        </td>
+
+                        <!-- ÚLTIMA ASISTENCIA -->
+
+                        <td>
+
+                            <?= e($ultimaAsistencia) ?>
+
+                        </td>
+
+                        <!-- RIESGO -->
+
+                        <td>
+
+                            <span class="badge <?= $riesgoClase ?>">
+
+                                <?= $riesgoTexto ?>
+
+                            </span>
+
+                        </td>
+
+                        <!-- INGRESO -->
+
+                        <td>
+
+                            <?= !empty($j["fecha_ingreso"])
+                                ? date("d/m/Y", strtotime($j["fecha_ingreso"]))
+                                : "-" ?>
+
+                        </td>
+
+                        <!-- ACCIONES -->
+
+                        <td>
+
+                            <div class="table-actions">
+
+                                <!-- VER -->
+
+                                <a
+                                    href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= (int)$j["id"] ?>"
+                                    class="btn-icon btn-view"
+                                    data-tooltip="Ver"
+                                >
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </a>
+
+                                <?php if ($filtro !== "eliminados"): ?>
+
+                                    <!-- EDITAR -->
+
+                                    <a
+                                        href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= (int)$j["id"] ?>"
+                                        class="btn-icon btn-edit"
+                                        data-tooltip="Editar"
+                                    >
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+                                    <?php if (tienePermiso("eliminar_jovenes")): ?>
+
+                                        <form
+                                            method="POST"
+                                            class="inline-form"
+                                            action="<?= BASE_URL ?>/controllers/jovenController.php"
+                                        >
+
+                                            <input
+                                                type="hidden"
+                                                name="id"
+                                                value="<?= (int)$j["id"] ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="action"
+                                                value="eliminar_joven"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="csrf_token"
+                                                value="<?= e($_SESSION["csrf_token"]) ?>"
+                                            >
+
+                                            <button
+                                                type="submit"
+                                                class="btn-icon btn-delete"
+                                                data-tooltip="Eliminar"
+                                                onclick="return confirm('¿Seguro que deseas eliminar este joven?')"
+                                            >
+
+                                                <i class="fa-solid fa-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    <?php endif; ?>
+
+                                <?php else: ?>
+
+    <!-- RECUPERAR -->
+
+    <form
+        method="POST"
+        class="inline-form"
+        action="<?= BASE_URL ?>/controllers/jovenController.php"
+    >
+
+        <input type="hidden" name="id" value="<?= (int)$j["id"] ?>">
+        <input type="hidden" name="action" value="recuperar_joven">
+        <input type="hidden" name="csrf_token" value="<?= e($_SESSION["csrf_token"]) ?>">
+
+        <button
+            type="submit"
+            class="btn-icon btn-success"
+            data-tooltip="Recuperar"
+            onclick="return confirm('¿Recuperar este joven?')"
+        >
+            <i class="fa-solid fa-rotate-left"></i>
+        </button>
+
+    </form>
+
+    <!-- ELIMINAR DEFINITIVAMENTE -->
+
+    <form
+        method="POST"
+        class="inline-form"
+        action="<?= BASE_URL ?>/controllers/jovenController.php"
+    >
+
+        <input type="hidden" name="id" value="<?= (int)$j["id"] ?>">
+        <input type="hidden" name="action" value="eliminar_definitivo">
+        <input type="hidden" name="csrf_token" value="<?= e($_SESSION["csrf_token"]) ?>">
+
+        <button
+            type="submit"
+            class="btn-icon btn-delete"
+            data-tooltip="Eliminar definitivamente"
+            onclick="return confirm('Esta acción eliminará el joven para siempre. ¿Deseas continuar?')"
+        >
+            <i class="fa-solid fa-trash-can"></i>
+        </button>
+
+    </form>
+
+<?php endif; ?>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                <?php endforeach; ?>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
             <?php endif; ?>
 
@@ -867,6 +1373,7 @@ $estadoClase = match ($j["estado_actividad"]) {
 
     </div>
 
+<<<<<<< HEAD
 </div>
 
 </div>
@@ -907,3 +1414,96 @@ if (tabla && buscador) {
 
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>
+=======
+</div>                                                                                                                                       <script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =====================================
+       DATATABLE
+    ===================================== */
+
+    const tabla = initDataTable("#tablaJovenes");
+
+    if (!tabla) {
+        return;
+    }
+
+    /* =====================================
+       BUSCADOR
+    ===================================== */
+
+    const buscador = document.getElementById("buscador");
+
+    if (buscador) {
+
+        buscador.addEventListener("input", function () {
+
+            tabla.search(this.value).draw();
+
+        });
+
+    }
+
+    /* =====================================
+       EXPORTACIONES
+    ===================================== */
+
+    const exportaciones = {
+
+        exportPdf: "pdf",
+        exportExcel: "excel",
+        exportWord: "word",
+        exportCsv: "csv",
+        exportPrint: "print"
+
+    };
+
+    Object.entries(exportaciones).forEach(([id, tipo]) => {
+
+        const boton = document.getElementById(id);
+
+        if (!boton) {
+            return;
+        }
+
+        boton.addEventListener("click", () => {
+
+            const botones = tabla.buttons();
+
+            if (!botones) {
+                return;
+            }
+
+            switch (tipo) {
+
+                case "pdf":
+                    botones.container().find(".buttons-pdf").click();
+                    break;
+
+                case "excel":
+                    botones.container().find(".buttons-excel").click();
+                    break;
+
+                case "word":
+                    botones.container().find(".buttons-word").click();
+                    break;
+
+                case "csv":
+                    botones.container().find(".buttons-csv").click();
+                    break;
+
+                case "print":
+                    botones.container().find(".buttons-print").click();
+                    break;
+
+            }
+
+        });
+
+    });
+
+});
+</script>
+
+<?php require_once __DIR__ . "/../../includes/footer.php"; ?>
+>>>>>>> 3e2d89c (Actualización del proyecto)

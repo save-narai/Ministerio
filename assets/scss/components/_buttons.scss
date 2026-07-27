@@ -20,39 +20,65 @@
 
     cursor:pointer;
 
+<<<<<<< HEAD
+=======
+    position:relative;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
     text-decoration:none;
 
     font-size:14px;
 
     font-weight:700;
 
+<<<<<<< HEAD
     white-space:nowrap;
 
     position:relative;
 
     overflow:hidden;
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
     transition:
         transform .22s ease,
         opacity .22s ease,
         box-shadow .22s ease,
         background .22s ease,
+<<<<<<< HEAD
         color .22s ease;
 }
 
 
 /* =========================================================
    HOVER
+=======
+        color .22s ease,
+        border-color .22s ease;
+}
+
+/* =========================================================
+   BUTTON STATES
+>>>>>>> 3e2d89c (Actualización del proyecto)
 ========================================================= */
 
 .btn:hover{
 
+<<<<<<< HEAD
     transform:
         translateY(-2px);
+=======
+    transform:translateY(-2px);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     opacity:.98;
 }
 
+<<<<<<< HEAD
 /* =========================================================
    ACTIVE
 ========================================================= */
@@ -61,6 +87,11 @@
 
     transform:
         scale(.98);
+=======
+.btn:active{
+
+    transform:scale(.98);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 }
 
 /* =========================================================
@@ -69,8 +100,12 @@
 
 .btn-primary{
 
+<<<<<<< HEAD
     background:
         var(--card-gradient);
+=======
+    background:var(--card-gradient);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     color:#fff;
 
@@ -78,15 +113,19 @@
         0 12px 24px rgba(255,95,46,.22);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    PRIMARY HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-primary:hover{
 
     box-shadow:
         0 16px 30px rgba(255,95,46,.28);
 }
+<<<<<<< HEAD
 /* =========================================================
    SECONDARY
 ========================================================= */
@@ -109,6 +148,15 @@
 ========================================================= */
 
 .btn-secondary,
+=======
+
+/* =========================================================
+   SECONDARY FAMILY
+========================================================= */
+
+.btn-secondary,
+.btn-outline,
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-back{
 
     background:var(--surface);
@@ -119,6 +167,7 @@
 
     box-shadow:
         0 8px 18px rgba(255,95,46,.10);
+<<<<<<< HEAD
 
 }
 
@@ -129,10 +178,23 @@
 
     background:var(--card-gradient);
 
+=======
+}
+
+.btn-secondary:hover,
+.btn-outline:hover,
+.btn-back:hover{
+
+    background:var(--card-gradient);
+
+    color:#fff;
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
     border-color:transparent;
 
     box-shadow:
         0 14px 28px rgba(255,95,46,.22);
+<<<<<<< HEAD
 
 }
 
@@ -142,10 +204,21 @@
 ========================================================= */
 
 html.dark .btn-secondary,
+=======
+}
+
+/* =========================================================
+   DARK MODE · SECONDARY FAMILY
+========================================================= */
+
+html.dark .btn-secondary,
+html.dark .btn-outline,
+>>>>>>> 3e2d89c (Actualización del proyecto)
 html.dark .btn-back{
 
     background:rgba(255,255,255,.04);
 
+<<<<<<< HEAD
     border:1px solid rgba(255,255,255,.08);
 
     box-shadow:
@@ -161,6 +234,34 @@ html.dark .btn-back:hover{
         0 0 18px rgba(0,229,255,.18);
 }
 
+=======
+    color:#00e5ff;
+
+    border:1px solid rgba(0,229,255,.25);
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.25);
+}
+
+html.dark .btn-secondary:hover,
+html.dark .btn-outline:hover,
+html.dark .btn-back:hover{
+
+    background:#00e5ff;
+
+    color:#08121f;
+
+    border-color:#00e5ff;
+
+    box-shadow:
+        0 0 22px rgba(0,229,255,.28);
+}
+
+/* =========================================================
+   BACK BUTTON ICON
+========================================================= */
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-back i{
 
     margin-right:8px;
@@ -171,8 +272,68 @@ html.dark .btn-back:hover{
 .btn-back:hover i{
 
     transform:translateX(-3px);
+<<<<<<< HEAD
 }
 
+=======
+}                                                                                                                                                                                                                /* =========================================================
+   PDF
+========================================================= */
+
+.btn-pdf{
+
+    background:var(--card-gradient);
+
+    background-size:300% 300%;
+
+    animation:liquidFlow 10s ease infinite;
+
+    color:#fff;
+
+    border:none;
+
+    backdrop-filter:blur(14px);
+
+    box-shadow:
+        0 12px 26px rgba(255,95,46,.22),
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.btn-pdf:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 18px 34px rgba(255,95,46,.30),
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* =========================================================
+   PDF PERFIL
+========================================================= */
+
+.btn-pdf.perfil-chico{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff7b00,
+            #ff9548,
+            #ffb347
+        );
+}
+
+.btn-pdf.perfil-chica{
+
+    background:
+        linear-gradient(
+            135deg,
+            #9d4edd,
+            #c77dff,
+            #f15bb5
+        );
+}
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 /* =========================================================
    SEGUIMIENTO
@@ -199,7 +360,10 @@ html.dark .btn-back:hover{
         0 14px 28px rgba(37,99,235,.30);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 /* =========================================================
    SUCCESS
 ========================================================= */
@@ -219,10 +383,13 @@ html.dark .btn-back:hover{
         0 10px 22px rgba(0,210,106,.22);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    SUCCESS HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-success:hover{
 
     box-shadow:
@@ -248,10 +415,13 @@ html.dark .btn-back:hover{
         0 10px 22px rgba(255,77,109,.22);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    DANGER HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-danger:hover{
 
     box-shadow:
@@ -277,10 +447,13 @@ html.dark .btn-back:hover{
         0 10px 22px rgba(255,176,32,.22);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    WARNING HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-warning:hover{
 
     box-shadow:
@@ -288,6 +461,7 @@ html.dark .btn-back:hover{
 }
 
 /* =========================================================
+<<<<<<< HEAD
    DELETE ICON
 ========================================================= */
 
@@ -350,6 +524,8 @@ html.dark .btn-icon.btn-delete:hover{
 }
 
 /* =========================================================
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
    INFO
 ========================================================= */
 
@@ -368,10 +544,13 @@ html.dark .btn-icon.btn-delete:hover{
         0 10px 22px rgba(0,168,255,.22);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    INFO HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-info:hover{
 
     box-shadow:
@@ -379,6 +558,7 @@ html.dark .btn-icon.btn-delete:hover{
 }
 
 /* =========================================================
+<<<<<<< HEAD
    GHOST
 ========================================================= */
 
@@ -427,6 +607,9 @@ html.dark .btn-icon.btn-delete:hover{
 
 /* =========================================================
    SMALL
+=======
+   SIZES
+>>>>>>> 3e2d89c (Actualización del proyecto)
 ========================================================= */
 
 .btn-sm{
@@ -438,10 +621,13 @@ html.dark .btn-icon.btn-delete:hover{
     border-radius:12px;
 }
 
+<<<<<<< HEAD
 /* =========================================================
    LARGE
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-lg{
 
     padding:17px 28px;
@@ -451,10 +637,13 @@ html.dark .btn-icon.btn-delete:hover{
     border-radius:18px;
 }
 
+<<<<<<< HEAD
 /* =========================================================
    BLOCK
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .btn-block{
 
     width:100%;
@@ -467,6 +656,7 @@ html.dark .btn-icon.btn-delete:hover{
 .btn i{
 
     font-size:13px;
+<<<<<<< HEAD
 }
 
 /* =========================================================
@@ -486,6 +676,85 @@ color:#fff;
         inset 0 1px 0 rgba(255,255,255,.04);
 }
 
+=======
+}                                                                                                                                                                                                     /* =========================================================
+   DELETE ICON
+========================================================= */
+
+.btn-icon.btn-delete{
+
+    background:
+        rgba(255,77,109,.12);
+
+    color:#ff4d6d;
+
+    border:
+        1px solid rgba(255,77,109,.22);
+
+    box-shadow:
+        0 4px 12px rgba(255,77,109,.10);
+}
+
+.btn-icon.btn-delete:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d6d,
+            #ff355d
+        );
+
+    color:#fff;
+
+    border-color:transparent;
+
+    box-shadow:
+        0 12px 24px rgba(255,77,109,.24);
+}
+
+html.dark .btn-icon.btn-delete{
+
+    background:
+        rgba(255,77,109,.15);
+
+    color:#ff8ea2;
+
+    border:
+        1px solid rgba(255,77,109,.18);
+}
+
+html.dark .btn-icon.btn-delete:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d6d,
+            #ff355d
+        );
+
+    color:#fff;
+}
+
+/* =========================================================
+   GHOST
+========================================================= */
+
+.btn-ghost{
+
+    background:transparent;
+
+    color:var(--text);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+}
+
+.btn-ghost:hover{
+
+    background:
+        rgba(255,255,255,.06);
+}
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 /* =========================================================
    EXPORT DROPDOWN
@@ -522,16 +791,26 @@ color:#fff;
 
     cursor:pointer;
 
+<<<<<<< HEAD
+=======
+    position:relative;
+
+    overflow:hidden;
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
     font-size:14px;
 
     font-weight:700;
 
     color:#fff;
 
+<<<<<<< HEAD
     position:relative;
 
     overflow:hidden;
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
     background:
         linear-gradient(
             135deg,
@@ -542,8 +821,20 @@ color:#fff;
     box-shadow:
         0 12px 28px rgba(255,95,46,.22);
 
+<<<<<<< HEAD
     transition:
         all .28s ease;
+=======
+    transition:all .28s ease;
+}
+
+.export-dropdown__trigger:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 18px 38px rgba(255,95,46,.28);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 }
 
 /* =========================================================
@@ -565,6 +856,7 @@ html.dark .export-dropdown__trigger{
         0 12px 30px rgba(0,255,220,.16);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    HOVER
 ========================================================= */
@@ -582,6 +874,8 @@ html.dark .export-dropdown__trigger{
    DARK HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 html.dark .export-dropdown__trigger:hover{
 
     box-shadow:
@@ -610,6 +904,7 @@ html.dark .export-dropdown__trigger:hover{
 
     visibility:hidden;
 
+<<<<<<< HEAD
     transform:
         translateY(10px);
 
@@ -620,6 +915,15 @@ html.dark .export-dropdown__trigger:hover{
 
     -webkit-backdrop-filter:
         blur(20px);
+=======
+    transform:translateY(10px);
+
+    z-index:999;
+
+    backdrop-filter:blur(20px);
+
+    -webkit-backdrop-filter:blur(20px);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     background:
         rgba(255,255,255,.88);
@@ -630,6 +934,7 @@ html.dark .export-dropdown__trigger:hover{
     box-shadow:
         0 20px 45px rgba(15,23,42,.14);
 
+<<<<<<< HEAD
     transition:
         all .25s ease;
 }
@@ -638,6 +943,11 @@ html.dark .export-dropdown__trigger:hover{
    DARK MENU
 ========================================================= */
 
+=======
+    transition:all .25s ease;
+}
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
 html.dark .export-dropdown__menu{
 
     background:
@@ -650,18 +960,25 @@ html.dark .export-dropdown__menu{
         0 24px 48px rgba(0,0,0,.45);
 }
 
+<<<<<<< HEAD
 /* =========================================================
    SHOW MENU
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .export-dropdown:hover .export-dropdown__menu{
 
     opacity:1;
 
     visibility:visible;
 
+<<<<<<< HEAD
     transform:
         translateY(0);
+=======
+    transform:translateY(0);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 }
 
 /* =========================================================
@@ -694,6 +1011,7 @@ html.dark .export-dropdown__menu{
 
     color:var(--text);
 
+<<<<<<< HEAD
     transition:
         all .22s ease;
 }
@@ -702,6 +1020,11 @@ html.dark .export-dropdown__menu{
    OPTION ICON
 ========================================================= */
 
+=======
+    transition:all .22s ease;
+}
+
+>>>>>>> 3e2d89c (Actualización del proyecto)
 .export-option i{
 
     width:18px;
@@ -709,6 +1032,7 @@ html.dark .export-dropdown__menu{
     text-align:center;
 }
 
+<<<<<<< HEAD
 /* =========================================================
    OPTION HOVER
 ========================================================= */
@@ -717,6 +1041,11 @@ html.dark .export-dropdown__menu{
 
     transform:
         translateX(4px);
+=======
+.export-option:hover{
+
+    transform:translateX(4px);
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
     background:
         rgba(255,95,46,.08);
@@ -724,16 +1053,20 @@ html.dark .export-dropdown__menu{
     color:#ff5f2e;
 }
 
+<<<<<<< HEAD
 /* =========================================================
    DARK OPTION HOVER
 ========================================================= */
 
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 html.dark .export-option:hover{
 
     background:
         rgba(0,255,220,.08);
 
     color:#00ffcc;
+<<<<<<< HEAD
 }
 
 /* =========================================================
@@ -750,3 +1083,6 @@ html.dark .btn-secondary{
     border:var(--border);
 }
 
+=======
+}
+>>>>>>> 3e2d89c (Actualización del proyecto)

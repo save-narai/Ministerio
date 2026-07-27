@@ -3,6 +3,12 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+<<<<<<< HEAD
+=======
+require_once __DIR__ . "/../../helpers/csrf.php";
+
+generarCsrf();
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 if (!tienePermiso('gestionar_roles')) {
 
@@ -260,7 +266,11 @@ require_once __DIR__ . "/../../includes/header.php";
                                             class="btn btn-primary btn-sm"
                                         >
 
+<<<<<<< HEAD
                                             <i class="fa-solid fa-pen"></i>
+=======
+                                           
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                                             Editar
 
@@ -269,6 +279,7 @@ require_once __DIR__ . "/../../includes/header.php";
                                         <?php if($rol["nombre"] !== "ADMIN"): ?>
 
                                             <form
+<<<<<<< HEAD
                                                 action="<?= BASE_URL ?>/controllers/rolController.php"
                                                 method="POST"
                                                 onsubmit="return confirm('¿Deseas eliminar este rol?');"
@@ -293,6 +304,39 @@ require_once __DIR__ . "/../../includes/header.php";
                                                 </button>
 
                                             </form>
+=======
+    action="<?= BASE_URL ?>/controllers/rolController.php"
+    method="POST"
+    onsubmit="return confirm('¿Deseas eliminar este rol?');"
+>
+
+    <input
+        type="hidden"
+        name="id"
+        value="<?= (int)$rol['id'] ?>"
+    >
+
+    <input
+        type="hidden"
+        name="action"
+        value="eliminar_rol"
+    >
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+    >
+
+    <button
+        type="submit"
+        class="btn btn-back btn-sm"
+    >
+        Eliminar
+    </button>
+
+</form>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                                         <?php endif; ?>
 
@@ -314,6 +358,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+<<<<<<< HEAD
     <div class="form-actions">
 
         <a
@@ -328,6 +373,8 @@ require_once __DIR__ . "/../../includes/header.php";
         </a>
 
     </div>
+=======
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 </div>
 

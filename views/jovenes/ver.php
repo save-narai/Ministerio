@@ -277,6 +277,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <div class="ver-wrapper">
 
+<<<<<<< HEAD
     <div class="perfil-card <?= $claseGenero ?>">
 
         <header class="perfil-header">
@@ -391,11 +392,201 @@ require_once __DIR__ . "/../../includes/header.php";
             <p>
 
                 <?= nl2br($observaciones) ?>
+=======
+    <!-- =====================================================
+         PERFIL
+    ====================================================== -->
+
+    <section class="perfil-card <?= $claseGenero ?>">
+
+        <div class="gx-profile">
+
+            <!-- =============================================
+                 CABECERA
+            ============================================== -->
+
+            <header class="gx-profile__header">
+
+                <div class="gx-profile__identity">
+
+                    <h1 class="gx-profile__name">
+
+                        <?= $nombre ?>
+
+                    </h1>
+
+                    <div class="gx-profile__status">
+
+                        <span class="perfil-conexion <?= $claseConexion ?>">
+
+                            <i class="fa-solid fa-circle"></i>
+
+                            <?= e($estadoConexion) ?>
+
+                        </span>
+
+                        <?php
+
+                        $badgeClase = match ($joven["estado_actividad"]) {
+
+                            "ACTIVO"    => "badge-activo",
+
+                            "INACTIVO"  => "badge-inactivo",
+
+                            "ELIMINADO" => "badge-eliminado",
+
+                            default     => "badge-inactivo"
+
+                        };
+
+                        ?>
+
+                        <span class="badge <?= $badgeClase ?>">
+
+                            <?= ucfirst(
+                                strtolower(
+                                    e($joven["estado_actividad"])
+                                )
+                            ) ?>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- =============================================
+                 INFORMACIÓN PERSONAL
+            ============================================== -->
+
+            <section class="gx-profile__section">
+
+                <h2 class="gx-profile__section-title">
+
+                    Información personal
+
+                </h2>
+
+                <div class="gx-profile__rows">
+
+                    <article class="gx-profile__row">
+
+                        <span class="gx-profile__label">
+
+                            Edad
+
+                        </span>
+
+                        <strong class="gx-profile__value">
+
+                            <?= $edad ?>
+
+                            <?= $edadAprox ? "(aprox.)" : "" ?>
+
+                        </strong>
+
+                    </article>
+
+                    <article class="gx-profile__row">
+
+                        <span class="gx-profile__label">
+
+                            Género
+
+                        </span>
+
+                        <strong class="gx-profile__value">
+
+                            <?= $genero ?>
+
+                        </strong>
+
+                    </article>
+
+                    <article class="gx-profile__row">
+
+                        <span class="gx-profile__label">
+
+                            Teléfono
+
+                        </span>
+
+                        <strong class="gx-profile__value">
+
+                            <?= $telefono ?>
+
+                        </strong>
+
+                    </article>
+
+                    <article class="gx-profile__row">
+
+                        <span class="gx-profile__label">
+
+                            Estado espiritual
+
+                        </span>
+
+                        <span class="gx-profile__badge">
+
+                            <?= $estadoEspiritual ?>
+
+                        </span>
+
+                    </article>
+
+                    <article class="gx-profile__row">
+
+                        <span class="gx-profile__label">
+
+                            Fecha de ingreso
+
+                        </span>
+
+                        <strong class="gx-profile__value">
+
+                            <?= $fechaIngreso ?>
+
+                        </strong>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </section>    
+    
+    <!-- =====================================================
+     OBSERVACIONES
+====================================================== -->
+
+<section class="ui-card">
+
+    <div class="ui-card-header">
+
+        <div>
+
+            <h2 class="page-section-title">
+
+                Observaciones
+
+            </h2>
+
+            <p class="page-subtitle">
+
+                Información adicional registrada sobre este joven.
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
             </p>
 
         </div>
 
+<<<<<<< HEAD
         <?php if ($ultimoSeguimiento): ?>
 
             <div class="perfil-obs">
@@ -405,6 +596,45 @@ require_once __DIR__ . "/../../includes/header.php";
                     Estado de consolidación
 
                 </strong>
+=======
+    </div>
+
+    <div class="ui-card-body">
+
+        <?php if (!empty(trim($observaciones)) && $observaciones !== "Sin observaciones"): ?>
+
+            <p class="gx-note">
+
+                <?= nl2br($observaciones) ?>
+
+            </p>
+
+        <?php else: ?>
+
+            <div class="gx-empty gx-empty--small">
+
+                <i class="fa-solid fa-note-sticky"></i>
+
+                <p>
+
+                    No existen observaciones registradas.
+
+                </p>
+
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($ultimoSeguimiento): ?>
+
+            <div class="gx-profile-status">
+
+                <span class="title-sm">
+
+                    Estado actual
+
+                </span>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                 <span class="estado <?= claseEstado($ultimoSeguimiento["estado_proceso"]) ?>">
 
@@ -434,6 +664,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+<<<<<<< HEAD
     <!-- =====================================
          ÚLTIMOS SEGUIMIENTOS
     ====================================== -->
@@ -479,6 +710,64 @@ require_once __DIR__ . "/../../includes/header.php";
                             <div class="timeline-header">
 
                                 <strong>
+=======
+</section>
+
+<!-- =====================================================
+     ÚLTIMOS SEGUIMIENTOS
+====================================================== -->
+
+<section class="ui-card">
+
+    <div class="ui-card-header">
+
+        <div>
+
+            <h2 class="page-section-title">
+
+                Últimos seguimientos
+
+            </h2>
+
+            <p class="page-subtitle">
+
+                Historial reciente de acompañamiento.
+
+            </p>
+
+        </div>
+
+        <a
+            href="<?= BASE_URL ?>/views/seguimientos/index.php?joven_id=<?= $id ?>"
+            class="btn btn-secondary"
+        >
+
+            <i class="fa-solid fa-list"></i>
+
+            Ver todos
+
+        </a>
+
+    </div>
+
+    <?php if ($seguimientos): ?>
+
+        <div class="gx-timeline">
+
+            <?php foreach ($seguimientos as $s): ?>
+
+                <article class="gx-timeline__item">
+
+                    <div class="gx-timeline__dot"></div>
+
+                    <div class="gx-timeline__content">
+
+                        <header class="gx-timeline__top">
+
+                            <div>
+
+                                <h4>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                                     <?= ucfirst(
 
@@ -490,6 +779,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
                                     ) ?>
 
+<<<<<<< HEAD
                                 </strong>
 
                                 <span class="estado <?= claseEstado($s["estado_proceso"]) ?>">
@@ -545,11 +835,39 @@ require_once __DIR__ . "/../../includes/header.php";
                                         $s["observaciones"]
 
                                         ?? "Sin observaciones"
+=======
+                                </h4>
+
+                                <small>
+
+                                    <?= formatearFecha($s["fecha_contacto"]) ?>
+
+                                </small>
+
+                            </div>
+
+                            <span class="estado <?= claseEstado($s["estado_proceso"]) ?>">
+
+                                <?= ucfirst(
+
+                                    strtolower(
+
+                                        str_replace(
+
+                                            "_",
+
+                                            " ",
+
+                                            e($s["estado_proceso"])
+
+                                        )
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                                     )
 
                                 ) ?>
 
+<<<<<<< HEAD
                             </p>
 
                         </div>
@@ -613,6 +931,80 @@ require_once __DIR__ . "/../../includes/header.php";
         <a
             href="<?= BASE_URL ?>/views/seguimientos/crear.php?id=<?= $id ?>"
             class="btn btn-primary btn-seguimiento"
+=======
+                            </span>
+
+                        </header>
+
+                        <div class="gx-timeline__meta">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            <?= e($s["responsable_nombre"] ?? "Sin responsable") ?>
+
+                        </div>
+
+                        <p>
+
+                            <?= nl2br(
+
+                                e(
+
+                                    $s["observaciones"]
+
+                                    ?? "Sin observaciones"
+
+                                )
+
+                            ) ?>
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    <?php else: ?>
+
+        <div class="gx-empty">
+
+            <i class="fa-solid fa-clipboard-list"></i>
+
+            <h3>
+
+                Sin seguimientos registrados
+
+            </h3>
+
+            <p>
+
+                Todavía no existen registros de seguimiento para este joven.
+
+            </p>
+
+        </div>
+
+    <?php endif; ?>
+
+</section>   
+
+
+<!-- =====================================================
+     ACCIONES
+====================================================== -->
+
+<section class="gx-actions">
+
+    <div class="gx-actions__left">
+
+        <a
+            href="<?= BASE_URL ?>/views/seguimientos/crear.php?id=<?= $id ?>"
+            class="btn btn-primary"
+>>>>>>> 3e2d89c (Actualización del proyecto)
         >
 
             <i class="fa-solid fa-user-plus"></i>
@@ -621,18 +1013,43 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </a>
 
+<<<<<<< HEAD
         <a
             href="<?= BASE_URL ?>/views/jovenes/historial.php?id=<?= $id ?>"
             class="btn btn-info"
         >
 
             <i class="fa-solid fa-clock-rotate-left"></i>
+=======
+    </div>
+
+    <div class="gx-actions__right">
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/editar.php?id=<?= $id ?>"
+            class="btn btn-primary"
+        >
+
+            
+
+            Editar
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/historial.php?id=<?= $id ?>"
+            class="btn btn-primary"
+        >
+
+            
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
             Historial
 
         </a>
 
         <a
+<<<<<<< HEAD
             href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $id ?>"
             target="_blank"
             class="btn btn-pdf <?= $claseGenero ?>"
@@ -641,12 +1058,37 @@ require_once __DIR__ . "/../../includes/header.php";
             <i class="fa-solid fa-file-pdf"></i>
 
             PDF
+=======
+    href="<?= BASE_URL ?>/views/jovenes/perfil_pdf.php?id=<?= $id ?>"
+    target="_blank"
+    class="btn btn-pdf <?= $claseGenero ?>"
+>
+
+            
+
+            Descargar PDF
+
+        </a>
+
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/index.php"
+            class="btn btn-primary"
+        >
+
+            
+
+            Volver al listado
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         </a>
 
     </div>
 
+<<<<<<< HEAD
 </div>
+=======
+</section>
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/jovenes/ver.js">

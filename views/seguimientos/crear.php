@@ -128,6 +128,7 @@ require_once __DIR__ . "/../../includes/header.php";
     ====================================== -->
 
     <form
+<<<<<<< HEAD
         action="<?= BASE_URL ?>/controllers/seguimientoController.php"
         method="POST"
         class="form"
@@ -138,6 +139,24 @@ require_once __DIR__ . "/../../includes/header.php";
             name="csrf_token"
             value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
         >
+=======
+    action="<?= BASE_URL ?>/controllers/seguimientoController.php"
+    method="POST"
+    class="form"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+    >
+
+    <input
+        type="hidden"
+        name="action"
+        value="crear_seguimiento"
+    >
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
         <div class="form-grid">
 
@@ -353,7 +372,11 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-back"
             >
 
+<<<<<<< HEAD
                 <i class="fa-solid fa-arrow-left"></i>
+=======
+               
+>>>>>>> 3e2d89c (Actualización del proyecto)
 
                 Volver
 
@@ -365,8 +388,12 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
+<<<<<<< HEAD
                 <i class="fa-solid fa-floppy-disk"></i>
 
+=======
+               
+>>>>>>> 3e2d89c (Actualización del proyecto)
                 Guardar Seguimiento
 
             </button>
