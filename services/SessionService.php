@@ -1,96 +1,127 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
+declare(strict_types=1);
+
+/*
+|--------------------------------------------------------------------------
+| Session Service
+|--------------------------------------------------------------------------
+|
+| Servicio centralizado para la gestión de la sesión del usuario.
+|
+| Ningún Controller, Helper, Middleware o View debe acceder
+| directamente a $_SESSION.
+|
+*/
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+
     session_start();
+
 }
 
-/* =========================================================
-   INICIAR SESIÓN DE USUARIO
-========================================================= */
+/* ==========================================================
+   CLAVE DE SESIÓN
+========================================================== */
+
+const SESSION_USER = 'usuario';
+
+/* ==========================================================
+   INICIAR SESIÓN
+========================================================== */
 
 function iniciarSesionUsuario(array $usuario): void
 {
     session_regenerate_id(true);
 
-    $_SESSION["user_id"] = (int)$usuario["id"];
-    $_SESSION["nombre"]  = $usuario["nombre"];
-    $_SESSION["rol"]     = $usuario["rol_nombre"];
-}
+    $_SESSION[SESSION_USER] = [
 
-/* =========================================================
-   USUARIO AUTENTICADO
-========================================================= */
+        'id' => (int) $usuario['id'],
 
-function usuarioAutenticado(): bool
-{
-    return !empty($_SESSION["user_id"]);
-}
+        'nombre' => (string) $usuario['nombre'],
 
-/* =========================================================
-   USUARIO ACTUAL
-========================================================= */
+        'rol' => (string) $usuario['rol_nombre'],
 
-function usuarioActual(): array
-{
-    return [
-
-        "id" => $_SESSION["user_id"] ?? null,
-
-        "nombre" => $_SESSION["nombre"] ?? null,
-
-        "rol" => $_SESSION["rol"] ?? null
+        'rol_id' => (int) ($usuario['rol_id'] ?? 0)
 
     ];
 }
 
-/* =========================================================
-   OBTENER ID
-========================================================= */
+/* ==========================================================
+   USUARIO AUTENTICADO
+========================================================== */
+
+function usuarioAutenticado(): bool
+{
+    return isset($_SESSION[SESSION_USER]);
+}
+
+/* ==========================================================
+   USUARIO ACTUAL
+========================================================== */
+
+function usuarioActual(): ?array
+{
+    return $_SESSION[SESSION_USER] ?? null;
+}
+
+/* ==========================================================
+   ID
+========================================================== */
 
 function usuarioId(): ?int
 {
-    return $_SESSION["user_id"] ?? null;
+    return usuarioActual()['id'] ?? null;
 }
 
-/* =========================================================
-   OBTENER NOMBRE
-========================================================= */
+/* ==========================================================
+   NOMBRE
+========================================================== */
 
 function usuarioNombre(): ?string
 {
-    return $_SESSION["nombre"] ?? null;
+    return usuarioActual()['nombre'] ?? null;
 }
 
-/* =========================================================
-   OBTENER ROL
-========================================================= */
+/* ==========================================================
+   ROL
+========================================================== */
 
 function usuarioRol(): ?string
 {
-    return $_SESSION["rol"] ?? null;
+    return usuarioActual()['rol'] ?? null;
 }
 
-/* =========================================================
-   ES ADMIN
-========================================================= */
+/* ==========================================================
+   ROL ID
+========================================================== */
+
+function usuarioRolId(): ?int
+{
+    return usuarioActual()['rol_id'] ?? null;
+}
+
+/* ==========================================================
+   ADMIN
+========================================================== */
 
 function esAdmin(): bool
 {
-    return usuarioRol() === "ADMIN";
+    return usuarioRol() === 'ADMIN';
 }
 
-/* =========================================================
+/* ==========================================================
    REGENERAR SESIÓN
-========================================================= */
+========================================================== */
 
 function regenerarSesion(): void
 {
     session_regenerate_id(true);
 }
 
-/* =========================================================
+/* ==========================================================
    CERRAR SESIÓN
-========================================================= */
+========================================================== */
 
 function cerrarSesion(): void
 {
@@ -103,13 +134,21 @@ function cerrarSesion(): void
         $params = session_get_cookie_params();
 
         setcookie(
+
             session_name(),
+
             '',
+
             time() - 42000,
+
             $params['path'],
+
             $params['domain'],
+
             $params['secure'],
+
             $params['httponly']
+
         );
 
     }

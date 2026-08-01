@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
-require_once __DIR__ . "/../../middleware/csrf.php";
+require_once __DIR__ . "/../../helpers/csrf.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 if (!tienePermiso('gestionar_usuarios')) {
@@ -16,17 +16,9 @@ if (!tienePermiso('gestionar_usuarios')) {
 
 $id = (int) ($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare("
-    SELECT
-        id,
-        nombre
-    FROM usuarios
-    WHERE id = ?
-");
+require_once __DIR__ . "/../../services/UsuarioService.php";
 
-$stmt->execute([$id]);
-
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$usuario = obtenerUsuarioPorId($pdo, $id);
 
 if (!$usuario) {
 

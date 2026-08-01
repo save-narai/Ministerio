@@ -2,8 +2,23 @@
 
 declare(strict_types=1);
 
+/*
+|--------------------------------------------------------------------------
+| HELPER FLASH
+|--------------------------------------------------------------------------
+|
+| Gestiona los mensajes flash almacenados en sesión.
+|
+| Responsabilidades:
+| - Guardar mensajes temporales.
+| - Recuperarlos.
+| - Eliminarlos tras su lectura.
+| - Verificar su existencia.
+|
+*/
+
 /* ==========================================================
-   SET FLASH
+   GUARDAR MENSAJE
 ========================================================== */
 
 function setFlash(
@@ -16,27 +31,35 @@ function setFlash(
 }
 
 /* ==========================================================
-   GET FLASH
+   OBTENER MENSAJE
 ========================================================== */
 
-function getFlash(string $tipo): ?string
-{
-    if (empty($_SESSION[$tipo])) {
+function getFlash(
+    string $tipo
+): ?string {
+
+    if (!isset($_SESSION[$tipo])) {
+
         return null;
+
     }
 
-    $mensaje = $_SESSION[$tipo];
+    $mensaje = (string) $_SESSION[$tipo];
 
     unset($_SESSION[$tipo]);
 
     return $mensaje;
+
 }
 
 /* ==========================================================
-   HAS FLASH
+   VERIFICAR MENSAJE
 ========================================================== */
 
-function hasFlash(string $tipo): bool
-{
-    return !empty($_SESSION[$tipo]);
+function hasFlash(
+    string $tipo
+): bool {
+
+    return isset($_SESSION[$tipo]);
+
 }

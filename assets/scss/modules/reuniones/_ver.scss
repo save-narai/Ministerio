@@ -73,6 +73,9 @@ html.dark .progress{
     transition:width .5s ease;
 }
 
+
+
+
 /* =========================================================
    REUNION SEARCH
 ========================================================= */
@@ -163,5 +166,20 @@ html.dark .progress{
 
         grid-template-columns:1fr;
     }
+
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.btn-group{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-top:24px;
 
 }

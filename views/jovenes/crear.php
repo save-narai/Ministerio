@@ -3,10 +3,6 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../helpers/csrf.php";
-<<<<<<< HEAD
-=======
-require_once __DIR__ . "/../../services/actividadService.php";
->>>>>>> 3e2d89c (Actualización del proyecto)
 
 /* =====================================
    CSRF
@@ -79,18 +75,24 @@ require_once __DIR__ . "/../../includes/header.php";
     ====================================== -->
 
     <form
-        id="formJoven"
-        class="form"
-        action="<?= BASE_URL ?>/controllers/jovenController.php"
-        method="POST"
-        autocomplete="off"
+    id="formJoven"
+    class="form"
+    action="<?= BASE_URL ?>/controllers/jovenController.php"
+    method="POST"
+    autocomplete="off"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
     >
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
-        >
+    <input
+        type="hidden"
+        name="action"
+        value="crear_joven"
+    >
 
         <div class="form-grid">
 

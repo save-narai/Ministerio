@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . "/auth.php";
 
 /* ==========================================================
-   PERMITIR SOLO INVITADOS
+   EXIGIR INVITADO
 ========================================================== */
 
 function exigirInvitado(): void
@@ -14,6 +14,5 @@ function exigirInvitado(): void
         return;
     }
 
-    header("Location: " . BASE_URL . "/views/dashboard.php");
-    exit;
+    redirect(BASE_URL . "/views/dashboard.php");
 }

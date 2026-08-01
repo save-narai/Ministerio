@@ -2,14 +2,9 @@
 
 declare(strict_types=1);
 
-require_once "../../middleware/auth.php";
-require_once "../../middleware/permiso.php";
+require_once __DIR__ . '/../../config/bootstrap.php';
 
-require_once "../../config/conexion.php";
-
-require_once "../../middleware/csrf.php";
-
-generarCSRF();
+require_once __DIR__ . '/../../services/UsuarioService.php';
 
 /* ==========================================================
    SEGURIDAD
@@ -17,17 +12,18 @@ generarCSRF();
 
 if (!tienePermiso('gestionar_usuarios')) {
 
-    header("Location: ../dashboard.php");
-
-    exit;
-
+    redirect(
+        BASE_URL . '/views/dashboard.php',
+        'error',
+        'No tienes permisos para acceder.'
+    );
 }
 
 /* ==========================================================
    CONFIGURACIÓN
 ========================================================== */
 
-$pageTitle = "Crear Usuario";
+$pageTitle = 'Crear Usuario';
 
 /* ==========================================================
    ROLES DISPONIBLES

@@ -1,96 +1,40 @@
 <?php
 
-session_start();
+declare(strict_types=1);
 
-require_once "../config/conexion.php";
+require_once __DIR__ . '/controller.php';
 
-require_once "../middleware/auth.php";
-require_once "../middleware/permiso.php";
+require_once __DIR__ . '/../services/usuarioService.php';
 
-require_once "../helpers/redirect.php";
-require_once "../helpers/validaciones.php";
+controllerInit();
 
-try {
+$pdo = controllerPdo();
 
-    if (!tienePermiso('gestionar_usuarios')) {
+controllerRun(
 
-        throw new Exception(
-            "Acceso denegado."
-        );
-    }
+    [
 
-    $id = (int) ($_GET["id"] ?? 0);
+        'toggle_usuario' => function () use ($pdo) {
 
-    if (!validarId($id)) {
+            $mensaje = toggleUsuario(
+                $pdo,
+                (int) ($_GET['id'] ?? 0)
+            );
 
-        throw new Exception(
-            "Usuario inválido."
-        );
-    }
+            return controllerSuccess($mensaje);
 
-    /* =====================================
-       OBTENER USUARIO
-    ===================================== */
+        }
 
-    $stmt = $pdo->prepare("
-        SELECT activo
-        FROM usuarios
-        WHERE id = :id
-        LIMIT 1
-    ");
+    ],
 
-    $stmt->execute([
-        ":id" => $id
-    ]);
+    [
 
-    $usuario = $stmt->fetch(
-        PDO::FETCH_ASSOC
-    );
+        'redirect' => '../views/usuarios/index.php',
 
-    if (!$usuario) {
+        'method' => 'GET',
 
-        throw new Exception(
-            "Usuario no encontrado."
-        );
-    }
+        'csrf' => false
 
-    /* =====================================
-       CAMBIAR ESTADO
-    ===================================== */
+    ]
 
-    $nuevoEstado =
-        $usuario["activo"] ? 0 : 1;
-
-    $stmt = $pdo->prepare("
-        UPDATE usuarios
-
-        SET activo = :estado
-
-        WHERE id = :id
-    ");
-
-    $stmt->execute([
-
-        ":estado" => $nuevoEstado,
-
-        ":id" => $id
-    ]);
-
-    $mensaje = $nuevoEstado
-        ? "Usuario activado correctamente."
-        : "Usuario desactivado correctamente.";
-
-    redirect(
-        "../views/usuarios/index.php",
-        "success",
-        $mensaje
-    );
-
-} catch (Exception $e) {
-
-    redirect(
-        "../views/usuarios/index.php",
-        "error",
-        $e->getMessage()
-    );
-}
+);

@@ -1,18 +1,48 @@
 <?php
 
-function setToast($mensaje) {
-    $_SESSION["error"] = $mensaje;
+declare(strict_types=1);
+
+/*
+|--------------------------------------------------------------------------
+| HELPER TOAST
+|--------------------------------------------------------------------------
+|
+| Gestiona las notificaciones tipo Toast.
+|
+| Responsabilidades:
+| - Almacenar temporalmente un mensaje en sesión.
+| - Imprimir el JavaScript necesario para mostrar el Toast.
+|
+*/
+
+/* ==========================================================
+   GUARDAR TOAST
+========================================================== */
+
+function setToast(string $mensaje): void
+{
+    $_SESSION['error'] = $mensaje;
 }
 
-function showToastJS() {
-    if (isset($_SESSION["error"])) {
-        echo "
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                showToast('" . addslashes($_SESSION["error"]) . "');
-            });
-        </script>
-        ";
-        unset($_SESSION["error"]);
+/* ==========================================================
+   MOSTRAR TOAST
+========================================================== */
+
+function showToastJS(): void
+{
+    if (empty($_SESSION['error'])) {
+        return;
     }
+
+    $mensaje = addslashes((string) $_SESSION['error']);
+
+    unset($_SESSION['error']);
+
+    echo <<<HTML
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    showToast('{$mensaje}');
+});
+</script>
+HTML;
 }

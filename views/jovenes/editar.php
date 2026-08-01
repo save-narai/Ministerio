@@ -131,29 +131,35 @@ require_once __DIR__ . "/../../includes/header.php";
          FORMULARIO
     ====================================== -->
 
-    <form
+   <form
 
-        class="form"
+    class="form"
 
-        action="<?= BASE_URL ?>/controllers/jovenController.php"
+    action="<?= BASE_URL ?>/controllers/jovenController.php"
 
-        method="POST"
+    method="POST"
 
-        autocomplete="off"
+    autocomplete="off"
 
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
     >
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
-        >
+    <input
+        type="hidden"
+        name="action"
+        value="editar_joven"
+    >
 
-        <input
-            type="hidden"
-            name="id"
-            value="<?= (int) $joven['id'] ?>"
-        >
+    <input
+        type="hidden"
+        name="id"
+        value="<?= (int) $joven['id'] ?>"
+    >
 
         <div class="form-grid">
 

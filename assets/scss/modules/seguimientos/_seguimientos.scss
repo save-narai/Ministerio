@@ -78,109 +78,123 @@
    ALERTAS
 ========================================================= */
 
-.seguimientos-alertas {
+.seguimientos-alertas{
 
-    display: flex;
+    display:flex;
 
-    flex-direction: column;
+    flex-direction:column;
 
-    gap: 16px;
+    gap:14px;
 
-    max-height: 550px;
+    max-height:570px;
 
-    overflow-y: auto;
+    overflow-y:auto;
 
-    padding-right: 8px;
+    overflow-x:hidden;
+
+    padding-right:10px;
 }
 
-.seguimientos-alertas::-webkit-scrollbar {
+.seguimientos-alertas::-webkit-scrollbar{
 
-    width: 8px;
+    width:8px;
+
 }
 
-.seguimientos-alertas::-webkit-scrollbar-thumb {
+.seguimientos-alertas::-webkit-scrollbar-track{
 
-    background: var(--primary);
+    background:transparent;
 
-    border-radius: 999px;
 }
 
-.seguimientos-alertas::-webkit-scrollbar-track {
+.seguimientos-alertas::-webkit-scrollbar-thumb{
 
-    background: transparent;
+    background:var(--primary);
+
+    border-radius:999px;
+
+}
+
+.seguimientos-alertas::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary-dark);
+
 }
 
 /* =========================================================
    CARD ALERTA
 ========================================================= */
 
-.seguimiento-alerta-card {
+.seguimiento-alerta-card{
 
-    position: relative;
+    display:flex;
 
-    overflow: hidden;
+    justify-content:space-between;
 
-    display: flex;
+    align-items:center;
 
-    justify-content: space-between;
+    gap:20px;
 
-    align-items: center;
+    min-height:72px;
 
-    gap: 20px;
+    padding:18px 22px;
 
-    padding: 20px;
+    border-radius:18px;
 
-    border-radius: 20px;
+    background:var(--surface);
 
-    background: var(--surface);
+    border:var(--border);
 
-    border: var(--border);
-
-    transition: var(--transition);
+    transition:var(--transition);
 }
 
-.seguimiento-alerta-card:hover {
+.seguimiento-alerta-card:hover{
 
-    transform: translateY(-2px);
+    transform:translateY(-2px);
 
-    border-color: var(--primary);
+    border-color:var(--primary);
 
-    box-shadow: var(--shadow-hover);
+    box-shadow:var(--shadow-hover);
+
 }
 
 /* =========================================================
    CARD - IZQUIERDA
 ========================================================= */
 
-.seguimiento-alerta-left {
+.seguimiento-alerta-left{
 
-    display: flex;
+    flex:1 1 auto;
 
-    align-items: center;
+    width:100%;
 
-    gap: 16px;
+    padding-right:20px;
 }
 
-.seguimiento-alerta-left h4 {
+.seguimiento-alerta-left h4{
 
-    margin: 0;
 
-    font-size: 15px;
 
-    font-weight: 700;
+    font-size:18px;
 
-    color: var(--text);
+    font-weight:700;
+
+    white-space:normal;
+
+    overflow:visible;
+
+    text-overflow:unset;
 }
 
-.seguimiento-alerta-left span {
+.seguimiento-alerta-left span{
 
-    display: block;
+    display:block;
 
-    margin-top: 4px;
+    margin-top:6px;
 
-    font-size: 13px;
+    font-size:14px;
 
-    color: var(--text-soft);
+    color:var(--text-soft);
 }
 
 /* =========================================================
@@ -193,41 +207,13 @@
 
     align-items: center;
 
-    gap: 12px;
+    gap: 8px;
 
     flex-wrap: wrap;
-}
-
-/* =========================================================
-   AVATAR
-========================================================= */
-
-.avatar {
-
-    width: 54px;
-
-    height: 54px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
 
     flex-shrink: 0;
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-    color: #fff;
-
-    background: var(--card-gradient);
-
-    box-shadow: var(--shadow);
 }
+
 
 /* =========================================================
    ESTADOS
@@ -241,13 +227,13 @@
 
     justify-content: center;
 
-    padding: 7px 14px;
+    padding: 5px 12px;
 
     border-radius: 999px;
 
-    font-size: 12px;
+    font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 800;
 
     letter-spacing: .02em;
 }

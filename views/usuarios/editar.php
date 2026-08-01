@@ -2,16 +2,9 @@
 
 declare(strict_types=1);
 
-require_once "../../middleware/auth.php";
-require_once "../../middleware/permiso.php";
+require_once __DIR__ . '/../../config/bootstrap.php';
 
-require_once "../../config/conexion.php";
-
-require_once "../../services/UsuarioService.php";
-
-require_once __DIR__ . "/../../middleware/csrf.php";
-
-generarCSRF();
+require_once __DIR__ . '/../../services/UsuarioService.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -118,10 +111,11 @@ $esAdministradorPrincipal =
         $id
 
     );
+$usuarioId = usuarioId();
 
 $esMiCuenta =
 
-    (int) $_SESSION['user_id'] === $id;
+    $usuarioId === $id;
 
 $puedeGestionar =
 
@@ -129,7 +123,7 @@ $puedeGestionar =
 
         $pdo,
 
-        (int) $_SESSION['user_id'],
+        $usuarioId,
 
         $id
 
@@ -538,7 +532,7 @@ require_once "../../includes/header.php";
 
             <a
 
-                href="index.php"
+                href="<?= BASE_URL ?>/views/usuarios/index.php"
 
                 class="btn btn-back"
 

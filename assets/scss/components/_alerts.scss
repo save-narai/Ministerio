@@ -1,362 +1,153 @@
 /* ==========================================================
-   GX ALERT
+   GX NOTIFICATIONS
+   Sistema Global de Alertas
+========================================================== */
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+:root{
+
+    --gx-alert-radius:22px;
+
+    --gx-alert-padding:18px;
+
+    --gx-alert-gap:16px;
+
+    --gx-alert-width:390px;
+
+    --gx-alert-blur:18px;
+
+    --gx-alert-shadow:
+        0 18px 45px rgba(15,23,42,.18);
+
+    --gx-alert-shadow-hover:
+        0 26px 60px rgba(15,23,42,.28);
+
+    --gx-alert-transition:
+        .35s cubic-bezier(.22,.61,.36,1);
+
+}
+
+/* ==========================================================
+   CONTAINER
+========================================================== */
+
+.gx-alert-container{
+
+    position:fixed;
+
+    top:26px;
+
+    right:26px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+    width:var(--gx-alert-width);
+
+    max-width:calc(100vw - 32px);
+
+    z-index:99999;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   ALERTA
 ========================================================== */
 
 .gx-alert{
 
     position:relative;
 
-    display:flex;
-
-    align-items:flex-start;
-
-    gap:1rem;
-
-    width:100%;
-
-    padding:1rem 1.2rem;
-
-    border-radius:18px;
-
     overflow:hidden;
 
-    border:1px solid transparent;
-
-    backdrop-filter:blur(18px);
-
-    transition:
-
-        transform .30s ease,
-
-        border-color .30s ease,
-
-        background .30s ease,
-
-        box-shadow .30s ease;
-
-}
-
-/* ==========================================================
-   LOGIN ALERT
-========================================================== */
-
-.login-alert{
-
     display:flex;
 
-    align-items:flex-start;
+    align-items:center;
 
-    gap:12px;
+    gap:var(--gx-alert-gap);
 
     width:100%;
 
-    margin-bottom:18px;
+    padding:var(--gx-alert-padding);
 
-    padding:14px 16px;
+    border-radius:var(--gx-alert-radius);
 
-    border-radius:16px;
+    border:1px solid rgba(255,255,255,.18);
 
-    border:1px solid rgba(239,68,68,.28);
+    background:rgba(255,255,255,.82);
+
+    backdrop-filter:blur(var(--gx-alert-blur));
+
+    -webkit-backdrop-filter:blur(var(--gx-alert-blur));
+
+    box-shadow:var(--gx-alert-shadow);
+
+    transition:all var(--gx-alert-transition);
+
+    pointer-events:auto;
+
+    isolation:isolate;
+
+    animation:gxAlertShow .45s cubic-bezier(.22,.61,.36,1);
+
+}
+
+/* ==========================================================
+   EFECTO SUPERIOR
+========================================================== */
+
+.gx-alert::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:5px;
+
+    opacity:.9;
+
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.90),
+        rgba(255,255,255,.25)
+    );
+
+}
+
+/* ==========================================================
+   BRILLO
+========================================================== */
+
+.gx-alert::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
 
     background:
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(239,68,68,.16),
-
-            rgba(185,28,28,.08)
-
+        radial-gradient(
+            circle at top left,
+            rgba(255,255,255,.28),
+            transparent 55%
         );
 
-    color:#fee2e2;
-
-    backdrop-filter:blur(14px);
-
-    box-shadow:
-
-        0 10px 24px rgba(0,0,0,.18);
-}
-
-.login-alert p{
-
-    margin:0;
-
-    color:inherit;
-
-    font-size:.90rem;
-
-    line-height:1.6;
-
-    font-weight:500;
-}
-
-/* ==========================================================
-   ICON
-========================================================== */
-
-.gx-alert-icon{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    width:42px;
-
-    height:42px;
-
-    flex-shrink:0;
-
-    border-radius:12px;
-
-    font-size:1rem;
-
-}
-
-/* ==========================================================
-   CONTENT
-========================================================== */
-
-.gx-alert-content{
-
-    flex:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:.25rem;
-
-}
-
-/* ==========================================================
-   TITLE
-========================================================== */
-
-.gx-alert-title{
-
-    margin:0;
-
-    font-size:.92rem;
-
-    font-weight:700;
-
-    letter-spacing:.02em;
-
-}
-
-/* ==========================================================
-   MESSAGE
-========================================================== */
-
-.gx-alert-message{
-
-    margin:0;
-
-    font-size:.88rem;
-
-    line-height:1.6;
-
-    opacity:.90;
-
-}
-
-/* ==========================================================
-   CLOSE BUTTON
-========================================================== */
-
-.gx-alert-close{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    width:34px;
-
-    height:34px;
-
-    border:none;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    background:transparent;
-
-    color:inherit;
-
-    opacity:.55;
-
-    transition:
-
-        background .30s ease,
-
-        opacity .30s ease,
-
-        transform .30s ease;
-
-}
-
-.gx-alert-close:hover{
-
-    opacity:1;
-
-    background:rgba(255,255,255,.08);
-
-}
-
-.gx-alert-close:active{
-
-    transform:scale(.94);
-
-}
-
-/* ==========================================================
-   SUCCESS
-========================================================== */
-
-.gx-alert-success{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(34,197,94,.16),
-
-            rgba(22,163,74,.08)
-
-        );
-
-    border-color:
-
-        rgba(34,197,94,.25);
-
-    color:#dcfce7;
-
-}
-
-.gx-alert-success .gx-alert-icon{
-
-    background:
-
-        rgba(34,197,94,.18);
-
-    color:#4ade80;
-
-}
-
-/* ==========================================================
-   ERROR
-========================================================== */
-
-.gx-alert-error{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(239,68,68,.16),
-
-            rgba(185,28,28,.08)
-
-        );
-
-    border-color:
-
-        rgba(239,68,68,.25);
-
-    color:#fee2e2;
-
-}
-
-.gx-alert-error .gx-alert-icon{
-
-    background:
-
-        rgba(239,68,68,.18);
-
-    color:#f87171;
-
-}
-
-/* ==========================================================
-   WARNING
-========================================================== */
-
-.gx-alert-warning{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(245,158,11,.16),
-
-            rgba(217,119,6,.08)
-
-        );
-
-    border-color:
-
-        rgba(245,158,11,.25);
-
-    color:#fef3c7;
-
-}
-
-.gx-alert-warning .gx-alert-icon{
-
-    background:
-
-        rgba(245,158,11,.18);
-
-    color:#fbbf24;
-
-}
-
-/* ==========================================================
-   INFO
-========================================================== */
-
-.gx-alert-info{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            rgba(59,130,246,.16),
-
-            rgba(37,99,235,.08)
-
-        );
-
-    border-color:
-
-        rgba(59,130,246,.25);
-
-    color:#dbeafe;
-
-}
-
-.gx-alert-info .gx-alert-icon{
-
-    background:
-
-        rgba(59,130,246,.18);
-
-    color:#60a5fa;
+    pointer-events:none;
 
 }
 
@@ -366,8 +157,939 @@
 
 .gx-alert:hover{
 
+    transform:translateY(-4px) scale(1.015);
+
+    box-shadow:var(--gx-alert-shadow-hover);
+
+}
+
+/* ==========================================================
+   ICONO
+========================================================== */
+
+.gx-alert-icon{
+
+    flex-shrink:0;
+
+    width:58px;
+
+    height:58px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:18px;
+
+    font-size:1.55rem;
+
+    color:#fff;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.gx-alert-icon::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.18;
+
+    background:#fff;
+
+}
+
+/* ==========================================================
+   CONTENIDO
+========================================================== */
+
+.gx-alert-content{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.gx-alert-content h4{
+
+    margin:0 0 6px;
+
+    font-size:1rem;
+
+    font-weight:700;
+
+    letter-spacing:.2px;
+
+    color:var(--text);
+
+}
+
+.gx-alert-content p{
+
+    margin:0;
+
+    font-size:.92rem;
+
+    line-height:1.55;
+
+    color:var(--text-light);
+
+    word-break:break-word;
+
+}                                                                                                                                                                     /* ==========================================================
+   SUCCESS
+========================================================== */
+
+.gx-alert-success{
+
+    border-color:rgba(34,197,94,.18);
+
+    background:linear-gradient(
+        135deg,
+        rgba(240,253,244,.96),
+        rgba(220,252,231,.88)
+    );
+
+}
+
+.gx-alert-success::before{
+
+    background:linear-gradient(
+        90deg,
+        #22c55e,
+        #16a34a,
+        #4ade80
+    );
+
+}
+
+.gx-alert-success .gx-alert-icon{
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    box-shadow:
+        0 12px 28px rgba(34,197,94,.35);
+
+}
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.gx-alert-error{
+
+    border-color:rgba(239,68,68,.18);
+
+    background:linear-gradient(
+        135deg,
+        rgba(254,242,242,.96),
+        rgba(254,226,226,.88)
+    );
+
+}
+
+.gx-alert-error::before{
+
+    background:linear-gradient(
+        90deg,
+        #ef4444,
+        #dc2626,
+        #f87171
+    );
+
+}
+
+.gx-alert-error .gx-alert-icon{
+
+    background:linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
+
+    box-shadow:
+        0 12px 28px rgba(239,68,68,.35);
+
+}
+
+/* ==========================================================
+   WARNING
+========================================================== */
+
+.gx-alert-warning{
+
+    border-color:rgba(245,158,11,.18);
+
+    background:linear-gradient(
+        135deg,
+        rgba(255,251,235,.96),
+        rgba(254,243,199,.90)
+    );
+
+}
+
+.gx-alert-warning::before{
+
+    background:linear-gradient(
+        90deg,
+        #f59e0b,
+        #d97706,
+        #fbbf24
+    );
+
+}
+
+.gx-alert-warning .gx-alert-icon{
+
+    background:linear-gradient(
+        135deg,
+        #f59e0b,
+        #d97706
+    );
+
+    box-shadow:
+        0 12px 28px rgba(245,158,11,.35);
+
+}
+
+/* ==========================================================
+   INFO
+========================================================== */
+
+.gx-alert-info{
+
+    border-color:rgba(59,130,246,.18);
+
+    background:linear-gradient(
+        135deg,
+        rgba(239,246,255,.96),
+        rgba(219,234,254,.90)
+    );
+
+}
+
+.gx-alert-info::before{
+
+    background:linear-gradient(
+        90deg,
+        #3b82f6,
+        #2563eb,
+        #60a5fa
+    );
+
+}
+
+.gx-alert-info .gx-alert-icon{
+
+    background:linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+
+    box-shadow:
+        0 12px 28px rgba(59,130,246,.35);
+
+}
+
+/* ==========================================================
+   BOTÓN CERRAR
+========================================================== */
+
+.gx-alert-close{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    outline:none;
+
+    cursor:pointer;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.55);
+
+    color:#64748b;
+
+    transition:all .30s ease;
+
+}
+
+.gx-alert-close:hover{
+
+    transform:rotate(90deg) scale(1.08);
+
+    background:#fff;
+
+    color:#1e293b;
+
+}
+
+.gx-alert-close i{
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   BARRA DE PROGRESO
+========================================================== */
+
+.gx-alert-progress{
+
+    position:absolute;
+
+    left:0;
+
+    bottom:0;
+
+    width:100%;
+
+    height:4px;
+
+    overflow:hidden;
+
+    border-radius:0 0 22px 22px;
+
+    background:rgba(255,255,255,.28);
+
+}
+
+.gx-alert-progress::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    animation:gxProgress 5s linear forwards;
+
+}
+
+.gx-alert-success .gx-alert-progress::before{
+
+    background:linear-gradient(
+        90deg,
+        #22c55e,
+        #4ade80
+    );
+
+}
+
+.gx-alert-error .gx-alert-progress::before{
+
+    background:linear-gradient(
+        90deg,
+        #ef4444,
+        #f87171
+    );
+
+}
+
+.gx-alert-warning .gx-alert-progress::before{
+
+    background:linear-gradient(
+        90deg,
+        #f59e0b,
+        #fbbf24
+    );
+
+}
+
+.gx-alert-info .gx-alert-progress::before{
+
+    background:linear-gradient(
+        90deg,
+        #3b82f6,
+        #60a5fa
+    );
+
+}                                                                                                                                                                      /* ==========================================================
+   ANIMACIONES
+========================================================== */
+
+@keyframes gxAlertShow{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+            translateX(70px)
+            translateY(-10px)
+            scale(.92);
+
+    }
+
+    60%{
+
+        opacity:1;
+
+        transform:
+            translateX(-6px)
+            scale(1.01);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:
+            translateX(0)
+            scale(1);
+
+    }
+
+}
+
+@keyframes gxAlertHide{
+
+    to{
+
+        opacity:0;
+
+        transform:
+            translateX(90px)
+            scale(.90);
+
+    }
+
+}
+
+@keyframes gxProgress{
+
+    from{
+
+        transform:scaleX(1);
+
+        transform-origin:left;
+
+    }
+
+    to{
+
+        transform:scaleX(0);
+
+        transform-origin:left;
+
+    }
+
+}
+
+@keyframes gxGlow{
+
+    0%,100%{
+
+        filter:brightness(1);
+
+    }
+
+    50%{
+
+        filter:brightness(1.15);
+
+    }
+
+}
+
+/* ==========================================================
+   EFECTOS
+========================================================== */
+
+.gx-alert:hover .gx-alert-icon{
+
+    transform:scale(1.08);
+
+}
+
+.gx-alert-icon{
+
+    transition:all .35s ease;
+
+    animation:gxGlow 3s ease infinite;
+
+}
+
+.gx-alert:hover .gx-alert-progress::before{
+
+    animation-play-state:paused;
+
+}
+
+.gx-alert:hover{
+
+    backdrop-filter:blur(24px);
+
+}
+
+/* ==========================================================
+   OCULTAR
+========================================================== */
+
+.gx-alert.gx-hide{
+
+    animation:gxAlertHide .35s ease forwards;
+
+}
+
+/* ==========================================================
+   MODO OSCURO
+========================================================== */
+
+.dark .gx-alert{
+
+    background:rgba(22,28,36,.88);
+
+    border-color:rgba(255,255,255,.08);
+
+    box-shadow:
+
+        0 20px 45px rgba(0,0,0,.45);
+
+}
+
+.dark .gx-alert-content h4{
+
+    color:#ffffff;
+
+}
+
+.dark .gx-alert-content p{
+
+    color:rgba(255,255,255,.78);
+
+}
+
+.dark .gx-alert-close{
+
+    background:rgba(255,255,255,.08);
+
+    color:#e2e8f0;
+
+}
+
+.dark .gx-alert-close:hover{
+
+    background:rgba(255,255,255,.18);
+
+}
+
+.dark .gx-alert-success{
+
+    background:linear-gradient(
+
+        135deg,
+
+        rgba(20,83,45,.96),
+
+        rgba(22,101,52,.88)
+
+    );
+
+}
+
+.dark .gx-alert-error{
+
+    background:linear-gradient(
+
+        135deg,
+
+        rgba(127,29,29,.96),
+
+        rgba(153,27,27,.88)
+
+    );
+
+}
+
+.dark .gx-alert-warning{
+
+    background:linear-gradient(
+
+        135deg,
+
+        rgba(120,53,15,.96),
+
+        rgba(146,64,14,.88)
+
+    );
+
+}
+
+.dark .gx-alert-info{
+
+    background:linear-gradient(
+
+        135deg,
+
+        rgba(30,64,175,.96),
+
+        rgba(29,78,216,.88)
+
+    );
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:768px){
+
+    .gx-alert-container{
+
+        top:18px;
+
+        right:18px;
+
+        left:18px;
+
+        width:auto;
+
+        max-width:none;
+
+    }
+
+    .gx-alert{
+
+        padding:16px;
+
+    }
+
+    .gx-alert-icon{
+
+        width:52px;
+
+        height:52px;
+
+        font-size:1.35rem;
+
+    }
+
+}
+
+@media (max-width:480px){
+
+    .gx-alert{
+
+        gap:12px;
+
+        padding:14px;
+
+    }
+
+    .gx-alert-content h4{
+
+        font-size:.95rem;
+
+    }
+
+    .gx-alert-content p{
+
+        font-size:.85rem;
+
+    }
+
+    .gx-alert-close{
+
+        width:34px;
+
+        height:34px;
+
+    }
+
+}                                                                                                                                                                                            /* ==========================================================
+   PREMIUM EFFECTS
+========================================================== */
+
+/* Halo de color detrás de la tarjeta */
+
+.gx-alert{
+
+    isolation:isolate;
+
+}
+
+.gx-alert::before{
+
+    z-index:-2;
+
+}
+
+.gx-alert::after{
+
+    z-index:-1;
+
+}
+
+.gx-alert-success{
+
+    --gx-color:#22c55e;
+
+}
+
+.gx-alert-error{
+
+    --gx-color:#ef4444;
+
+}
+
+.gx-alert-warning{
+
+    --gx-color:#f59e0b;
+
+}
+
+.gx-alert-info{
+
+    --gx-color:#3b82f6;
+
+}
+
+.gx-alert{
+
+    box-shadow:
+
+        0 20px 45px rgba(15,23,42,.18),
+
+        0 0 0 1px rgba(255,255,255,.08),
+
+        0 0 35px color-mix(in srgb, var(--gx-color) 18%, transparent);
+
+}
+
+/* ==========================================================
+   REFLEJO SUPERIOR
+========================================================== */
+
+.gx-alert .gx-alert-shine{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    overflow:hidden;
+
+    border-radius:inherit;
+
+}
+
+.gx-alert .gx-alert-shine::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-140%;
+
+    left:-60%;
+
+    width:45%;
+
+    height:320%;
+
+    background:linear-gradient(
+
+        90deg,
+
+        transparent,
+
+        rgba(255,255,255,.45),
+
+        transparent
+
+    );
+
+    transform:rotate(28deg);
+
+    animation:gxShine 7s linear infinite;
+
+}
+
+/* ==========================================================
+   ICONO
+========================================================== */
+
+.gx-alert-icon{
+
+    position:relative;
+
+}
+
+.gx-alert-icon i{
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+.gx-alert-icon::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:8px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.10);
+
+}
+
+/* ==========================================================
+   TEXTO
+========================================================== */
+
+.gx-alert-content h4{
+
+    text-transform:uppercase;
+
+    font-size:.82rem;
+
+    letter-spacing:1.2px;
+
+}
+
+.gx-alert-content p{
+
+    font-size:.94rem;
+
+    font-weight:500;
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.gx-alert{
+
+    cursor:default;
+
+}
+
+.gx-alert:hover{
+
     transform:
 
-        translateY(-2px);
+        translateY(-6px)
+
+        scale(1.02);
+
+}
+
+.gx-alert:hover .gx-alert-icon{
+
+    transform:
+
+        rotate(-8deg)
+
+        scale(1.10);
+
+}
+
+.gx-alert:hover .gx-alert-progress{
+
+    height:6px;
+
+}
+
+/* ==========================================================
+   CERRAR
+========================================================== */
+
+.gx-alert-close{
+
+    backdrop-filter:blur(8px);
+
+}
+
+.gx-alert-close:hover{
+
+    box-shadow:
+
+        0 10px 20px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================================
+   SHINE
+========================================================== */
+
+@keyframes gxShine{
+
+    0%{
+
+        left:-70%;
+
+    }
+
+    100%{
+
+        left:160%;
+
+    }
+
+}
+
+/* ==========================================================
+   REDUCIR MOVIMIENTO
+========================================================== */
+
+@media (prefers-reduced-motion:reduce){
+
+    .gx-alert,
+
+    .gx-alert *{
+
+        animation:none !important;
+
+        transition:none !important;
+
+    }
+
+}
+
+/* ==========================================================
+   IMPRESIÓN
+========================================================== */
+
+@media print{
+
+    .gx-alert-container{
+
+        display:none !important;
+
+    }
 
 }

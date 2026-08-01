@@ -1,23 +1,33 @@
 <?php
+
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../services/reunionService.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
+
     header("Location: ../dashboard.php");
     exit;
+
 }
 
 if (!isset($_GET["id"])) {
+
     die("Reunión no encontrada");
+
 }
 
-$id = (int)$_GET["id"];
+$id = (int) $_GET["id"];
 
 $stmt = $pdo->prepare("
+
     SELECT *
+
     FROM reuniones
+
     WHERE id = ?
+
 ");
 
 $stmt->execute([$id]);
@@ -25,10 +35,24 @@ $stmt->execute([$id]);
 $reunion = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$reunion) {
+
     die("Reunión no encontrada");
+
 }
 
+$esPersonalizado = !in_array(
+    $reunion["tipo"],
+    [
+        "Reunión Jóvenes",
+        "Grupo Conexión",
+        "Discipulado",
+        "Evento Especial"
+    ],
+    true
+);
+
 require_once __DIR__ . "/../../includes/header.php";
+
 ?>
 
 <div class="form-card">
@@ -36,7 +60,9 @@ require_once __DIR__ . "/../../includes/header.php";
     <div class="form-header">
 
         <div class="form-header-icon">
+
             <i class="fa-solid fa-calendar-days"></i>
+
         </div>
 
         <div class="form-header-content">
@@ -46,7 +72,7 @@ require_once __DIR__ . "/../../includes/header.php";
             </h1>
 
             <p class="form-subtitle">
-                Actualiza la información de esta reunión o evento.
+                Actualiza la información de esta reunión.
             </p>
 
         </div>
@@ -58,6 +84,12 @@ require_once __DIR__ . "/../../includes/header.php";
         method="POST"
         action="<?= BASE_URL ?>/controllers/reunionController.php"
     >
+
+        <input
+            type="hidden"
+            name="action"
+            value="actualizar_reunion"
+        >
 
         <input
             type="hidden"
@@ -73,7 +105,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <div class="form-grid">
 
-            <!-- FECHA -->
+                    <!-- FECHA -->
 
             <div class="form-group">
 
@@ -108,53 +140,53 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     <option
                         value="REUNION_JOVENES"
-                        <?= $reunion["tipo"] === "REUNION_JOVENES" ? "selected" : "" ?>
+                        <?= $reunion["tipo"] === "Reunión Jóvenes" ? "selected" : "" ?>
                     >
                         Reunión Jóvenes
                     </option>
 
                     <option
                         value="GRUPO_CONEXION"
-                        <?= $reunion["tipo"] === "GRUPO_CONEXION" ? "selected" : "" ?>
+                        <?= $reunion["tipo"] === "Grupo Conexión" ? "selected" : "" ?>
                     >
                         Grupo Conexión
                     </option>
 
                     <option
                         value="DISCIPULADO"
-                        <?= $reunion["tipo"] === "DISCIPULADO" ? "selected" : "" ?>
+                        <?= $reunion["tipo"] === "Discipulado" ? "selected" : "" ?>
                     >
                         Discipulado
                     </option>
 
                     <option
                         value="EVENTO_ESPECIAL"
-                        <?= $reunion["tipo"] === "EVENTO_ESPECIAL" ? "selected" : "" ?>
+                        <?= $reunion["tipo"] === "Evento Especial" ? "selected" : "" ?>
                     >
                         Evento Especial
                     </option>
 
                     <option
                         value="OTRO"
-                        <?= $reunion["tipo"] === "OTRO" ? "selected" : "" ?>
+                        <?= $esPersonalizado ? "selected" : "" ?>
                     >
-                        Otro
+                        Otro...
                     </option>
 
                 </select>
 
             </div>
 
-            <!-- TIPO PERSONALIZADO -->
-            <!-- Elimina este bloque si aún no existe la columna tipo_personalizado -->
+            <!-- NOMBRE DEL EVENTO -->
 
             <div
                 class="form-group"
                 id="grupoTipoPersonalizado"
+                style="<?= $esPersonalizado ? '' : 'display:none;' ?>"
             >
 
                 <label class="form-label">
-                    Tipo personalizado
+                    Nombre del evento
                 </label>
 
                 <input
@@ -162,30 +194,33 @@ require_once __DIR__ . "/../../includes/header.php";
                     type="text"
                     name="tipo_personalizado"
                     id="tipoPersonalizado"
-                    value="<?= htmlspecialchars($reunion["tipo_personalizado"] ?? "") ?>"
-                    placeholder="Ej: Campamento, Congreso..."
+                    value="<?= $esPersonalizado ? htmlspecialchars($reunion["tipo"]) : "" ?>"
+                    placeholder="Ej: Campamento Juvenil"
                 >
 
             </div>
 
         </div>
 
-        <div class="form-actions">
+                <div class="form-actions">
 
             <a
                 href="index.php"
                 class="btn btn-back"
             >
-                <i class="fa-solid fa-arrow-left"></i>
+
+            
                 Volver
+
             </a>
 
             <button
                 type="submit"
-                name="actualizar"
                 class="btn btn-primary"
             >
+
                 Guardar cambios
+
             </button>
 
         </div>

@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-require_once "../../middleware/auth.php";
-require_once "../../middleware/permiso.php";
 
-require_once "../../config/conexion.php";
 
-require_once "../../services/UsuarioService.php";
-require_once __DIR__ . "/../../middleware/csrf.php";
+require_once __DIR__ . '/../../config/bootstrap.php';
 
-generarCSRF();
+require_once __DIR__ . '/../../services/UsuarioService.php';
+
+
 
 
 
@@ -131,7 +129,8 @@ $subtitulo =
    HEADER
 ========================================================== */
 
-require_once "../../includes/header.php";
+require_once __DIR__ . '/../../includes/header.php';
+
 
 ?>
 
@@ -163,7 +162,7 @@ require_once "../../includes/header.php";
 
             <a
 
-                href="crear.php"
+                href="<?= BASE_URL ?>/views/usuarios/crear.php"
 
                 class="btn btn-primary"
 
@@ -316,33 +315,30 @@ require_once "../../includes/header.php";
             <?php foreach ($usuarios as $u): ?>
 
                 <?php
+$usuarioId = usuarioId();
 
-                $esMiCuenta =
+$esMiCuenta =
+    $usuarioId === (int) $u['id'];
 
-                    (int) $_SESSION['user_id'] === (int) $u['id'];
+$esAdministrador =
+    esAdministradorPrincipal(
+        $pdo,
+        (int) $u['id']
+    );
 
-                $esAdministrador =
+$puedeGestionar =
+    puedeGestionarUsuario(
+        $pdo,
+        $usuarioId,
+        (int) $u['id']
+    );
 
-                    esAdministradorPrincipal(
-                        $pdo,
-                        (int) $u['id']
-                    );
-
-                $puedeGestionar =
-
-                    puedeGestionarUsuario(
-                        $pdo,
-                        (int) $_SESSION['user_id'],
-                        (int) $u['id']
-                    );
-
-                $puedeEliminar =
-
-                    puedeEliminarUsuario(
-                        $pdo,
-                        (int) $_SESSION['user_id'],
-                        (int) $u['id']
-                    );
+$puedeEliminar =
+    puedeEliminarUsuario(
+        $pdo,
+        $usuarioId,
+        (int) $u['id']
+    );
 
                 ?>
 
@@ -461,7 +457,7 @@ require_once "../../includes/header.php";
                                 <!-- EDITAR -->
 
                                 <a
-                                    href="editar.php?id=<?= (int) $u['id'] ?>"
+                                   href="<?= BASE_URL ?>/views/usuarios/editar.php?id=<?= (int)$u['id'] ?>"
                                     class="btn-icon btn-edit"
                                     data-tooltip="Editar usuario"
                                 >
@@ -703,6 +699,13 @@ window.USUARIOS_CONFIG = {
      MÓDULO USUARIOS
 ========================================================== -->
 
+<script
+
+    defer
+
+    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
+
+</script>
 <script
 
     src="<?= BASE_URL ?>/assets/js/modulos/usuarios/index.js"

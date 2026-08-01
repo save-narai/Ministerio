@@ -6,11 +6,11 @@ require_once __DIR__ . '/../../config/bootstrap.php';
 
 require_once __DIR__ . '/../../middleware/guest.php';
 
-require_once __DIR__ . '/../../middleware/csrf.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
+
 
 exigirInvitado();
-
-generarCSRF();
+generarCsrf();
 
 $config = $GLOBALS['config'];
 

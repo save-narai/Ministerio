@@ -3,12 +3,7 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
-<<<<<<< HEAD
-=======
-require_once __DIR__ . "/../../helpers/csrf.php";
-
-generarCsrf();
->>>>>>> 3e2d89c (Actualización del proyecto)
+require_once __DIR__ . "/../../services/rolService.php";
 
 if (!tienePermiso('gestionar_roles')) {
 
@@ -266,117 +261,63 @@ require_once __DIR__ . "/../../includes/header.php";
                                             class="btn btn-primary btn-sm"
                                         >
 
-<<<<<<< HEAD
-                                            <i class="fa-solid fa-pen"></i>
-=======
-                                           
->>>>>>> 3e2d89c (Actualización del proyecto)
+                                                Editar
 
-                                            Editar
+                                            </a>
 
-                                        </a>
+                                            <?php if (!esRolProtegido($pdo, (int)$rol['id'])): ?>
 
-                                        <?php if($rol["nombre"] !== "ADMIN"): ?>
-
-                                            <form
-<<<<<<< HEAD
-                                                action="<?= BASE_URL ?>/controllers/rolController.php"
-                                                method="POST"
-                                                onsubmit="return confirm('¿Deseas eliminar este rol?');"
-                                            >
-
-                                                <input
-                                                    type="hidden"
-                                                    name="id"
-                                                    value="<?= (int)$rol['id'] ?>"
+                                                <form
+                                                    action="<?= BASE_URL ?>/controllers/rolController.php"
+                                                    method="POST"
+                                                    onsubmit="return confirm('¿Deseas eliminar este rol?');"
                                                 >
 
-                                                <button
-                                                    type="submit"
-                                                    name="eliminar_rol"
-                                                    class="btn btn-back btn-sm"
-                                                >
+                                                    <?= csrfField(); ?>
 
-                                                    <i class="fa-solid fa-trash"></i>
+                                                    <input
+                                                        type="hidden"
+                                                        name="action"
+                                                        value="eliminar_rol"
+                                                    >
 
-                                                    Eliminar
+                                                    <input
+                                                        type="hidden"
+                                                        name="id"
+                                                        value="<?= (int)$rol['id'] ?>"
+                                                    >
 
-                                                </button>
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-back btn-sm"
+                                                    >
+                                                        Eliminar
+                                                    </button>
 
-                                            </form>
-=======
-    action="<?= BASE_URL ?>/controllers/rolController.php"
-    method="POST"
-    onsubmit="return confirm('¿Deseas eliminar este rol?');"
->
+                                                </form>
 
-    <input
-        type="hidden"
-        name="id"
-        value="<?= (int)$rol['id'] ?>"
-    >
+                                            <?php endif; ?>
 
-    <input
-        type="hidden"
-        name="action"
-        value="eliminar_rol"
-    >
+                                        </div>
 
-    <input
-        type="hidden"
-        name="csrf_token"
-        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
-    >
+                                    </td>
 
-    <button
-        type="submit"
-        class="btn btn-back btn-sm"
-    >
-        Eliminar
-    </button>
+                                </tr>
 
-</form>
->>>>>>> 3e2d89c (Actualización del proyecto)
+                            <?php endforeach; ?>
 
-                                        <?php endif; ?>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        <?php endforeach; ?>
-
-                    <?php endif; ?>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
+                        <?php endif; ?>
     </div>
-
-<<<<<<< HEAD
-    <div class="form-actions">
-
-        <a
-            href="../dashboard.php"
-            class="btn btn-back"
-        >
-
-            <i class="fa-solid fa-arrow-left"></i>
-
-            Volver
-
-        </a>
-
-    </div>
-=======
->>>>>>> 3e2d89c (Actualización del proyecto)
 
 </div>
+
+<script
+
+    defer
+
+    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
+
+</script>
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/roles/index.js"></script>
 

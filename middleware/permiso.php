@@ -1,11 +1,12 @@
 <?php
 
-require_once __DIR__ . "/../services/SessionService.php";
-require_once __DIR__ . "/../config/conexion.php";
+declare(strict_types=1);
 
-/* =========================================================
+require_once __DIR__ . '/../services/SessionService.php';
+
+/* ==========================================================
    OBTENER PERMISOS DEL USUARIO
-========================================================= */
+========================================================== */
 
 function obtenerPermisosUsuario(PDO $pdo): array
 {
@@ -20,11 +21,10 @@ function obtenerPermisosUsuario(PDO $pdo): array
     }
 
     $stmt = $pdo->prepare("
-        SELECT DISTINCT
-            p.nombre
+        SELECT DISTINCT p.nombre
         FROM permisos p
         INNER JOIN rol_permiso rp
-            ON p.id = rp.permiso_id
+            ON rp.permiso_id = p.id
         INNER JOIN usuarios u
             ON u.rol_id = rp.rol_id
         WHERE
@@ -33,7 +33,7 @@ function obtenerPermisosUsuario(PDO $pdo): array
     ");
 
     $stmt->execute([
-        "usuario" => usuarioId()
+        'usuario' => usuarioId()
     ]);
 
     $permisos = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -41,36 +41,34 @@ function obtenerPermisosUsuario(PDO $pdo): array
     return $permisos;
 }
 
-/* =========================================================
+/* ==========================================================
    VALIDAR PERMISO
-========================================================= */
+========================================================== */
 
 function tienePermiso(string $permiso): bool
 {
-    global $pdo;
-
     if (esAdmin()) {
         return true;
     }
 
     return in_array(
         $permiso,
-        obtenerPermisosUsuario($pdo),
+        obtenerPermisosUsuario(controllerPdo()),
         true
     );
 }
 
-/* =========================================================
+/* ==========================================================
    EXIGIR PERMISO
-========================================================= */
+========================================================== */
 
 function exigirPermiso(string $permiso): void
 {
-    if (!tienePermiso($permiso)) {
-
-        http_response_code(403);
-
-        exit("Acceso denegado.");
-
+    if (tienePermiso($permiso)) {
+        return;
     }
+
+    http_response_code(403);
+
+    redirect(BASE_URL . '/views/errors/403.php');
 }

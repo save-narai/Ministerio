@@ -6,11 +6,12 @@ require_once __DIR__ . '/../../config/bootstrap.php';
 
 require_once __DIR__ . '/../../middleware/guest.php';
 
-require_once __DIR__ . '/../../middleware/csrf.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
+
 
 exigirInvitado();
 
-generarCSRF();
+generarCsrf();
 
 $config = $GLOBALS['config'];
 
@@ -245,15 +246,21 @@ $version = $config['version'] ?? '2.0';
 <div class="login-card-body">
 
 
-        <form
-            id="loginForm"
-            class="login-form"
-            action="<?= BASE_URL ?>/controllers/authController.php"
-            method="POST"
-            autocomplete="on"
-        >
+       <form
+    id="loginForm"
+    class="login-form"
+    action="<?= BASE_URL ?>/controllers/authController.php"
+    method="POST"
+    autocomplete="on"
+>
 
-            <?= csrfField(); ?>
+    <?= csrfField(); ?>
+
+    <input
+        type="hidden"
+        name="action"
+        value="login"
+    >
 
             <!-- ======================================
                  USUARIO

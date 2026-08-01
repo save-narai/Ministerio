@@ -38,6 +38,7 @@
 @import "components/filters";
 @import "components/stats";
 @import "components/attendance-card";
+@import "components/alerts";
 
 /* =========================================================
    MODULES
@@ -59,7 +60,6 @@
 
 @import "modules/reuniones/reuniones";
 @import "modules/reuniones/crear";
-@import "modules/reuniones/editar";
 @import "modules/reuniones/ver";
 @import "modules/reuniones/marcar";
 

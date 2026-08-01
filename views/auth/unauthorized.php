@@ -5,6 +5,7 @@ declare(strict_types=1);
 http_response_code(403);
 
 require_once __DIR__ . '/../../config/bootstrap.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 
 $config = $GLOBALS['config'];
 

@@ -286,76 +286,152 @@ $extraCSS ??= '';
         </div>
 
     </header>
+<!-- ==============================================
+   NOTIFICACIONES
+=============================================== -->
 
-    <!-- ==============================================
-       CONTENEDOR
-    =============================================== -->
+<div class="gx-alert-container">
 
-    <section class="container">
+<?php if ($mensaje = getFlash('success')): ?>
 
-            <?php
+    <div class="gx-alert gx-alert-success">
 
-            if ($mensaje = getFlash('success')):
+        <div class="gx-alert-icon">
 
-            ?>
+            <i class="fa-solid fa-circle-check"></i>
 
-                <div class="alert alert-success">
+        </div>
 
-                    <i class="fa-solid fa-circle-check"></i>
+        <div class="gx-alert-content">
 
-                    <?= htmlspecialchars($mensaje) ?>
+            <h4>Éxito</h4>
 
-                </div>
+            <p><?= htmlspecialchars($mensaje) ?></p>
 
-            <?php endif; ?>
+        </div>
 
-            <?php
+        <button
+            type="button"
+            class="gx-alert-close"
+            aria-label="Cerrar"
+        >
 
-            if ($mensaje = getFlash('error')):
+            <i class="fa-solid fa-xmark"></i>
 
-            ?>
+        </button>
 
-                <div class="alert alert-danger">
+        <div class="gx-alert-progress"></div>
 
-                    <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
 
-                    <?= htmlspecialchars($mensaje) ?>
+<?php endif; ?>
 
-                </div>
 
-            <?php endif; ?>
+<?php if ($mensaje = getFlash('error')): ?>
 
-            <?php
+    <div class="gx-alert gx-alert-danger">
 
-            if ($mensaje = getFlash('warning')):
+        <div class="gx-alert-icon">
 
-            ?>
+            <i class="fa-solid fa-circle-xmark"></i>
 
-                <div class="alert alert-warning">
+        </div>
 
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+        <div class="gx-alert-content">
 
-                    <?= htmlspecialchars($mensaje) ?>
+            <h4>Error</h4>
 
-                </div>
+            <p><?= htmlspecialchars($mensaje) ?></p>
 
-            <?php endif; ?>
+        </div>
 
-            <?php
+        <button
+            type="button"
+            class="gx-alert-close"
+            aria-label="Cerrar"
+        >
 
-            if ($mensaje = getFlash('info')):
+            <i class="fa-solid fa-xmark"></i>
 
-            ?>
+        </button>
 
-                <div class="alert alert-info">
+        <div class="gx-alert-progress"></div>
 
-                    <i class="fa-solid fa-circle-info"></i>
+    </div>
 
-                    <?= htmlspecialchars($mensaje) ?>
+<?php endif; ?>
 
-                </div>
 
-            <?php endif; ?>
+<?php if ($mensaje = getFlash('warning')): ?>
+
+    <div class="gx-alert gx-alert-warning">
+
+        <div class="gx-alert-icon">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+        </div>
+
+        <div class="gx-alert-content">
+
+            <h4>Advertencia</h4>
+
+            <p><?= htmlspecialchars($mensaje) ?></p>
+
+        </div>
+
+        <button
+            type="button"
+            class="gx-alert-close"
+            aria-label="Cerrar"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+        <div class="gx-alert-progress"></div>
+
+    </div>
+
+<?php endif; ?>
+
+
+<?php if ($mensaje = getFlash('info')): ?>
+
+    <div class="gx-alert gx-alert-info">
+
+        <div class="gx-alert-icon">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+        </div>
+
+        <div class="gx-alert-content">
+
+            <h4>Información</h4>
+
+            <p><?= htmlspecialchars($mensaje) ?></p>
+
+        </div>
+
+        <button
+            type="button"
+            class="gx-alert-close"
+            aria-label="Cerrar"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+        <div class="gx-alert-progress"></div>
+
+    </div>
+
+<?php endif; ?>
+
+</div>
 
             <!-- ==============================================
                INICIO DEL CONTENIDO DE LA VISTA

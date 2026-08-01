@@ -81,17 +81,18 @@ require_once __DIR__ . "/../../includes/header.php";
     <!-- =====================================
          FORMULARIO
     ====================================== -->
-
-    <form
+<form
     action="<?= BASE_URL ?>/controllers/rolController.php"
     method="POST"
     class="form"
 >
 
+    <?= csrfField(); ?>
+
     <input
         type="hidden"
-        name="csrf_token"
-        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+        name="action"
+        value="crear_rol"
     >
 
     
@@ -270,17 +271,14 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </a>
 
-            <button
-                type="submit"
-                name="crear_rol"
-                class="btn btn-primary"
-            >
+         <button
+    type="submit"
+    class="btn btn-primary"
+>
 
-            
+    Guardar Rol
 
-                Guardar Rol
-
-            </button>
+</button>
 
         </div>
 

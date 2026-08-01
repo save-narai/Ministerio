@@ -116,252 +116,257 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-    <form
-        method="POST"
-        action="<?= BASE_URL ?>/controllers/asistenciaController.php"
+ <form
+    method="POST"
+    action="<?= BASE_URL ?>/controllers/asistenciaController.php"
+>
+
+    <input
+        type="hidden"
+        name="action"
+        value="guardar_asistencia"
     >
 
-        <input
-            type="hidden"
-            name="reunion_id"
-            value="<?= $reunion_id ?>"
-        >
+    <input
+        type="hidden"
+        name="reunion_id"
+        value="<?= $reunion_id ?>"
+    >
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= $_SESSION['csrf_token'] ?>"
-        >
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= $_SESSION['csrf_token'] ?>"
+    >
 
-        <!-- HERRAMIENTAS -->
+    <!-- HERRAMIENTAS -->
 
-        <div class="marcar-toolbar">
+    <div class="marcar-toolbar">
 
-            <!-- FILTROS -->
+        <!-- FILTROS -->
 
-            <div class="filters-bar marcar-filters">
+        <div class="filters-bar marcar-filters">
 
-                <button
-                    type="button"
-                    class="filter-chip filter-chip--active"
-                    data-filter="todos"
-                >
-                    Todos
-                </button>
+            <button
+                type="button"
+                class="filter-chip filter-chip--active"
+                data-filter="todos"
+            >
+                Todos
+            </button>
 
-                <button
-                    type="button"
-                    class="filter-chip"
-                    data-filter="teen"
-                >
-                    Teenagers
-                </button>
+            <button
+                type="button"
+                class="filter-chip"
+                data-filter="teen"
+            >
+                Teenagers
+            </button>
 
-                <button
-                    type="button"
-                    class="filter-chip"
-                    data-filter="remanente"
-                >
-                    Remanente
-                </button>
-
-            </div>
-
-            <!-- BUSCADOR -->
-
-            <div class="search-bar marcar-search">
-
-                <input
-                    type="text"
-                    id="buscadorJovenes"
-                    class="search-input"
-                    placeholder="Buscar joven..."
-                >
-
-            </div>
-
-            <!-- BOTONES -->
-
-            <div class="btn-group marcar-buttons">
-
-                <button
-                    type="button"
-                    id="checkAll"
-                    class="btn btn-success"
-                >
-                    Marcar todos
-                </button>
-
-                <button
-                    type="button"
-                    id="uncheckAll"
-                    class="btn btn-secondary"
-                >
-                    Limpiar selección
-                </button>
-
-            </div>
+            <button
+                type="button"
+                class="filter-chip"
+                data-filter="remanente"
+            >
+                Remanente
+            </button>
 
         </div>
 
-        <!-- PARTICIPANTES -->
+        <!-- BUSCADOR -->
 
-        <div class="attendance-section">
+        <div class="search-bar marcar-search">
 
-            <div class="attendance-section-header">
-
-                <h3>
-                    Participantes
-                </h3>
-
-                <div class="attendance-head-actions">
-
-                    <span title="Asistencia">
-                        ✓
-                    </span>
-
-                    <span title="Conexión">
-                        Cx
-                    </span>
-
-                    <span title="Discipulado">
-                        Dp
-                    </span>
-
-                    <span title="Primera vez">
-                        1V
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="lista">
-
-                <?php foreach ($jovenes as $j):
-
-                    $grupoEdad =
-                        ($j["edad"] >= 15 && $j["edad"] <= 17)
-                        ? "teen"
-                        : "remanente";
-
-                ?>
-
-                    <div
-                        class="attendance-card"
-                        data-edad="<?= $grupoEdad ?>"
-                    >
-
-                        <div class="info">
-
-                            <strong>
-                                <?= htmlspecialchars($j["nombre_completo"]) ?>
-                            </strong>
-
-                            <small>
-
-                                <?= ucfirst($grupoEdad) ?>
-
-                                ·
-
-                                <?= ucfirst(
-                                    strtolower(
-                                        $j["estado_actividad"]
-                                    )
-                                ) ?>
-
-                            </small>
-
-                        </div>
-
-                        <div class="checks-grid">
-
-                            <label title="Asistencia">
-
-                                <input
-                                    type="checkbox"
-                                    name="asistencia[]"
-                                    value="<?= $j["id"] ?>"
-                                >
-
-                                <span>✓</span>
-
-                            </label>
-
-                            <label title="Conexión">
-
-                                <input
-                                    type="checkbox"
-                                    name="conexion[]"
-                                    value="<?= $j["id"] ?>"
-                                >
-
-                                <span>Cx</span>
-
-                            </label>
-
-                            <label title="Discipulado">
-
-                                <input
-                                    type="checkbox"
-                                    name="discipulado[]"
-                                    value="<?= $j["id"] ?>"
-                                >
-
-                                <span>Dp</span>
-
-                            </label>
-
-                            <label title="Primera vez">
-
-                                <input
-                                    type="checkbox"
-                                    name="primera_vez[]"
-                                    value="<?= $j["id"] ?>"
-                                >
-
-                                <span>1V</span>
-
-                            </label>
-
-                        </div>
-
-                        <input
-                            type="hidden"
-                            name="grupo_edad[<?= $j["id"] ?>]"
-                            value="<?= $grupoEdad ?>"
-                        >
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            </div>
+            <input
+                type="text"
+                id="buscadorJovenes"
+                class="search-input"
+                placeholder="Buscar joven..."
+            >
 
         </div>
 
         <!-- BOTONES -->
 
-        <div class="form-actions">
+        <div class="btn-group marcar-buttons">
 
             <button
-                type="submit"
-                name="guardar_asistencia"
-                class="btn btn-primary"
+                type="button"
+                id="checkAll"
+                class="btn btn-success"
             >
-                Guardar asistencia
+                Marcar todos
             </button>
 
-            <a
-                href="index.php"
+            <button
+                type="button"
+                id="uncheckAll"
                 class="btn btn-secondary"
             >
-                Cancelar
-            </a>
+                Limpiar selección
+            </button>
 
         </div>
 
-    </form>
+    </div>
+
+      <!-- PARTICIPANTES -->
+
+<div class="attendance-section">
+
+    <div class="attendance-section-header">
+
+        <h3>
+            Participantes
+        </h3>
+
+        <div class="attendance-head-actions">
+
+            <span title="Asistencia">
+                ✓
+            </span>
+
+            <span title="Conexión">
+                Cx
+            </span>
+
+            <span title="Discipulado">
+                Dp
+            </span>
+
+            <span title="Primera vez">
+                1V
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="lista">
+
+        <?php foreach ($jovenes as $j):
+
+            $grupoEdad =
+                ($j["edad"] >= 15 && $j["edad"] <= 17)
+                ? "teen"
+                : "remanente";
+
+        ?>
+
+            <div
+                class="attendance-card"
+                data-edad="<?= $grupoEdad ?>"
+            >
+
+                <div class="info">
+
+                    <strong>
+                        <?= htmlspecialchars($j["nombre_completo"]) ?>
+                    </strong>
+
+                    <small>
+
+                        <?= ucfirst($grupoEdad) ?>
+
+                        ·
+
+                        <?= ucfirst(
+                            strtolower(
+                                $j["estado_actividad"]
+                            )
+                        ) ?>
+
+                    </small>
+
+                </div>
+
+                <div class="checks-grid">
+
+                    <label title="Asistencia">
+
+                        <input
+                            type="checkbox"
+                            name="asistencia[]"
+                            value="<?= $j["id"] ?>"
+                        >
+
+                        <span>✓</span>
+
+                    </label>
+
+                    <label title="Conexión">
+
+                        <input
+                            type="checkbox"
+                            name="conexion[]"
+                            value="<?= $j["id"] ?>"
+                        >
+
+                        <span>Cx</span>
+
+                    </label>
+
+                    <label title="Discipulado">
+
+                        <input
+                            type="checkbox"
+                            name="discipulado[]"
+                            value="<?= $j["id"] ?>"
+                        >
+
+                        <span>Dp</span>
+
+                    </label>
+
+                    <label title="Primera vez">
+
+                        <input
+                            type="checkbox"
+                            name="primera_vez[]"
+                            value="<?= $j["id"] ?>"
+                        >
+
+                        <span>1V</span>
+
+                    </label>
+
+                </div>
+
+                <input
+                    type="hidden"
+                    name="grupo_edad[<?= $j["id"] ?>]"
+                    value="<?= $grupoEdad ?>"
+                >
+
+            </div>
+
+        <?php endforeach; ?>
+
+            </div>
+
+        </div>
+
+     <!-- BOTONES -->
+
+<div class="form-actions">
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+        Guardar asistencia
+    </button>
+
+    <a
+        href="index.php"
+        class="btn btn-secondary"
+    >
+        Cancelar
+    </a>
+
+</div>
+
+</form>
 
 </div>
 

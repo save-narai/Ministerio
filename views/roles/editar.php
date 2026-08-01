@@ -117,44 +117,26 @@ require_once __DIR__ . "/../../includes/header.php";
             <h1 class="form-title">
                 Editar Rol
             </h1>
-<<<<<<< HEAD
 
-            <p class="form-subtitle">
-
-                Gestiona los permisos asignados al rol:
-
-               <strong>
-
-    <?= htmlspecialchars(
-
-        ucwords(
-
-            str_replace(
-                '_',
-                ' ',
-                $permiso["nombre"]
-            )
-
-        )
-
-    ) ?>
-
-</strong>
-
-            </p>
-=======
-<p class="form-subtitle">
+           <p class="form-subtitle">
 
     Gestiona los permisos asignados al rol:
 
     <strong>
 
-        <?= htmlspecialchars($rol["nombre"]) ?>
+        <?= htmlspecialchars(
+            ucwords(
+                str_replace(
+                    '_',
+                    ' ',
+                    $rol['nombre']
+                )
+            )
+        ) ?>
 
     </strong>
 
 </p>
->>>>>>> 3e2d89c (Actualización del proyecto)
 
         </div>
 
@@ -176,16 +158,24 @@ require_once __DIR__ . "/../../includes/header.php";
          FORMULARIO
     ====================================== -->
 
-   <form
+<form
     action="<?= BASE_URL ?>/controllers/rolController.php"
     method="POST"
     class="form"
 >
 
+    <?= csrfField(); ?>
+
     <input
         type="hidden"
-        name="csrf_token"
-        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+        name="action"
+        value="guardar_permisos"
+    >
+
+    <input
+        type="hidden"
+        name="id"
+        value="<?= (int) $rol['id'] ?>"
     >
 
 
@@ -199,13 +189,18 @@ require_once __DIR__ . "/../../includes/header.php";
                     Nombre del Rol
                 </label>
 
-                <input
-                    type="text"
-                    class="form-input"
-                    value="<?= htmlspecialchars($rol["nombre"]) ?>"
-                    autocomplete="off"
-                    disabled
-                >
+             <input
+    type="text"
+    class="form-input"
+    value="<?= htmlspecialchars($rol["nombre"]) ?>"
+    disabled
+>
+
+<input
+    type="hidden"
+    name="nombre"
+    value="<?= htmlspecialchars($rol["nombre"]) ?>"
+>
 
             </div>
 
@@ -364,17 +359,12 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </a>
 
-            <button
-                type="submit"
-                name="guardar_permisos"
-                class="btn btn-primary"
-            >
-
-               
-
-                Guardar Cambios
-
-            </button>
+       <button
+    type="submit"
+    class="btn btn-primary"
+>
+    Guardar Cambios
+</button>
 
         </div>
 

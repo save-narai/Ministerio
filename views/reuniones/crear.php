@@ -3,9 +3,9 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../services/reunionService.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
-
     header("Location: ../dashboard.php");
     exit;
 }
@@ -19,9 +19,7 @@ require_once __DIR__ . "/../../includes/header.php";
     <div class="form-header">
 
         <div class="form-header-icon">
-
             <i class="fa-solid fa-calendar-plus"></i>
-
         </div>
 
         <div class="form-header-content">
@@ -47,12 +45,18 @@ require_once __DIR__ . "/../../includes/header.php";
         <input
             type="hidden"
             name="csrf_token"
-            value="<?= $_SESSION['csrf_token'] ?>"
+            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+        >
+
+        <input
+            type="hidden"
+            name="action"
+            value="crear_reunion"
         >
 
         <div class="form-grid">
 
-            <!-- TIPO -->
+                    <!-- TIPO -->
 
             <div class="form-group">
 
@@ -95,26 +99,27 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-            <!-- TIPO PERSONALIZADO -->
+            <!-- NOMBRE DEL EVENTO (SOLO PARA OTRO) -->
 
-           <div
-    class="form-group"
-    id="grupoTipoPersonalizado"
->
+            <div
+                class="form-group"
+                id="grupoTipoPersonalizado"
+                style="display:none;"
+            >
 
-    <label class="form-label">
-        Tipo personalizado
-    </label>
+                <label class="form-label">
+                    Nombre del evento
+                </label>
 
-    <input
-        class="form-input"
-        type="text"
-        name="tipo_personalizado"
-        id="tipoPersonalizado"
-        placeholder="Ej: Navidad, Campamento..."
-    >
+                <input
+                    class="form-input"
+                    type="text"
+                    name="tipo_personalizado"
+                    id="tipoPersonalizado"
+                    placeholder="Ej: Campamento Juvenil"
+                >
 
-</div>
+            </div>
 
             <!-- FECHA -->
 
@@ -135,27 +140,20 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
-        <div class="form-actions">
+                <div class="form-actions">
 
             <a
                 href="index.php"
                 class="btn btn-back"
             >
-
-                <i class="fa-solid fa-arrow-left"></i>
-
                 Volver
-
             </a>
 
             <button
                 type="submit"
-                name="crear_reunion"
                 class="btn btn-primary"
             >
-
                 Guardar reunión
-
             </button>
 
         </div>
@@ -163,8 +161,7 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
-<script
-    src="<?= BASE_URL ?>/assets/js/modulos/reuniones/crear.js">
-</script>
+
+<script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/crear.js"></script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

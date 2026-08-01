@@ -1,25 +1,17 @@
 <?php
 
-require_once __DIR__
-    . "/../middleware/permiso.php";
+declare(strict_types=1);
 
-require_once __DIR__
-    . "/../config/conexion.php";
+require_once __DIR__ . '/controller.php';
 
-require_once __DIR__
-    . "/../services/actividadService.php";
+require_once __DIR__ . '/../services/actividadService.php';
+require_once __DIR__ . '/../services/dashboardService.php';
 
-require_once __DIR__
-    . "/../services/dashboardService.php";
+controllerInit();
 
-/* =========================================================
-   SEGURIDAD
-========================================================= */
+controllerRequirePermission('ver_dashboard');
 
-if (!tienePermiso('ver_dashboard')) {
-
-    die("Acceso denegado.");
-}
+$pdo = controllerPdo();
 
 /* =========================================================
    ACTIVIDAD

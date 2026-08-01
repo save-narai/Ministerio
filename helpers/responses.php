@@ -1,78 +1,40 @@
-
 <?php
 
-/* ======================================================
-   REDIRECCIONAR ERROR
-====================================================== */
+declare(strict_types=1);
 
-function errorResponse($ruta, $mensaje){
+/*
+|--------------------------------------------------------------------------
+| HELPER RESPONSE
+|--------------------------------------------------------------------------
+|
+| Gestiona respuestas HTTP del sistema.
+|
+| Responsabilidades:
+| - Enviar respuestas JSON.
+|
+| Las redirecciones, mensajes flash y la validación CSRF se
+| gestionan mediante sus Helpers específicos.
+|
+*/
 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-
-    $_SESSION["error"] = $mensaje;
-
-    header("Location: $ruta");
-
-    exit;
-}
-
-/* ======================================================
-   REDIRECCIONAR SUCCESS
-====================================================== */
-
-function successResponse($ruta, $mensaje){
-
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-
-    $_SESSION["success"] = $mensaje;
-
-    header("Location: $ruta");
-
-    exit;
-}
-
-/* ======================================================
+/* ==========================================================
    RESPUESTA JSON
-====================================================== */
+========================================================== */
 
-function jsonResponse($data = [], $codigo = 200){
+function jsonResponse(
+    array $data = [],
+    int $codigo = 200
+): void {
 
     http_response_code($codigo);
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=UTF-8');
 
-    echo json_encode($data);
+    echo json_encode(
+        $data,
+        JSON_UNESCAPED_UNICODE
+    );
 
     exit;
-}
 
-/* ======================================================
-   VALIDAR CSRF
-====================================================== */
-
-function validarCsrf(){
-
-    if (
-        !isset($_POST["csrf_token"]) ||
-        !isset($_SESSION["csrf_token"]) ||
-        $_POST["csrf_token"] !== $_SESSION["csrf_token"]
-    ){
-        die("Token CSRF inválido");
-    }
-}
-
-/* ======================================================
-   VALIDAR PERMISO
-====================================================== */
-
-function validarPermiso($permiso){
-
-    if (!tienePermiso($permiso)) {
-
-        die("Acceso denegado.");
-    }
 }

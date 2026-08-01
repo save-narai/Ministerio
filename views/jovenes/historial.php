@@ -6,11 +6,11 @@ require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../helpers/fechas.php";
 
-/* =========================
+/* =====================================================
    PERMISOS
-========================= */
+===================================================== */
 
-if (!tienePermiso('gestionar_jovenes')) {
+if (!tienePermiso("gestionar_jovenes")) {
 
     $_SESSION["error"] = "Acceso denegado";
 
@@ -19,15 +19,15 @@ if (!tienePermiso('gestionar_jovenes')) {
     exit;
 }
 
-/* =========================
+/* =====================================================
    ACTUALIZAR ACTIVIDAD
-========================= */
+===================================================== */
 
 actualizarEstadoActividad($pdo);
 
-/* =========================
-   ID
-========================= */
+/* =====================================================
+   ID DEL JOVEN
+===================================================== */
 
 $joven_id = (int) ($_GET["id"] ?? 0);
 
@@ -40,9 +40,9 @@ if ($joven_id <= 0) {
     exit;
 }
 
-/* =========================
-   JOVEN
-========================= */
+/* =====================================================
+   INFORMACIÓN DEL JOVEN
+===================================================== */
 
 $stmt = $pdo->prepare("
     SELECT
@@ -57,7 +57,7 @@ $stmt = $pdo->prepare("
 ");
 
 $stmt->execute([
-    ':id' => $joven_id
+    ":id" => $joven_id
 ]);
 
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -71,9 +71,9 @@ if (!$joven) {
     exit;
 }
 
-/* =========================
+/* =====================================================
    HISTORIAL
-========================= */
+===================================================== */
 
 $stmt = $pdo->prepare("
     SELECT
@@ -97,14 +97,14 @@ $stmt = $pdo->prepare("
 ");
 
 $stmt->execute([
-    ':id' => $joven_id
+    ":id" => $joven_id
 ]);
 
 $historial = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =========================
+/* =====================================================
    RESUMEN
-========================= */
+===================================================== */
 
 $total = count($historial);
 
@@ -114,7 +114,7 @@ $presentes = count(
 
         $historial,
 
-        fn ($h) => (int) $h["asistio"] === 1
+        fn($h) => (int) $h["asistio"] === 1
 
     )
 
@@ -128,9 +128,9 @@ $porcentaje = $total > 0
 
     : 0;
 
-/* =========================
+/* =====================================================
    CONEXIÓN
-========================= */
+===================================================== */
 
 $con = estadoConexionJoven(
     $pdo,
@@ -141,11 +141,12 @@ $estadoConexion = $con["estado"];
 
 $claseConexion = match ($con["color"]) {
 
-    "danger" => "conexion-danger",
+    "danger"  => "conexion-danger",
 
     "warning" => "conexion-warning",
 
-    default => "conexion-ok"
+    default   => "conexion-ok"
+
 };
 
 $faltasConsecutivas = faltasConsecutivasConexion(
@@ -153,105 +154,70 @@ $faltasConsecutivas = faltasConsecutivasConexion(
     $joven_id
 );
 
-/* =========================
+/* =====================================================
    HEADER
-========================= */
+===================================================== */
 
 require_once __DIR__ . "/../../includes/header.php";
 
 ?>
 
-<div class="page">
-
-    <!-- =====================================================
+<div class="page">   
+    
+    
+    
+<!-- =====================================================
          HEADER
-<<<<<<< HEAD
-    ===================================================== -->
-
-    <div class="page-header">
-=======
     ====================================================== -->
+<div class="page-header gx-history-header">
 
-    <div class="page-header gx-history-header">
->>>>>>> 3e2d89c (Actualización del proyecto)
+    <div class="page-header-left">
 
-        <div class="page-header-left">
+        <h1 class="page-title">
 
-            <h1 class="page-title">
+            Historial de asistencia
 
-                Historial de Asistencia
+        </h1>
 
-            </h1>
+        <div class="page-subtitle">
 
-            <div class="page-subtitle">
-
-                <?= htmlspecialchars($joven["nombre_completo"]) ?>
-
-            </div>
+            <?= htmlspecialchars($joven["nombre_completo"]) ?>
 
         </div>
 
-<<<<<<< HEAD
-        <div class="page-header-right">
+    </div>
 
-            <span class="perfil-conexion <?= $claseConexion ?>">
+    <div class="page-header-right">
 
-                <i class="fa-solid fa-circle"></i>
+        <span class="perfil-conexion <?= $claseConexion ?>">
 
-                <?= $estadoConexion ?>
+            <i class="fa-solid fa-circle"></i>
 
-            </span>
+            <?= $estadoConexion ?>
 
-            <a
-                href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $joven_id ?>"
-                class="btn btn-secondary"
-            >
+        </span>
 
-                <i class="fa-solid fa-arrow-left"></i>
+        <a
+            href="<?= BASE_URL ?>/views/jovenes/index.php"
+            class="btn btn-primary"
+        >
 
-                Volver al perfil
+            <i class="fa-solid fa-users"></i>
 
-            </a>
+            Todos los jóvenes
 
-        </div>
+        </a>
 
-    </div>                                                                                                                                                                     <!-- =====================================================
-       STATS
-    ===================================================== -->
-
-    <div class="gx-stats">
-=======
-       <div class="page-header-right">
-
-    <span class="perfil-conexion <?= $claseConexion ?>">
-
-        <i class="fa-solid fa-circle"></i>
-
-        <?= $estadoConexion ?>
-
-    </span>
-
-    <a
-        href="<?= BASE_URL ?>/views/jovenes/index.php"
-        class="btn btn-primary"
-    >
-
-        <i class="fa-solid fa-users"></i>
-
-        Todos los jóvenes
-
-    </a>
+    </div>
 
 </div>
 
-    </div>
 
     <!-- =====================================================
          ESTADÍSTICAS
     ====================================================== -->
 
     <div class="gx-stats gx-history-stats">
->>>>>>> 3e2d89c (Actualización del proyecto)
 
         <div class="gx-stat-card">
 
@@ -320,13 +286,8 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
     <!-- =====================================================
-<<<<<<< HEAD
-       ALERTA
-    ===================================================== -->
-=======
          ALERTA
     ====================================================== -->
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     <?php if ($faltasConsecutivas >= 3): ?>
 
@@ -369,25 +330,13 @@ require_once __DIR__ . "/../../includes/header.php";
     <?php endif; ?>
 
     <!-- =====================================================
-<<<<<<< HEAD
-       HISTORIAL
-    ===================================================== -->
-=======
          HISTORIAL
     ====================================================== -->
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     <div class="page-section">
 
         <div class="section-header">
 
-<<<<<<< HEAD
-            <h3>
-
-                Historial de reuniones
-
-            </h3>
-=======
             <div>
 
                 <h3 class="page-section-title">
@@ -403,7 +352,6 @@ require_once __DIR__ . "/../../includes/header.php";
                 </span>
 
             </div>
->>>>>>> 3e2d89c (Actualización del proyecto)
 
             <div class="search-wrapper">
 
@@ -417,9 +365,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-        </div>
-
-        <?php if (!empty($historial)): ?>
+        </div>                                                                                                                                                                                                                  <?php if (!empty($historial)): ?>
 
             <div class="table-wrapper">
 
@@ -442,8 +388,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     </thead>
 
-<<<<<<< HEAD
-                    <tbody>                                                                                                                                                <?php foreach ($historial as $h): ?>
+                    <tbody>
+
+                        <?php foreach ($historial as $h): ?>
 
                             <tr>
 
@@ -462,21 +409,13 @@ require_once __DIR__ . "/../../includes/header.php";
                                         "EVENTO_ESPECIAL" => "Evento",
 
                                         default => ucfirst(
-
                                             strtolower(
-
                                                 str_replace(
-
                                                     "_",
-
                                                     " ",
-
                                                     $h["tipo"]
-
                                                 )
-
                                             )
-
                                         )
 
                                     };
@@ -522,105 +461,16 @@ require_once __DIR__ . "/../../includes/header.php";
                             </tr>
 
                         <?php endforeach; ?>
-=======
-                    <tbody>                                                                                                                            <?php foreach ($historial as $h): ?>
-
-    <tr>
-
-        <td>
-
-            <?php
-
-            $tipo = match ($h["tipo"]) {
-
-                "REUNION_JOVENES" => "Reunión",
-
-                "GRUPO_CONEXION" => "Grupo Conexión",
-
-                "DISCIPULADO" => "Discipulado",
-
-                "EVENTO_ESPECIAL" => "Evento",
-
-                default => ucfirst(
-
-                    strtolower(
-
-                        str_replace(
-
-                            "_",
-
-                            " ",
-
-                            $h["tipo"]
-
-                        )
-
-                    )
-
-                )
-
-            };
-
-            ?>
-
-            <?= htmlspecialchars($tipo) ?>
-
-        </td>
-
-        <td>
-
-            <?= formatearFecha($h["fecha"]) ?>
-
-        </td>
-
-        <td>
-
-            <?php if ((int) $h["asistio"] === 1): ?>
-
-                <span class="badge badge-success">
-
-                    <i class="fa-solid fa-check"></i>
-
-                    Presente
-
-                </span>
-
-            <?php else: ?>
-
-                <span class="badge badge-danger">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                    Ausente
-
-                </span>
-
-            <?php endif; ?>
-
-        </td>
-
-    </tr>
-
-<?php endforeach; ?>
->>>>>>> 3e2d89c (Actualización del proyecto)
 
                     </tbody>
 
                 </table>
 
-<<<<<<< HEAD
             </div>
 
         <?php else: ?>
 
-            <div class="empty-state">
-=======
-            </div> <!-- /.table-wrapper -->
-
-        <?php else: ?>
-
             <div class="empty-state gx-history-empty">
->>>>>>> 3e2d89c (Actualización del proyecto)
 
                 <i class="fa-solid fa-calendar-xmark"></i>
 
@@ -640,62 +490,24 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <?php endif; ?>
 
-<<<<<<< HEAD
-    </div>                                                                                                                                                            <!-- =====================================================
-       BOTONES
-    ===================================================== -->
-
-    <div class="btn-group">
-
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $joven_id ?>"
-            class="btn btn-secondary"
-        >
-
-            <i class="fa-solid fa-arrow-left"></i>
-
-            Volver al perfil
-
-        </a>
-
-        <a
-            href="<?= BASE_URL ?>/views/jovenes/index.php"
-            class="btn btn-primary"
-        >
-
-            <i class="fa-solid fa-users"></i>
-
-            Todos los jóvenes
-
-        </a>
-=======
-    </div> 
+    </div>  
     
-    <!-- /.page-section -->  
-     
+    
+    
+    
     <!-- =====================================================
          BOTONES
     ====================================================== -->
 
-
-
-        <div class="gx-actions">
+<div class="gx-actions gx-actions--single">
 
     <a
         href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $joven_id ?>"
-        class="btn btn-secondary"
+        class="btn btn-primary"
     >
-
         
-
         Volver al perfil
-
     </a>
-
-</div>
->>>>>>> 3e2d89c (Actualización del proyecto)
-
-    </div>
 
 </div>
 
@@ -703,16 +515,10 @@ require_once __DIR__ . "/../../includes/header.php";
    JAVASCRIPT
 ===================================================== -->
 
-<script
-    src="<?= BASE_URL ?>/assets/js/modulos/jovenes/historial.js">
-</script>
+<script src="<?= BASE_URL ?>/assets/js/modulos/jovenes/historial.js"></script>
 
 <?php
 
 require_once __DIR__ . "/../../includes/footer.php";
 
-<<<<<<< HEAD
 ?>
-=======
-?>
->>>>>>> 3e2d89c (Actualización del proyecto)

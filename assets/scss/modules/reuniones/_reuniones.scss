@@ -203,6 +203,18 @@
     border:none;
 }
 
+
+.tipo-personalizado{
+
+    background:#FF2C2C !important;
+
+    color:#fff !important;
+
+    border:none !important;
+
+
+}
+
 /* =========================================================
    PORCENTAJES
 ========================================================= */
@@ -286,7 +298,24 @@
 
         min-width:100%;
     }
+
+    
+.tipo-personalizado{
+
+    background:#64748b !important;
+
+    color:#fff !important;
+
+    border:none !important;
+
+    padding:4px 10px;
+
+    border-radius:999px;
+
+    display:inline-block;
+
 }
+
 
 /* =========================================================
    ANIMACION
@@ -307,4 +336,6 @@
 
         transform:translateY(0);
     }
+}
+
 }

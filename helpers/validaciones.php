@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+|--------------------------------------------------------------------------
+| HELPER VALIDATION
+|--------------------------------------------------------------------------
+|
+| Funciones auxiliares para validar y normalizar datos.
+|
+| Responsabilidades:
+| - Sanitizar texto.
+| - Validar nombres, teléfonos y correos.
+| - Validar fechas, edades e identificadores.
+| - Validar tipos de datos comunes.
+|
+*/
+
 /* ======================================================
    LIMPIAR TEXTO
 ====================================================== */
@@ -24,18 +41,9 @@ function validarNombre(string $nombre): array
 {
     $nombre = trim($nombre);
 
-    $nombre = preg_replace(
-        '/\s+/',
-        ' ',
-        $nombre
-    );
+    $nombre = preg_replace('/\s+/', ' ', $nombre);
 
-    if (
-        !preg_match(
-            '/^[\p{L}\'\- ]+$/u',
-            $nombre
-        )
-    ) {
+    if (!preg_match('/^[\p{L}\'\- ]+$/u', $nombre)) {
 
         return [
             false,
@@ -54,7 +62,7 @@ function validarNombre(string $nombre): array
     $nombre = mb_convert_case(
         $nombre,
         MB_CASE_TITLE,
-        "UTF-8"
+        'UTF-8'
     );
 
     return [
@@ -70,20 +78,9 @@ function validarNombre(string $nombre): array
 
 function validarTelefono(string $telefono): array
 {
-    $telefono = preg_replace(
-        '/\D/',
-        '',
-        $telefono
-    );
+    $telefono = preg_replace('/\D/', '', $telefono);
 
-    /* Debe iniciar en 3 y tener 10 dígitos */
-
-    if (
-        !preg_match(
-            '/^3\d{9}$/',
-            $telefono
-        )
-    ) {
+    if (!preg_match('/^3\d{9}$/', $telefono)) {
 
         return [
             false,
@@ -91,14 +88,7 @@ function validarTelefono(string $telefono): array
         ];
     }
 
-    /* Evitar teléfonos repetidos */
-
-    if (
-        preg_match(
-            '/^(\d)\1+$/',
-            $telefono
-        )
-    ) {
+    if (preg_match('/^(\d)\1+$/', $telefono)) {
 
         return [
             false,
@@ -119,15 +109,7 @@ function validarTelefono(string $telefono): array
 
 function validarFecha(?string $fecha): bool
 {
-    if (
-        empty($fecha) ||
-        !strtotime($fecha)
-    ) {
-
-        return false;
-    }
-
-    return true;
+    return !empty($fecha) && strtotime($fecha) !== false;
 }
 
 
@@ -137,18 +119,13 @@ function validarFecha(?string $fecha): bool
 
 function validarGenero(?string $genero): bool
 {
-    $permitidos = ['M', 'F'];
-
-    /* Vacío permitido */
-
     if (empty($genero)) {
-
         return true;
     }
 
     return in_array(
         $genero,
-        $permitidos,
+        ['M', 'F'],
         true
     );
 }
@@ -158,16 +135,11 @@ function validarGenero(?string $genero): bool
    VALIDAR ENTERO POSITIVO
 ====================================================== */
 
-function validarEntero($numero): bool
+function validarEntero(mixed $numero): bool
 {
-    return (
-        filter_var(
-            $numero,
-            FILTER_VALIDATE_INT
-        ) !== false
-        &&
-        $numero >= 0
-    );
+    return
+        filter_var($numero, FILTER_VALIDATE_INT) !== false
+        && $numero >= 0;
 }
 
 
@@ -175,16 +147,11 @@ function validarEntero($numero): bool
    VALIDAR ID
 ====================================================== */
 
-function validarId($id): bool
+function validarId(mixed $id): bool
 {
-    return (
-        filter_var(
-            $id,
-            FILTER_VALIDATE_INT
-        ) !== false
-        &&
-        $id > 0
-    );
+    return
+        filter_var($id, FILTER_VALIDATE_INT) !== false
+        && $id > 0;
 }
 
 
@@ -192,17 +159,13 @@ function validarId($id): bool
    VALIDAR EDAD
 ====================================================== */
 
-function validarEdad($edad): bool
+function validarEdad(mixed $edad): bool
 {
     if (!validarEntero($edad)) {
-
         return false;
     }
 
-    return (
-        $edad >= 0 &&
-        $edad <= 120
-    );
+    return $edad >= 0 && $edad <= 120;
 }
 
 
@@ -212,12 +175,10 @@ function validarEdad($edad): bool
 
 function validarEmail(string $email): bool
 {
-    return (
-        filter_var(
-            $email,
-            FILTER_VALIDATE_EMAIL
-        ) !== false
-    );
+    return filter_var(
+        $email,
+        FILTER_VALIDATE_EMAIL
+    ) !== false;
 }
 
 
@@ -225,13 +186,10 @@ function validarEmail(string $email): bool
    VALIDAR CAMPO REQUERIDO
 ====================================================== */
 
-function requerido($valor): bool
+function requerido(mixed $valor): bool
 {
-    return (
-        isset($valor)
-        &&
-        trim((string)$valor) !== ''
-    );
+    return isset($valor)
+        && trim((string) $valor) !== '';
 }
 
 
@@ -239,7 +197,7 @@ function requerido($valor): bool
    VALIDAR BOOLEANO
 ====================================================== */
 
-function validarBoolean($valor): bool
+function validarBoolean(mixed $valor): bool
 {
     return in_array(
         $valor,
@@ -253,14 +211,12 @@ function validarBoolean($valor): bool
    VALIDAR ARRAY NO VACÍO
 ====================================================== */
 
-function validarArray($array): bool
+function validarArray(mixed $array): bool
 {
-    return (
-        is_array($array)
-        &&
-        count($array) > 0
-    );
+    return is_array($array)
+        && count($array) > 0;
 }
+
 
 /* ======================================================
    VALIDAR VALOR EN ARRAY

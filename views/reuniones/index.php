@@ -1,50 +1,146 @@
 <?php
+
 require_once "../../middleware/auth.php";
 require_once "../../middleware/permiso.php";
 require_once "../../config/conexion.php";
+require_once __DIR__ . "/../../services/reunionService.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
+
     header("Location: ../dashboard.php");
     exit;
+
 }
 
-/* FILTRO */
-$tipos = ["todos", "REUNION_JOVENES", "GRUPO_CONEXION", "EVENTO_ESPECIAL", "DISCIPULADO"];
-$filtro = $_GET["tipo"] ?? "todos";
-if (!in_array($filtro, $tipos)) $filtro = "todos";
+/* =========================================================
+   FILTRO
+========================================================= */
 
-/* QUERY */
+$tipos = [
+
+    "todos",
+
+    "REUNION_JOVENES",
+
+    "GRUPO_CONEXION",
+
+    "EVENTO_ESPECIAL",
+
+    "DISCIPULADO"
+
+];
+
+$filtro = $_GET["tipo"] ?? "todos";
+
+if (!in_array($filtro, $tipos, true)) {
+
+    $filtro = "todos";
+
+}
+
+/* =========================================================
+   VALOR REAL DEL TIPO EN LA BASE DE DATOS
+========================================================= */
+
+$tipoBusqueda = $filtro;
+
+switch ($filtro) {
+
+    case "REUNION_JOVENES":
+        $tipoBusqueda = "Reunión Jóvenes";
+        break;
+
+    case "GRUPO_CONEXION":
+        $tipoBusqueda = "Grupo Conexión";
+        break;
+
+    case "DISCIPULADO":
+        $tipoBusqueda = "Discipulado";
+        break;
+
+    case "EVENTO_ESPECIAL":
+        $tipoBusqueda = "Evento Especial";
+        break;
+
+}
+
+/* =========================================================
+   CONSULTA
+========================================================= */
+
 $query = "
-SELECT r.*,
-COUNT(a.id) as total_registros,
-SUM(a.asistio = 1) as asistieron
-FROM reuniones r
-LEFT JOIN asistencia a ON a.reunion_id = r.id
+
+    SELECT
+
+        r.*,
+
+        COUNT(a.id) AS total_registros,
+
+        COALESCE(SUM(a.asistio = 1), 0) AS asistieron
+
+    FROM reuniones r
+
+    LEFT JOIN asistencia a
+
+        ON a.reunion_id = r.id
+
 ";
 
 if ($filtro !== "todos") {
-    $query .= " WHERE r.tipo = :tipo";
+
+    $query .= "
+
+        WHERE r.tipo = :tipo
+
+    ";
+
 }
 
-$query .= " GROUP BY r.id ORDER BY r.fecha DESC";
+$query .= "
+
+    GROUP BY r.id
+
+    ORDER BY r.fecha DESC
+
+";
 
 $stmt = $pdo->prepare($query);
 
-$filtro !== "todos"
-    ? $stmt->execute(["tipo"=>$filtro])
-    : $stmt->execute();
+if ($filtro !== "todos") {
+
+    $stmt->execute([
+
+        "tipo" => $tipoBusqueda
+
+    ]);
+
+} else {
+
+    $stmt->execute();
+
+}
 
 $reuniones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* CSS */
-$extraCSS = '<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/reuniones/reuniones.css">';
+/* =========================================================
+   CSS
+========================================================= */
+
+$extraCSS =
+
+    '<link rel="stylesheet" href="' .
+
+    BASE_URL .
+
+    '/assets/css/modules/reuniones/reuniones.css">';
+
 require_once "../../includes/header.php";
+
 ?>
 
 <div class="reuniones">
-<div class="page">
 
-    <!-- HEADER -->
+<div class="page">
 
     <div class="page-header">
 
@@ -139,6 +235,9 @@ require_once "../../includes/header.php";
         </div>
 
     </div>
+
+
+    
 <!-- FILTROS -->
 
 <div class="page-section">
@@ -249,16 +348,18 @@ require_once "../../includes/header.php";
                             ? round(($asistieron / $total) * 100, 1)
                             : 0;
 
-                        $tipoBonito = match($r["tipo"]) {
+                       $claseBadge = match ($r["tipo"]) {
 
-                            "REUNION_JOVENES" => "Reunión",
+    "Reunión Jóvenes" => "tipo-reunion_jovenes",
 
-                            "GRUPO_CONEXION" => "Conexión",
+    "Grupo Conexión" => "tipo-grupo_conexion",
 
-                            "EVENTO_ESPECIAL" => "Evento",
+    "Evento Especial" => "tipo-evento_especial",
 
-                            default => $r["tipo"]
-                        };
+    "Discipulado" => "tipo-discipulado",
+
+    default => "tipo-personalizado"
+};
 
                     ?>
 
@@ -270,13 +371,11 @@ require_once "../../includes/header.php";
 
                         <td>
 
-                            <span
-                                class="badge tipo-<?= strtolower($r["tipo"]) ?>"
-                            >
+                          <span class="badge <?= $claseBadge ?>">
 
-                                <?= $tipoBonito ?>
+    <?= htmlspecialchars($r["tipo"]) ?>
 
-                            </span>
+</span>
 
                         </td>
 
@@ -327,35 +426,40 @@ require_once "../../includes/header.php";
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
 
-                                <form
-                                    action="../../controllers/reunionController.php"
-                                    method="POST"
-                                    class="table-action-form"
-                                    onsubmit="return confirm('¿Eliminar reunión?')"
-                                >
+                              <form
+    action="<?= BASE_URL ?>/controllers/reunionController.php"
+    method="POST"
+    class="table-action-form"
+    onsubmit="return confirm('¿Eliminar reunión?')"
+>
 
-                                    <input
-                                        type="hidden"
-                                        name="id"
-                                        value="<?= $r['id'] ?>"
-                                    >
+    <input
+        type="hidden"
+        name="action"
+        value="eliminar_reunion"
+    >
 
-                                    <input
-                                        type="hidden"
-                                        name="csrf_token"
-                                        value="<?= $_SESSION['csrf_token'] ?>"
-                                    >
+    <input
+        type="hidden"
+        name="id"
+        value="<?= $r['id'] ?>"
+    >
 
-                                    <button
-                                        type="submit"
-                                        name="eliminar_reunion"
-                                        class="btn-icon btn-delete"
-                                        data-tooltip="Eliminar"
-                                    >
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= $_SESSION['csrf_token'] ?>"
+    >
 
-                                </form>
+    <button
+        type="submit"
+        class="btn-icon btn-delete"
+        data-tooltip="Eliminar"
+    >
+        <i class="fa-solid fa-trash"></i>
+    </button>
+
+</form>
 
                             </div>
 
@@ -377,6 +481,13 @@ require_once "../../includes/header.php";
 
 </div>
 
+<script
+
+    defer
+
+    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
+
+</script>
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/reuniones/index.js">

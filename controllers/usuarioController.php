@@ -2,91 +2,28 @@
 
 declare(strict_types=1);
 
-session_start();
-
-require_once __DIR__ . '/../config/conexion.php';
-
-require_once __DIR__ . '/../helpers/redirect.php';
-require_once __DIR__ . '/../helpers/validaciones.php';
-
-require_once __DIR__ . '/../middleware/csrf.php';
+require_once __DIR__ . '/controller.php';
 
 require_once __DIR__ . '/../services/UsuarioService.php';
 require_once __DIR__ . '/../services/MailService.php';
 
-/* ==========================================================
-   REQUEST
-========================================================== */
+controllerInit();
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+$pdo = controllerPdo();
 
-    redirect(
+controllerRun(
 
-        '../views/usuarios/index.php',
-
-        'error',
-
-        'Acceso inválido.'
-
-    );
-
-}
-
-/* ==========================================================
-   SEGURIDAD
-========================================================== */
-
-validarCSRF();
-
-/* ==========================================================
-   ACCIÓN
-========================================================== */
-
-$action = strtolower(
-
-    trim(
-
-        (string) (
-
-            $_POST['action'] ?? ''
-
-        )
-
-    )
-
-);
-
-/* ==========================================================
-   RUTA DE RETORNO
-========================================================== */
-
-$redirect = '../views/usuarios/index.php';
-
-/* ==========================================================
-   CONTROLADOR
-========================================================== */
-
-
-/* ==========================================================
-   CONTROLADOR
-========================================================== */
-
-try {
-
-    switch ($action) {
+    [
 
         /* ==================================================
            CREAR USUARIO
         =================================================== */
 
-        case 'crear_usuario':
+        'crear_usuario' => function () use ($pdo) {
 
             $usuario = crearUsuario(
-
                 $pdo,
-
                 $_POST
-
             );
 
             /*
@@ -100,229 +37,126 @@ try {
 
             // enviarCredencialesUsuario($usuario);
 
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Usuario creado correctamente.'
-
             );
 
-            break;
+        },
 
         /* ==================================================
            EDITAR USUARIO
         =================================================== */
 
-        case 'editar_usuario':
+        'editar_usuario' => function () use ($pdo) {
 
             editarUsuario(
-
                 $pdo,
-
                 $_POST
-
             );
 
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Usuario actualizado correctamente.'
-
             );
 
-            break;
+        },
 
         /* ==================================================
            CAMBIAR CONTRASEÑA
         =================================================== */
 
-        case 'cambiar_password':
+        'cambiar_password' => function () use ($pdo) {
 
-            cambiarPassword(
+         $password = $_POST['password'] ?? '';
+$confirmar = $_POST['confirmar_password'] ?? '';
 
-                $pdo,
+if ($password !== $confirmar) {
+    throw new Exception('Las contraseñas no coinciden.');
+}
 
-                (int) (
+cambiarPassword(
+    $pdo,
+    (int) ($_POST['id'] ?? 0),
+    $password
+);
 
-                    $_POST['id'] ?? 0
-
-                ),
-
-                (string) (
-
-                    $_POST['password'] ?? ''
-
-                )
-
-            );
-
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Contraseña actualizada correctamente.'
-
             );
 
-            break;
+        },
 
         /* ==================================================
            ACTIVAR USUARIO
         =================================================== */
 
-        case 'activar_usuario':
+        'activar_usuario' => function () use ($pdo) {
 
-            activarUsuario(
+          activarUsuario(
 
-                $pdo,
+    $pdo,
 
-                (int) $_SESSION['usuario']['id'],
+    usuarioId(),
 
-                (int) (
+    (int) ($_POST['id'] ?? 0)
 
-                    $_POST['id'] ?? 0
+);
 
-                )
-
-            );
-
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Usuario activado correctamente.'
-
             );
 
-            break;
+        },
 
         /* ==================================================
            DESACTIVAR USUARIO
         =================================================== */
 
-        case 'desactivar_usuario':
+        'desactivar_usuario' => function () use ($pdo) {
 
-            desactivarUsuario(
+         desactivarUsuario(
 
-                $pdo,
+    $pdo,
 
-                (int) $_SESSION['usuario']['id'],
+    usuarioId(),
 
-                (int) (
+    (int) ($_POST['id'] ?? 0)
 
-                    $_POST['id'] ?? 0
+);
 
-                )
-
-            );
-
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Usuario desactivado correctamente.'
-
             );
 
-            break;
+        },
 
         /* ==================================================
            ELIMINAR USUARIO
         =================================================== */
 
-        case 'eliminar_usuario':
+        'eliminar_usuario' => function () use ($pdo) {
 
-            eliminarUsuario(
+         eliminarUsuario(
 
-                $pdo,
+    $pdo,
 
-                (int) $_SESSION['usuario']['id'],
+    usuarioId(),
 
-                (int) (
+    (int) ($_POST['id'] ?? 0)
 
-                    $_POST['id'] ?? 0
+);
 
-                )
-
-            );
-
-            redirect(
-
-                $redirect,
-
-                'success',
-
+            return controllerSuccess(
                 'Usuario eliminado correctamente.'
-
             );
 
-            break;
+        }
 
-        /* ==================================================
-           DEFAULT
-        =================================================== */
+    ],
 
-        default:
+    [
 
-            throw new Exception(
+        'redirect' => '../views/usuarios/index.php'
 
-                'Acción no válida.'
+    ]
 
-            );
-
-    }
-
-} catch (PDOException $e) {
-
-    /*
-    |----------------------------------------------------------
-    | Registrar el error para depuración.
-    |----------------------------------------------------------
-    */
-
-    error_log(
-
-        $e->getMessage()
-
-    );
-
-    redirect(
-
-        $redirect,
-
-        'error',
-
-        'Ocurrió un error interno del sistema.'
-
-    );
-
-} catch (Exception $e) {
-
-    redirect(
-
-        $redirect,
-
-        'error',
-
-        $e->getMessage()
-
-    );
-
-}
-
-
-/* ==========================================================
-   FIN DEL CONTROLADOR
-========================================================== */
+);

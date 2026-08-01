@@ -476,7 +476,7 @@ require_once __DIR__ . "/../../includes/header.php";
             class="btn btn-secondary"
         >
 
-            <i class="fa-solid fa-arrow-left"></i>
+      
 
             Volver
 

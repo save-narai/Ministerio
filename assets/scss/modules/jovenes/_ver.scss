@@ -1,10 +1,4 @@
 /* =====================================================
-<<<<<<< HEAD
-   CARD SEGUIMIENTOS
-===================================================== */
-
-.card{
-=======
    WRAPPER
 ===================================================== */
 
@@ -27,7 +21,7 @@
 
 .gx-summary{
 
-    margin-top:-8px;
+    margin-bottom:6px;
 }
 
 /* =====================================================
@@ -53,6 +47,12 @@
     position:relative;
 
     overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
 
     padding:24px;
 
@@ -102,6 +102,8 @@
 
     z-index:2;
 
+    margin-bottom:10px;
+
     font-size:38px;
 
     font-weight:800;
@@ -110,7 +112,7 @@
 
     color:var(--primary);
 
-    margin-bottom:10px;
+    transition:.25s ease;
 }
 
 /* =====================================================
@@ -141,14 +143,15 @@
 .gx-stat:hover .gx-stat__number{
 
     transform:scale(1.04);
+}
 
-    transition:.25s ease;
-}                                                                                                                                                         /* =====================================================
+/* =====================================================
    GX CARD
 ===================================================== */
 
 .gx-card{
->>>>>>> 3e2d89c (Actualización del proyecto)
+
+    overflow:hidden;
 
     background:var(--container);
 
@@ -156,274 +159,6 @@
 
     border-radius:24px;
 
-<<<<<<< HEAD
-    padding:24px;
-
-    box-shadow:var(--shadow);
-
-    margin-bottom:24px;
-}
-
-/* =====================================================
-   SECTION HEADER
-===================================================== */
-
-.section-header{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:16px;
-
-    margin-bottom:20px;
-}
-
-.section-header h3{
-
-    margin:0;
-
-    font-size:22px;
-
-    color:var(--text);
-}
-
-/* =====================================================
-   WRAPPER
-===================================================== */
-.ver-wrapper{
-
-    max-width: 1000px !important;
-
-    width:100%;
-
-    margin:0 auto;
-
-    
-}
-
-/* =========================================================
-   BTN MINI
-========================================================= */
-
-
-.btn-mini{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    padding:10px 16px;
-
-    border-radius:12px;
-
-    background:var(--card-gradient);
-
-    color:#fff;
-
-    text-decoration:none;
-
-    font-weight:700;
-}
-
-.btn-mini:hover{
-
-    transform:translateY(-2px);
-
-    background:rgba(255,95,46,.14);
-}
-
-/* =====================================================
-   EMPTY STATE
-===================================================== */
-
-.empty-state{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:12px;
-
-    padding:50px 20px;
-
-    text-align:center;
-
-    border-radius:20px;
-
-    background:var(--container);
-
-    border:var(--border);
-}
-
-.empty-state i{
-
-    font-size:38px;
-
-    color:var(--primary);
-}
-
-.empty-state h4{
-
-    margin:0;
-
-    font-size:18px;
-
-    color:var(--text);
-}
-
-.empty-state p{
-
-    margin:0;
-
-    color:var(--text-soft);
-
-    max-width:320px;
-}
-
-/* =====================================================
-   TIMELINE
-===================================================== */
-
-.timeline{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:20px;
-}
-
-.timeline-item{
-
-    display:flex;
-
-    gap:16px;
-}
-
-.timeline-dot{
-
-    width:12px;
-
-    height:12px;
-
-    border-radius:50%;
-
-    background:var(--primary);
-
-    margin-top:8px;
-
-    flex-shrink:0;
-}
-
-.timeline-content{
-
-    flex:1;
-
-    padding:18px;
-
-    border-radius:18px;
-
-    background:var(--container);
-
-    border:var(--border);
-
-    transition:var(--transition);
-}
-
-.timeline-content:hover{
-
-    box-shadow:var(--shadow);
-}
-
-.timeline-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:10px;
-
-    margin-bottom:10px;
-}
-
-.timeline-meta{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:16px;
-
-    margin-bottom:10px;
-
-    color:var(--text-soft);
-
-    font-size:13px;
-}
-
-.timeline-content p{
-
-    margin:0;
-
-    line-height:1.6;
-
-    color:var(--text);
-}
-
-/* =====================================================
-   BOTONES INFERIORES
-===================================================== */
-
-.btn-group{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:12px;
-
-    margin-top:24px;
-}
-
-.btn-group .btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-}
-
-/* =====================================================
-   SEGUIMIENTO
-===================================================== */
-
-.btn-seguimiento{
-
-    background:var(--card-gradient);
-
-    color:#fff;
-
-    border:none;
-
-    box-shadow:var(--shadow);
-}
-
-.btn-seguimiento:hover{
-=======
     padding:28px;
 
     box-shadow:var(--shadow);
@@ -432,7 +167,6 @@
 }
 
 .gx-card:hover{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     transform:translateY(-2px);
 
@@ -440,43 +174,6 @@
 }
 
 /* =====================================================
-<<<<<<< HEAD
-   PDF HOMBRE
-===================================================== */
-
-.btn-pdf.perfil-chico{
-
-    background:
-    linear-gradient(
-        90deg,
-        #ff1b1b,
-        #ff7a00,
-        #ffd500
-    ) !important;
-
-    color:#fff !important;
-
-    border:none;
-}
-
-/* =====================================================
-   PDF MUJER
-===================================================== */
-
-.btn-pdf.perfil-chica{
-
-    background:
-    linear-gradient(
-        90deg,
-      #9333ea,
-        #c026d3,
-        #ec4899
-    ) !important;
-
-    color:#fff !important;
-
-    border:none;
-=======
    VARIANTE SUAVE
 ===================================================== */
 
@@ -489,7 +186,7 @@
             transparent
         ),
         var(--container);
-}
+} 
 
 /* =====================================================
    HEADER
@@ -524,9 +221,9 @@
 
     color:var(--text-soft);
 
-    line-height:1.6;
-
     font-size:14px;
+
+    line-height:1.6;
 }
 
 /* =====================================================
@@ -539,9 +236,47 @@
 
     justify-content:space-between;
 
-    align-items:flex-start;
+    align-items:center;
 
     gap:20px;
+}
+
+/* =====================================================
+   HEADER SEGUIMIENTOS
+===================================================== */
+
+.gx-card__header--seguimientos{
+
+    display:grid;
+
+    grid-template-columns:1fr auto;
+
+    align-items:start;
+
+    gap:20px;
+
+    margin-bottom:22px;
+
+}
+
+.gx-card__header--seguimientos > div{
+
+    min-width:0;
+
+}
+
+.gx-card__header--seguimientos .btn{
+
+    width:auto !important;
+
+    justify-self:end;
+
+    align-self:start;
+
+    white-space:nowrap;
+
+    margin:0;
+
 }
 
 /* =====================================================
@@ -565,11 +300,11 @@
 
     margin:0;
 
-    line-height:1.8;
-
     color:var(--text);
 
     font-size:15px;
+
+    line-height:1.8;
 }
 
 .gx-note--empty{
@@ -584,6 +319,8 @@
 ===================================================== */
 
 .gx-timeline{
+
+    position:relative;
 
     display:flex;
 
@@ -621,11 +358,10 @@
 
     width:2px;
 
-    background:rgba(150,150,150,.18);
+    background:rgba(255,95,46,.14);
 }
 
-.gx-timeline__item:last-child
-.gx-timeline__line{
+.gx-timeline__item:last-child .gx-timeline__line{
 
     display:none;
 }
@@ -658,6 +394,10 @@
 
 .gx-timeline__content{
 
+    position:relative;
+
+    overflow:hidden;
+
     padding:22px;
 
     border-radius:18px;
@@ -674,7 +414,9 @@
     transform:translateY(-2px);
 
     box-shadow:var(--shadow);
-}                                                                                                                                                                                   /* =====================================================
+}
+
+/* =====================================================
    TIMELINE CABECERA
 ===================================================== */
 
@@ -723,6 +465,8 @@
 
     align-items:center;
 
+    flex-wrap:wrap;
+
     gap:10px;
 
     margin-bottom:14px;
@@ -760,11 +504,13 @@
 
     justify-content:center;
 
+    min-height:260px;
+
+    padding:70px 30px;
+
     text-align:center;
 
     gap:18px;
-
-    padding:70px 30px;
 }
 
 .gx-empty i{
@@ -794,7 +540,7 @@
     color:var(--text-soft);
 
     line-height:1.7;
-}
+} 
 
 /* =====================================================
    ACCIONES
@@ -808,7 +554,7 @@
 
     justify-content:space-between;
 
-    align-items:center;
+    align-items:flex-end;
 
     gap:18px;
 
@@ -821,6 +567,8 @@
 
     align-items:center;
 
+    flex-wrap:wrap;
+
     gap:12px;
 }
 
@@ -829,6 +577,8 @@
     display:flex;
 
     flex-wrap:wrap;
+
+    justify-content:flex-end;
 
     gap:12px;
 }
@@ -846,11 +596,13 @@
 
     min-height:46px;
 
-    border-radius:14px;
-
     padding:0 22px;
 
+    border-radius:14px;
+
     font-weight:600;
+
+    white-space:nowrap;
 
     transition:.25s ease;
 }
@@ -861,54 +613,26 @@
         0 10px 24px rgba(255,95,46,.25);
 }
 
-.gx-actions .btn-primary:hover{
-
-    transform:translateY(-2px);
-}
+.gx-actions .btn-primary:hover,
 
 .gx-actions .btn-outline:hover{
 
     transform:translateY(-2px);
->>>>>>> 3e2d89c (Actualización del proyecto)
 }
 
 /* =====================================================
    RESPONSIVE
 ===================================================== */
 
-<<<<<<< HEAD
-@media(max-width:768px){
-
-    .section-header{
-=======
 @media (max-width:992px){
 
     .gx-card__header--between{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
         flex-direction:column;
 
         align-items:flex-start;
     }
 
-<<<<<<< HEAD
-    .timeline-header{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-    }
-
-    .btn-group{
-
-        flex-direction:column;
-    }
-
-    .btn-group .btn{
-
-        width:100%;
-    }
-=======
     .gx-actions{
 
         flex-direction:column;
@@ -944,6 +668,11 @@
         flex-direction:column;
 
         align-items:flex-start;
+    }
+
+    .gx-actions__primary{
+
+        flex-direction:column;
     }
 
     .gx-actions__secondary{
@@ -982,5 +711,4 @@
         font-size:32px;
     }
 
->>>>>>> 3e2d89c (Actualización del proyecto)
 }

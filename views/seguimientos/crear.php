@@ -2,8 +2,11 @@
 
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
-require_once __DIR__ . "/../../middleware/actividad.php";
+
 require_once __DIR__ . "/../../config/conexion.php";
+
+require_once __DIR__ . "/../../services/actividadService.php";
+
 require_once __DIR__ . "/../../helpers/csrf.php";
 
 /* =========================
@@ -26,7 +29,7 @@ if (!tienePermiso('gestionar_seguimientos')) {
    ACTIVIDAD
 ========================= */
 
-actualizarEstadoActividad();
+actualizarEstadoActividad($pdo);
 
 /* =========================
    JOVEN PRESELECCIONADO
@@ -127,19 +130,7 @@ require_once __DIR__ . "/../../includes/header.php";
          FORMULARIO
     ====================================== -->
 
-    <form
-<<<<<<< HEAD
-        action="<?= BASE_URL ?>/controllers/seguimientoController.php"
-        method="POST"
-        class="form"
-    >
-
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
-        >
-=======
+<form
     action="<?= BASE_URL ?>/controllers/seguimientoController.php"
     method="POST"
     class="form"
@@ -156,9 +147,8 @@ require_once __DIR__ . "/../../includes/header.php";
         name="action"
         value="crear_seguimiento"
     >
->>>>>>> 3e2d89c (Actualización del proyecto)
 
-        <div class="form-grid">
+    <div class="form-grid">
 
             <!-- JOVEN -->
 
@@ -372,11 +362,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-back"
             >
 
-<<<<<<< HEAD
-                <i class="fa-solid fa-arrow-left"></i>
-=======
-               
->>>>>>> 3e2d89c (Actualización del proyecto)
+                
 
                 Volver
 
@@ -388,12 +374,8 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
-<<<<<<< HEAD
-                <i class="fa-solid fa-floppy-disk"></i>
+           
 
-=======
-               
->>>>>>> 3e2d89c (Actualización del proyecto)
                 Guardar Seguimiento
 
             </button>

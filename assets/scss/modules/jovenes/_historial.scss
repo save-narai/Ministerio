@@ -12,8 +12,6 @@
 }
 
 /* =====================================================
-<<<<<<< HEAD
-=======
    HEADER
 ===================================================== */
 
@@ -91,7 +89,6 @@
 }
 
 /* =====================================================
->>>>>>> 3e2d89c (Actualización del proyecto)
    ALERTA
 ===================================================== */
 
@@ -152,46 +149,13 @@
             rgba(234,88,12,.08)
         );
 
-    border-color:
-        rgba(245,158,11,.35);
+    border-color:rgba(245,158,11,.35);
 }
 
 .alert-warning i{
 
     color:#f59e0b;
-<<<<<<< HEAD
 }
-
-/* =====================================================
-   SECTION HEADER
-===================================================== */
-
-.section-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:20px;
-
-    margin-bottom:20px;
-}
-
-.section-header h3{
-
-    margin:0;
-
-    font-size:20px;
-
-    font-weight:700;
-
-    color:var(--text);
-}
-=======
-}   
->>>>>>> 3e2d89c (Actualización del proyecto)
 
 /* =====================================================
    TABLE
@@ -227,16 +191,14 @@
 
 .badge-success{
 
-    background:
-        rgba(34,197,94,.16);
+    background:rgba(34,197,94,.16);
 
     color:#16a34a;
 }
 
 .badge-danger{
 
-    background:
-        rgba(239,68,68,.16);
+    background:rgba(239,68,68,.16);
 
     color:#dc2626;
 }
@@ -245,32 +207,14 @@
    EMPTY STATE
 ===================================================== */
 
-<<<<<<< HEAD
-.empty-state{
-=======
 .gx-history-empty{
 
     min-height:340px;
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     display:flex;
 
     flex-direction:column;
 
-<<<<<<< HEAD
-    align-items:center;
-
-    justify-content:center;
-
-    text-align:center;
-
-    gap:14px;
-
-    padding:60px 20px;
-}
-
-.empty-state i{
-=======
     justify-content:center;
 
     align-items:center;
@@ -281,38 +225,19 @@
 }
 
 .gx-history-empty i{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     font-size:56px;
 
     color:var(--text-light);
 }
 
-<<<<<<< HEAD
-.empty-state h3{
-=======
 .gx-history-empty h3{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     margin:0;
 
     color:var(--text);
 }
 
-<<<<<<< HEAD
-.empty-state p{
-
-    margin:0;
-
-    color:var(--text-soft);
-}
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
-.btn-group{
-=======
 .gx-history-empty p{
 
     margin:0;
@@ -331,86 +256,45 @@
 .gx-history-stats{
 
     margin-bottom:8px;
-}   
-
+}
 
 /* =====================================================
    ACCIONES
 ===================================================== */
 
 .gx-actions--history{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
     display:flex;
 
     justify-content:flex-end;
 
-<<<<<<< HEAD
-    gap:14px;
-
-=======
     align-items:center;
 
     gap:14px;
 
     margin-top:28px;
 
->>>>>>> 3e2d89c (Actualización del proyecto)
     flex-wrap:wrap;
 }
 
 /* =====================================================
-<<<<<<< HEAD
-   GX STATS
-===================================================== */
-
-.gx-stat-card{
-
-    min-height:120px;
-
-    justify-content:center;
-}
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:768px){
-
-    .section-header{
-=======
    RESPONSIVE
 ===================================================== */
 
 @media (max-width:768px){
 
     .gx-section-header{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
         flex-direction:column;
 
         align-items:stretch;
-<<<<<<< HEAD
-    }
-
-    .btn-group{
-
-        flex-direction:column;
-    }
-
-    .btn-group .btn{
-=======
-
     }
 
     .search-wrapper{
->>>>>>> 3e2d89c (Actualización del proyecto)
 
         width:100%;
     }
 
-<<<<<<< HEAD
-=======
     .search-input{
 
         width:100%;
@@ -421,7 +305,6 @@
         width:100%;
 
         justify-content:stretch;
-
     }
 
     .gx-actions--history .btn{
@@ -429,7 +312,6 @@
         width:100%;
 
         justify-content:center;
-
     }
 
 }
@@ -441,13 +323,11 @@
         padding:20px;
 
         border-radius:20px;
-
     }
 
     .gx-history-empty{
 
         min-height:260px;
-
     }
 
     .badge{
@@ -455,16 +335,33 @@
         width:100%;
 
         justify-content:center;
-
     }
 
 }
+
+/* =====================================================
+   ESTADO CONEXIÓN
+===================================================== */
 
 .conexion-ok{
 
     background:var(--success-bg);
 
     color:var(--text);
+}
 
->>>>>>> 3e2d89c (Actualización del proyecto)
+.gx-actions--single{
+
+    display:flex;
+
+}
+
+.gx-actions--single .btn{
+
+    margin-left:auto;
+
+    width:auto;
+
+    flex:none;
+
 }
