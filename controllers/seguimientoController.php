@@ -158,13 +158,15 @@ try {
            VALIDAR JOVEN
         ========================== */
 
-        $joven =
-            obtenerJovenPorId($joven_id);
+        $joven = obtenerJovenPorId(
+            $pdo,
+            $joven_id
+        );
 
         if (!$joven) {
 
             setToast(
-                "El joven no existe.",
+                "Joven inválido.",
                 "error"
             );
 

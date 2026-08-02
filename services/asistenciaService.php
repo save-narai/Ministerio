@@ -210,3 +210,80 @@ function activarDiscipulado(
         'id' => $jovenId
     ]);
 }
+
+/* =========================================================
+   GUARDAR ASISTENCIA
+========================================================= */
+
+function guardarAsistencia(
+    PDO $pdo,
+    array $datos
+): void {
+
+    if (empty($datos['reunion_id'])) {
+        throw new Exception('Reunión inválida.');
+    }
+
+    $reunionId = (int)$datos['reunion_id'];
+
+    $tipo = obtenerTipoReunion(
+        $pdo,
+        $reunionId
+    );
+
+    if (!$tipo) {
+        throw new Exception('La reunión no existe.');
+    }
+
+    desactivarDiscipuladosVencidos($pdo);
+
+    $jovenes = obtenerJovenesActivos($pdo);
+
+    foreach ($jovenes as $jovenId) {
+
+        $registro = [
+
+            'reunion_id' => $reunionId,
+
+            'joven_id' => $jovenId,
+
+            'asistio' => isset($datos['asistencia'][$jovenId]) ? 1 : 0,
+
+            'grupo_edad' =>
+                $datos['grupo_edad'][$jovenId] ?? null,
+
+            'participa_discipulado' =>
+                isset($datos['participa_discipulado'][$jovenId]) ? 1 : 0,
+
+            'grupo_conexion' =>
+                $datos['grupo_conexion'][$jovenId] ?? null,
+
+            'primera_vez' =>
+                isset($datos['primera_vez'][$jovenId]) ? 1 : 0
+        ];
+
+        guardarRegistroAsistencia(
+            $pdo,
+            $registro
+        );
+
+        if ($registro['asistio']) {
+
+            actualizarActividadJoven(
+                $pdo,
+                $jovenId
+            );
+
+            if (
+                $tipo === 'DISCIPULADO'
+                && $registro['primera_vez']
+            ) {
+
+                activarDiscipulado(
+                    $pdo,
+                    $jovenId
+                );
+            }
+        }
+    }
+}

@@ -19,30 +19,39 @@ require_once __DIR__ . '/../middleware/permiso.php';
 ========================================================== */
 
 const GENEROS = [
+
     'M',
+
     'F'
+
 ];
 
 const ESTADOS_ESPIRITUALES = [
+
     'NUEVO',
+
     'CONGREGANTE',
+
     'DISCIPULADO',
+
     'SERVIDOR',
+
     'LIDER'
+
 ];
 
 const ESTADOS_ACTIVIDAD = [
+
     'ACTIVO',
+
     'INACTIVO',
+
     'ELIMINADO'
+
 ];
 
 /* ==========================================================
-   CONSULTAS
-========================================================== */
-
-/* ==========================================================
-   OBTENER JOVEN
+   OBTENER JOVEN POR ID
 ========================================================== */
 
 function obtenerJovenPorId(
@@ -51,27 +60,16 @@ function obtenerJovenPorId(
 ): ?array
 {
     $stmt = $pdo->prepare("
-        SELECT
-            id,
-            nombre_completo,
-            telefono,
-            genero,
-            fecha_nacimiento,
-            edad_manual,
-            fecha_actualizacion_edad,
-            estado_espiritual,
-            estado_actividad,
-            fecha_ingreso,
-            es_servidor,
-            observaciones,
-            ultima_actividad
+        SELECT *
         FROM jovenes
         WHERE id = :id
         LIMIT 1
     ");
 
     $stmt->execute([
+
         ':id' => $id
+
     ]);
 
     return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
@@ -94,7 +92,9 @@ function obtenerJovenPorTelefono(
     ");
 
     $stmt->execute([
+
         ':telefono' => $telefono
+
     ]);
 
     return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
@@ -117,7 +117,9 @@ function existeJoven(
     ");
 
     $stmt->execute([
+
         ':id' => $id
+
     ]);
 
     return (bool) $stmt->fetch();
@@ -137,16 +139,16 @@ function existeJovenDuplicado(
     $sql = "
         SELECT id
         FROM jovenes
-        WHERE
-            nombre_completo = :nombre
-        AND
-            telefono <=> :telefono
+        WHERE nombre_completo = :nombre
+        AND telefono <=> :telefono
     ";
 
     if ($ignorarId > 0) {
+
         $sql .= "
             AND id != :id
         ";
+
     }
 
     $sql .= "
@@ -156,12 +158,17 @@ function existeJovenDuplicado(
     $stmt = $pdo->prepare($sql);
 
     $params = [
-        ':nombre' => $nombre,
+
+        ':nombre' => trim($nombre),
+
         ':telefono' => $telefono
+
     ];
 
     if ($ignorarId > 0) {
+
         $params[':id'] = $ignorarId;
+
     }
 
     $stmt->execute($params);
@@ -170,7 +177,7 @@ function existeJovenDuplicado(
 }
 
 /* ==========================================================
-   LISTAR JÓVENES
+   OBTENER TODOS LOS JÓVENES
 ========================================================== */
 
 function obtenerJovenes(
@@ -184,9 +191,11 @@ function obtenerJovenes(
     ";
 
     if (!$incluirEliminados) {
+
         $sql .= "
             WHERE estado_actividad != 'ELIMINADO'
         ";
+
     }
 
     $sql .= "
@@ -199,7 +208,7 @@ function obtenerJovenes(
 }
 
 /* ==========================================================
-   LISTAR ACTIVOS
+   OBTENER JÓVENES ACTIVOS
 ========================================================== */
 
 function obtenerJovenesActivos(
@@ -208,21 +217,29 @@ function obtenerJovenesActivos(
 {
     $stmt = $pdo->query("
         SELECT
+
             id,
+
             nombre_completo,
+
             telefono,
+
             genero,
+
             estado_espiritual
+
         FROM jovenes
+
         WHERE estado_actividad = 'ACTIVO'
-        ORDER BY nombre_completo
+
+        ORDER BY nombre_completo ASC
     ");
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 /* ==========================================================
-   CONTAR ACTIVOS
+   CONTAR JÓVENES ACTIVOS
 ========================================================== */
 
 function contarJovenesActivos(
@@ -239,7 +256,324 @@ function contarJovenesActivos(
 }
 
 /* ==========================================================
-   PREPARAR DATOS
+   VALIDAR JOVEN
+========================================================== */
+
+function validarJoven(
+    PDO $pdo,
+    int $id
+): void
+{
+    if ($id <= 0) {
+
+        throw new Exception(
+            'Joven inválido.'
+        );
+
+    }
+
+    if (!existeJoven($pdo, $id)) {
+
+        throw new Exception(
+            'El joven no existe.'
+        );
+
+    }
+}
+
+/* ==========================================================
+   VALIDAR NOMBRE
+========================================================== */
+
+function validarNombreJoven(
+    string $nombre
+): string
+{
+    $nombre = trim($nombre);
+
+    if ($nombre === '') {
+
+        throw new Exception(
+            'Debe ingresar el nombre del joven.'
+        );
+
+    }
+
+    if (mb_strlen($nombre) > 150) {
+
+        throw new Exception(
+            'El nombre es demasiado largo.'
+        );
+
+    }
+
+    return $nombre;
+}
+
+/* ==========================================================
+   VALIDAR GÉNERO
+========================================================== */
+
+function validarGeneroJoven(
+    string $genero
+): string
+{
+    $genero = strtoupper(
+        trim($genero)
+    );
+
+    if (!in_array(
+        $genero,
+        GENEROS,
+        true
+    )) {
+
+        throw new Exception(
+            'Debe seleccionar un género válido.'
+        );
+
+    }
+
+    return $genero;
+}
+
+/* ==========================================================
+   VALIDAR ESTADO ESPIRITUAL
+========================================================== */
+
+function validarEstadoEspiritualJoven(
+    string $estado
+): string
+{
+    $estado = strtoupper(
+        trim($estado)
+    );
+
+    if (!in_array(
+        $estado,
+        ESTADOS_ESPIRITUALES,
+        true
+    )) {
+
+        throw new Exception(
+            'Estado espiritual inválido.'
+        );
+
+    }
+
+    return $estado;
+}
+
+/* ==========================================================
+   VALIDAR SERVIDOR
+========================================================== */
+
+function validarServidorJoven(
+    int $servidor
+): int
+{
+    if (!in_array(
+        $servidor,
+        [0, 1],
+        true
+    )) {
+
+        throw new Exception(
+            'Valor de servidor inválido.'
+        );
+
+    }
+
+    return $servidor;
+}
+
+/* ==========================================================
+   VALIDAR FECHA INGRESO
+========================================================== */
+
+function validarFechaIngresoJoven(
+    ?string $fecha
+): ?string
+{
+    if (
+        $fecha === null ||
+        $fecha === ''
+    ) {
+
+        return null;
+
+    }
+
+    if (!strtotime($fecha)) {
+
+        throw new Exception(
+            'Fecha de ingreso inválida.'
+        );
+
+    }
+
+    return $fecha;
+}
+
+/* ==========================================================
+   VALIDAR EDAD
+========================================================== */
+
+function validarEdadJoven(
+    ?string $fechaNacimiento,
+    ?int $edadManual
+): array
+{
+    if ($fechaNacimiento) {
+
+        if (!strtotime($fechaNacimiento)) {
+
+            throw new Exception(
+                'Fecha de nacimiento inválida.'
+            );
+
+        }
+
+        return [
+
+            $fechaNacimiento,
+
+            null,
+
+            null
+
+        ];
+    }
+
+    if ($edadManual === null) {
+
+        throw new Exception(
+            'Debe ingresar la edad o la fecha de nacimiento.'
+        );
+
+    }
+
+    if (
+        $edadManual < 0 ||
+        $edadManual > 120
+    ) {
+
+        throw new Exception(
+            'Edad inválida.'
+        );
+
+    }
+
+    return [
+
+        null,
+
+        $edadManual,
+
+        date('Y-m-d')
+
+    ];
+}
+
+/* ==========================================================
+   VALIDAR TELÉFONO
+========================================================== */
+
+function validarTelefonoJoven(
+    ?string $telefono,
+    bool $sinTelefono
+): ?string
+{
+    if ($sinTelefono) {
+
+        return null;
+
+    }
+
+    $telefono = trim(
+        (string) $telefono
+    );
+
+    if ($telefono === '') {
+
+        throw new Exception(
+            'Debe ingresar un teléfono o marcar "Sin teléfono".'
+        );
+
+    }
+
+    if (!preg_match(
+        '/^[0-9]{7,15}$/',
+        $telefono
+    )) {
+
+        throw new Exception(
+            'El teléfono no es válido.'
+        );
+
+    }
+
+    return $telefono;
+}
+
+/* ==========================================================
+   VALIDAR DUPLICADO
+========================================================== */
+
+function validarDuplicadoJoven(
+    PDO $pdo,
+    string $nombre,
+    ?string $telefono,
+    int $id = 0
+): void
+{
+    if (
+        existeJovenDuplicado(
+            $pdo,
+            $nombre,
+            $telefono,
+            $id
+        )
+    ) {
+
+        throw new Exception(
+            'Ya existe un joven con ese nombre y teléfono.'
+        );
+
+    }
+}
+
+/* ==========================================================
+   VALIDAR OBSERVACIONES
+========================================================== */
+
+function validarObservacionesJoven(
+    ?string $texto
+): ?string
+{
+    $texto = trim(
+        (string) $texto
+    );
+
+    if ($texto === '') {
+
+        return null;
+
+    }
+
+    if (mb_strlen($texto) > 5000) {
+
+        throw new Exception(
+            'Las observaciones son demasiado largas.'
+        );
+
+    }
+
+    return $texto;
+}
+
+/* ==========================================================
+   PREPARAR DATOS DEL JOVEN
 ========================================================== */
 
 function prepararDatosJoven(
@@ -248,104 +582,136 @@ function prepararDatosJoven(
     int $id = 0
 ): array
 {
-    $nombre = trim(
+    /* ==========================================
+       NOMBRE
+    ========================================== */
+
+    $nombre = validarNombreJoven(
         $datos['nombre_completo'] ?? ''
     );
 
-    $genero = $datos['genero'] ?? '';
+    /* ==========================================
+       GÉNERO
+    ========================================== */
+
+    $genero = validarGeneroJoven(
+        $datos['genero'] ?? ''
+    );
+
+    /* ==========================================
+       ESTADO ESPIRITUAL
+    ========================================== */
 
     $estadoEspiritual =
-        $datos['estado_espiritual'] ?? '';
+        validarEstadoEspiritualJoven(
+            $datos['estado_espiritual'] ?? ''
+        );
+
+    /* ==========================================
+       SERVIDOR
+    ========================================== */
+
+    $esServidor =
+        validarServidorJoven(
+            (int)($datos['es_servidor'] ?? 0)
+        );
+
+    /* ==========================================
+       FECHA INGRESO
+    ========================================== */
 
     $fechaIngreso =
-        $datos['fecha_ingreso'] ?? null;
+        validarFechaIngresoJoven(
+            $datos['fecha_ingreso'] ?? null
+        );
 
-    $fechaNacimiento = !empty(
-        $datos['fecha_nacimiento']
-    )
-        ? $datos['fecha_nacimiento']
-        : null;
+    /* ==========================================
+       EDAD
+    ========================================== */
 
-    $edadManual = !empty(
-        $datos['edad_manual']
-    )
-        ? (int) $datos['edad_manual']
-        : null;
+    [
 
-    $fechaActualizacionEdad = null;
+        $fechaNacimiento,
+
+        $edadManual,
+
+        $fechaActualizacionEdad
+
+    ] = validarEdadJoven(
+
+        !empty($datos['fecha_nacimiento'])
+            ? $datos['fecha_nacimiento']
+            : null,
+
+        !empty($datos['edad_manual'])
+            ? (int)$datos['edad_manual']
+            : null
+
+    );
+
+    /* ==========================================
+       TELÉFONO
+    ========================================== */
 
     $telefono =
-        $datos['telefono'] ?? null;
+        validarTelefonoJoven(
 
-    $sinTelefono = isset(
-        $datos['sinTelefono']
-    );
+            $datos['telefono'] ?? null,
 
-    $esServidor = (int) (
-        $datos['es_servidor'] ?? 0
-    );
+            isset($datos['sinTelefono'])
 
-    $observaciones =
-        $datos['observaciones'] ?? null;
+        );
 
-    validarNombreJoven($nombre);
-    validarGeneroJoven($genero);
-    validarEstadoEspiritualJoven($estadoEspiritual);
-    validarServidorJoven($esServidor);
-    validarFechaIngresoJoven($fechaIngreso);
-
-    validarEdadJoven(
-        $fechaNacimiento,
-        $edadManual,
-        $fechaActualizacionEdad
-    );
-
-    validarTelefonoJoven(
-        $telefono,
-        $sinTelefono
-    );
+    /* ==========================================
+       DUPLICADOS
+    ========================================== */
 
     validarDuplicadoJoven(
+
         $pdo,
+
         $nombre,
+
         $telefono,
+
         $id
+
     );
 
-    validarObservacionesJoven(
-        $observaciones
-    );
+    /* ==========================================
+       OBSERVACIONES
+    ========================================== */
+
+    $observaciones =
+        validarObservacionesJoven(
+            $datos['observaciones'] ?? null
+        );
+
+    /* ==========================================
+       RESPUESTA
+    ========================================== */
 
     return [
 
         'nombre' => $nombre,
 
-        'fechaNacimiento' =>
-            $fechaNacimiento,
+        'fechaNacimiento' => $fechaNacimiento,
 
-        'edadManual' =>
-            $edadManual,
+        'edadManual' => $edadManual,
 
-        'fechaActualizacionEdad' =>
-            $fechaActualizacionEdad,
+        'fechaActualizacionEdad' => $fechaActualizacionEdad,
 
-        'telefono' =>
-            $telefono,
+        'telefono' => $telefono,
 
-        'genero' =>
-            $genero,
+        'genero' => $genero,
 
-        'estadoEspiritual' =>
-            $estadoEspiritual,
+        'estadoEspiritual' => $estadoEspiritual,
 
-        'fechaIngreso' =>
-            $fechaIngreso,
+        'fechaIngreso' => $fechaIngreso,
 
-        'esServidor' =>
-            $esServidor,
+        'esServidor' => $esServidor,
 
-        'observaciones' =>
-            $observaciones
+        'observaciones' => $observaciones
 
     ];
 }
@@ -359,9 +725,7 @@ function crearJoven(
     array $datos
 ): int
 {
-    exigirPermiso(
-        'gestionar_jovenes'
-    );
+    exigirPermiso('gestionar_jovenes');
 
     $datos = prepararDatosJoven(
         $pdo,
@@ -383,8 +747,7 @@ function crearJoven(
             es_servidor,
             observaciones
 
-        )
-        VALUES (
+        ) VALUES (
 
             :nombre,
             :fechaNacimiento,
@@ -416,7 +779,7 @@ function crearJoven(
 
     ]);
 
-    return (int) $pdo->lastInsertId();
+    return (int)$pdo->lastInsertId();
 }
 
 /* ==========================================================
@@ -429,9 +792,7 @@ function editarJoven(
     array $datos
 ): void
 {
-    exigirPermiso(
-        'gestionar_jovenes'
-    );
+    exigirPermiso('gestionar_jovenes');
 
     validarJoven(
         $pdo,
@@ -447,6 +808,7 @@ function editarJoven(
     $stmt = $pdo->prepare("
         UPDATE jovenes
         SET
+
             nombre_completo = :nombre,
             fecha_nacimiento = :fechaNacimiento,
             edad_manual = :edadManual,
@@ -457,6 +819,7 @@ function editarJoven(
             fecha_ingreso = :fechaIngreso,
             es_servidor = :esServidor,
             observaciones = :observaciones
+
         WHERE id = :id
     ");
 
@@ -487,9 +850,7 @@ function cambiarEstadoJoven(
     string $estado
 ): void
 {
-    exigirPermiso(
-        'gestionar_jovenes'
-    );
+    exigirPermiso('gestionar_jovenes');
 
     validarJoven(
         $pdo,
@@ -501,9 +862,11 @@ function cambiarEstadoJoven(
         ESTADOS_ACTIVIDAD,
         true
     )) {
+
         throw new Exception(
             'Estado inválido.'
         );
+
     }
 
     $stmt = $pdo->prepare("
@@ -513,8 +876,10 @@ function cambiarEstadoJoven(
     ");
 
     $stmt->execute([
+
         ':estado' => $estado,
         ':id' => $id
+
     ]);
 }
 
@@ -551,7 +916,7 @@ function recuperarJoven(
 }
 
 /* ==========================================================
-   ELIMINAR DEFINITIVO
+   ELIMINAR DEFINITIVAMENTE
 ========================================================== */
 
 function eliminarDefinitivo(
@@ -575,142 +940,9 @@ function eliminarDefinitivo(
     ");
 
     $stmt->execute([
+
         ':id' => $id
+
     ]);
 }
 
-/* ==========================================================
-   VALIDAR JOVEN
-========================================================== */
-
-function validarJoven(
-    PDO $pdo,
-    int $id
-): void
-{
-    if ($id <= 0) {
-
-        throw new Exception(
-            'Joven inválido.'
-        );
-
-    }
-
-    if (!existeJoven($pdo, $id)) {
-
-        throw new Exception(
-            'El joven no existe.'
-        );
-
-    }
-}
-
-
-
-/* ==========================================================
-   SERVIDOR
-========================================================== */
-
-function validarServidorJoven(
-    int $servidor
-): void
-{
-    if (!in_array($servidor, [0, 1], true)) {
-        throw new Exception('Valor de servidor inválido.');
-    }
-}
-
-/* ==========================================================
-   FECHA INGRESO
-========================================================== */
-
-function validarFechaIngresoJoven(
-    ?string $fecha
-): void
-{
-    if ($fecha === null || $fecha === '') {
-        return;
-    }
-
-    if (!strtotime($fecha)) {
-        throw new Exception('Fecha de ingreso inválida.');
-    }
-}
-
-/* ==========================================================
-   EDAD
-========================================================== */
-
-function validarEdadJoven(
-    ?string $fechaNacimiento,
-    ?int $edadManual,
-    ?string $fechaActualizacionEdad
-): void
-{
-    if ($fechaNacimiento !== null && !strtotime($fechaNacimiento)) {
-        throw new Exception('Fecha de nacimiento inválida.');
-    }
-
-    if ($edadManual !== null && $edadManual < 0) {
-        throw new Exception('Edad inválida.');
-    }
-}
-
-/* ==========================================================
-   TELÉFONO
-========================================================== */
-
-function validarTelefonoJoven(
-    ?string &$telefono,
-    bool $sinTelefono
-): void
-{
-    if ($sinTelefono) {
-        $telefono = null;
-        return;
-    }
-
-    if ($telefono === null || trim($telefono) === '') {
-        throw new Exception('Debe ingresar un teléfono o marcar "Sin teléfono".');
-    }
-
-    $telefono = trim($telefono);
-}
-
-/* ==========================================================
-   DUPLICADOS
-========================================================== */
-
-function validarDuplicadoJoven(
-    PDO $pdo,
-    string $nombre,
-    ?string $telefono,
-    int $id = 0
-): void
-{
-    if (existeJovenDuplicado(
-        $pdo,
-        $nombre,
-        $telefono,
-        $id
-    )) {
-        throw new Exception(
-            'Ya existe un joven con ese nombre y teléfono.'
-        );
-    }
-}
-
-/* ==========================================================
-   OBSERVACIONES
-========================================================== */
-
-function validarObservacionesJoven(
-    ?string $texto
-): void
-{
-    if ($texto !== null && mb_strlen($texto) > 5000) {
-        throw new Exception(
-            'Las observaciones son demasiado largas.'
-        );
-    }
-}
