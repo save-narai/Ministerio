@@ -7,50 +7,24 @@ $db   = "ministerio_jovenes";
 $user = "root";
 $pass = "";
 
-/* ==========================================================
-   BASE URL
-========================================================== */
-
-if (!defined('BASE_URL')) {
-
-    define(
-
-        'BASE_URL',
-
-        'http://localhost/ministerio'
-
-    );
-
-}
-
 try {
 
     $pdo = new PDO(
-
         "mysql:host=$host;dbname=$db;charset=utf8",
-
         $user,
-
         $pass
-
     );
 
     $pdo->setAttribute(
-
         PDO::ATTR_ERRMODE,
-
         PDO::ERRMODE_EXCEPTION
-
     );
 
 } catch (PDOException $e) {
 
     die(
-
         "Error de conexión: " .
-
         $e->getMessage()
-
     );
 
 }

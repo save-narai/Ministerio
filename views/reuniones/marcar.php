@@ -210,141 +210,169 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
-      <!-- PARTICIPANTES -->
+<!-- =========================================================
+     CONTENEDOR PARTICIPANTES
+========================================================= -->
 
 <div class="attendance-section">
 
-    <div class="attendance-section-header">
+  <!-- =====================================================
+     HEADER PARTICIPANTES
+====================================================== -->
 
-        <h3>
-            Participantes
-        </h3>
+<div class="attendance-section-header">
 
-        <div class="attendance-head-actions">
+    <h3>
+        Participantes
+    </h3>
 
-            <span title="Asistencia">
-                ✓
-            </span>
+    <div class="attendance-head-actions">
 
-            <span title="Conexión">
-                Cx
-            </span>
+        <!-- ASISTENCIA -->
+        <span title="Asistencia">
+            ✓
+        </span>
 
-            <span title="Discipulado">
-                Dp
-            </span>
+        <?php if ($reunion["tipo"] === "Discipulado"): ?>
 
-            <span title="Primera vez">
+            <!-- PRIMERA VEZ EN DISCIPULADO -->
+            <span title="Primera vez en discipulado">
                 1V
             </span>
 
-        </div>
+        <?php endif; ?>
 
     </div>
 
-    <div class="lista">
+</div>
 
-        <?php foreach ($jovenes as $j):
 
-            $grupoEdad =
-                ($j["edad"] >= 15 && $j["edad"] <= 17)
-                ? "teen"
-                : "remanente";
+<!-- =====================================================
+     LISTA DE PARTICIPANTES
+====================================================== -->
+
+<div class="lista">
+
+    <?php foreach ($jovenes as $j): ?>
+
+        <?php
+
+        $grupoEdad =
+            (
+                (int)($j["edad"] ?? 0) >= 15
+                &&
+                (int)($j["edad"] ?? 0) <= 17
+            )
+            ? "teen"
+            : "remanente";
+
+        $jovenId = (int)$j["id"];
 
         ?>
 
-            <div
-                class="attendance-card"
-                data-edad="<?= $grupoEdad ?>"
-            >
+        <div
+            class="attendance-card"
+            data-edad="<?= htmlspecialchars($grupoEdad) ?>"
+        >
 
-                <div class="info">
+            <!-- INFORMACIÓN DEL JOVEN -->
 
-                    <strong>
-                        <?= htmlspecialchars($j["nombre_completo"]) ?>
-                    </strong>
+            <div class="info">
 
-                    <small>
+                <strong>
 
-                        <?= ucfirst($grupoEdad) ?>
+                    <?= htmlspecialchars(
+                        $j["nombre_completo"] ?? ""
+                    ) ?>
 
-                        ·
+                </strong>
 
-                        <?= ucfirst(
-                            strtolower(
-                                $j["estado_actividad"]
-                            )
-                        ) ?>
+                <small>
 
-                    </small>
+                    <?= ucfirst($grupoEdad) ?>
 
-                </div>
+                    ·
 
-                <div class="checks-grid">
+                    <?= ucfirst(
+                        strtolower(
+                            $j["estado_actividad"] ?? ""
+                        )
+                    ) ?>
 
-                    <label title="Asistencia">
+                </small>
 
-                        <input
-                            type="checkbox"
-                            name="asistencia[]"
-                            value="<?= $j["id"] ?>"
-                        >
+            </div>
 
-                        <span>✓</span>
 
-                    </label>
+            <!-- =================================================
+                 CHECKS
+            ================================================== -->
 
-                    <label title="Conexión">
+            <div class="checks-grid">
 
-                        <input
-                            type="checkbox"
-                            name="conexion[]"
-                            value="<?= $j["id"] ?>"
-                        >
+                <!-- ASISTENCIA -->
 
-                        <span>Cx</span>
-
-                    </label>
-
-                    <label title="Discipulado">
-
-                        <input
-                            type="checkbox"
-                            name="discipulado[]"
-                            value="<?= $j["id"] ?>"
-                        >
-
-                        <span>Dp</span>
-
-                    </label>
-
-                    <label title="Primera vez">
-
-                        <input
-                            type="checkbox"
-                            name="primera_vez[]"
-                            value="<?= $j["id"] ?>"
-                        >
-
-                        <span>1V</span>
-
-                    </label>
-
-                </div>
-
-                <input
-                    type="hidden"
-                    name="grupo_edad[<?= $j["id"] ?>]"
-                    value="<?= $grupoEdad ?>"
+                <label
+                    title="Asistencia"
+                    class="attendance-check"
                 >
 
+                    <input
+                        type="checkbox"
+                        name="asistencia[<?= $jovenId ?>]"
+                        value="1"
+                    >
+
+                    <span>
+                        ✓
+                    </span>
+
+                </label>
+
+
+                <?php if ($reunion["tipo"] === "Discipulado"): ?>
+
+                    <!-- =========================================
+                         PRIMERA VEZ EN DISCIPULADO
+                    ========================================== -->
+
+                    <label
+                        title="Primera vez en discipulado"
+                        class="attendance-check"
+                    >
+
+                        <input
+                            type="checkbox"
+                            name="primera_vez[<?= $jovenId ?>]"
+                            value="1"
+                        >
+
+                        <span>
+                            1V
+                        </span>
+
+                    </label>
+
+                <?php endif; ?>
+
             </div>
 
-        <?php endforeach; ?>
 
-            </div>
+            <!-- GRUPO DE EDAD -->
+
+            <input
+                type="hidden"
+                name="grupo_edad[<?= $jovenId ?>]"
+                value="<?= htmlspecialchars($grupoEdad) ?>"
+            >
 
         </div>
+
+    <?php endforeach; ?>
+
+</div>
+
+</div>
 
      <!-- BOTONES -->
 

@@ -122,17 +122,7 @@ if ($filtro !== "todos") {
 
 $reuniones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =========================================================
-   CSS
-========================================================= */
 
-$extraCSS =
-
-    '<link rel="stylesheet" href="' .
-
-    BASE_URL .
-
-    '/assets/css/modules/reuniones/reuniones.css">';
 
 require_once "../../includes/header.php";
 

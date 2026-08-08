@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/controller.php';
-require_once __DIR__ . '/../services/AuthService.php';
+require_once __DIR__ . '/../services/authService.php';
 
 controllerInit();
 

@@ -485,9 +485,14 @@
 
     position:absolute;
 
-    inset:0;
+    top:0;
+    left:0;
 
-    animation:gxProgress 5s linear forwards;
+    width:var(--gx-progress, 100%);
+
+    height:100%;
+
+    transition:width .05s linear;
 
 }
 
@@ -633,12 +638,6 @@
     transition:all .35s ease;
 
     animation:gxGlow 3s ease infinite;
-
-}
-
-.gx-alert:hover .gx-alert-progress::before{
-
-    animation-play-state:paused;
 
 }
 

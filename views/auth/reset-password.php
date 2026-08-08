@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../config/conexion.php';
 
 require_once __DIR__ . '/../../middleware/guest.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
-require_once __DIR__ . '/../../services/AuthService.php';
+require_once __DIR__ . '/../../services/authService.php';
 
 
 exigirInvitado();

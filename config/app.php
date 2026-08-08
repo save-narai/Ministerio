@@ -2,7 +2,9 @@
 
 return [
 
-    'nombre' => 'Ministerio',
+    'nombre' => 'SIG Remanente',
+
+    'base_url' => 'http://localhost/sigremanente',
 
     'logo' => 'logo.png',
 
@@ -19,9 +21,7 @@ return [
     'modulos' => [
 
         'jovenes'      => true,
-
         'reuniones'    => true,
-
         'seguimientos' => true,
 
     ],

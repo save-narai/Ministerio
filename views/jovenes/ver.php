@@ -43,14 +43,6 @@ if ($id <= 0) {
 }
 
 /* =========================
-   CSS
-========================= */
-
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/ver.css">
-';
-
-/* =========================
    DATOS JOVEN
 ========================= */
 

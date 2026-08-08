@@ -178,13 +178,7 @@ $stmt->execute();
 
 $jovenes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* =========================
-   CSS
-========================= */
 
-$extraCSS = '
-<link rel="stylesheet" href="' . BASE_URL . '/assets/css/modules/jovenes/jovenes.css">
-';
 
 require_once __DIR__ . "/../../includes/header.php";
 ?>

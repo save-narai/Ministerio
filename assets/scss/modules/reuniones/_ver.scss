@@ -1,99 +1,83 @@
 /* =========================================================
-   REUNION STATS
+   REUNIÓN — ESTADÍSTICAS
 ========================================================= */
 
-.reunion-stats{
-
-    margin-bottom:24px;
+.stats-grid {
+    margin-bottom: 24px;
 }
 
-.reunion-stats .stat-card{
+.stats-grid .stat-card {
+    min-height: 120px;
 
-    min-height:120px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.reunion-stats .stat-card.info .stat-number{
-
-    color:#3b82f6;
+.stats-grid .stat-card.info .stat-number {
+    color: #3b82f6;
 }
 
-.reunion-stats .stat-card.success .stat-number{
-
-    color:#22c55e;
+.stats-grid .stat-card.success .stat-number {
+    color: #22c55e;
 }
 
-.reunion-stats .stat-card.purple .stat-number{
-
-    color:#a855f7;
+.stats-grid .stat-card.purple .stat-number {
+    color: #a855f7;
 }
 
-.reunion-stats .stat-card.orange .stat-number{
-
-    color:#f97316;
+.stats-grid .stat-card.orange .stat-number {
+    color: #f97316;
 }
+
 
 /* =========================================================
    PROGRESS
 ========================================================= */
 
-.progress{
+.progress {
+    width: 100%;
+    height: 18px;
 
-    width:100%;
+    overflow: hidden;
 
-    height:18px;
+    border-radius: 999px;
 
-    overflow:hidden;
-
-    border-radius:999px;
-
-    background:rgba(0,0,0,.06);
+    background: rgba(0, 0, 0, .06);
 }
 
-html.dark .progress{
-
-    background:rgba(255,255,255,.08);
+html.dark .progress {
+    background: rgba(255, 255, 255, .08);
 }
 
-.progress-bar{
+.progress-bar {
+    height: 100%;
 
-    height:100%;
+    border-radius: 999px;
 
-    border-radius:999px;
+    background: var(--card-gradient);
 
-    background:var(--card-gradient);
-
-    transition:width .5s ease;
+    transition: width .5s ease;
 }
-
-
 
 
 /* =========================================================
-   REUNION SEARCH
+   BUSCADOR DE REUNIÓN
 ========================================================= */
 
-.reunion-search{
-
-    margin-bottom:16px;
+.reunion-search {
+    margin-bottom: 16px;
 }
+
 
 /* =========================================================
-   REUNION FILTERS
+   FILTROS DE REUNIÓN
 ========================================================= */
 
-.reunion-filters{
-
-    margin-bottom:18px;
+.reunion-filters {
+    margin-bottom: 18px;
 }
-
 
 
 /* =========================================================
@@ -101,70 +85,63 @@ html.dark .progress{
 ========================================================= */
 
 .badge-success,
-.badge-danger{
-
-    min-width:80px;
-
-    justify-content:center;
+.badge-danger {
+    min-width: 80px;
+    justify-content: center;
 }
+
 
 /* =========================================================
-   PAGE SECTION
+   SECCIÓN
 ========================================================= */
 
-.page-section{
-
-    animation:fadeIn .35s ease;
+.page-section {
+    animation: fadeIn .35s ease;
 }
+
 
 /* =========================================================
-   ANIMATION
+   ANIMACIÓN
 ========================================================= */
 
-@keyframes fadeIn{
+@keyframes fadeIn {
 
-    from{
-
-        opacity:0;
-
-        transform:translateY(10px);
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+
 }
+
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
-    .attendance-summary{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:10px;
+    .attendance-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 
-    .filter-chip{
-
-        width:100%;
+    .filter-chip {
+        width: 100%;
     }
 
 }
 
-@media(max-width:520px){
 
-    .reunion-stats{
+@media (max-width: 520px) {
 
-        grid-template-columns:1fr;
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 
 }
@@ -174,12 +151,8 @@ html.dark .progress{
    BOTONES
 ========================================================= */
 
-.btn-group{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    margin-top:24px;
-
+.btn-group {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
 }

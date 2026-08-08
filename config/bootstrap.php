@@ -40,10 +40,14 @@ $GLOBALS['config'] = $config;
    BASE URL
 ========================================================== */
 
-defined('BASE_URL') || define(
-    'BASE_URL',
-    $config['base_url'] ?? '/ministerio'
-);
+if (!defined('BASE_URL')) {
+
+    define(
+        'BASE_URL',
+        $config['base_url']
+    );
+
+}
 
 /* ==========================================================
    ZONA HORARIA

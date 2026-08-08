@@ -1,6 +1,6 @@
 /* =========================================================
    MARCAR ASISTENCIA
-========================================================= */
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -23,9 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let filtroActivo = "todos";
 
+
     /* =====================================================
        FILTROS + BUSCADOR
-    ===================================================== */
+       ===================================================== */
 
     function aplicarFiltros() {
 
@@ -38,12 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const nombre =
                 fila.querySelector("strong")
                     ?.textContent
+                    .trim()
                     .toLowerCase() ?? "";
 
             const grupo =
-                fila.dataset.edad ?? "";
+                (fila.dataset.edad ?? "")
+                    .trim()
+                    .toLowerCase();
 
             let visible = true;
+
+
+            /* ---------------------------------------------
+               BUSCADOR
+            --------------------------------------------- */
 
             if (
                 texto &&
@@ -54,6 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
+            /* ---------------------------------------------
+               FILTRO DE GRUPO
+            --------------------------------------------- */
+
             if (
                 filtroActivo !== "todos" &&
                 grupo !== filtroActivo
@@ -63,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             fila.style.display =
                 visible ? "" : "none";
 
@@ -70,35 +85,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /* =====================================================
        BUSCADOR
-    ===================================================== */
+       ===================================================== */
 
     buscador?.addEventListener(
         "input",
         aplicarFiltros
     );
 
+
     /* =====================================================
        FILTROS
-    ===================================================== */
+       ===================================================== */
 
     filtros.forEach(btn => {
 
         btn.addEventListener("click", () => {
 
-            filtros.forEach(item =>
+            filtros.forEach(item => {
+
                 item.classList.remove(
                     "filter-chip--active"
-                )
-            );
+                );
+
+            });
+
 
             btn.classList.add(
                 "filter-chip--active"
             );
 
+
             filtroActivo =
-                btn.dataset.filter;
+                (
+                    btn.dataset.filter ||
+                    "todos"
+                )
+                .trim()
+                .toLowerCase();
+
 
             aplicarFiltros();
 
@@ -106,9 +133,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
     /* =====================================================
        MARCAR TODOS
-    ===================================================== */
+       
+       IMPORTANTE:
+       Marca TODOS los checklists de TODOS los jóvenes.
+       
+       No solamente asistencia[].
+       ===================================================== */
 
     btnCheckAll?.addEventListener(
         "click",
@@ -116,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document
                 .querySelectorAll(
-                    'input[name="asistencia[]"]'
+                    '.checks-grid input[type="checkbox"]'
                 )
                 .forEach(check => {
 
@@ -127,9 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
     /* =====================================================
-       LIMPIAR SELECCIÓN
-    ===================================================== */
+       LIMPIAR TODOS
+       
+       Quita TODOS los checklists.
+       ===================================================== */
 
     btnUncheckAll?.addEventListener(
         "click",
@@ -147,5 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
     );
+
+
+    /* =====================================================
+       INICIALIZAR FILTROS
+       ===================================================== */
+
+    aplicarFiltros();
 
 });
