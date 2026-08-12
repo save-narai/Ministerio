@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 /* ==========================================================
-   ASISTENCIA SERVICE V3.1
-   ----------------------------------------------------------
+   ASISTENCIA SERVICE V3.2
+
    RESPONSABILIDAD
 
    - Validar la solicitud de asistencia.
@@ -13,6 +13,7 @@ declare(strict_types=1);
    - Construir el contexto.
    - Extraer los checklists enviados.
    - Construir registros individuales.
+   - Delegar la lógica especializada.
 
    IMPORTANTE
 
@@ -22,7 +23,6 @@ declare(strict_types=1);
    Este Service NO calcula indicadores.
 
    Este Service coordina los servicios especializados.
-
 ========================================================== */
 
 
@@ -78,6 +78,7 @@ function obtenerTipoReunion(
     }
 
     return (string)$tipo;
+
 }
 
 
@@ -108,6 +109,7 @@ function obtenerJovenesActivos(
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
     );
+
 }
 
 
@@ -129,6 +131,7 @@ function validarSolicitudAsistencia(
 
     }
 
+
     if (
         !is_numeric($datos['reunion_id'])
     ) {
@@ -141,6 +144,7 @@ function validarSolicitudAsistencia(
 
 }
 
+
 /* ==========================================================
    OBTENER CONTEXTO DE ASISTENCIA
 ========================================================== */
@@ -150,17 +154,19 @@ function obtenerContextoAsistencia(
     array $datos
 ): array {
 
-    $reunionId = (int)$datos['reunion_id'];
+    $reunionId =
+        (int)$datos['reunion_id'];
 
 
     /* ------------------------------------------------------
        OBTENER TIPO
     ------------------------------------------------------ */
 
-    $tipo = obtenerTipoReunion(
-        $pdo,
-        $reunionId
-    );
+    $tipo =
+        obtenerTipoReunion(
+            $pdo,
+            $reunionId
+        );
 
 
     if ($tipo === false) {
@@ -172,18 +178,20 @@ function obtenerContextoAsistencia(
     }
 
 
-    $tipo = strtoupper(
-        trim($tipo)
-    );
+    $tipo =
+        strtoupper(
+            trim($tipo)
+        );
 
 
     /* ------------------------------------------------------
        OBTENER PARTICIPANTES
     ------------------------------------------------------ */
 
-    $jovenes = obtenerJovenesActivos(
-        $pdo
-    );
+    $jovenes =
+        obtenerJovenesActivos(
+            $pdo
+        );
 
 
     return [
@@ -247,17 +255,26 @@ function obtenerChecklists(
         -------------------------------------------------- */
 
         'asistencia' =>
-            is_array($datos['asistencia'] ?? null)
+            is_array(
+                $datos['asistencia'] ?? null
+            )
                 ? $datos['asistencia']
                 : [],
 
 
         /* --------------------------------------------------
            PRIMERA VEZ
+
+           Aplica a cualquier tipo de reunión.
+
+           Representa:
+           "Primera vez en esta reunión/espacio".
         -------------------------------------------------- */
 
         'primera_vez' =>
-            is_array($datos['primera_vez'] ?? null)
+            is_array(
+                $datos['primera_vez'] ?? null
+            )
                 ? $datos['primera_vez']
                 : [],
 
@@ -267,7 +284,9 @@ function obtenerChecklists(
         -------------------------------------------------- */
 
         'grupo_edad' =>
-            is_array($datos['grupo_edad'] ?? null)
+            is_array(
+                $datos['grupo_edad'] ?? null
+            )
                 ? $datos['grupo_edad']
                 : []
 
@@ -308,8 +327,8 @@ function construirRegistroAsistencia(
 
     /* ------------------------------------------------------
        DISCIPULADO AUTOMÁTICO
-       
-       Si la reunión es de DISCIPULADO y el joven asistió,
+
+       Si la reunión es DISCIPULADO y el joven asistió,
        participa_discipulado = 1.
 
        No existe checkbox independiente.
@@ -327,8 +346,8 @@ function construirRegistroAsistencia(
 
     /* ------------------------------------------------------
        GRUPO DE CONEXIÓN AUTOMÁTICO
-       
-       Si la reunión es de GRUPO_CONEXION y el joven asistió,
+
+       Si la reunión es GRUPO_CONEXION y el joven asistió,
        grupo_conexion = 1.
 
        No existe checkbox independiente.
@@ -345,19 +364,25 @@ function construirRegistroAsistencia(
 
 
     /* ------------------------------------------------------
-       PRIMERA VEZ EN DISCIPULADO
-       
-       Solo puede existir cuando:
+       PRIMERA VEZ EN LA REUNIÓN
 
-       1. La reunión es DISCIPULADO.
-       2. El joven asistió.
-       3. Se marcó explícitamente como primera vez.
+       Se registra cuando:
+
+       1. El joven asistió.
+       2. Se marcó explícitamente como primera vez.
+
+       Este dato aplica a cualquier tipo de reunión.
+
+       IMPORTANTE:
+
+       Esto NO determina si el joven entra por primera vez
+       al proceso de discipulado.
+
+       Esa lógica pertenece a discipuladoService.php.
     ------------------------------------------------------ */
 
     $primeraVez =
         (
-            $tipoReunion === 'DISCIPULADO'
-            &&
             $asistio === 1
             &&
             isset(
@@ -418,7 +443,7 @@ function construirRegistroAsistencia(
 
 
         /* --------------------------------------------------
-           PRIMERA VEZ
+           PRIMERA VEZ EN LA REUNIÓN
         -------------------------------------------------- */
 
         'primera_vez' =>
@@ -456,7 +481,7 @@ function guardarRegistroAsistencia(
             grupo_edad,
             participa_discipulado,
             grupo_conexion,
-            primera_vez_discipulado,
+            primera_vez,
             fecha_registro
         )
 
@@ -486,8 +511,8 @@ function guardarRegistroAsistencia(
             grupo_conexion =
                 VALUES(grupo_conexion),
 
-            primera_vez_discipulado =
-                VALUES(primera_vez_discipulado),
+            primera_vez =
+                VALUES(primera_vez),
 
             fecha_registro =
                 NOW()
@@ -595,6 +620,13 @@ function procesarActividad(
 
    Registra el evento de asistencia únicamente cuando
    el joven asistió.
+
+   IMPORTANTE:
+
+   No vuelve a calcular discipulado ni conexión.
+
+   Utiliza los valores que ya fueron calculados por
+   construirRegistroAsistencia().
 ========================================================== */
 
 function procesarHistorial(
@@ -655,55 +687,40 @@ function procesarHistorial(
                     /* --------------------------------------------------
                        DISCIPULADO
 
-                       Se deriva automáticamente del tipo de reunión.
+                       Usa el valor ya calculado por el registro.
                     -------------------------------------------------- */
 
                     'participa_discipulado' =>
-                        (
-                            $registro['tipo_reunion']
-                            === 'DISCIPULADO'
-                            &&
-                            (int)$registro['asistio'] === 1
-                        )
-                            ? 1
-                            : 0,
+                        (int)(
+                            $registro['participa_discipulado']
+                            ?? 0
+                        ),
 
 
                     /* --------------------------------------------------
                        GRUPO DE CONEXIÓN
 
-                       Se deriva automáticamente del tipo de reunión.
+                       Usa el valor ya calculado por el registro.
                     -------------------------------------------------- */
 
                     'grupo_conexion' =>
-                        (
-                            $registro['tipo_reunion']
-                            === 'GRUPO_CONEXION'
-                            &&
-                            (int)$registro['asistio'] === 1
-                        )
-                            ? 1
-                            : 0,
+                        (int)(
+                            $registro['grupo_conexion']
+                            ?? 0
+                        ),
 
 
                     /* --------------------------------------------------
-                       PRIMERA VEZ EN DISCIPULADO
+                       PRIMERA VEZ EN LA REUNIÓN
+
+                       Usa el valor ya calculado por el registro.
                     -------------------------------------------------- */
 
-                    'primera_vez_discipulado' =>
-                        (
-                            $registro['tipo_reunion']
-                            === 'DISCIPULADO'
-                            &&
-                            (int)$registro['asistio'] === 1
-                            &&
-                            (int)(
-                                $registro['primera_vez']
-                                ?? 0
-                            ) === 1
+                    'primera_vez' =>
+                        (int)(
+                            $registro['primera_vez']
+                            ?? 0
                         )
-                            ? 1
-                            : 0
 
                 ],
 
@@ -774,7 +791,7 @@ function procesarRegistro(
 
     /* ------------------------------------------------------
        4. DISCIPULADO
-       
+
        Solo delegamos.
 
        NO implementamos la lógica aquí.
@@ -890,7 +907,9 @@ function iniciarTransaccion(
     PDO $pdo
 ): void {
 
-    if (!$pdo->inTransaction()) {
+    if (
+        !$pdo->inTransaction()
+    ) {
 
         $pdo->beginTransaction();
 
@@ -907,7 +926,9 @@ function confirmarTransaccion(
     PDO $pdo
 ): void {
 
-    if ($pdo->inTransaction()) {
+    if (
+        $pdo->inTransaction()
+    ) {
 
         $pdo->commit();
 
@@ -924,7 +945,9 @@ function cancelarTransaccion(
     PDO $pdo
 ): void {
 
-    if ($pdo->inTransaction()) {
+    if (
+        $pdo->inTransaction()
+    ) {
 
         $pdo->rollBack();
 
@@ -1034,7 +1057,9 @@ function ejecutarRegistroAsistencia(
            CONFIRMAR TODO
         -------------------------------------------------- */
 
-        confirmarTransaccion($pdo);
+        confirmarTransaccion(
+            $pdo
+        );
 
 
     } catch (Throwable $e) {
@@ -1043,7 +1068,9 @@ function ejecutarRegistroAsistencia(
            SI ALGO FALLA, DESHACER TODO
         -------------------------------------------------- */
 
-        cancelarTransaccion($pdo);
+        cancelarTransaccion(
+            $pdo
+        );
 
         throw $e;
 
@@ -1133,4 +1160,3 @@ function guardarAsistencia(
 /* ==========================================================
    FIN ASISTENCIA SERVICE
 ========================================================== */
-

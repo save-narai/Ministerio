@@ -6,6 +6,7 @@ require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 require_once __DIR__ . "/../../services/seguimientoService.php";
+require_once __DIR__ . "/../../services/excepcionSeguimientoService.php";
 require_once __DIR__ . "/../../helpers/format.php";
 require_once __DIR__ . "/../../helpers/fechas.php";
 
@@ -31,13 +32,37 @@ actualizarEstadoActividad($pdo);
 
 $data = obtenerResumenSeguimientosMes($pdo);
 
-$seguimientosMes     = $data['seguimientosMes'] ?? [];
+$seguimientosMes = $data['seguimientosMes'] ?? [];
+$historialMes    = $data['historialMes'] ?? [];
+
 $totalActivos        = $data['totalActivos'] ?? 0;
 $totalConSeguimiento = $data['totalConSeguimiento'] ?? 0;
 $totalSinSeguimiento = $data['totalSinSeguimiento'] ?? 0;
 $porcentaje          = $data['porcentaje'] ?? 0;
 $color               = $data['color'] ?? '';
 $mesTexto            = $data['mesTexto'] ?? '';
+
+
+
+/* =========================
+   MESES EN ESPAÑOL
+========================= */
+
+$mesesEspanol = [
+
+    1  => 'Enero',
+    2  => 'Febrero',
+    3  => 'Marzo',
+    4  => 'Abril',
+    5  => 'Mayo',
+    6  => 'Junio',
+    7  => 'Julio',
+    8  => 'Agosto',
+    9  => 'Septiembre',
+    10 => 'Octubre',
+    11 => 'Noviembre',
+    12 => 'Diciembre'
+];
 
 /* =========================
    ALERTAS
@@ -46,36 +71,50 @@ $mesTexto            = $data['mesTexto'] ?? '';
 $stmt = $pdo->prepare("
     SELECT
 
-        id,
-        nombre_completo,
-        telefono,
-        genero
+        j.id,
+        j.nombre_completo,
+        j.telefono,
+        j.genero,
+        j.estado_espiritual,
 
-    FROM jovenes
+        e.id AS excepcion_id,
+        e.motivo AS excepcion_motivo
 
-    WHERE estado_actividad = 'ACTIVO'
+    FROM jovenes j
 
-    AND id NOT IN (
+    LEFT JOIN excepciones_seguimiento e
+        ON e.joven_id = j.id
+        AND e.anio = YEAR(CURDATE())
+        AND e.mes = MONTH(CURDATE())
 
-        SELECT joven_id
+    WHERE j.estado_actividad = 'ACTIVO'
 
-        FROM seguimientos
+    AND j.estado_espiritual = 'NUEVO'
 
-        WHERE DATE_FORMAT(
-            fecha_contacto,
-            '%Y-%m'
-        ) = DATE_FORMAT(
-            CURDATE(),
-            '%Y-%m'
-        )
+    AND NOT EXISTS (
+
+        SELECT 1
+
+        FROM seguimientos s
+
+        WHERE s.joven_id = j.id
+
+        AND MONTH(s.fecha_contacto) = MONTH(CURDATE())
+
+        AND YEAR(s.fecha_contacto) = YEAR(CURDATE())
+
     )
 
-    ORDER BY nombre_completo ASC
+    AND e.id IS NULL
+
+    ORDER BY j.nombre_completo ASC
 ");
 
 $stmt->execute();
 
 $alertas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 /* =========================
    HEADER
@@ -297,29 +336,43 @@ require_once __DIR__ . "/../../includes/header.php";
 
                     </div>
 
-                    <div class="seguimiento-alerta-right">
+<div class="seguimiento-alerta-right">
 
-                        <span class="badge badge-danger">
+    <span class="badge badge-danger">
+        Pendiente
+    </span>
 
-                            Pendiente
+    <a
+        href="../jovenes/ver.php?id=<?= (int)$j["id"] ?>"
+        class="btn btn-sm btn-perfil <?= ($j["genero"] ?? "") === "F"
+            ? "btn-perfil-chica"
+            : "btn-perfil-chico" ?>"
+    >
 
-                        </span>
+        <i class="fa-solid fa-user"></i>
 
-                       <a
-    href="../jovenes/ver.php?id=<?= $j["id"] ?>"
-    class="btn btn-sm btn-perfil <?= ($j["genero"] ?? "") === "F"
-        ? "btn-perfil-chica"
-        : "btn-perfil-chico" ?>"
->
+        Ver perfil
 
-    Ver perfil
+    </a>
 
-</a>
-                    </div>
+    <button
+        type="button"
+        class="btn btn-sm btn-checklist"
+        data-joven-id="<?= (int)$j["id"] ?>"
+        data-joven-nombre="<?= e($j["nombre_completo"]) ?>"
+    >
 
-                </div>
+        <i class="fa-solid fa-square-check"></i>
 
-            <?php endforeach; ?>
+        Checklist
+
+    </button>
+
+</div>
+
+</div>
+
+<?php endforeach; ?>
 
         </div>
 
@@ -355,20 +408,21 @@ require_once __DIR__ . "/../../includes/header.php";
         <div>
 
             <h2 class="section-title">
-
                 Historial de seguimientos
-
             </h2>
 
             <p class="section-subtitle">
-
                 Registros del mes actual
-
             </p>
 
         </div>
 
     </div>
+
+
+    <!-- =====================================
+         BUSCADOR
+    ====================================== -->
 
     <div class="gx-toolbar">
 
@@ -385,6 +439,11 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+
+    <!-- =====================================
+         TABLA
+    ====================================== -->
+
     <div class="table-responsive">
 
         <table
@@ -396,100 +455,692 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 <tr>
 
-                    <th>Nombre</th>
+                    <th>
+                        Nombre
+                    </th>
 
-                    <th>Modalidad</th>
+                    <th>
+                        Modalidad
+                    </th>
 
-                    <th>Estado</th>
+                    <th>
+                        Estado
+                    </th>
 
-                    <th>Responsable</th>
+                    <th>
+                        Responsable
+                    </th>
 
-                    <th>Fecha</th>
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
 
                 </tr>
 
             </thead>
 
+
             <tbody>
 
-                <?php foreach ($seguimientosMes as $s): ?>
+                <?php if (!empty($historialMes)): ?>
+
+                    <?php foreach ($historialMes as $registro): ?>
+
+                        <?php
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | TIPO DE REGISTRO
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $esExcepcion =
+                            ($registro['tipo_registro'] ?? '') === 'EXCEPCION';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | MODALIDAD
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $modalidad = strtoupper(
+                            trim(
+                                $registro['modalidad_contacto'] ?? ''
+                            )
+                        );
+
+
+                        $modalidadClases = [
+
+                            'WHATSAPP' =>
+                                'modalidad-whatsapp',
+
+                            'LLAMADA' =>
+                                'modalidad-llamada',
+
+                            'VISITA' =>
+                                'modalidad-visita',
+
+                            'MENSAJE' =>
+                                'modalidad-mensaje'
+
+                        ];
+
+
+                        $modalidadTexto = [
+
+                            'WHATSAPP' =>
+                                'WhatsApp',
+
+                            'LLAMADA' =>
+                                'Llamada',
+
+                            'VISITA' =>
+                                'Visita',
+
+                            'MENSAJE' =>
+                                'Mensaje'
+
+                        ];
+
+
+                        $modalidadClase =
+                            $modalidadClases[$modalidad]
+                            ?? 'modalidad-default';
+
+
+                        $modalidadNombre =
+                            $modalidadTexto[$modalidad]
+                            ?? (
+                                $modalidad !== ''
+                                    ? ucfirst(
+                                        strtolower($modalidad)
+                                    )
+                                    : 'Sin modalidad'
+                            );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ESTADO
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $estadoProceso =
+                            strtoupper(
+                                trim(
+                                    $registro['estado_proceso'] ?? ''
+                                )
+                            );
+
+
+                        $estadoClase =
+                            strtolower(
+                                str_replace(
+                                    '_',
+                                    '-',
+                                    $estadoProceso
+                                )
+                            );
+
+
+                        $estadoNombre =
+                            $estadoProceso !== ''
+                                ? ucfirst(
+                                    strtolower(
+                                        str_replace(
+                                            '_',
+                                            ' ',
+                                            $estadoProceso
+                                        )
+                                    )
+                                )
+                                : 'Sin estado';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PERFIL
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $clasePerfil =
+                            ($registro['genero'] ?? '') === 'F'
+                                ? 'btn-perfil-chica'
+                                : 'btn-perfil-chico';
+
+                        ?>
+
+                        <tr>
+
+                            <!-- =================================
+                                 NOMBRE
+                            ================================== -->
+
+                            <td>
+
+                                <span class="seguimiento-nombre">
+
+                                    <?= e(
+                                        $registro['nombre_completo']
+                                    ) ?>
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- =================================
+                                 MODALIDAD
+                            ================================== -->
+
+                            <td>
+
+                                <?php if ($esExcepcion): ?>
+
+                                    <span
+                                        class="badge badge-warning badge-modalidad"
+                                    >
+
+                                        <i
+                                            class="fa-solid fa-triangle-exclamation"
+                                        ></i>
+
+                                        Excepción
+
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <span
+                                        class="badge badge-modalidad <?= e(
+                                            $modalidadClase
+                                        ) ?>"
+                                    >
+
+                                        <?php if ($modalidad === 'WHATSAPP'): ?>
+
+                                            <i
+                                                class="fa-brands fa-whatsapp"
+                                            ></i>
+
+                                        <?php elseif ($modalidad === 'LLAMADA'): ?>
+
+                                            <i
+                                                class="fa-solid fa-phone"
+                                            ></i>
+
+                                        <?php elseif ($modalidad === 'VISITA'): ?>
+
+                                            <i
+                                                class="fa-solid fa-house"
+                                            ></i>
+
+                                        <?php elseif ($modalidad === 'MENSAJE'): ?>
+
+                                            <i
+                                                class="fa-solid fa-message"
+                                            ></i>
+
+                                        <?php else: ?>
+
+                                            <i
+                                                class="fa-solid fa-comments"
+                                            ></i>
+
+                                        <?php endif; ?>
+
+
+                                        <?= e(
+                                            $modalidadNombre
+                                        ) ?>
+
+                                    </span>
+
+                                <?php endif; ?>
+
+                            </td>
+
+
+                            <!-- =================================
+                                 ESTADO
+                            ================================== -->
+
+                            <td>
+
+                                <?php if ($esExcepcion): ?>
+
+                                    <span
+                                        class="estado excepcion"
+                                    >
+
+                                        <i
+                                            class="fa-solid fa-circle-info"
+                                        ></i>
+
+                                        <?= e(
+                                            nombreMotivoExcepcionSeguimiento(
+                                                $registro['excepcion_motivo']
+                                            )
+                                        ) ?>
+
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <span
+                                        class="estado <?= e(
+                                            $estadoClase
+                                        ) ?>"
+                                    >
+
+                                        <?= e(
+                                            $estadoNombre
+                                        ) ?>
+
+                                    </span>
+
+                                <?php endif; ?>
+
+                            </td>
+
+
+                            <!-- =================================
+                                 RESPONSABLE
+                            ================================== -->
+
+                            <td>
+
+                                <span class="seguimiento-responsable">
+
+                                    <?= e(
+                                        $registro['responsable_nombre']
+                                        ?? '-'
+                                    ) ?>
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- =================================
+                                 FECHA
+                            ================================== -->
+
+                            <td>
+
+                                <?php if ($esExcepcion): ?>
+
+                                    <?php
+
+                                    $mesExcepcion =
+                                        (int)(
+                                            $registro['excepcion_mes']
+                                            ?? 0
+                                        );
+
+                                    $anioExcepcion =
+                                        (int)(
+                                            $registro['excepcion_anio']
+                                            ?? 0
+                                        );
+
+                                    ?>
+
+                                    <span class="seguimiento-fecha">
+
+                                        <?= e(
+                                            $mesesEspanol[
+                                                $mesExcepcion
+                                            ] ?? ''
+                                        ) ?>
+
+                                        <?= $anioExcepcion ?>
+
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <span class="seguimiento-fecha">
+
+                                        <?= e(
+                                            formatearFecha(
+                                                $registro['fecha_registro']
+                                            )
+                                        ) ?>
+
+                                    </span>
+
+                                <?php endif; ?>
+
+                            </td>
+
+
+                            <!-- =================================
+                                 ACCIONES
+                            ================================== -->
+
+                            <td>
+
+                                <div class="seguimiento-acciones">
+
+                                    <!-- =============================
+                                         VER PERFIL
+                                    ============================== -->
+
+                                    <a
+                                        href="../jovenes/ver.php?id=<?= (int)$registro['joven_id'] ?>"
+                                        class="btn btn-sm btn-perfil <?= e(
+                                            $clasePerfil
+                                        ) ?>"
+                                    >
+
+                                        <i
+                                            class="fa-solid fa-user"
+                                        ></i>
+
+                                        Ver perfil
+
+                                    </a>
+
+
+                                    <!-- =============================
+                                         EDITAR EXCEPCIÓN
+                                    ============================== -->
+
+                                    <?php if ($esExcepcion): ?>
+
+                                   <button
+    type="button"
+    class="btn btn-sm btn-warning btn-editar-excepcion"
+    data-id="<?= (int)$registro['excepcion_id'] ?>"
+    data-joven-id="<?= (int)$registro['joven_id'] ?>"
+    data-joven-nombre="<?= e($registro['nombre_completo']) ?>"
+>
+  
+    Editar
+</button>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                <?php else: ?>
+
+                    <!-- =================================
+                         TABLA VACÍA
+                    ================================== -->
 
                     <tr>
 
-                        <td>
+                        <td
+                            colspan="6"
+                            class="table-empty"
+                        >
 
-                            <?= e($s["nombre_completo"]) ?>
+                            <div class="gx-empty">
 
-                        </td>
+                                <i
+                                    class="fa-solid fa-inbox"
+                                ></i>
 
-                        <td>
+                                <p>
+                                    No hay registros de seguimiento
+                                    durante este mes.
+                                </p>
 
-                            <?= ucfirst(
-                                strtolower(
-                                    e($s["modalidad_contacto"])
-                                )
-                            ) ?>
-
-                        </td>
-
-                        <td>
-
-                            <span class="estado <?= strtolower(str_replace('_', '-', e($s["estado_proceso"]))) ?>">
-
-                                <?= ucfirst(
-                                    strtolower(
-                                        str_replace(
-                                            "_",
-                                            " ",
-                                            e($s["estado_proceso"])
-                                        )
-                                    )
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <?= e(
-                                $s["responsable_nombre"] ?? "-"
-                            ) ?>
-
-                        </td>
-
-                        <td>
-
-                            <?= formatearFecha(
-                                $s["fecha_contacto"]
-                            ) ?>
+                            </div>
 
                         </td>
 
                     </tr>
 
-                <?php endforeach; ?>
+                <?php endif; ?>
 
             </tbody>
 
         </table>
 
     </div>
-
 </section>
 
+<!-- =====================================================
+     MODAL EXCEPCIÓN DE SEGUIMIENTO
+====================================================== -->
 
+<div
+    id="modalExcepcionSeguimiento"
+    class="gx-modal"
+    aria-hidden="true"
+>
+
+    <div class="gx-modal__overlay"></div>
+
+    <div
+        class="gx-modal__content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalExcepcionTitulo"
+    >
+
+        <div class="gx-modal__header">
+
+            <div>
+
+                <h2 id="modalExcepcionTitulo">
+                    Registrar excepción
+                </h2>
+
+                <p>
+                    Indica por qué este joven no tendrá seguimiento este mes.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="gx-modal__close"
+                id="cerrarModalExcepcion"
+                aria-label="Cerrar"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="gx-modal__body">
+
+            <div class="form-info">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>
+                    Joven:
+                    <strong id="excepcionJovenNombre">
+                        —
+                    </strong>
+                </span>
+
+            </div>
+
+
+            <form
+                id="formExcepcionSeguimiento"
+                action="../../controllers/excepcionSeguimientoController.php"
+                method="POST"
+                class="form"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="<?= htmlspecialchars(
+                        $_SESSION['csrf_token'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="crear_excepcion_seguimiento"
+                >
+
+                <input
+                    type="hidden"
+                    name="joven_id"
+                    id="excepcionJovenId"
+                    value=""
+                >
+
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="motivoExcepcion"
+                    >
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                        Motivo
+
+                    </label>
+
+
+                    <select
+                        id="motivoExcepcion"
+                        name="motivo"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Seleccionar motivo
+                        </option>
+
+                        <option value="SIN_TELEFONO">
+                            No tiene teléfono
+                        </option>
+
+                        <option value="JOVEN_ANTIGUO">
+                            Joven antiguo
+                        </option>
+
+                        <option value="REGRESO">
+                            Regresó al ministerio
+                        </option>
+
+                        <option value="TRASLADO">
+                            Viene de otra iglesia
+                        </option>
+
+                        <option value="NO_CORRESPONDE">
+                            No corresponde seguimiento de nuevo
+                        </option>
+
+                        <option value="OTRO">
+                            Otro motivo
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="observacionesExcepcion"
+                    >
+
+                        <i class="fa-solid fa-comment-dots"></i>
+
+                        Observaciones
+
+                    </label>
+
+
+                    <textarea
+                        id="observacionesExcepcion"
+                        name="observaciones"
+                        class="form-textarea"
+                        rows="4"
+                        maxlength="1000"
+                        placeholder="Agrega una observación si es necesario..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-back"
+                        id="cancelarExcepcion"
+                    >
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fa-solid fa-check"></i>
+
+                        Registrar excepción
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    window.excepcionSeguimientoUrl =
+        <?= json_encode(
+            BASE_URL . '/controllers/excepcionSeguimientoController.php'
+        ) ?>;
+</script>
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/index.js">
 </script>
 
 <script
+    src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/excepciones.js">
+</script>
 
+<scrip
     defer
-
     src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-
 </script>
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

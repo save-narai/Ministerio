@@ -69,7 +69,7 @@ $stmt = $pdo->prepare("
 
         a.grupo_conexion,
 
-        a.primera_vez_discipulado
+        a.primera_vez
 
     FROM asistencia a
 
@@ -86,7 +86,6 @@ $stmt->execute([
 ]);
 
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 /* =========================================================
    ESTADÍSTICAS GENERALES
@@ -160,9 +159,8 @@ foreach ($data as $d) {
         $participaronDiscipulado++;
     }
 
-
     /* -----------------------------------------------------
-       PRIMERA VEZ EN DISCIPULADO
+       PRIMERA VEZ EN LA REUNIÓN
 
        Solo contamos personas que:
        1. Asistieron
@@ -170,12 +168,13 @@ foreach ($data as $d) {
     ----------------------------------------------------- */
 
     if (
-        (int)($d["primera_vez_discipulado"] ?? 0) === 1
+        (int)($d["primera_vez"] ?? 0) === 1
         &&
         (int)($d["asistio"] ?? 0) === 1
     ) {
 
         $primeraVezDiscipulado++;
+
     }
 
 
@@ -194,10 +193,9 @@ foreach ($data as $d) {
     ) {
 
         $participaronConexion++;
+
     }
-
 }
-
 
 /* =========================================================
    PORCENTAJE GENERAL DE ASISTENCIA
@@ -719,51 +717,47 @@ require_once __DIR__ . "/../../includes/header.php";
         </thead>
 
 
-        <tbody>
+    <tbody>
 
-            <?php foreach ($data as $d): ?>
+    <?php foreach ($data as $d): ?>
 
-                <?php
+        <?php
 
-                $grupo = strtolower(
-                    trim(
-                        $d["grupo_edad"] ?? ""
-                    )
-                );
+        $grupo = strtolower(
+            trim(
+                $d["grupo_edad"] ?? ""
+            )
+        );
 
-                $asistio = (
-                    (int)($d["asistio"] ?? 0) === 1
-                );
+        $asistio = (
+            (int)($d["asistio"] ?? 0) === 1
+        );
 
-                $esServidor = (
-                    (int)($d["es_servidor"] ?? 0) === 1
-                );
+        $esServidor = (
+            (int)($d["es_servidor"] ?? 0) === 1
+        );
 
-                $enDiscipulado = (
-                    (int)($d["participa_discipulado"] ?? 0) === 1
-                );
+        $enDiscipulado = (
+            (int)($d["participa_discipulado"] ?? 0) === 1
+        );
 
-                $primeraVez = (
-                    (int)($d["primera_vez_discipulado"] ?? 0) === 1
-                );
+        $primeraVez = (
+            (int)($d["primera_vez"] ?? 0) === 1
+        );
 
-                $enConexion = (
-                    (int)($d["grupo_conexion"] ?? 0) === 1
-                );
+        $enConexion = (
+            (int)($d["grupo_conexion"] ?? 0) === 1
+        );
 
-                ?>
+        ?>
 
-
-                <tr
-
-                    data-grupo="<?= htmlspecialchars($grupo) ?>"
-
-                    data-asistencia="<?= $asistio
-                        ? 'asistio'
-                        : 'falto'
-                    ?>"
-
-                >
+        <tr
+            data-grupo="<?= htmlspecialchars($grupo) ?>"
+            data-asistencia="<?= $asistio
+                ? 'asistio'
+                : 'falto'
+            ?>"
+        >
 
 
                     <!-- NOMBRE -->

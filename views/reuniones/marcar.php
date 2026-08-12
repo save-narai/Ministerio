@@ -5,33 +5,52 @@ require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
+
     header("Location: ../dashboard.php");
+
     exit;
 }
 
+
 $reunion_id = $_GET["reunion_id"] ?? null;
 
+
 if (!$reunion_id) {
+
     die("Reunión inválida");
+
 }
+
 
 /* =========================================================
    REUNIÓN
 ========================================================= */
 
 $stmt = $pdo->prepare("
+
     SELECT *
+
     FROM reuniones
+
     WHERE id = ?
+
 ");
 
-$stmt->execute([$reunion_id]);
+$stmt->execute([
+    $reunion_id
+]);
 
-$reunion = $stmt->fetch(PDO::FETCH_ASSOC);
+$reunion = $stmt->fetch(
+    PDO::FETCH_ASSOC
+);
+
 
 if (!$reunion) {
+
     die("No existe");
+
 }
+
 
 /* =========================================================
    TIPO BONITO
@@ -39,35 +58,145 @@ if (!$reunion) {
 
 $tipoBonito = match ($reunion["tipo"]) {
 
-    "REUNION_JOVENES" => "Reunión Jóvenes",
-    "GRUPO_CONEXION"  => "Grupo Conexión",
-    "DISCIPULADO"     => "Discipulado",
-    "EVENTO_ESPECIAL" => "Evento Especial",
+    "REUNION_JOVENES" =>
+        "Reunión Jóvenes",
 
-    default => $reunion["tipo"]
+    "GRUPO_CONEXION" =>
+        "Grupo Conexión",
+
+    "DISCIPULADO" =>
+        "Discipulado",
+
+    "EVENTO_ESPECIAL" =>
+        "Evento Especial",
+
+    default =>
+        $reunion["tipo"]
+
 };
+
 
 /* =========================================================
    JÓVENES
 ========================================================= */
 
 $jovenes = $pdo->query("
+
     SELECT
+
         id,
+
         nombre_completo,
+
         TIMESTAMPDIFF(
             YEAR,
             fecha_nacimiento,
             CURDATE()
         ) AS edad,
+
         estado_actividad
+
     FROM jovenes
+
     WHERE estado_actividad IN (
         'ACTIVO',
         'INACTIVO'
     )
+
     ORDER BY nombre_completo ASC
+
 ")->fetchAll(PDO::FETCH_ASSOC);
+
+
+/* =========================================================
+   CARGAR ASISTENCIA EXISTENTE DE ESTA REUNIÓN
+========================================================= */
+
+$stmt = $pdo->prepare("
+
+    SELECT
+
+        joven_id,
+
+        asistio,
+
+        primera_vez
+
+    FROM asistencia
+
+    WHERE reunion_id = :reunion_id
+
+");
+
+$stmt->execute([
+
+    ':reunion_id' =>
+        $reunion_id
+
+]);
+
+
+$asistenciaExistente = [];
+
+
+foreach (
+    $stmt->fetchAll(PDO::FETCH_ASSOC)
+    as $registro
+) {
+
+    $jovenId =
+        (int)$registro['joven_id'];
+
+
+    $asistenciaExistente[$jovenId] = [
+
+        'asistio' =>
+            (int)(
+                $registro['asistio']
+                ?? 0
+            ),
+
+        'primera_vez' =>
+            (int)(
+                $registro['primera_vez']
+                ?? 0
+            )
+
+    ];
+
+}
+
+
+/* =========================================================
+   INYECTAR DATOS EXISTENTES EN CADA JOVEN
+========================================================= */
+
+foreach ($jovenes as &$j) {
+
+    $jovenId =
+        (int)$j['id'];
+
+
+    $j['asistencia_actual'] =
+
+        $asistenciaExistente[$jovenId]['asistio']
+        ?? 0;
+
+
+    $j['primera_vez_actual'] =
+
+        $asistenciaExistente[$jovenId]['primera_vez']
+        ?? 0;
+
+}
+
+
+unset($j);
+
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 require_once __DIR__ . "/../../includes/header.php";
 
@@ -233,19 +362,14 @@ require_once __DIR__ . "/../../includes/header.php";
             ✓
         </span>
 
-        <?php if ($reunion["tipo"] === "Discipulado"): ?>
-
-            <!-- PRIMERA VEZ EN DISCIPULADO -->
-            <span title="Primera vez en discipulado">
-                1V
-            </span>
-
-        <?php endif; ?>
+        <!-- PRIMERA VEZ EN ESTA REUNIÓN -->
+        <span title="Primera vez en esta reunión">
+            1V
+        </span>
 
     </div>
 
 </div>
-
 
 <!-- =====================================================
      LISTA DE PARTICIPANTES
@@ -253,124 +377,120 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <div class="lista">
 
-    <?php foreach ($jovenes as $j): ?>
+   <?php foreach ($jovenes as $j): ?>
 
-        <?php
+    <?php
 
-        $grupoEdad =
-            (
-                (int)($j["edad"] ?? 0) >= 15
-                &&
-                (int)($j["edad"] ?? 0) <= 17
-            )
-            ? "teen"
-            : "remanente";
+    $grupoEdad =
+        (
+            (int)($j["edad"] ?? 0) >= 15
+            &&
+            (int)($j["edad"] ?? 0) <= 17
+        )
+        ? "teen"
+        : "remanente";
 
-        $jovenId = (int)$j["id"];
+    $jovenId = (int)$j["id"];
 
-        ?>
+    ?>
 
-        <div
-            class="attendance-card"
-            data-edad="<?= htmlspecialchars($grupoEdad) ?>"
-        >
+    <div
+        class="attendance-card"
+        data-edad="<?= htmlspecialchars($grupoEdad) ?>"
+    >
 
-            <!-- INFORMACIÓN DEL JOVEN -->
+        <!-- INFORMACIÓN DEL JOVEN -->
 
-            <div class="info">
+        <div class="info">
 
-                <strong>
+            <strong>
+                <?= htmlspecialchars(
+                    $j["nombre_completo"] ?? ""
+                ) ?>
+            </strong>
 
-                    <?= htmlspecialchars(
-                        $j["nombre_completo"] ?? ""
-                    ) ?>
+            <small>
 
-                </strong>
+                <?= ucfirst($grupoEdad) ?>
 
-                <small>
+                ·
 
-                    <?= ucfirst($grupoEdad) ?>
+                <?= ucfirst(
+                    strtolower(
+                        $j["estado_actividad"] ?? ""
+                    )
+                ) ?>
 
-                    ·
-
-                    <?= ucfirst(
-                        strtolower(
-                            $j["estado_actividad"] ?? ""
-                        )
-                    ) ?>
-
-                </small>
-
-            </div>
-
-
-            <!-- =================================================
-                 CHECKS
-            ================================================== -->
-
-            <div class="checks-grid">
-
-                <!-- ASISTENCIA -->
-
-                <label
-                    title="Asistencia"
-                    class="attendance-check"
-                >
-
-                    <input
-                        type="checkbox"
-                        name="asistencia[<?= $jovenId ?>]"
-                        value="1"
-                    >
-
-                    <span>
-                        ✓
-                    </span>
-
-                </label>
-
-
-                <?php if ($reunion["tipo"] === "Discipulado"): ?>
-
-                    <!-- =========================================
-                         PRIMERA VEZ EN DISCIPULADO
-                    ========================================== -->
-
-                    <label
-                        title="Primera vez en discipulado"
-                        class="attendance-check"
-                    >
-
-                        <input
-                            type="checkbox"
-                            name="primera_vez[<?= $jovenId ?>]"
-                            value="1"
-                        >
-
-                        <span>
-                            1V
-                        </span>
-
-                    </label>
-
-                <?php endif; ?>
-
-            </div>
-
-
-            <!-- GRUPO DE EDAD -->
-
-            <input
-                type="hidden"
-                name="grupo_edad[<?= $jovenId ?>]"
-                value="<?= htmlspecialchars($grupoEdad) ?>"
-            >
+            </small>
 
         </div>
 
-    <?php endforeach; ?>
+
+        <!-- =================================================
+             CHECKS
+        ================================================== -->
+
+      <div class="checks-grid">
+
+<!-- ASISTENCIA -->
+
+<label
+    title="Asistencia"
+    class="attendance-check"
+>
+
+    <input
+        type="checkbox"
+        name="asistencia[<?= $jovenId ?>]"
+        value="1"
+        <?= (
+            (int)($j["asistencia_actual"] ?? 0) === 1
+        ) ? 'checked' : '' ?>
+    >
+
+    <span>
+        ✓
+    </span>
+
+</label>
+
+
+<!-- PRIMERA VEZ -->
+
+<label
+    title="Primera vez en esta reunión"
+    class="attendance-check"
+>
+
+    <input
+        type="checkbox"
+        name="primera_vez[<?= $jovenId ?>]"
+        value="1"
+        <?= (
+            (int)($j["primera_vez_actual"] ?? 0) === 1
+        ) ? 'checked' : '' ?>
+    >
+
+    <span>
+        1V
+    </span>
+
+</label>
 
 </div>
+
+
+        <!-- GRUPO DE EDAD -->
+
+        <input
+            type="hidden"
+            name="grupo_edad[<?= $jovenId ?>]"
+            value="<?= htmlspecialchars($grupoEdad) ?>"
+        >
+
+    </div>
+
+<?php endforeach; ?>
 
 </div>
 

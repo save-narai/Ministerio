@@ -4,7 +4,8 @@ require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../helpers/csrf.php";
-require_once __DIR__ . "/../../services/actividadService.php";
+require_once __DIR__ . "/../../services/seguimientoService.php";
+
 
 /* =========================
    ACTUALIZAR ACTIVIDAD
@@ -173,26 +174,24 @@ $totalSeguimientos =
     (int)$stmt->fetchColumn();
 
 /* =========================
-   ÚLTIMOS SEGUIMIENTOS
+   HISTORIAL DE SEGUIMIENTOS
+   + EXCEPCIONES
 ========================= */
 
-$stmt = $pdo->prepare("
-    SELECT
-        s.*,
-        u.nombre AS responsable_nombre
-    FROM seguimientos s
-    LEFT JOIN usuarios u
-        ON s.responsable_id = u.id
-    WHERE s.joven_id = :joven_id
-    ORDER BY s.fecha_contacto DESC
-    LIMIT 5
-");
+$historialJoven = obtenerHistorialJoven(
+    $pdo,
+    $id
+);
 
-$stmt->execute([
-    "joven_id" => $id
-]);
+$totalSeguimientos = count(
+    $historialJoven
+);
 
-$seguimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$seguimientos = array_slice(
+    $historialJoven,
+    0,
+    5
+);
 
 /* =========================
    ESTADO ACTIVIDAD
@@ -441,17 +440,16 @@ $estadoActividad = strtoupper(
 
         </div>
 
-        <?php if ($totalSeguimientos > 5): ?>
+<?php if ($totalSeguimientos > 0): ?>
 
-            <a
-                href="<?= BASE_URL ?>/views/seguimientos/index.php?joven_id=<?= $id ?>"
-                class="btn btn-outline">
+<a
+    href="<?= BASE_URL ?>/views/seguimientos/historial.php?joven_id=<?= $id ?>"
+    class="btn btn-outline"
+>
+    Ver historial completo (<?= $totalSeguimientos ?>)
+</a>
 
-                Ver historial completo (<?= $totalSeguimientos ?>)
-
-            </a>
-
-        <?php endif; ?>
+<?php endif; ?>
 
     </div>
 
@@ -461,67 +459,173 @@ $estadoActividad = strtoupper(
 
             <div class="gx-timeline">
 
-                <?php foreach ($seguimientos as $s): ?>
+               <?php foreach ($seguimientos as $s): ?>
 
-                    <article class="gx-timeline__item">
+    <article class="gx-timeline__item">
 
-                        <div class="gx-timeline__line"></div>
+        <div class="gx-timeline__line"></div>
 
-                        <div class="gx-timeline__dot"></div>
+        <div class="gx-timeline__dot"></div>
 
-                        <div class="gx-timeline__content">
+        <div class="gx-timeline__content">
 
-                            <div class="gx-timeline__top">
+            <?php if ($s["tipo_registro"] === "EXCEPCION"): ?>
 
-                                <div>
+                <div class="gx-timeline__top">
 
-                                    <h4>
+                    <div>
 
-                                        <?= ucfirst(strtolower(htmlspecialchars($s["modalidad_contacto"]))) ?>
+                        <h4>
+                            Excepción de seguimiento
+                        </h4>
 
-                                    </h4>
+                        <small>
+                            <i class="fa-regular fa-calendar"></i>
 
-                                    <small>
+                            <?= date(
+                                "d/m/Y",
+                                strtotime($s["fecha_registro"])
+                            ) ?>
+                        </small>
 
-                                        <i class="fa-regular fa-calendar"></i>
+                    </div>
 
-                                        <?= date("d/m/Y", strtotime($s["fecha_contacto"])) ?>
+                    <span class="estado excepcion">
+                        Excepción
+                    </span>
 
-                                    </small>
+                </div>
 
-                                </div>
+                <div class="gx-timeline__meta">
 
-                                <span class="estado <?= strtolower(str_replace("_", "-", $s["estado_proceso"])) ?>">
+                    <span>
+                        <i class="fa-solid fa-circle-exclamation"></i>
 
-                                    <?= ucfirst(strtolower(str_replace("_", " ", $s["estado_proceso"]))) ?>
+                        Motivo:
 
-                                </span>
+                        <?= htmlspecialchars(
+                            $s["excepcion_motivo"] ?? "No especificado"
+                        ) ?>
+                    </span>
 
-                            </div>
+                </div>
 
-                            <div class="gx-timeline__meta">
+                <p>
 
-                                <span>
+                    <?= nl2br(
+                        htmlspecialchars(
+                            $s["observaciones"]
+                            ?: "Sin observaciones registradas."
+                        )
+                    ) ?>
 
-                                    <i class="fa-solid fa-user"></i>
+                </p>
 
-                                    <?= htmlspecialchars($s["responsable_nombre"] ?? "Sin responsable") ?>
+                <div class="gx-timeline__meta">
 
-                                </span>
+                    <span>
 
-                            </div>
+                        <i class="fa-solid fa-user"></i>
 
-                            <p>
+                        <?= htmlspecialchars(
+                            $s["responsable_nombre"]
+                            ?? "Sin responsable"
+                        ) ?>
 
-                                <?= nl2br(htmlspecialchars($s["observaciones"] ?: "Sin observaciones registradas.")) ?>
+                    </span>
 
-                            </p>
+                </div>
 
-                        </div>
+            <?php else: ?>
 
-                    </article>
+                <!-- SEGUIMIENTO REAL -->
 
-                <?php endforeach; ?>
+                <div class="gx-timeline__top">
+
+                    <div>
+
+                        <h4>
+
+                            <?= ucfirst(
+                                strtolower(
+                                    htmlspecialchars(
+                                        $s["modalidad_contacto"]
+                                    )
+                                )
+                            ) ?>
+
+                        </h4>
+
+                        <small>
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <?= date(
+                                "d/m/Y",
+                                strtotime(
+                                    $s["fecha_contacto"]
+                                )
+                            ) ?>
+
+                        </small>
+
+                    </div>
+
+                    <span class="estado <?= strtolower(
+                        str_replace(
+                            "_",
+                            "-",
+                            $s["estado_proceso"]
+                        )
+                    ) ?>">
+
+                        <?= ucfirst(
+                            strtolower(
+                                str_replace(
+                                    "_",
+                                    " ",
+                                    $s["estado_proceso"]
+                                )
+                            )
+                        ) ?>
+
+                    </span>
+
+                </div>
+
+                <div class="gx-timeline__meta">
+
+                    <span>
+
+                        <i class="fa-solid fa-user"></i>
+
+                        <?= htmlspecialchars(
+                            $s["responsable_nombre"]
+                            ?? "Sin responsable"
+                        ) ?>
+
+                    </span>
+
+                </div>
+
+                <p>
+
+                    <?= nl2br(
+                        htmlspecialchars(
+                            $s["observaciones"]
+                            ?: "Sin observaciones registradas."
+                        )
+                    ) ?>
+
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+    </article>
+
+<?php endforeach; ?>
 
             </div>
 
@@ -577,17 +681,15 @@ $estadoActividad = strtoupper(
 
     <div class="gx-actions__primary">
 
-
-
         <a
 
             href="<?= BASE_URL ?>/views/seguimientos/crear.php?id=<?= $id ?>"
 
-            class="btn btn-primary btn-seguimiento"
+            class="btn btn-primary"
 
         >
 
-          
+            <i class="fa-solid fa-plus"></i>
 
             Registrar seguimiento
 

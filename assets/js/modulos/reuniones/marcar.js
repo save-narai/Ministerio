@@ -143,23 +143,22 @@ document.addEventListener("DOMContentLoaded", () => {
        No solamente asistencia[].
        ===================================================== */
 
-    btnCheckAll?.addEventListener(
-        "click",
-        () => {
+btnCheckAll?.addEventListener(
+    "click",
+    () => {
 
-            document
-                .querySelectorAll(
-                    '.checks-grid input[type="checkbox"]'
-                )
-                .forEach(check => {
+        document
+            .querySelectorAll(
+                '.checks-grid input[name^="asistencia["]'
+            )
+            .forEach(check => {
 
-                    check.checked = true;
+                check.checked = true;
 
-                });
+            });
 
-        }
-    );
-
+    }
+);
 
     /* =====================================================
        LIMPIAR TODOS
@@ -167,22 +166,22 @@ document.addEventListener("DOMContentLoaded", () => {
        Quita TODOS los checklists.
        ===================================================== */
 
-    btnUncheckAll?.addEventListener(
-        "click",
-        () => {
+ btnUncheckAll?.addEventListener(
+    "click",
+    () => {
 
-            document
-                .querySelectorAll(
-                    '.checks-grid input[type="checkbox"]'
-                )
-                .forEach(check => {
+        document
+            .querySelectorAll(
+                '.checks-grid input[type="checkbox"]'
+            )
+            .forEach(check => {
 
-                    check.checked = false;
+                check.checked = false;
 
-                });
+            });
 
-        }
-    );
+    }
+);
 
 
     /* =====================================================
