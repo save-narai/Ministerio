@@ -7,6 +7,7 @@ require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../services/actividadService.php";
 require_once __DIR__ . "/../../services/seguimientoService.php";
+require_once __DIR__ . "/../../services/excepcionSeguimientoService.php";
 require_once __DIR__ . "/../../helpers/format.php";
 require_once __DIR__ . "/../../helpers/fechas.php";
 
@@ -32,7 +33,9 @@ actualizarEstadoActividad($pdo);
    VALIDAR JOVEN
 ========================================================== */
 
-$jovenId = (int)($_GET['joven_id'] ?? 0);
+$jovenId = (int)(
+    $_GET['joven_id'] ?? 0
+);
 
 if ($jovenId <= 0) {
 
@@ -61,7 +64,9 @@ $stmt = $pdo->prepare("
 ");
 
 $stmt->execute([
+
     ':id' => $jovenId
+
 ]);
 
 $joven = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -76,10 +81,11 @@ if (!$joven) {
 
 
 /* ==========================================================
-   HISTORIAL
+   HISTORIAL COMPLETO
+   SEGUIMIENTOS + EXCEPCIONES
 ========================================================== */
 
-$seguimientos = obtenerSeguimientosPorJoven(
+$historial = obtenerHistorialCompletoPorJoven(
     $pdo,
     $jovenId
 );
@@ -89,29 +95,79 @@ $seguimientos = obtenerSeguimientosPorJoven(
    ESTADÍSTICAS
 ========================================================== */
 
-$totalSeguimientos = count($seguimientos);
+$totalRegistros = count($historial);
 
 $pendientes = 0;
 $enProceso = 0;
 $finalizados = 0;
 
-foreach ($seguimientos as $seguimiento) {
+foreach ($historial as $registro) {
 
-    switch ($seguimiento['estado_proceso']) {
+    $tipoRegistro =
+        strtoupper(
+            trim(
+                $registro['tipo_registro'] ?? ''
+            )
+        );
+
+    /*
+    | Solo los seguimientos normales tienen
+    | estado_proceso.
+    */
+
+    if ($tipoRegistro !== 'SEGUIMIENTO') {
+        continue;
+    }
+
+    switch (
+        strtoupper(
+            trim(
+                $registro['estado_proceso'] ?? ''
+            )
+        )
+    ) {
 
         case 'PENDIENTE':
+
             $pendientes++;
+
             break;
 
         case 'EN_PROCESO':
+
             $enProceso++;
+
             break;
 
         case 'FINALIZADO':
+
             $finalizados++;
+
             break;
     }
 }
+
+
+/* ==========================================================
+   MESES
+========================================================== */
+
+$mesesEspanol = [
+
+    1  => 'Enero',
+    2  => 'Febrero',
+    3  => 'Marzo',
+    4  => 'Abril',
+    5  => 'Mayo',
+    6  => 'Junio',
+    7  => 'Julio',
+    8  => 'Agosto',
+    9  => 'Septiembre',
+    10 => 'Octubre',
+    11 => 'Noviembre',
+    12 => 'Diciembre'
+
+];
 
 
 /* ==========================================================
@@ -139,6 +195,7 @@ require_once __DIR__ . "/../../includes/header.php";
             <p class="page-subtitle">
 
                 Historial completo del acompañamiento realizado a
+
                 <strong>
                     <?= e($joven['nombre_completo']) ?>
                 </strong>
@@ -146,7 +203,6 @@ require_once __DIR__ . "/../../includes/header.php";
             </p>
 
         </div>
-
 
         <div class="page-header-right">
 
@@ -165,6 +221,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
     </div>
 
+    <br>
+    
+    <br>
 
     <!-- =====================================================
          INFORMACIÓN DEL JOVEN
@@ -186,7 +245,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-
             <div>
 
                 <span class="badge badge-info">
@@ -194,7 +252,8 @@ require_once __DIR__ . "/../../includes/header.php";
                     <?= e(
                         ucfirst(
                             strtolower(
-                                $joven['estado_espiritual'] ?? 'Nuevo'
+                                $joven['estado_espiritual']
+                                ?? 'Nuevo'
                             )
                         )
                     ) ?>
@@ -268,11 +327,11 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card info">
 
             <span class="stat-number">
-                <?= $totalSeguimientos ?>
+                <?= $totalRegistros ?>
             </span>
 
             <span class="stat-label">
-                Total seguimientos
+                Total registros
             </span>
 
         </div>
@@ -323,7 +382,7 @@ require_once __DIR__ . "/../../includes/header.php";
 
 
     <!-- =====================================================
-         HISTORIAL
+         HISTORIAL COMPLETO
     ====================================================== -->
 
     <section class="page-section">
@@ -333,11 +392,11 @@ require_once __DIR__ . "/../../includes/header.php";
             <div>
 
                 <h2 class="section-title">
-                    Todos los seguimientos
+                    Historial completo
                 </h2>
 
                 <p class="section-subtitle">
-                    Registro cronológico del acompañamiento.
+                    Registro cronológico del acompañamiento y sus excepciones.
                 </p>
 
             </div>
@@ -345,13 +404,32 @@ require_once __DIR__ . "/../../includes/header.php";
         </div>
 
 
-        <?php if (!empty($seguimientos)): ?>
+        <?php if (!empty($historial)): ?>
 
             <div class="gx-timeline">
 
-                <?php foreach ($seguimientos as $s): ?>
+                <?php foreach ($historial as $registro): ?>
 
-                    <article class="gx-timeline__item">
+                    <?php
+
+                    $tipoRegistro =
+                        strtoupper(
+                            trim(
+                                $registro['tipo_registro']
+                                ?? ''
+                            )
+                        );
+
+                    $esExcepcion =
+                        $tipoRegistro === 'EXCEPCION';
+
+                    ?>
+
+                    <article
+                        class="gx-timeline__item <?= $esExcepcion
+                            ? 'gx-timeline__item--excepcion'
+                            : '' ?>"
+                    >
 
                         <div class="gx-timeline__line"></div>
 
@@ -359,169 +437,268 @@ require_once __DIR__ . "/../../includes/header.php";
 
 
                         <div class="gx-timeline__content">
+<?php if ($esExcepcion): ?>
 
-                            <!-- =========================
-                                 CABECERA
-                            ========================== -->
+    <!-- =================================
+         EXCEPCIÓN
+    ================================== -->
 
-                            <div class="gx-timeline__top">
+    <div class="gx-timeline__top">
 
-                                <div>
+        <div>
 
-                                    <h4>
+            <h4>
+                Excepción de seguimiento
+            </h4>
 
-                                        <?= ucfirst(
-                                            strtolower(
-                                                e(
-                                                    $s[
-                                                        'modalidad_contacto'
-                                                    ]
-                                                )
-                                            )
-                                        ) ?>
+            <small>
 
-                                    </h4>
+                <i class="fa-regular fa-calendar"></i>
 
+                <?= e(
+                    formatearFecha(
+                        $registro['fecha_registro']
+                    )
+                ) ?>
 
-                                    <small>
+            </small>
 
-                                        <i class="fa-regular fa-calendar"></i>
+        </div>
 
-                                        <?= formatearFecha(
-                                            $s['fecha_contacto']
-                                        ) ?>
+        <span class="estado excepcion">
 
-                                    </small>
+            <i class="fa-solid fa-triangle-exclamation"></i>
 
-                                </div>
+            Excepción
 
+        </span>
 
-                                <span
-                                    class="estado <?= strtolower(
-                                        str_replace(
-                                            "_",
-                                            "-",
-                                            e(
-                                                $s[
-                                                    'estado_proceso'
-                                                ]
-                                            )
-                                        )
-                                    ) ?>"
-                                >
-
-                                    <?= ucfirst(
-                                        strtolower(
-                                            str_replace(
-                                                "_",
-                                                " ",
-                                                e(
-                                                    $s[
-                                                        'estado_proceso'
-                                                    ]
-                                                )
-                                            )
-                                        )
-                                    ) ?>
-
-                                </span>
-
-                            </div>
+    </div>
 
 
-                            <!-- =========================
-                                 RESPONSABLE
-                            ========================== -->
+    <div class="gx-timeline__meta">
 
-                            <div class="gx-timeline__meta">
+        <span>
 
-                                <span>
+            <i class="fa-solid fa-circle-info"></i>
 
-                                    <i class="fa-solid fa-user"></i>
+            Motivo:
 
-                                    <?= e(
-                                        $s[
-                                            'responsable_nombre'
-                                        ]
-                                        ?? 'Sin responsable'
-                                    ) ?>
+            <?= e(
+                nombreMotivoExcepcionSeguimiento(
+                    $registro['excepcion_motivo'] ?? ''
+                )
+            ) ?>
 
-                                </span>
+        </span>
 
-                            </div>
+    </div>
 
 
-                            <!-- =========================
-                                 OBSERVACIONES
-                            ========================== -->
+    <p>
 
-                            <p>
+        <?= nl2br(
+            e(
+                $registro['observaciones']
+                ?: 'Sin observaciones registradas.'
+            )
+        ) ?>
 
-                                <?= nl2br(
-                                    e(
-                                        $s['observaciones']
-                                        ?: 'Sin observaciones registradas.'
-                                    )
-                                ) ?>
-
-                            </p>
+    </p>
 
 
-                            <!-- =========================
-                                 ACCIONES
-                            ========================== -->
+    <div class="gx-timeline__meta">
 
-                            <div class="gx-timeline__actions">
+        <span>
 
-                                <a
-                                    href="<?= BASE_URL ?>/views/jovenes/ver.php?id=<?= $jovenId ?>"
-                                    class="btn btn-sm btn-outline"
-                                >
+            <i class="fa-solid fa-user"></i>
 
-                                    Ver perfil
+            <?= e(
+                $registro['responsable_nombre']
+                ?? 'Sin responsable'
+            ) ?>
 
-                                </a>
+        </span>
+
+    </div>
 
 
-                              <form
-    action="<?= BASE_URL ?>/controllers/seguimientoController.php"
-    method="POST"
-    class="form-eliminar-seguimiento"
->
+<?php else: ?>
 
-    <input
-        type="hidden"
-        name="csrf_token"
-        value="<?= htmlspecialchars(
-            $_SESSION['csrf_token'],
-            ENT_QUOTES,
-            'UTF-8'
-        ) ?>"
+    <!-- =================================
+         SEGUIMIENTO NORMAL
+    ================================== -->
+
+    <?php
+
+    $modalidad =
+        strtoupper(
+            trim(
+                $registro['modalidad_contacto']
+                ?? ''
+            )
+        );
+
+    $estadoProceso =
+        strtoupper(
+            trim(
+                $registro['estado_proceso']
+                ?? ''
+            )
+        );
+
+    $estadoClase =
+        strtolower(
+            str_replace(
+                '_',
+                '-',
+                $estadoProceso
+            )
+        );
+
+    $modalidadNombre =
+        match ($modalidad) {
+
+            'WHATSAPP' =>
+                'WhatsApp',
+
+            'LLAMADA' =>
+                'Llamada',
+
+            'VISITA' =>
+                'Visita',
+
+            'MENSAJE' =>
+                'Mensaje',
+
+            default =>
+                'Sin modalidad'
+
+        };
+
+    ?>
+
+    <div class="gx-timeline__top">
+
+        <div>
+
+            <h4>
+                <?= e($modalidadNombre) ?>
+            </h4>
+
+            <small>
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <?= e(
+                    formatearFecha(
+                        $registro['fecha_registro']
+                    )
+                ) ?>
+
+            </small>
+
+        </div>
+
+        <span
+            class="estado <?= e($estadoClase) ?>"
+        >
+
+            <?= e(
+                ucfirst(
+                    strtolower(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $estadoProceso
+                        )
+                    )
+                )
+            ) ?>
+
+        </span>
+
+    </div>
+
+
+    <div class="gx-timeline__meta">
+
+        <span>
+
+            <i class="fa-solid fa-user"></i>
+
+            <?= e(
+                $registro['responsable_nombre']
+                ?? 'Sin responsable'
+            ) ?>
+
+        </span>
+
+    </div>
+
+
+    <p>
+
+        <?= nl2br(
+            e(
+                $registro['observaciones']
+                ?: 'Sin observaciones registradas.'
+            )
+        ) ?>
+
+    </p>
+
+
+<div class="gx-timeline__actions">
+
+    <form
+        action="<?= BASE_URL ?>/controllers/seguimientoController.php"
+        method="POST"
+        class="form-eliminar-seguimiento"
     >
 
-    <input
-        type="hidden"
-        name="action"
-        value="eliminar_seguimiento"
-    >
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= htmlspecialchars(
+                $_SESSION['csrf_token'],
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>"
+        >
 
-    <input
-        type="hidden"
-        name="id"
-        value="<?= (int)$seguimiento['id'] ?>"
-    >
+        <input
+            type="hidden"
+            name="action"
+            value="eliminar_seguimiento"
+        >
 
-    <button
-        type="submit"
-        class="btn btn-danger"
-    >
-        <i class="fa-solid fa-trash"></i>
-        Eliminar
-    </button>
+        <input
+            type="hidden"
+            name="id"
+            value="<?= (int)$registro['registro_id'] ?>"
+        >
 
-</form>
+        <button
+            type="submit"
+            class="btn btn-danger btn-eliminar-seguimiento"
+        >
 
-                            </div>
+            <i class="fa-solid fa-trash"></i>
+
+            Eliminar
+
+        </button>
+
+    </form>
+
+</div>
+
+<?php endif; ?>
+
+                            
+
+                               
 
                         </div>
 
@@ -534,7 +711,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <?php else: ?>
 
-
             <!-- =================================================
                  SIN HISTORIAL
             ================================================== -->
@@ -544,13 +720,13 @@ require_once __DIR__ . "/../../includes/header.php";
                 <i class="fa-solid fa-notes-medical"></i>
 
                 <h3>
-                    Aún no hay seguimientos
+                    Aún no hay registros
                 </h3>
 
                 <p>
 
-                    Este joven todavía no tiene registros
-                    de seguimiento.
+                    Este joven todavía no tiene seguimientos
+                    ni excepciones registradas.
 
                 </p>
 
@@ -560,14 +736,13 @@ require_once __DIR__ . "/../../includes/header.php";
                     class="btn btn-primary"
                 >
 
-                    
+                    <i class="fa-solid fa-plus"></i>
 
                     Registrar primer seguimiento
 
                 </a>
 
             </div>
-
 
         <?php endif; ?>
 
@@ -587,7 +762,6 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
-
                 Volver al perfil
 
             </a>
@@ -598,8 +772,6 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-primary"
             >
 
-      
-
                 Seguimientos
 
             </a>
@@ -609,6 +781,11 @@ require_once __DIR__ . "/../../includes/header.php";
     </div>
 
 </div>
+
+
+<script
+    src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/historial.js"
+></script>
 
 
 <?php require_once __DIR__ . "/../../includes/footer.php"; ?>

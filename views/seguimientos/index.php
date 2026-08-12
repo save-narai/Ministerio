@@ -148,75 +148,113 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
-        <div class="page-header-right">
+    
 
-                   <div class="export-dropdown">
+      <div class="page-header-right">
 
-                <button
-                    type="button"
-                    class="export-dropdown__trigger"
-                >
+    <?php if (tienePermiso('asignar_seguimientos')): ?>
 
-                    <i class="fa-solid fa-download"></i>
+        <a
+            href="<?= BASE_URL ?>/views/seguimientos/asignaciones.php"
+            class="btn btn-primary seguimiento-btn-asignaciones"
+        >
 
-                    Exportar
+            <i class="fa-solid fa-user-plus"></i>
 
-                    <i class="fa-solid fa-chevron-down"></i>
+            Asignaciones
 
-                </button>
+        </a>
 
-                <div class="export-dropdown__menu">
+    <?php endif; ?>
 
-                    <button
-                        type="button"
-                        class="export-option"
-                        id="exportPdf"
-                    >
-                        <i class="fa-solid fa-file-pdf"></i>
-                        PDF
-                    </button>
 
-                    <button
-                        type="button"
-                        class="export-option"
-                        id="exportExcel"
-                    >
-                        <i class="fa-solid fa-file-excel"></i>
-                        Excel
-                    </button>
+    <div class="export-dropdown">
 
-                    <button
-                        type="button"
-                        class="export-option"
-                        id="exportWord"
-                    >
-                        <i class="fa-solid fa-file-word"></i>
-                        Word
-                    </button>
+        <button
+            type="button"
+            class="export-dropdown__trigger"
+        >
 
-                    <button
-                        type="button"
-                        class="export-option"
-                        id="exportCsv"
-                    >
-                        <i class="fa-solid fa-file-csv"></i>
-                        CSV
-                    </button>
+            <i class="fa-solid fa-download"></i>
 
-                    <button
-                        type="button"
-                        class="export-option"
-                        id="exportPrint"
-                    >
-                        <i class="fa-solid fa-print"></i>
-                        Imprimir
-                    </button>
+            Exportar
 
-                </div>
+            <i class="fa-solid fa-chevron-down"></i>
 
-            </div>
+        </button>
+
+
+        <div class="export-dropdown__menu">
+
+            <button
+                type="button"
+                class="export-option"
+                id="exportPdf"
+            >
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                PDF
+
+            </button>
+
+
+            <button
+                type="button"
+                class="export-option"
+                id="exportExcel"
+            >
+
+                <i class="fa-solid fa-file-excel"></i>
+
+                Excel
+
+            </button>
+
+
+            <button
+                type="button"
+                class="export-option"
+                id="exportWord"
+            >
+
+                <i class="fa-solid fa-file-word"></i>
+
+                Word
+
+            </button>
+
+
+            <button
+                type="button"
+                class="export-option"
+                id="exportCsv"
+            >
+
+                <i class="fa-solid fa-file-csv"></i>
+
+                CSV
+
+            </button>
+
+
+            <button
+                type="button"
+                class="export-option"
+                id="exportPrint"
+            >
+
+                <i class="fa-solid fa-print"></i>
+
+                Imprimir
+
+            </button>
 
         </div>
+
+    </div>
+
+</div>
 
     </div>
 

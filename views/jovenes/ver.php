@@ -491,8 +491,12 @@ $estadoActividad = strtoupper(
                     </div>
 
                     <span class="estado excepcion">
-                        Excepción
-                    </span>
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            Excepción
+
+        </span>
 
                 </div>
 

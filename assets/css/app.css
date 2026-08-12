@@ -1819,6 +1819,120 @@ html.dark .btn-icon {
 }
 
 /* =========================================================
+   ASIGNACIONES
+========================================================= */
+.seguimientos-page .asignaciones-card {
+  border-radius: 24px;
+}
+
+.seguimientos-page .asignaciones-card + .asignaciones-card {
+  margin-top: 24px;
+}
+
+.seguimientos-page .asignaciones-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.seguimientos-page .asignaciones-seleccion-info {
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.seguimientos-page .asignaciones-toolbar form {
+  margin: 0;
+}
+
+.seguimientos-page #btnCancelarSeleccionados:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================================
+   CHECKBOX DE TABLAS
+========================================================== */
+.table-check {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-grid;
+  place-content: center;
+  vertical-align: middle;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.table-check:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 95, 46, 0.08);
+}
+
+.table-check:checked {
+  background: var(--card-gradient);
+  border-color: transparent;
+  box-shadow: 0 5px 14px rgba(255, 95, 46, 0.2);
+}
+
+.table-check::before {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.15s ease;
+}
+
+.table-check:checked::before {
+  border-color: #fff;
+  transform: rotate(-45deg) scale(1);
+}
+
+.table-check:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16);
+}
+
+html.dark .table-check {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+html.dark .table-check:hover {
+  border-color: #00e5ff;
+  box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.08);
+}
+
+html.dark .table-check:checked {
+  background: linear-gradient(135deg, #00e5ff, #00ffa3, #4facfe);
+  border-color: transparent;
+}
+
+/* ==========================================================
+   COLUMNA DE CHECKBOX
+========================================================== */
+.table-check-column {
+  width: 52px !important;
+  min-width: 52px !important;
+  max-width: 52px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  text-align: center !important;
+}
+
+/* =========================================================
    DATATABLE SELECT
 ========================================================= */
 .dataTables_length select {
@@ -2873,6 +2987,18 @@ html.dark .permission-card:has(input:checked) {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
+}
+
+/* ======================================================
+   EN PROCESO
+====================================================== */
+.gx-stats .stat-card.warning {
+  border-color: #f59e0b;
+  box-shadow: 0 8px 22px rgba(245, 158, 11, 0.12);
+}
+
+.gx-stats .stat-card.warning .stat-number {
+  color: #f59e0b;
 }
 
 /* =====================================================
@@ -4635,6 +4761,12 @@ html.dark .check-custom input:checked + .checkmark {
   color: var(--text-soft);
 }
 
+.gx-timeline__content .estado.excepcion {
+  color: #a16207;
+  background: #fef3c7;
+  border-color: #fcd34d;
+}
+
 /* =====================================================
    HISTORY CONTAINER
 ===================================================== */
@@ -5847,19 +5979,20 @@ html.dark .progress {
 }
 /* Seguimientos */
 /* =========================================================
-   PAGE
+   SEGUIMIENTOS — PÁGINA
 ========================================================= */
 .seguimientos-page {
   animation: fadeIn 0.4s ease;
 }
 
 /* =========================================================
-   PAGE HEADER
+   PAGE HEADER — ACCIONES
 ========================================================= */
-.page-header-right {
+.seguimientos-page .page-header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: flex-end;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -5933,7 +6066,7 @@ html.dark .progress {
 }
 
 /* =========================================================
-   CARD ALERTA
+   CARD DE ALERTA
 ========================================================= */
 .seguimiento-alerta-card {
   display: flex;
@@ -5955,7 +6088,7 @@ html.dark .progress {
 }
 
 /* =========================================================
-   CARD - IZQUIERDA
+   CARD ALERTA — IZQUIERDA
 ========================================================= */
 .seguimiento-alerta-left {
   flex: 1 1 auto;
@@ -5979,7 +6112,7 @@ html.dark .progress {
 }
 
 /* =========================================================
-   CARD - DERECHA
+   CARD ALERTA — DERECHA
 ========================================================= */
 .seguimiento-alerta-right {
   display: flex;
@@ -5990,7 +6123,7 @@ html.dark .progress {
 }
 
 /* =========================================================
-   ESTADOS
+   ESTADOS DE SEGUIMIENTO
 ========================================================= */
 .estado {
   display: inline-flex;
@@ -6019,328 +6152,29 @@ html.dark .progress {
 }
 
 /* =========================================================
-   SECTION COUNTER
+   BOTÓN ASIGNACIONES
 ========================================================= */
-.section-counter {
+.seguimientos-page .seguimiento-btn-asignaciones {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin-left: 12px;
-  border-radius: 50%;
-  background: rgba(236, 72, 153, 0.12);
-  color: #ec4899;
-  font-size: 13px;
-  font-weight: 800;
-  vertical-align: middle;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 18px;
 }
 
 /* =========================================================
-   BOTONES
+   DARK MODE — BOTÓN ASIGNACIONES
 ========================================================= */
-.btn-mini {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 16px;
-  border-radius: 14px;
-  text-decoration: none;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  transition: 0.25s ease;
-}
-
-.btn-mini.chico {
-  background: linear-gradient(135deg, #ff9a44, #ff4b2b, #ff416c);
-}
-
-.btn-mini.chica {
-  background: linear-gradient(135deg, #a855f7, #ec4899);
-}
-
-.btn-mini:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: var(--shadow-hover);
+html.dark .seguimientos-page .seguimiento-btn-asignaciones {
+  background: linear-gradient(135deg, #00e5ff, #00ffa3, #4facfe);
+  color: #07111f;
+  box-shadow: 0 10px 24px rgba(0, 229, 255, 0.16);
 }
 
 /* =========================================================
-   ESTADO VACÍO
-========================================================= */
-.estado-vacio {
-  padding: 28px;
-  border-radius: 20px;
-  background: rgba(34, 197, 94, 0.08);
-  border: 1px solid rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  font-weight: 700;
-  text-align: center;
-}
-
-/* =========================================================
-   HISTORIAL
-========================================================= */
-.historial-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.historial-search {
-  min-width: 300px;
-  max-width: 420px;
-  width: 100%;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-@media (max-width: 768px) {
-  .seguimiento-alerta-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .seguimiento-alerta-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .page-header {
-    align-items: flex-start;
-  }
-  .page-header-right {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  .historial-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .historial-search {
-    max-width: 100%;
-  }
-}
-/* =========================================================
-   ANIMACIONES
-========================================================= */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* =====================================================
-   MODAL EXCEPCIÓN DE SEGUIMIENTO
-===================================================== */
-.gx-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.gx-modal.is-open {
-  display: flex;
-}
-
-/* Fondo oscuro */
-.gx-modal__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(3px);
-}
-
-/* Contenedor */
-.gx-modal__content {
-  position: relative;
-  z-index: 2;
-  width: min(600px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
-  animation: gxModalEntrada 0.2s ease-out;
-}
-
-/* Header */
-.gx-modal__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 24px 26px;
-  border-bottom: 1px solid #eef0f4;
-}
-
-.gx-modal__header h2 {
-  margin: 0 0 6px;
-  font-size: 22px;
-  font-weight: 700;
-  color: #172033;
-}
-
-.gx-modal__header p {
-  margin: 0;
-  font-size: 14px;
-  color: #718096;
-}
-
-/* Botón cerrar */
-.gx-modal__close {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: #f1f3f7;
-  color: #4a5568;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.gx-modal__close:hover {
-  background: #ffe5e5;
-  color: #e53e3e;
-}
-
-/* Body */
-.gx-modal__body {
-  padding: 26px;
-}
-
-/* Información del joven */
-.form-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  margin-bottom: 24px;
-  border-radius: 12px;
-  background: #eef6ff;
-  color: #3b5b7a;
-  font-size: 14px;
-}
-
-.form-info i {
-  color: #3182ce;
-}
-
-/* Formulario */
-.gx-modal .form-group {
-  margin-bottom: 20px;
-}
-
-.gx-modal .form-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #273244;
-}
-
-.gx-modal .form-label i {
-  margin-right: 6px;
-}
-
-/* Select y textarea */
-.gx-modal .form-select,
-.gx-modal .form-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #d7dce5;
-  border-radius: 10px;
-  background: #fff;
-  padding: 12px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  color: #273244;
-  outline: none;
-  transition: 0.2s ease;
-}
-
-.gx-modal .form-select:focus,
-.gx-modal .form-textarea:focus {
-  border-color: #ff7043;
-  box-shadow: 0 0 0 3px rgba(255, 112, 67, 0.12);
-}
-
-.gx-modal .form-textarea {
-  resize: vertical;
-  min-height: 110px;
-}
-
-/* Acciones */
-.gx-modal .form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 26px;
-}
-
-.gx-modal .form-actions .btn {
-  min-height: 42px;
-  padding: 10px 18px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* Animación */
-@keyframes gxModalEntrada {
-  from {
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-/* Evitar scroll de la página cuando el modal está abierto */
-body.gx-modal-open {
-  overflow: hidden;
-}
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-@media (max-width: 600px) {
-  .gx-modal {
-    padding: 12px;
-  }
-  .gx-modal__content {
-    max-height: 94vh;
-    border-radius: 16px;
-  }
-  .gx-modal__header {
-    padding: 20px;
-  }
-  .gx-modal__body {
-    padding: 20px;
-  }
-  .gx-modal .form-actions {
-    flex-direction: column-reverse;
-  }
-  .gx-modal .form-actions .btn {
-    width: 100%;
-  }
-}
-/* ==========================================================
    BADGES DE MODALIDAD
-========================================================== */
+========================================================= */
 .badge-modalidad {
   display: inline-flex;
   align-items: center;
@@ -6354,51 +6188,535 @@ body.gx-modal-open {
   white-space: nowrap;
 }
 
-/* =========================
-   WHATSAPP
-========================= */
+/* =========================================================
+   MODALIDAD — WHATSAPP
+========================================================= */
 .badge-modalidad.modalidad-whatsapp {
   background: #dcfce7;
   color: #15803d;
   border: 1px solid #bbf7d0;
 }
 
-/* =========================
-   LLAMADA
-========================= */
+/* =========================================================
+   MODALIDAD — LLAMADA
+========================================================= */
 .badge-modalidad.modalidad-llamada {
   background: #dbeafe;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
 }
 
-/* =========================
-   VISITA
-========================= */
+/* ==========================================================
+   TABLAS DE ASIGNACIONES
+========================================================== */
+.seguimientos-page #tablaAsignaciones,
+.seguimientos-page #tablaAsignacionesActuales {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  table-layout: auto;
+}
+.seguimientos-page #tablaAsignaciones thead th,
+.seguimientos-page #tablaAsignacionesActuales thead th {
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.seguimientos-page #tablaAsignaciones tbody td,
+.seguimientos-page #tablaAsignacionesActuales tbody td {
+  padding: 13px 16px;
+  font-size: 0.86rem;
+  vertical-align: middle;
+}
+.seguimientos-page #tablaAsignaciones .seguimiento-nombre,
+.seguimientos-page #tablaAsignacionesActuales .seguimiento-nombre {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.seguimientos-page #tablaAsignaciones .badge,
+.seguimientos-page #tablaAsignacionesActuales .badge {
+  min-height: 28px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+.seguimientos-page {
+  /* ======================================================
+     CANCELADAS
+  ====================================================== */
+}
+.seguimientos-page #tablaAsignacionesActuales tbody tr.asignacion-cancelada {
+  opacity: 0.62;
+}
+.seguimientos-page #tablaAsignacionesActuales tbody tr.asignacion-cancelada:hover {
+  opacity: 1;
+}
+
+/* =========================================================
+   MODALIDAD — VISITA
+========================================================= */
 .badge-modalidad.modalidad-visita {
   background: #f3e8ff;
   color: #7e22ce;
   border: 1px solid #e9d5ff;
 }
 
-/* =========================
-   MENSAJE
-========================= */
+/* =========================================================
+   MODALIDAD — MENSAJE
+========================================================= */
 .badge-modalidad.modalidad-mensaje {
   background: #fef3c7;
   color: #b45309;
   border: 1px solid #fde68a;
 }
 
-/* =========================
-   MODALIDAD DESCONOCIDA
-========================= */
+/* =========================================================
+   MODALIDAD — DESCONOCIDA
+========================================================= */
 .badge-modalidad.modalidad-default {
   background: #f1f5f9;
   color: #475569;
   border: 1px solid #e2e8f0;
 }
 
+/* ==========================================================
+   TABLA DE SEGUIMIENTOS
+   Alineada visualmente con Jóvenes y Reuniones
+========================================================== */
+.seguimientos-page .gx-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  table-layout: auto;
+}
+.seguimientos-page {
+  /* ======================================================
+     ENCABEZADO
+  ====================================================== */
+}
+.seguimientos-page .gx-table thead th {
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.seguimientos-page {
+  /* ======================================================
+     CELDAS
+  ====================================================== */
+}
+.seguimientos-page .gx-table tbody td {
+  padding: 13px 16px;
+  vertical-align: middle;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+.seguimientos-page {
+  /* ======================================================
+     NOMBRE
+  ====================================================== */
+}
+.seguimientos-page .gx-table .seguimiento-nombre {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: normal;
+}
+.seguimientos-page {
+  /* ======================================================
+     RESPONSABLE
+  ====================================================== */
+}
+.seguimientos-page .gx-table .seguimiento-responsable {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+.seguimientos-page {
+  /* ======================================================
+     FECHA
+  ====================================================== */
+}
+.seguimientos-page .gx-table .seguimiento-fecha {
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.seguimientos-page {
+  /* ======================================================
+     MODALIDAD + ESTADO
+  ====================================================== */
+}
+.seguimientos-page .gx-table .badge-modalidad,
+.seguimientos-page .gx-table .estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  line-height: 1;
+  font-weight: 800;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.seguimientos-page {
+  /* ======================================================
+     ACCIONES
+  ====================================================== */
+}
+.seguimientos-page .gx-table th:last-child,
+.seguimientos-page .gx-table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+.seguimientos-page .gx-table .seguimiento-acciones {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.seguimientos-page .gx-table .seguimiento-acciones .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.seguimientos-page .gx-table .btn-sm {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  border-radius: 11px;
+}
+.seguimientos-page {
+  /* ======================================================
+     MODO OSCURO
+  ====================================================== */
+}
+html.dark .seguimientos-page .gx-table tbody tr {
+  background: #182233;
+}
+html.dark .seguimientos-page .gx-table tbody td {
+  color: #f8fafc;
+}
+html.dark .seguimientos-page .gx-table .seguimiento-nombre {
+  color: #ffffff;
+}
+html.dark .seguimientos-page .gx-table .seguimiento-responsable,
+html.dark .seguimientos-page .gx-table .seguimiento-fecha {
+  color: #cbd5e1;
+}
+
+/* =========================================================
+   MODAL — EXCEPCIÓN DE SEGUIMIENTO
+========================================================= */
+.seguimientos-page .gx-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.seguimientos-page .gx-modal.is-open {
+  display: flex;
+}
+
+/* =========================================================
+   MODAL — OVERLAY
+========================================================= */
+.seguimientos-page .gx-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+/* =========================================================
+   MODAL — CONTENEDOR
+========================================================= */
+.seguimientos-page .gx-modal__content {
+  position: relative;
+  z-index: 2;
+  width: min(600px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: var(--border);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  animation: gxModalEntrada 0.2s ease-out;
+}
+
+/* =========================================================
+   MODAL — HEADER
+========================================================= */
+.seguimientos-page .gx-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 26px;
+  border-bottom: var(--border);
+}
+
+.seguimientos-page .gx-modal__header h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.seguimientos-page .gx-modal__header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+/* =========================================================
+   MODAL — CERRAR
+========================================================= */
+.seguimientos-page .gx-modal__close {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.seguimientos-page .gx-modal__close:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #e53e3e;
+}
+
+/* =========================================================
+   MODAL — BODY
+========================================================= */
+.seguimientos-page .gx-modal__body {
+  padding: 26px;
+}
+
+/* =========================================================
+   MODAL — INFORMACIÓN
+========================================================= */
+.seguimientos-page .form-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.seguimientos-page .form-info i {
+  color: #3182ce;
+}
+
+/* =========================================================
+   MODAL — FORMULARIO
+========================================================= */
+.seguimientos-page .gx-modal .form-group {
+  margin-bottom: 20px;
+}
+
+.seguimientos-page .gx-modal .form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.seguimientos-page .gx-modal .form-label i {
+  margin-right: 6px;
+}
+
+/* =========================================================
+   MODAL — SELECT / TEXTAREA
+========================================================= */
+.seguimientos-page .gx-modal .form-select,
+.seguimientos-page .gx-modal .form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.seguimientos-page .gx-modal .form-select:focus,
+.seguimientos-page .gx-modal .form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 112, 67, 0.12);
+}
+
+.seguimientos-page .gx-modal .form-textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* =========================================================
+   MODAL — ACCIONES
+========================================================= */
+.seguimientos-page .gx-modal .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.seguimientos-page .gx-modal .form-actions .btn {
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   MODAL — ANIMACIÓN
+========================================================= */
+@keyframes gxModalEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* =========================================================
+   MODAL — BLOQUEAR SCROLL
+========================================================= */
+body.gx-modal-open {
+  overflow: hidden;
+}
+
+/* =========================================================
+   PAGINACIÓN DATATABLES
+========================================================= */
+.seguimientos-page .datatable-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.seguimientos-page .datatable-pagination .paginate_button {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.seguimientos-page .datatable-pagination .paginate_button:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.seguimientos-page .datatable-pagination .paginate_button.current {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.seguimientos-page .datatable-pagination .paginate_button.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   RESPONSIVE — ALERTAS / HEADER
+========================================================= */
+@media (max-width: 768px) {
+  .seguimiento-alerta-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .seguimiento-alerta-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .page-header {
+    align-items: flex-start;
+  }
+  .seguimientos-page .page-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+/* =========================================================
+   RESPONSIVE — MODAL
+========================================================= */
+@media (max-width: 600px) {
+  .seguimientos-page .gx-modal {
+    padding: 12px;
+  }
+  .seguimientos-page .gx-modal__content {
+    max-height: 94vh;
+    border-radius: 16px;
+  }
+  .seguimientos-page .gx-modal__header {
+    padding: 20px;
+  }
+  .seguimientos-page .gx-modal__body {
+    padding: 20px;
+  }
+  .seguimientos-page .gx-modal .form-actions {
+    flex-direction: column-reverse;
+  }
+  .seguimientos-page .gx-modal .form-actions .btn {
+    width: 100%;
+  }
+}
+/* =========================================================
+   ANIMACIÓN DE PÁGINA
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* =========================================================
    PAGE
 ========================================================= */
@@ -6540,6 +6858,296 @@ html.dark .form-info i {
     margin: 24px 0 32px;
   }
 }
+/* ==========================================================
+   HISTORIAL DE SEGUIMIENTOS
+   Estilos exclusivos del módulo
+========================================================== */
+.seguimientos-page {
+  /* ======================================================
+     HEADER
+  ====================================================== */
+}
+.seguimientos-page .page-header {
+  position: relative;
+}
+.seguimientos-page {
+  /* ======================================================
+     PERFIL / INFORMACIÓN DEL JOVEN
+  ====================================================== */
+}
+.seguimientos-page .gx-profile__rows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+.seguimientos-page .gx-profile__row {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(100, 116, 139, 0.06);
+  border: 1px solid rgba(100, 116, 139, 0.12);
+}
+.seguimientos-page .gx-profile__label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.seguimientos-page .gx-profile__value {
+  display: block;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.seguimientos-page {
+  /* ======================================================
+     SECCIÓN DEL HISTORIAL
+  ====================================================== */
+}
+.seguimientos-page .page-section {
+  width: 100%;
+  overflow: hidden;
+}
+.seguimientos-page {
+  /* ======================================================
+     TIMELINE
+  ====================================================== */
+}
+.seguimientos-page .gx-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 18px;
+  padding: 8px 0 8px 32px;
+  box-sizing: border-box;
+}
+.seguimientos-page .gx-timeline__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.seguimientos-page .gx-timeline__line {
+  position: absolute;
+  left: -21px;
+  top: 28px;
+  bottom: -20px;
+  width: 2px;
+  background: rgba(100, 116, 139, 0.2);
+}
+.seguimientos-page .gx-timeline__item:last-child .gx-timeline__line {
+  display: none;
+}
+.seguimientos-page .gx-timeline__dot {
+  position: absolute;
+  left: -28px;
+  top: 19px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00b8d9;
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 4px rgba(0, 184, 217, 0.12);
+  z-index: 2;
+}
+.seguimientos-page {
+  /* ======================================================
+     CONTENIDO DEL REGISTRO
+  ====================================================== */
+}
+.seguimientos-page .gx-timeline__content {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+.seguimientos-page .gx-timeline__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+.seguimientos-page .gx-timeline__top > div {
+  min-width: 0;
+}
+.seguimientos-page .gx-timeline__top h4 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+}
+.seguimientos-page .gx-timeline__top small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+.seguimientos-page .gx-timeline__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+.seguimientos-page .gx-timeline__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+}
+.seguimientos-page .gx-timeline__content > p {
+  margin: 14px 0 0;
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.seguimientos-page .gx-timeline__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.seguimientos-page {
+  /* ======================================================
+     ESTADOS DEL HISTORIAL
+  ====================================================== */
+}
+.seguimientos-page .gx-timeline__content .estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+.seguimientos-page .gx-timeline__content .estado.pendiente {
+  color: #b91c1c;
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+.seguimientos-page .gx-timeline__content .estado.en-proceso {
+  color: #b45309;
+  background: #fef3c7;
+  border-color: #fde68a;
+}
+.seguimientos-page .gx-timeline__content .estado.finalizado {
+  color: #047857;
+  background: #d1fae5;
+  border-color: #a7f3d0;
+}
+.seguimientos-page .gx-timeline__content .estado.excepcion {
+  color: #a16207;
+  background: #fef3c7;
+  border-color: #fcd34d;
+}
+.seguimientos-page {
+  /* ======================================================
+     EXCEPCIONES
+  ====================================================== */
+}
+.seguimientos-page .gx-timeline__item--excepcion .gx-timeline__dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+}
+.seguimientos-page .gx-timeline__item--excepcion .gx-timeline__content {
+  border-color: rgba(245, 158, 11, 0.28);
+}
+.seguimientos-page {
+  /* ======================================================
+     MODO OSCURO
+  ====================================================== */
+}
+html.dark .seguimientos-page .gx-profile__row {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+html.dark .seguimientos-page .gx-profile__label {
+  color: #8fa0b8;
+}
+html.dark .seguimientos-page .gx-timeline__line {
+  background: rgba(255, 255, 255, 0.12);
+}
+html.dark .seguimientos-page .gx-timeline__dot {
+  border-color: var(--surface);
+}
+html.dark .seguimientos-page .gx-timeline__content {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+html.dark .seguimientos-page .gx-timeline__content .estado.pendiente {
+  color: #fca5a5;
+  background: rgba(127, 29, 29, 0.34);
+  border-color: rgba(248, 113, 113, 0.32);
+}
+html.dark .seguimientos-page .gx-timeline__content .estado.en-proceso {
+  color: #fde68a;
+  background: rgba(146, 64, 14, 0.3);
+  border-color: rgba(251, 191, 36, 0.34);
+}
+html.dark .seguimientos-page .gx-timeline__content .estado.finalizado {
+  color: #86efac;
+  background: rgba(22, 101, 52, 0.28);
+  border-color: rgba(74, 222, 128, 0.34);
+}
+html.dark .seguimientos-page .gx-timeline__content .estado.excepcion {
+  color: #fde68a;
+  background: rgba(146, 64, 14, 0.28);
+  border-color: rgba(251, 191, 36, 0.38);
+}
+.seguimientos-page {
+  /* ======================================================
+     RESPONSIVE
+  ====================================================== */
+}
+@media (max-width: 768px) {
+  .seguimientos-page .gx-profile__rows {
+    grid-template-columns: 1fr;
+  }
+  .seguimientos-page .gx-timeline {
+    padding-left: 24px;
+  }
+  .seguimientos-page .gx-timeline__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .seguimientos-page .gx-timeline__actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ======================================================
+   EN PROCESO
+====================================================== */
+.gx-stats .stat-card.warning {
+  border-color: #f59e0b;
+  box-shadow: 0 8px 22px rgba(245, 158, 11, 0.12);
+}
+
+.gx-stats .stat-card.warning .stat-number {
+  color: #f59e0b;
+}
+
 /* Usuarios */
 /* =========================================================
    PAGE

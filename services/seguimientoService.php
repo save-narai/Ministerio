@@ -333,6 +333,7 @@ function prepararDatosSeguimiento(
 }
 
 
+
 /* ==========================================================
    CREAR SEGUIMIENTO
 ========================================================== */
@@ -342,9 +343,35 @@ function crearSeguimiento(
     array $datos
 ): int
 {
-    exigirPermiso(
-        'gestionar_seguimientos'
-    );
+    /*
+    |--------------------------------------------------------------------------
+    | PERMISO
+    |--------------------------------------------------------------------------
+    |
+    | Un administrador/líder/sublíder puede gestionar seguimientos
+    | normalmente.
+    |
+    | Un usuario normal puede registrar solamente sus seguimientos
+    | asignados.
+    |
+    */
+
+    if (
+        !tienePermiso('gestionar_seguimientos')
+        &&
+        !tienePermiso('gestionar_mis_seguimientos')
+    ) {
+
+        throw new Exception(
+            'No tienes permiso para registrar seguimientos.'
+        );
+
+    }
+
+
+    /* ==========================================
+       PREPARAR Y VALIDAR DATOS
+    ========================================== */
 
     $datos =
         prepararDatosSeguimiento(
@@ -352,9 +379,18 @@ function crearSeguimiento(
             $datos
         );
 
+
+    /* ==========================================
+       TRANSACCIÓN
+    ========================================== */
+
     $pdo->beginTransaction();
 
     try {
+
+        /* ==========================================
+           INSERTAR SEGUIMIENTO
+        ========================================== */
 
         $stmt = $pdo->prepare("
             INSERT INTO seguimientos
@@ -396,14 +432,13 @@ function crearSeguimiento(
 
             ':observaciones' =>
                 $datos['observaciones']
+
         ]);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | ACTUALIZAR ACTIVIDAD DEL JOVEN
-        |--------------------------------------------------------------------------
-        */
+        /* ==========================================
+           ACTUALIZAR ACTIVIDAD DEL JOVEN
+        ========================================== */
 
         $stmt = $pdo->prepare("
             UPDATE jovenes
@@ -414,26 +449,95 @@ function crearSeguimiento(
         ");
 
         $stmt->execute([
+
             ':id' =>
                 $datos['jovenId']
+
         ]);
 
+
+        /* ==========================================
+           COMPLETAR ASIGNACIÓN DEL MISMO PERÍODO
+        ========================================== */
+
+        $anioSeguimiento =
+            (int)date(
+                'Y',
+                strtotime(
+                    $datos['fechaContacto']
+                )
+            );
+
+        $mesSeguimiento =
+            (int)date(
+                'm',
+                strtotime(
+                    $datos['fechaContacto']
+                )
+            );
+
+
+        $stmt = $pdo->prepare("
+            UPDATE asignaciones_seguimiento
+
+            SET
+                estado = 'COMPLETADO',
+                fecha_completado = NOW()
+
+            WHERE joven_id = :joven_id
+
+            AND anio = :anio
+
+            AND mes = :mes
+
+            AND estado IN (
+                'PENDIENTE',
+                'EN_PROCESO'
+            )
+        ");
+
+        $stmt->execute([
+
+            ':joven_id' =>
+                $datos['jovenId'],
+
+            ':anio' =>
+                $anioSeguimiento,
+
+            ':mes' =>
+                $mesSeguimiento
+
+        ]);
+
+
+        /* ==========================================
+           ID DEL SEGUIMIENTO
+        ========================================== */
 
         $seguimientoId =
             (int)$pdo->lastInsertId();
 
+
+        /* ==========================================
+           COMMIT
+        ========================================== */
+
         $pdo->commit();
 
+
         return $seguimientoId;
+
 
     } catch (Throwable $e) {
 
         if ($pdo->inTransaction()) {
 
             $pdo->rollBack();
+
         }
 
         throw $e;
+
     }
 }
 
@@ -905,6 +1009,8 @@ function obtenerSeguimientosPorJoven(
         PDO::FETCH_ASSOC
     );
 }
+
+
 
 
 /* ==========================================================

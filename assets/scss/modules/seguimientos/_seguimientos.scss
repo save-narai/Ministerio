@@ -1,210 +1,171 @@
 /* =========================================================
-   PAGE
+   SEGUIMIENTOS — PÁGINA
 ========================================================= */
 
 .seguimientos-page {
-
     animation: fadeIn .4s ease;
 }
 
+
 /* =========================================================
-   PAGE HEADER
+   PAGE HEADER — ACCIONES
 ========================================================= */
 
-.page-header-right {
-
+.seguimientos-page .page-header-right {
     display: flex;
-
     align-items: center;
-
-    gap: 14px;
-
+    justify-content: flex-end;
+    gap: 12px;
     flex-wrap: wrap;
 }
+
 
 /* =========================================================
    STATS
 ========================================================= */
 
 .gx-stats {
-
     margin: 28px 0 34px;
 }
 
 .gx-stats .stat-card {
-
     min-height: 126px;
 
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
 }
 
 .gx-stats .stat-card.info .stat-number {
-
     color: #3b82f6;
 }
 
 .gx-stats .stat-card.success .stat-number {
-
     color: #22c55e;
 }
 
 .gx-stats .stat-card.warning .stat-number {
-
     color: #f97316;
 }
 
 .gx-stats .stat-card.danger .stat-number {
-
     color: #ef4444;
 }
 
 .gx-stats .stat-card.purple .stat-number {
-
     color: #a855f7;
 }
 
 .gx-stats .stat-card.orange .stat-number {
-
     color: #f97316;
 }
+
 
 /* =========================================================
    ALERTAS
 ========================================================= */
 
-.seguimientos-alertas{
+.seguimientos-alertas {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 
-    display:flex;
+    max-height: 570px;
 
-    flex-direction:column;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    gap:14px;
-
-    max-height:570px;
-
-    overflow-y:auto;
-
-    overflow-x:hidden;
-
-    padding-right:10px;
+    padding-right: 10px;
 }
 
-.seguimientos-alertas::-webkit-scrollbar{
-
-    width:8px;
-
+.seguimientos-alertas::-webkit-scrollbar {
+    width: 8px;
 }
 
-.seguimientos-alertas::-webkit-scrollbar-track{
-
-    background:transparent;
-
+.seguimientos-alertas::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.seguimientos-alertas::-webkit-scrollbar-thumb{
-
-    background:var(--primary);
-
-    border-radius:999px;
-
+.seguimientos-alertas::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 999px;
 }
 
-.seguimientos-alertas::-webkit-scrollbar-thumb:hover{
-
-    background:var(--primary-dark);
-
+.seguimientos-alertas::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
 }
+
 
 /* =========================================================
-   CARD ALERTA
+   CARD DE ALERTA
 ========================================================= */
 
-.seguimiento-alerta-card{
+.seguimiento-alerta-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    display:flex;
+    gap: 20px;
 
-    justify-content:space-between;
+    min-height: 72px;
 
-    align-items:center;
+    padding: 18px 22px;
 
-    gap:20px;
+    border-radius: 18px;
 
-    min-height:72px;
+    background: var(--surface);
+    border: var(--border);
 
-    padding:18px 22px;
-
-    border-radius:18px;
-
-    background:var(--surface);
-
-    border:var(--border);
-
-    transition:var(--transition);
+    transition: var(--transition);
 }
 
-.seguimiento-alerta-card:hover{
+.seguimiento-alerta-card:hover {
+    transform: translateY(-2px);
 
-    transform:translateY(-2px);
+    border-color: var(--primary);
 
-    border-color:var(--primary);
-
-    box-shadow:var(--shadow-hover);
-
+    box-shadow: var(--shadow-hover);
 }
+
 
 /* =========================================================
-   CARD - IZQUIERDA
+   CARD ALERTA — IZQUIERDA
 ========================================================= */
 
-.seguimiento-alerta-left{
+.seguimiento-alerta-left {
+    flex: 1 1 auto;
+    width: 100%;
 
-    flex:1 1 auto;
-
-    width:100%;
-
-    padding-right:20px;
+    padding-right: 20px;
 }
 
-.seguimiento-alerta-left h4{
+.seguimiento-alerta-left h4 {
+    font-size: 18px;
+    font-weight: 700;
 
-
-
-    font-size:18px;
-
-    font-weight:700;
-
-    white-space:normal;
-
-    overflow:visible;
-
-    text-overflow:unset;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
 }
 
-.seguimiento-alerta-left span{
+.seguimiento-alerta-left span {
+    display: block;
 
-    display:block;
+    margin-top: 6px;
 
-    margin-top:6px;
+    font-size: 14px;
 
-    font-size:14px;
-
-    color:var(--text-soft);
+    color: var(--text-soft);
 }
+
 
 /* =========================================================
-   CARD - DERECHA
+   CARD ALERTA — DERECHA
 ========================================================= */
 
 .seguimiento-alerta-right {
-
     display: flex;
-
     align-items: center;
 
     gap: 8px;
@@ -216,15 +177,12 @@
 
 
 /* =========================================================
-   ESTADOS
+   ESTADOS DE SEGUIMIENTO
 ========================================================= */
 
 .estado {
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     padding: 5px 12px;
@@ -232,279 +190,523 @@
     border-radius: 999px;
 
     font-size: 11px;
-
     font-weight: 800;
 
     letter-spacing: .02em;
 }
 
 .estado.pendiente {
-
-    background: rgba(239,68,68,.15);
-
+    background: rgba(239, 68, 68, .15);
     color: #ef4444;
 }
 
 .estado.en-proceso {
-
-    background: rgba(245,158,11,.15);
-
+    background: rgba(245, 158, 11, .15);
     color: #f59e0b;
 }
 
 .estado.finalizado {
-
-    background: rgba(16,185,129,.15);
-
+    background: rgba(16, 185, 129, .15);
     color: #10b981;
 }
 
+
 /* =========================================================
-   SECTION COUNTER
+   BOTÓN ASIGNACIONES
 ========================================================= */
 
-.section-counter {
-
+.seguimientos-page .seguimiento-btn-asignaciones {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
-    width: 30px;
+    gap: 9px;
 
-    height: 30px;
+    min-height: 48px;
 
-    margin-left: 12px;
-
-    border-radius: 50%;
-
-    background: rgba(236,72,153,.12);
-
-    color: #ec4899;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-    vertical-align: middle;
+    padding: 0 18px;
 }
 
+
 /* =========================================================
-   BOTONES
+   DARK MODE — BOTÓN ASIGNACIONES
 ========================================================= */
 
-.btn-mini {
+html.dark .seguimientos-page .seguimiento-btn-asignaciones {
+    background:
+        linear-gradient(
+            135deg,
+            #00e5ff,
+            #00ffa3,
+            #4facfe
+        );
 
+    color: #07111f;
+
+    box-shadow:
+        0 10px 24px rgba(0, 229, 255, 0.16);
+}
+
+
+/* =========================================================
+   BADGES DE MODALIDAD
+========================================================= */
+
+.badge-modalidad {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
-    padding: 9px 16px;
+    gap: 6px;
 
-    border-radius: 14px;
+    padding: 5px 11px;
 
-    text-decoration: none;
-
-    color: #fff;
+    border-radius: 999px;
 
     font-size: 12px;
-
     font-weight: 700;
 
-    transition: .25s ease;
+    line-height: 1;
+
+    white-space: nowrap;
 }
 
-.btn-mini.chico {
-
-    background:
-        linear-gradient(
-            135deg,
-            #ff9a44,
-            #ff4b2b,
-            #ff416c
-        );
-}
-
-.btn-mini.chica {
-
-    background:
-        linear-gradient(
-            135deg,
-            #a855f7,
-            #ec4899
-        );
-}
-
-.btn-mini:hover {
-
-    transform:
-        translateY(-2px)
-        scale(1.03);
-
-    box-shadow: var(--shadow-hover);
-}
 
 /* =========================================================
-   ESTADO VACÍO
+   MODALIDAD — WHATSAPP
 ========================================================= */
 
-.estado-vacio {
+.badge-modalidad.modalidad-whatsapp {
+    background: #dcfce7;
+    color: #15803d;
 
-    padding: 28px;
-
-    border-radius: 20px;
-
-    background: rgba(34,197,94,.08);
-
-    border: 1px solid rgba(34,197,94,.15);
-
-    color: #22c55e;
-
-    font-weight: 700;
-
-    text-align: center;
+    border: 1px solid #bbf7d0;
 }
+
 
 /* =========================================================
-   HISTORIAL
+   MODALIDAD — LLAMADA
 ========================================================= */
 
-.historial-header {
+.badge-modalidad.modalidad-llamada {
+    background: #dbeafe;
+    color: #1d4ed8;
 
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-
-    margin-bottom: 24px;
-
-    flex-wrap: wrap;
+    border: 1px solid #bfdbfe;
 }
 
-.historial-search {
+/* ==========================================================
+   TABLAS DE ASIGNACIONES
+========================================================== */
 
-    min-width: 300px;
+.seguimientos-page {
 
-    max-width: 420px;
-
-    width: 100%;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 768px) {
-
-    .seguimiento-alerta-card {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-    .seguimiento-alerta-right {
+    #tablaAsignaciones,
+    #tablaAsignacionesActuales {
 
         width: 100%;
 
-        justify-content: space-between;
+        border-collapse: separate;
+
+        border-spacing: 0 8px;
+
+        table-layout: auto;
+
     }
 
-    .page-header {
 
-        align-items: flex-start;
+    #tablaAsignaciones thead th,
+    #tablaAsignacionesActuales thead th {
+
+        padding: 14px 16px;
+
+        font-size: .78rem;
+
+        font-weight: 900;
+
+        letter-spacing: .04em;
+
+        text-transform: uppercase;
+
+        white-space: nowrap;
+
     }
 
-    .page-header-right {
 
-        width: 100%;
+    #tablaAsignaciones tbody td,
+    #tablaAsignacionesActuales tbody td {
 
-        justify-content: flex-start;
+        padding: 13px 16px;
+
+        font-size: .86rem;
+
+        vertical-align: middle;
+
     }
 
-    .historial-header {
 
-        flex-direction: column;
+    #tablaAsignaciones .seguimiento-nombre,
+    #tablaAsignacionesActuales .seguimiento-nombre {
 
-        align-items: flex-start;
+        font-size: .88rem;
+
+        font-weight: 700;
+
     }
 
-    .historial-search {
 
-        max-width: 100%;
-    }
-}
+    #tablaAsignaciones .badge,
+    #tablaAsignacionesActuales .badge {
 
-/* =========================================================
-   ANIMACIONES
-========================================================= */
+        min-height: 28px;
 
-@keyframes fadeIn {
+        padding: 6px 10px;
 
-    from {
+        font-size: .75rem;
 
-        opacity: 0;
-
-        transform: translateY(10px);
     }
 
-    to {
+
+    /* ======================================================
+       CANCELADAS
+    ====================================================== */
+
+    #tablaAsignacionesActuales
+    tbody tr.asignacion-cancelada {
+
+        opacity: .62;
+
+    }
+
+
+    #tablaAsignacionesActuales
+    tbody tr.asignacion-cancelada:hover {
 
         opacity: 1;
 
-        transform: translateY(0);
     }
+
+}
+
+/* =========================================================
+   MODALIDAD — VISITA
+========================================================= */
+
+.badge-modalidad.modalidad-visita {
+    background: #f3e8ff;
+    color: #7e22ce;
+
+    border: 1px solid #e9d5ff;
 }
 
 
-/* =====================================================
-   MODAL EXCEPCIÓN DE SEGUIMIENTO
-===================================================== */
+/* =========================================================
+   MODALIDAD — MENSAJE
+========================================================= */
 
-.gx-modal {
+.badge-modalidad.modalidad-mensaje {
+    background: #fef3c7;
+    color: #b45309;
+
+    border: 1px solid #fde68a;
+}
+
+
+/* =========================================================
+   MODALIDAD — DESCONOCIDA
+========================================================= */
+
+.badge-modalidad.modalidad-default {
+    background: #f1f5f9;
+    color: #475569;
+
+    border: 1px solid #e2e8f0;
+}
+
+
+/* ==========================================================
+   TABLA DE SEGUIMIENTOS
+   Alineada visualmente con Jóvenes y Reuniones
+========================================================== */
+
+.seguimientos-page {
+
+    .gx-table {
+
+        width: 100%;
+
+        border-collapse: separate;
+
+        border-spacing: 0 8px;
+
+        table-layout: auto;
+
+    }
+
+
+    /* ======================================================
+       ENCABEZADO
+    ====================================================== */
+
+    .gx-table thead th {
+
+        padding: 14px 16px;
+
+        font-size: 0.78rem;
+
+        font-weight: 900;
+
+        letter-spacing: 0.04em;
+
+        text-transform: uppercase;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* ======================================================
+       CELDAS
+    ====================================================== */
+
+    .gx-table tbody td {
+
+        padding: 13px 16px;
+
+        vertical-align: middle;
+
+        font-size: 0.88rem;
+
+        line-height: 1.35;
+
+    }
+
+
+    /* ======================================================
+       NOMBRE
+    ====================================================== */
+
+    .gx-table .seguimiento-nombre {
+
+        display: inline-block;
+
+        font-size: 0.88rem;
+
+        font-weight: 700;
+
+        line-height: 1.35;
+
+        white-space: normal;
+
+    }
+
+
+    /* ======================================================
+       RESPONSABLE
+    ====================================================== */
+
+    .gx-table .seguimiento-responsable {
+
+        font-size: 0.84rem;
+
+        font-weight: 600;
+
+    }
+
+
+    /* ======================================================
+       FECHA
+    ====================================================== */
+
+    .gx-table .seguimiento-fecha {
+
+        font-size: 0.84rem;
+
+        font-weight: 600;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* ======================================================
+       MODALIDAD + ESTADO
+    ====================================================== */
+
+    .gx-table .badge-modalidad,
+    .gx-table .estado {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 6px;
+
+        min-height: 28px;
+
+        padding: 6px 10px;
+
+        border-radius: 999px;
+
+        font-size: 0.76rem;
+
+        line-height: 1;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+
+    }
+
+
+    /* ======================================================
+       ACCIONES
+    ====================================================== */
+
+    .gx-table th:last-child,
+    .gx-table td:last-child {
+
+        width: 1%;
+
+        white-space: nowrap;
+
+    }
+
+
+    .gx-table .seguimiento-acciones {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        gap: 6px;
+
+        flex-wrap: nowrap;
+
+        white-space: nowrap;
+
+    }
+
+
+    .gx-table .seguimiento-acciones .btn {
+
+        flex: 0 0 auto;
+
+        white-space: nowrap;
+
+    }
+
+
+    .gx-table .btn-sm {
+
+        padding: 8px 12px;
+
+        font-size: 0.75rem;
+
+        border-radius: 11px;
+
+    }
+
+
+    /* ======================================================
+       MODO OSCURO
+    ====================================================== */
+
+    html.dark & {
+
+        .gx-table tbody tr {
+
+            background: #182233;
+
+        }
+
+
+        .gx-table tbody td {
+
+            color: #f8fafc;
+
+        }
+
+
+        .gx-table .seguimiento-nombre {
+
+            color: #ffffff;
+
+        }
+
+
+        .gx-table .seguimiento-responsable,
+        .gx-table .seguimiento-fecha {
+
+            color: #cbd5e1;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   MODAL — EXCEPCIÓN DE SEGUIMIENTO
+========================================================= */
+
+.seguimientos-page .gx-modal {
     position: fixed;
     inset: 0;
+
     z-index: 9999;
 
     display: none;
+
     align-items: center;
     justify-content: center;
 
     padding: 20px;
 }
 
-.gx-modal.is-open {
+.seguimientos-page .gx-modal.is-open {
     display: flex;
 }
 
-/* Fondo oscuro */
 
-.gx-modal__overlay {
+/* =========================================================
+   MODAL — OVERLAY
+========================================================= */
+
+.seguimientos-page .gx-modal__overlay {
     position: absolute;
     inset: 0;
 
     background: rgba(15, 23, 42, 0.55);
+
     backdrop-filter: blur(3px);
 }
 
-/* Contenedor */
 
-.gx-modal__content {
+/* =========================================================
+   MODAL — CONTENEDOR
+========================================================= */
+
+.seguimientos-page .gx-modal__content {
     position: relative;
     z-index: 2;
 
     width: min(600px, 100%);
+
     max-height: 90vh;
 
     overflow-y: auto;
 
-    background: #ffffff;
+    background: var(--surface);
+
+    border: var(--border);
 
     border-radius: 20px;
 
@@ -514,9 +716,12 @@
     animation: gxModalEntrada 0.2s ease-out;
 }
 
-/* Header */
 
-.gx-modal__header {
+/* =========================================================
+   MODAL — HEADER
+========================================================= */
+
+.seguimientos-page .gx-modal__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -525,29 +730,32 @@
 
     padding: 24px 26px;
 
-    border-bottom: 1px solid #eef0f4;
+    border-bottom: var(--border);
 }
 
-.gx-modal__header h2 {
+.seguimientos-page .gx-modal__header h2 {
     margin: 0 0 6px;
 
     font-size: 22px;
     font-weight: 700;
 
-    color: #172033;
+    color: var(--text);
 }
 
-.gx-modal__header p {
+.seguimientos-page .gx-modal__header p {
     margin: 0;
 
     font-size: 14px;
 
-    color: #718096;
+    color: var(--text-soft);
 }
 
-/* Botón cerrar */
 
-.gx-modal__close {
+/* =========================================================
+   MODAL — CERRAR
+========================================================= */
+
+.seguimientos-page .gx-modal__close {
     width: 38px;
     height: 38px;
 
@@ -558,29 +766,35 @@
     border: none;
     border-radius: 50%;
 
-    background: #f1f3f7;
+    background: var(--surface-soft);
 
-    color: #4a5568;
+    color: var(--text-soft);
 
     cursor: pointer;
 
     transition: 0.2s ease;
 }
 
-.gx-modal__close:hover {
-    background: #ffe5e5;
+.seguimientos-page .gx-modal__close:hover {
+    background: rgba(239, 68, 68, .12);
     color: #e53e3e;
 }
 
-/* Body */
 
-.gx-modal__body {
+/* =========================================================
+   MODAL — BODY
+========================================================= */
+
+.seguimientos-page .gx-modal__body {
     padding: 26px;
 }
 
-/* Información del joven */
 
-.form-info {
+/* =========================================================
+   MODAL — INFORMACIÓN
+========================================================= */
+
+.seguimientos-page .form-info {
     display: flex;
     align-items: center;
 
@@ -592,24 +806,27 @@
 
     border-radius: 12px;
 
-    background: #eef6ff;
+    background: rgba(59, 130, 246, .10);
 
-    color: #3b5b7a;
+    color: var(--text);
 
     font-size: 14px;
 }
 
-.form-info i {
+.seguimientos-page .form-info i {
     color: #3182ce;
 }
 
-/* Formulario */
 
-.gx-modal .form-group {
+/* =========================================================
+   MODAL — FORMULARIO
+========================================================= */
+
+.seguimientos-page .gx-modal .form-group {
     margin-bottom: 20px;
 }
 
-.gx-modal .form-label {
+.seguimientos-page .gx-modal .form-label {
     display: block;
 
     margin-bottom: 8px;
@@ -617,57 +834,63 @@
     font-size: 14px;
     font-weight: 600;
 
-    color: #273244;
+    color: var(--text);
 }
 
-.gx-modal .form-label i {
+.seguimientos-page .gx-modal .form-label i {
     margin-right: 6px;
 }
 
-/* Select y textarea */
 
-.gx-modal .form-select,
-.gx-modal .form-textarea {
+/* =========================================================
+   MODAL — SELECT / TEXTAREA
+========================================================= */
+
+.seguimientos-page .gx-modal .form-select,
+.seguimientos-page .gx-modal .form-textarea {
     width: 100%;
 
     box-sizing: border-box;
 
-    border: 1px solid #d7dce5;
+    border: 1px solid var(--border-color);
 
     border-radius: 10px;
 
-    background: #fff;
+    background: var(--surface);
 
     padding: 12px 14px;
 
     font-family: inherit;
     font-size: 14px;
 
-    color: #273244;
+    color: var(--text);
 
     outline: none;
 
     transition: 0.2s ease;
 }
 
-.gx-modal .form-select:focus,
-.gx-modal .form-textarea:focus {
-    border-color: #ff7043;
+.seguimientos-page .gx-modal .form-select:focus,
+.seguimientos-page .gx-modal .form-textarea:focus {
+    border-color: var(--primary);
 
     box-shadow:
         0 0 0 3px rgba(255, 112, 67, 0.12);
 }
 
-.gx-modal .form-textarea {
+.seguimientos-page .gx-modal .form-textarea {
     resize: vertical;
+
     min-height: 110px;
 }
 
-/* Acciones */
 
-.gx-modal .form-actions {
+/* =========================================================
+   MODAL — ACCIONES
+========================================================= */
+
+.seguimientos-page .gx-modal .form-actions {
     display: flex;
-
     justify-content: flex-end;
 
     gap: 12px;
@@ -675,7 +898,7 @@
     margin-top: 26px;
 }
 
-.gx-modal .form-actions .btn {
+.seguimientos-page .gx-modal .form-actions .btn {
     min-height: 42px;
 
     padding: 10px 18px;
@@ -685,7 +908,10 @@
     cursor: pointer;
 }
 
-/* Animación */
+
+/* =========================================================
+   MODAL — ANIMACIÓN
+========================================================= */
 
 @keyframes gxModalEntrada {
 
@@ -698,142 +924,171 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-
 }
 
-/* Evitar scroll de la página cuando el modal está abierto */
+
+/* =========================================================
+   MODAL — BLOQUEAR SCROLL
+========================================================= */
 
 body.gx-modal-open {
     overflow: hidden;
 }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
 
-@media (max-width: 600px) {
+/* =========================================================
+   PAGINACIÓN DATATABLES
+========================================================= */
 
-    .gx-modal {
-        padding: 12px;
-    }
-
-    .gx-modal__content {
-        max-height: 94vh;
-        border-radius: 16px;
-    }
-
-    .gx-modal__header {
-        padding: 20px;
-    }
-
-    .gx-modal__body {
-        padding: 20px;
-    }
-
-    .gx-modal .form-actions {
-        flex-direction: column-reverse;
-    }
-
-    .gx-modal .form-actions .btn {
-        width: 100%;
-    }
-
-}
-
-
-/* ==========================================================
-   BADGES DE MODALIDAD
-========================================================== */
-
-.badge-modalidad {
-
-    display: inline-flex;
-
+.seguimientos-page .datatable-pagination {
+    display: flex;
     align-items: center;
-
-    justify-content: center;
+    justify-content: flex-end;
 
     gap: 6px;
 
-    padding: 5px 11px;
+    margin-top: 18px;
+}
 
-    border-radius: 999px;
+.seguimientos-page .datatable-pagination .paginate_button {
+    width: 38px;
+    height: 38px;
 
-    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
+    border-radius: 12px;
+
+    border: 1px solid var(--border-color);
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font-size: 15px;
     font-weight: 700;
 
-    line-height: 1;
+    text-decoration: none;
 
-    white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.seguimientos-page
+.datatable-pagination
+.paginate_button:hover {
+    background: var(--primary);
+
+    border-color: var(--primary);
+
+    color: #fff;
+
+    transform: translateY(-1px);
+}
+
+.seguimientos-page
+.datatable-pagination
+.paginate_button.current {
+    background: var(--primary);
+
+    border-color: var(--primary);
+
+    color: #fff;
+}
+
+.seguimientos-page
+.datatable-pagination
+.paginate_button.disabled {
+    opacity: .45;
+
+    cursor: not-allowed;
+
+    transform: none;
 }
 
 
-/* =========================
-   WHATSAPP
-========================= */
+/* =========================================================
+   RESPONSIVE — ALERTAS / HEADER
+========================================================= */
 
-.badge-modalidad.modalidad-whatsapp {
+@media (max-width: 768px) {
 
-    background: #dcfce7;
+    .seguimiento-alerta-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-    color: #15803d;
+    .seguimiento-alerta-right {
+        width: 100%;
 
-    border: 1px solid #bbf7d0;
+        justify-content: space-between;
+    }
+
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .seguimientos-page .page-header-right {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
 }
 
 
-/* =========================
-   LLAMADA
-========================= */
+/* =========================================================
+   RESPONSIVE — MODAL
+========================================================= */
 
-.badge-modalidad.modalidad-llamada {
+@media (max-width: 600px) {
 
-    background: #dbeafe;
+    .seguimientos-page .gx-modal {
+        padding: 12px;
+    }
 
-    color: #1d4ed8;
+    .seguimientos-page .gx-modal__content {
+        max-height: 94vh;
 
-    border: 1px solid #bfdbfe;
+        border-radius: 16px;
+    }
+
+    .seguimientos-page .gx-modal__header {
+        padding: 20px;
+    }
+
+    .seguimientos-page .gx-modal__body {
+        padding: 20px;
+    }
+
+    .seguimientos-page .gx-modal .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .seguimientos-page .gx-modal .form-actions .btn {
+        width: 100%;
+    }
 }
 
 
-/* =========================
-   VISITA
-========================= */
+/* =========================================================
+   ANIMACIÓN DE PÁGINA
+========================================================= */
 
-.badge-modalidad.modalidad-visita {
+@keyframes fadeIn {
 
-    background: #f3e8ff;
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 
-    color: #7e22ce;
-
-    border: 1px solid #e9d5ff;
-}
-
-
-/* =========================
-   MENSAJE
-========================= */
-
-.badge-modalidad.modalidad-mensaje {
-
-    background: #fef3c7;
-
-    color: #b45309;
-
-    border: 1px solid #fde68a;
-}
-
-
-/* =========================
-   MODALIDAD DESCONOCIDA
-========================= */
-
-.badge-modalidad.modalidad-default {
-
-    background: #f1f5f9;
-
-    color: #475569;
-
-    border: 1px solid #e2e8f0;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

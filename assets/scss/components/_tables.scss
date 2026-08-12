@@ -550,6 +550,211 @@ html.dark .btn-icon{
     margin-left:10px !important;
 }
 
+
+/* =========================================================
+   ASIGNACIONES
+========================================================= */
+
+.seguimientos-page .asignaciones-card {
+    border-radius: 24px;
+}
+
+.seguimientos-page .asignaciones-card + .asignaciones-card {
+    margin-top: 24px;
+}
+
+.seguimientos-page .asignaciones-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.seguimientos-page .asignaciones-seleccion-info {
+    color: var(--text-soft);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.seguimientos-page .asignaciones-toolbar form {
+    margin: 0;
+}
+
+.seguimientos-page #btnCancelarSeleccionados:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* ==========================================================
+   CHECKBOX DE TABLAS
+========================================================== */
+
+.table-check {
+
+    position: relative;
+
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    display: inline-grid;
+
+    place-content: center;
+
+    vertical-align: middle;
+
+    border:
+        1.5px solid #cbd5e1;
+
+    border-radius: 6px;
+
+    background: #fff;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .15s ease;
+
+}
+
+
+.table-check:hover {
+
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(255,95,46,.08);
+
+}
+
+
+.table-check:checked {
+
+    background:
+        var(--card-gradient);
+
+    border-color:
+        transparent;
+
+    box-shadow:
+        0 5px 14px rgba(255,95,46,.20);
+
+}
+
+
+.table-check::before {
+
+    content: "";
+
+    width: 9px;
+    height: 5px;
+
+    border-left:
+        2px solid transparent;
+
+    border-bottom:
+        2px solid transparent;
+
+    transform:
+        rotate(-45deg)
+        scale(0);
+
+    transition:
+        transform .15s ease;
+
+}
+
+
+.table-check:checked::before {
+
+    border-color:
+        #fff;
+
+    transform:
+        rotate(-45deg)
+        scale(1);
+
+}
+
+
+.table-check:focus-visible {
+
+    outline: none;
+
+    box-shadow:
+        0 0 0 4px rgba(59,130,246,.16);
+
+}
+
+
+html.dark .table-check {
+
+    background:
+        rgba(255,255,255,.04);
+
+    border-color:
+        rgba(148,163,184,.45);
+
+}
+
+
+html.dark .table-check:hover {
+
+    border-color:
+        #00e5ff;
+
+    box-shadow:
+        0 0 0 4px rgba(0,229,255,.08);
+
+}
+
+
+html.dark .table-check:checked {
+
+    background:
+        linear-gradient(
+            135deg,
+            #00e5ff,
+            #00ffa3,
+            #4facfe
+        );
+
+    border-color:
+        transparent;
+
+}
+/* ==========================================================
+   COLUMNA DE CHECKBOX
+========================================================== */
+
+.table-check-column {
+
+    width: 52px !important;
+
+    min-width: 52px !important;
+
+    max-width: 52px !important;
+
+    padding-left: 12px !important;
+
+    padding-right: 12px !important;
+
+    text-align: center !important;
+
+}
+
 /* =========================================================
    DATATABLE SELECT
 ========================================================= */

@@ -1,120 +1,207 @@
 /* =========================================================
-   DATATABLE
+   DATATABLE GLOBAL
 ========================================================= */
 
-function initDataTable(tableId){
+function initDataTable(
+    tableId,
+    options = {}
+) {
 
     /* =====================================================
        VALIDATION
     ===================================================== */
 
-    if(
+    if (
         typeof $ === "undefined" ||
+        !$.fn ||
         !$.fn.DataTable
-    ){
+    ) {
         return null;
     }
+
+
+    /* =====================================================
+       VALIDATE TABLE
+    ===================================================== */
+
+    const $table = $(tableId);
+
+    if (!$table.length) {
+        return null;
+    }
+
 
     /* =====================================================
        AVOID DOUBLE INIT
     ===================================================== */
 
-    if($.fn.DataTable.isDataTable(tableId)){
+    if (
+        $.fn.DataTable.isDataTable(
+            tableId
+        )
+    ) {
 
-        return $(tableId).DataTable();
+        return $table.DataTable();
+
     }
 
+
     /* =====================================================
-       INIT
+       DEFAULT CONFIGURATION
     ===================================================== */
 
-    return $(tableId).DataTable({
+    const config = {
 
         /* =================================================
-           CONFIG
+           PAGINATION
         ================================================= */
 
-        pageLength:8,
+        pageLength: 8,
 
-        ordering:true,
+        lengthChange: false,
 
-        searching:true,
+        paging: true,
 
-        paging:true,
+        info: true,
 
-        info:true,
 
-        lengthChange:false,
+        /* =================================================
+           ORDERING
+        ================================================= */
 
-        responsive:false,
+        ordering: true,
 
-        autoWidth:false,
 
-        processing:false,
+        /* =================================================
+           SEARCH
+        ================================================= */
+
+        searching: true,
+
+
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
+
+        responsive: false,
+
+        autoWidth: false,
+
+
+        /* =================================================
+           PROCESSING
+        ================================================= */
+
+        processing: false,
+
 
         /* =================================================
            DOM
         ================================================= */
 
         dom:
-        'Brt<"datatable-footer"<"datatable-info"i><"datatable-pagination"p>>',
+            'Brt<"datatable-footer"<"datatable-info"i><"datatable-pagination"p>>',
+
 
         /* =================================================
            EXPORT BUTTONS
         ================================================= */
 
-        buttons:[
+        buttons: [
 
             {
-                extend:'pdfHtml5',
-                className:'buttons-pdf',
-                title:'Registros'
+                extend: "pdfHtml5",
+
+                className: "buttons-pdf",
+
+                title: "Registros"
             },
 
-            {
-                extend:'excelHtml5',
-                className:'buttons-excel',
-                title:'Registros'
-            },
 
             {
-                extend:'csvHtml5',
-                className:'buttons-csv',
-                title:'Registros'
+                extend: "excelHtml5",
+
+                className: "buttons-excel",
+
+                title: "Registros"
             },
 
+
             {
-                extend:'print',
-                className:'buttons-print',
-                title:'Registros'
+                extend: "csvHtml5",
+
+                className: "buttons-csv",
+
+                title: "Registros"
+            },
+
+
+            {
+                extend: "print",
+
+                className: "buttons-print",
+
+                title: "Registros"
             }
 
         ],
+
 
         /* =================================================
            LANGUAGE
         ================================================= */
 
-        language:{
+        language: {
 
-            search:"",
+            search: "",
 
             info:
-            "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "Mostrando _START_ a _END_ de _TOTAL_ registros",
 
             infoEmpty:
-            "No hay registros disponibles",
+                "No hay registros disponibles",
 
             emptyTable:
-            "No hay datos disponibles",
+                "No hay datos disponibles",
 
             zeroRecords:
-            "No se encontraron resultados",
+                "No se encontraron resultados",
 
-            paginate:{
-                previous:"‹",
-                next:"›"
+            lengthMenu:
+                "Mostrar _MENU_ registros",
+
+            paginate: {
+
+                previous: "‹",
+
+                next: "›"
+
             }
+
         }
-    });
+
+    };
+
+
+    /* =====================================================
+       MERGE OPTIONS
+       
+       Las opciones específicas de cada tabla
+       sobrescriben solamente lo que necesiten.
+    ===================================================== */
+
+    Object.assign(
+        config,
+        options
+    );
+
+
+    /* =====================================================
+       INIT DATATABLE
+    ===================================================== */
+
+    return $table.DataTable(
+        config
+    );
+
 }
