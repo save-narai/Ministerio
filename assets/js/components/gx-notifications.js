@@ -1,43 +1,27 @@
-/* ==========================================================
-   GX NOTIFICATIONS
-   Sistema Global de Alertas
-========================================================== */
-
 "use strict";
 
 class GXNotifications {
 
     constructor() {
 
-        this.duration = 5000;
-
+        this.defaultDuration = 5000;
         this.alerts = [];
 
         this.init();
 
     }
 
-
     /* ======================================================
-       INIT
+       INICIALIZAR
     ====================================================== */
 
     init() {
 
-        this.alerts = [
-            ...document.querySelectorAll(".gx-alert")
-        ];
+        this.alerts = [...document.querySelectorAll(".gx-alert")];
 
-        if (!this.alerts.length) return;
-
-        this.alerts.forEach(alert => {
-
-            this.prepare(alert);
-
-        });
+        this.alerts.forEach(alert => this.prepare(alert));
 
     }
-
 
     /* ======================================================
        PREPARAR ALERTA
@@ -45,44 +29,35 @@ class GXNotifications {
 
     prepare(alert) {
 
-        if (!alert || alert.dataset.gxInitialized === "true") {
-            return;
-        }
+        if (!alert || alert.dataset.gxInitialized === "true") return;
 
         alert.dataset.gxInitialized = "true";
 
-        const closeButton =
-            alert.querySelector(".gx-alert-close");
+        const closeBtn = alert.querySelector(".gx-alert-close");
+        const progress = alert.querySelector(".gx-alert-progress");
 
-        const progress =
-            alert.querySelector(".gx-alert-progress");
+        const duration = parseInt(
+            alert.dataset.duration || this.defaultDuration,
+            10
+        );
 
-
+        let remaining = duration;
         let timer = null;
-
-        let remaining = this.duration;
-
-        let startTime = Date.now();
-
+        let start = Date.now();
         let paused = false;
 
+        /* -----------------------------
+           Barra de progreso
+        ----------------------------- */
 
-        /* ==================================================
-           ACTUALIZAR BARRA
-        ================================================== */
-
-        const updateProgress = () => {
+        const renderProgress = () => {
 
             if (!progress) return;
 
-            const percentage =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        (remaining / this.duration) * 100
-                    )
-                );
+            const percentage = Math.max(
+                0,
+                (remaining / duration) * 100
+            );
 
             progress.style.setProperty(
                 "--gx-progress",
@@ -91,33 +66,20 @@ class GXNotifications {
 
         };
 
-
-        /* ==================================================
-           INICIAR TEMPORIZADOR
-        ================================================== */
+        /* -----------------------------
+           Iniciar temporizador
+        ----------------------------- */
 
         const startTimer = () => {
 
             clearTimeout(timer);
 
-            if (remaining <= 0) {
-
-                this.hide(alert);
-
-                return;
-            }
-
-            startTime = Date.now();
-
-            paused = false;
-
-            updateProgress();
+            start = Date.now();
 
             timer = setTimeout(() => {
 
                 remaining = 0;
-
-                updateProgress();
+                renderProgress();
 
                 this.hide(alert);
 
@@ -125,12 +87,11 @@ class GXNotifications {
 
         };
 
+        /* -----------------------------
+           Pausar
+        ----------------------------- */
 
-        /* ==================================================
-           PAUSAR
-        ================================================== */
-
-        const pauseTimer = () => {
+        const pause = () => {
 
             if (paused) return;
 
@@ -138,23 +99,19 @@ class GXNotifications {
 
             clearTimeout(timer);
 
-            remaining -= Date.now() - startTime;
+            remaining -= Date.now() - start;
 
-            remaining = Math.max(
-                0,
-                remaining
-            );
+            remaining = Math.max(0, remaining);
 
-            updateProgress();
+            renderProgress();
 
         };
 
+        /* -----------------------------
+           Reanudar
+        ----------------------------- */
 
-        /* ==================================================
-           REANUDAR
-        ================================================== */
-
-        const resumeTimer = () => {
+        const resume = () => {
 
             if (!paused) return;
 
@@ -163,7 +120,6 @@ class GXNotifications {
             if (remaining <= 0) {
 
                 this.hide(alert);
-
                 return;
 
             }
@@ -172,59 +128,39 @@ class GXNotifications {
 
         };
 
-
-        /* ==================================================
-           INICIAR
-        ================================================== */
-
-        updateProgress();
-
+        renderProgress();
         startTimer();
 
+        /* -----------------------------
+           Hover
+        ----------------------------- */
 
-        /* ==================================================
-           HOVER
-        ================================================== */
+        alert.addEventListener("mouseenter", pause);
+        alert.addEventListener("mouseleave", resume);
 
-        alert.addEventListener(
-            "mouseenter",
-            pauseTimer
-        );
+        /* -----------------------------
+           Botón cerrar
+        ----------------------------- */
 
-        alert.addEventListener(
-            "mouseleave",
-            resumeTimer
-        );
+        if (closeBtn) {
 
+            closeBtn.addEventListener("click", e => {
 
-        /* ==================================================
-           BOTÓN CERRAR
-        ================================================== */
+                e.preventDefault();
+                e.stopPropagation();
 
-        if (closeButton) {
+                clearTimeout(timer);
 
-            closeButton.addEventListener(
-                "click",
-                (event) => {
+                this.hide(alert);
 
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-                    clearTimeout(timer);
-
-                    this.hide(alert);
-
-                }
-            );
+            });
 
         }
 
     }
 
-
     /* ======================================================
-       OCULTAR ALERTA
+       OCULTAR
     ====================================================== */
 
     hide(alert) {
@@ -235,15 +171,11 @@ class GXNotifications {
             alert.classList.contains("gx-hide") ||
             alert.dataset.gxRemoving === "true"
         ) {
-
             return;
-
         }
 
         alert.dataset.gxRemoving = "true";
-
         alert.classList.add("gx-hide");
-
 
         setTimeout(() => {
 
@@ -253,9 +185,8 @@ class GXNotifications {
 
     }
 
-
     /* ======================================================
-       ELIMINAR DEL DOM
+       ELIMINAR
     ====================================================== */
 
     remove(alert) {
@@ -264,94 +195,63 @@ class GXNotifications {
 
         alert.remove();
 
-        this.alerts =
-            this.alerts.filter(
-                item => item !== alert
-            );
+        this.alerts = this.alerts.filter(a => a !== alert);
 
-        this.updateContainer();
+        const container = document.querySelector(".gx-alert-container");
 
-    }
-
-
-    /* ======================================================
-       ACTUALIZAR CONTENEDOR
-    ====================================================== */
-
-    updateContainer() {
-
-        const container =
-            document.querySelector(
-                ".gx-alert-container"
-            );
-
-        if (!container) return;
-
-        if (!container.children.length) {
-
+        if (container && container.children.length === 0) {
             container.remove();
-
         }
 
     }
 
+    /* ======================================================
+       ESCAPAR HTML
+    ====================================================== */
+
+    escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text ?? "";
+
+        return div.innerHTML;
+
+    }
 
     /* ======================================================
-       CREAR ALERTA DINÁMICA
+       CREAR ALERTA
     ====================================================== */
 
     create(type, title, message, icon) {
 
-        let container =
-            document.querySelector(
-                ".gx-alert-container"
-            );
-
-
-        /* ----------------------------------------------
-           Crear contenedor si no existe
-        ---------------------------------------------- */
+        let container = document.querySelector(".gx-alert-container");
 
         if (!container) {
 
-            container =
-                document.createElement("div");
+            container = document.createElement("div");
+            container.className = "gx-alert-container";
 
-            container.className =
-                "gx-alert-container";
-
-            document.body.appendChild(
-                container
-            );
+            document.body.appendChild(container);
 
         }
 
+        const safeTitle = this.escapeHTML(title);
+        const safeMessage = this.escapeHTML(message);
 
-        /* ----------------------------------------------
-           Crear alerta
-        ---------------------------------------------- */
+        const alert = document.createElement("div");
 
-        const alert =
-            document.createElement("div");
-
-        alert.className =
-            `gx-alert gx-alert-${type}`;
-
+        alert.className = `gx-alert gx-alert-${type}`;
+        alert.dataset.duration = this.defaultDuration;
 
         alert.innerHTML = `
-
             <div class="gx-alert-icon">
-
                 <i class="${icon}"></i>
-
             </div>
 
             <div class="gx-alert-content">
-
-                <h4>${title}</h4>
-
-                <p>${message}</p>
-
+                <h4>${safeTitle}</h4>
+                <p>${safeMessage}</p>
             </div>
 
             <button
@@ -359,17 +259,12 @@ class GXNotifications {
                 class="gx-alert-close"
                 aria-label="Cerrar notificación"
             >
-
                 <i class="fa-solid fa-xmark"></i>
-
             </button>
 
             <div class="gx-alert-progress"></div>
-
             <div class="gx-alert-shine"></div>
-
         `;
-
 
         container.appendChild(alert);
 
@@ -379,146 +274,61 @@ class GXNotifications {
 
     }
 
-
     /* ======================================================
-       MÉTODOS RÁPIDOS
+       ATAJOS
     ====================================================== */
 
     success(message) {
-
         this.create(
             "success",
             "Éxito",
             message,
             "fa-solid fa-circle-check"
         );
-
     }
 
-
     error(message) {
-
         this.create(
             "error",
             "Error",
             message,
             "fa-solid fa-circle-xmark"
         );
-
     }
 
-
     warning(message) {
-
         this.create(
             "warning",
             "Advertencia",
             message,
             "fa-solid fa-triangle-exclamation"
         );
-
     }
 
-
     info(message) {
-
         this.create(
             "info",
             "Información",
             message,
             "fa-solid fa-circle-info"
         );
-
-    }
-
-
-    /* ======================================================
-       DESTRUIR
-    ====================================================== */
-
-    destroy() {
-
-        this.alerts.forEach(alert => {
-
-            alert.remove();
-
-        });
-
-        this.alerts = [];
-
     }
 
 }
-
 
 /* ==========================================================
    INSTANCIA GLOBAL
 ========================================================== */
 
-let gxNotifications = null;
+document.addEventListener("DOMContentLoaded", () => {
 
+    if (!window.gxNotifications) {
 
-/* ==========================================================
-   INICIALIZACIÓN
-========================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        if (window.gxNotifications) {
-            return;
-        }
-
-        gxNotifications =
-            new GXNotifications();
-
-        window.gxNotifications =
-            gxNotifications;
+        window.gxNotifications = new GXNotifications();
 
     }
-);
 
-
-/* ==========================================================
-   ATAJOS GLOBALES
-========================================================== */
-
-window.notifySuccess = (message) => {
-
-    if (!window.gxNotifications) return;
-
-    window.gxNotifications.success(message);
-
-};
-
-
-window.notifyError = (message) => {
-
-    if (!window.gxNotifications) return;
-
-    window.gxNotifications.error(message);
-
-};
-
-
-window.notifyWarning = (message) => {
-
-    if (!window.gxNotifications) return;
-
-    window.gxNotifications.warning(message);
-
-};
-
-
-window.notifyInfo = (message) => {
-
-    if (!window.gxNotifications) return;
-
-    window.gxNotifications.info(message);
-
-};
-
+});
 
 /* ==========================================================
    API GLOBAL
@@ -527,27 +337,19 @@ window.notifyInfo = (message) => {
 window.GXNotify = {
 
     success(message) {
-
-        window.notifySuccess(message);
-
+        window.gxNotifications?.success(message);
     },
 
     error(message) {
-
-        window.notifyError(message);
-
+        window.gxNotifications?.error(message);
     },
 
     warning(message) {
-
-        window.notifyWarning(message);
-
+        window.gxNotifications?.warning(message);
     },
 
     info(message) {
-
-        window.notifyInfo(message);
-
+        window.gxNotifications?.info(message);
     }
 
 };

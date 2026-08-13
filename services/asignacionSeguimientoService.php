@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../middleware/permiso.php';
 require_once __DIR__ . '/jovenService.php';
+require_once __DIR__ . '/notificacionService.php';
+
 
 /*
 |--------------------------------------------------------------------------
 | Asignación de Seguimientos Service
 |--------------------------------------------------------------------------
 |
-| Gestiona la distribución de jóvenes pendientes de seguimiento
-| entre los usuarios responsables.
+| Gestiona:
+|
+| 1. Jóvenes pendientes de seguimiento.
+| 2. Asignación de jóvenes a usuarios.
+| 3. Consulta de asignaciones.
+| 4. Cambio de estados.
+| 5. Cancelación de asignaciones.
+| 6. Notificaciones relacionadas con asignaciones.
 |
 */
 
@@ -39,8 +47,8 @@ const ESTADOS_ASIGNACION_SEGUIMIENTO = [
 
 function validarEstadoAsignacionSeguimiento(
     string $estado
-): string
-{
+): string {
+
     $estado = strtoupper(
         trim($estado)
     );
@@ -68,8 +76,8 @@ function validarEstadoAsignacionSeguimiento(
 function validarJovenAsignacionSeguimiento(
     PDO $pdo,
     int $jovenId
-): array
-{
+): array {
+
     if ($jovenId <= 0) {
 
         throw new Exception(
@@ -92,8 +100,14 @@ function validarJovenAsignacionSeguimiento(
     }
 
     if (
-        ($joven['estado_actividad'] ?? '')
-        === 'ELIMINADO'
+        strtoupper(
+            trim(
+                (string)(
+                    $joven['estado_actividad']
+                    ?? ''
+                )
+            )
+        ) === 'ELIMINADO'
     ) {
 
         throw new Exception(
@@ -113,8 +127,8 @@ function validarJovenAsignacionSeguimiento(
 function validarUsuarioAsignacionSeguimiento(
     PDO $pdo,
     int $usuarioId
-): array
-{
+): array {
+
     if ($usuarioId <= 0) {
 
         throw new Exception(
@@ -125,28 +139,23 @@ function validarUsuarioAsignacionSeguimiento(
 
     $stmt = $pdo->prepare("
         SELECT
-
             id,
             nombre,
             usuario,
             rol_id,
             activo
-
         FROM usuarios
-
         WHERE id = :id
-
         LIMIT 1
     ");
 
     $stmt->execute([
-
         ':id' => $usuarioId
-
     ]);
 
-    $usuario =
-        $stmt->fetch(PDO::FETCH_ASSOC);
+    $usuario = $stmt->fetch(
+        PDO::FETCH_ASSOC
+    );
 
     if (!$usuario) {
 
@@ -175,8 +184,8 @@ function validarUsuarioAsignacionSeguimiento(
 function validarPeriodoAsignacionSeguimiento(
     int $anio,
     int $mes
-): void
-{
+): void {
+
     if (
         $anio < 2000 ||
         $anio > 2100
@@ -211,15 +220,12 @@ function existeAsignacionSeguimiento(
     int $anio,
     int $mes,
     ?int $exceptoId = null
-): bool
-{
+): bool {
+
     if (
-        $jovenId <= 0
-        ||
-        $anio < 2000
-        ||
-        $mes < 1
-        ||
+        $jovenId <= 0 ||
+        $anio < 2000 ||
+        $mes < 1 ||
         $mes > 12
     ) {
 
@@ -229,13 +235,9 @@ function existeAsignacionSeguimiento(
 
     $sql = "
         SELECT id
-
         FROM asignaciones_seguimiento
-
         WHERE joven_id = :joven_id
-
         AND anio = :anio
-
         AND mes = :mes
     ";
 
@@ -264,13 +266,9 @@ function existeAsignacionSeguimiento(
         LIMIT 1
     ";
 
-    $stmt = $pdo->prepare(
-        $sql
-    );
+    $stmt = $pdo->prepare($sql);
 
-    $stmt->execute(
-        $params
-    );
+    $stmt->execute($params);
 
     return (bool)$stmt->fetchColumn();
 }
@@ -283,8 +281,8 @@ function existeAsignacionSeguimiento(
 function obtenerAsignacionSeguimientoPorId(
     PDO $pdo,
     int $id
-): ?array
-{
+): ?array {
+
     if ($id <= 0) {
 
         return null;
@@ -332,9 +330,7 @@ function obtenerAsignacionSeguimientoPorId(
     ");
 
     $stmt->execute([
-
         ':id' => $id
-
     ]);
 
     return $stmt->fetch(
@@ -352,15 +348,12 @@ function obtenerAsignacionSeguimientoPeriodo(
     int $jovenId,
     int $anio,
     int $mes
-): ?array
-{
+): ?array {
+
     if (
-        $jovenId <= 0
-        ||
-        $anio < 2000
-        ||
-        $mes < 1
-        ||
+        $jovenId <= 0 ||
+        $anio < 2000 ||
+        $mes < 1 ||
         $mes > 12
     ) {
 
@@ -422,6 +415,240 @@ function obtenerAsignacionSeguimientoPeriodo(
 
 
 /* ==========================================================
+   VALIDAR PERMISO SOBRE ASIGNACIÓN
+========================================================== */
+
+function validarAccesoAsignacionSeguimiento(
+    array $asignacion
+): void {
+
+    /*
+     * Quien tenga permiso de asignar seguimientos
+     * puede gestionar cualquier asignación.
+     */
+
+    if (tienePermiso('asignar_seguimientos')) {
+
+        return;
+
+    }
+
+    /*
+     * Un usuario normal solamente puede gestionar
+     * una asignación que le fue entregada.
+     */
+
+    $usuarioActual = usuarioId();
+
+    if (
+        $usuarioActual === null ||
+        $usuarioActual <= 0
+    ) {
+
+        throw new Exception(
+            'No se pudo identificar al usuario actual.'
+        );
+
+    }
+
+    if (
+        (int)$asignacion['usuario_id']
+        !==
+        (int)$usuarioActual
+    ) {
+
+        throw new RuntimeException(
+            'No tienes permiso para gestionar esta asignación.'
+        );
+
+    }
+}
+
+
+/* ==========================================================
+   CREAR NOTIFICACIÓN DE ASIGNACIÓN
+========================================================== */
+
+function notificarNuevaAsignacionSeguimiento(
+    PDO $pdo,
+    array $asignacion
+): void {
+
+    $jovenNombre =
+        $asignacion['joven_nombre']
+        ?? 'Joven';
+
+
+    $meses = [
+
+        1  => 'Enero',
+        2  => 'Febrero',
+        3  => 'Marzo',
+        4  => 'Abril',
+        5  => 'Mayo',
+        6  => 'Junio',
+        7  => 'Julio',
+        8  => 'Agosto',
+        9  => 'Septiembre',
+        10 => 'Octubre',
+        11 => 'Noviembre',
+        12 => 'Diciembre'
+
+    ];
+
+
+    $mesNombre =
+        $meses[
+            (int)$asignacion['mes']
+        ]
+        ?? 'mes seleccionado';
+
+
+    crearNotificacion(
+
+        $pdo,
+
+        [
+
+            'usuario_id' =>
+                (int)$asignacion['usuario_id'],
+
+            'tipo' =>
+                'NUEVA_ASIGNACION',
+
+            'titulo' =>
+                'Nueva asignación de seguimiento',
+
+            'mensaje' =>
+                "Te asignaron el seguimiento de "
+                . "{$jovenNombre} para "
+                . "{$mesNombre} "
+                . "{$asignacion['anio']}.",
+
+            'joven_id' =>
+                (int)$asignacion['joven_id'],
+
+            'asignacion_id' =>
+                (int)$asignacion['id']
+
+        ]
+
+    );
+}
+
+
+/* ==========================================================
+   CREAR NOTIFICACIÓN DE CAMBIO DE ESTADO
+========================================================== */
+
+function notificarCambioEstadoAsignacionSeguimiento(
+    PDO $pdo,
+    array $asignacion,
+    string $estado
+): void {
+
+    $jovenNombre =
+        $asignacion['joven_nombre']
+        ?? 'Joven';
+
+
+    $tipoNotificacion = null;
+
+    $titulo = null;
+
+    $mensaje = null;
+
+
+    switch ($estado) {
+
+        case 'EN_PROCESO':
+
+            $tipoNotificacion =
+                'ASIGNACION_EN_PROCESO';
+
+            $titulo =
+                'Seguimiento iniciado';
+
+            $mensaje =
+                "El seguimiento de "
+                . "{$jovenNombre} "
+                . "se encuentra en proceso.";
+
+            break;
+
+
+        case 'COMPLETADO':
+
+            $tipoNotificacion =
+                'ASIGNACION_COMPLETADA';
+
+            $titulo =
+                'Seguimiento completado';
+
+            $mensaje =
+                "El seguimiento de "
+                . "{$jovenNombre} "
+                . "fue marcado como completado.";
+
+            break;
+
+
+        case 'CANCELADO':
+
+            $tipoNotificacion =
+                'ASIGNACION_CANCELADA';
+
+            $titulo =
+                'Asignación cancelada';
+
+            $mensaje =
+                "La asignación de "
+                . "{$jovenNombre} "
+                . "fue cancelada.";
+
+            break;
+
+    }
+
+
+    if ($tipoNotificacion === null) {
+
+        return;
+
+    }
+
+
+    crearNotificacion(
+
+        $pdo,
+
+        [
+
+            'usuario_id' =>
+                (int)$asignacion['usuario_id'],
+
+            'tipo' =>
+                $tipoNotificacion,
+
+            'titulo' =>
+                $titulo,
+
+            'mensaje' =>
+                $mensaje,
+
+            'joven_id' =>
+                (int)$asignacion['joven_id'],
+
+            'asignacion_id' =>
+                (int)$asignacion['id']
+
+        ]
+
+    );
+}
+
+
+/* ==========================================================
    CREAR ASIGNACIÓN
 ========================================================== */
 
@@ -433,41 +660,36 @@ function crearAsignacionSeguimiento(
     int $anio,
     int $mes,
     ?string $observaciones = null
-): int
-{
+): int {
+
     exigirPermiso(
         'asignar_seguimientos'
     );
 
-
-    /* ==========================================
-       VALIDACIONES
-    ========================================== */
 
     validarPeriodoAsignacionSeguimiento(
         $anio,
         $mes
     );
 
+
     validarJovenAsignacionSeguimiento(
         $pdo,
         $jovenId
     );
+
 
     validarUsuarioAsignacionSeguimiento(
         $pdo,
         $usuarioId
     );
 
+
     validarUsuarioAsignacionSeguimiento(
         $pdo,
         $asignadoPor
     );
 
-
-    /* ==========================================
-       DUPLICADO
-    ========================================== */
 
     if (
         existeAsignacionSeguimiento(
@@ -485,14 +707,11 @@ function crearAsignacionSeguimiento(
     }
 
 
-    /* ==========================================
-       OBSERVACIONES
-    ========================================== */
-
     $observaciones =
         trim(
             (string)$observaciones
         );
+
 
     if ($observaciones === '') {
 
@@ -500,9 +719,9 @@ function crearAsignacionSeguimiento(
 
     }
 
+
     if (
-        $observaciones !== null
-        &&
+        $observaciones !== null &&
         mb_strlen($observaciones) > 2000
     ) {
 
@@ -513,56 +732,105 @@ function crearAsignacionSeguimiento(
     }
 
 
-    /* ==========================================
-       INSERTAR
-    ========================================== */
+    $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("
-        INSERT INTO asignaciones_seguimiento
-        (
-            joven_id,
-            usuario_id,
-            asignado_por,
-            anio,
-            mes,
-            estado,
-            observaciones
-        )
-        VALUES
-        (
-            :joven_id,
-            :usuario_id,
-            :asignado_por,
-            :anio,
-            :mes,
-            'PENDIENTE',
-            :observaciones
-        )
-    ");
 
-    $stmt->execute([
+    try {
 
-        ':joven_id' =>
-            $jovenId,
+        $stmt = $pdo->prepare("
+            INSERT INTO asignaciones_seguimiento
+            (
+                joven_id,
+                usuario_id,
+                asignado_por,
+                anio,
+                mes,
+                estado,
+                observaciones
+            )
+            VALUES
+            (
+                :joven_id,
+                :usuario_id,
+                :asignado_por,
+                :anio,
+                :mes,
+                'PENDIENTE',
+                :observaciones
+            )
+        ");
 
-        ':usuario_id' =>
-            $usuarioId,
 
-        ':asignado_por' =>
-            $asignadoPor,
+        $stmt->execute([
 
-        ':anio' =>
-            $anio,
+            ':joven_id' =>
+                $jovenId,
 
-        ':mes' =>
-            $mes,
+            ':usuario_id' =>
+                $usuarioId,
 
-        ':observaciones' =>
-            $observaciones
+            ':asignado_por' =>
+                $asignadoPor,
 
-    ]);
+            ':anio' =>
+                $anio,
 
-    return (int)$pdo->lastInsertId();
+            ':mes' =>
+                $mes,
+
+            ':observaciones' =>
+                $observaciones
+
+        ]);
+
+
+        $asignacionId =
+            (int)$pdo->lastInsertId();
+
+
+        $asignacion =
+            obtenerAsignacionSeguimientoPorId(
+                $pdo,
+                $asignacionId
+            );
+
+
+        if (!$asignacion) {
+
+            throw new Exception(
+                'No se pudo recuperar la asignación creada.'
+            );
+
+        }
+
+
+        /*
+         * Notificar al usuario responsable.
+         */
+
+        notificarNuevaAsignacionSeguimiento(
+            $pdo,
+            $asignacion
+        );
+
+
+        $pdo->commit();
+
+
+        return $asignacionId;
+
+
+    } catch (Throwable $e) {
+
+        if ($pdo->inTransaction()) {
+
+            $pdo->rollBack();
+
+        }
+
+        throw $e;
+
+    }
 }
 
 
@@ -574,12 +842,13 @@ function obtenerAsignacionesSeguimientoMes(
     PDO $pdo,
     int $anio,
     int $mes
-): array
-{
+): array {
+
     validarPeriodoAsignacionSeguimiento(
         $anio,
         $mes
     );
+
 
     $stmt = $pdo->prepare("
         SELECT
@@ -619,16 +888,28 @@ function obtenerAsignacionesSeguimientoMes(
         AND a.mes = :mes
 
         ORDER BY
+
             CASE a.estado
-                WHEN 'PENDIENTE' THEN 1
-                WHEN 'EN_PROCESO' THEN 2
-                WHEN 'COMPLETADO' THEN 3
-                WHEN 'CANCELADO' THEN 4
+
+                WHEN 'PENDIENTE'
+                    THEN 1
+
+                WHEN 'EN_PROCESO'
+                    THEN 2
+
+                WHEN 'COMPLETADO'
+                    THEN 3
+
+                WHEN 'CANCELADO'
+                    THEN 4
+
                 ELSE 5
+
             END,
 
             j.nombre_completo ASC
     ");
+
 
     $stmt->execute([
 
@@ -637,6 +918,7 @@ function obtenerAsignacionesSeguimientoMes(
         ':mes' => $mes
 
     ]);
+
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -653,17 +935,19 @@ function obtenerAsignacionesUsuario(
     int $usuarioId,
     int $anio,
     int $mes
-): array
-{
+): array {
+
     validarPeriodoAsignacionSeguimiento(
         $anio,
         $mes
     );
 
+
     validarUsuarioAsignacionSeguimiento(
         $pdo,
         $usuarioId
     );
+
 
     $stmt = $pdo->prepare("
         SELECT
@@ -692,15 +976,26 @@ function obtenerAsignacionesUsuario(
         ORDER BY
 
             CASE a.estado
-                WHEN 'PENDIENTE' THEN 1
-                WHEN 'EN_PROCESO' THEN 2
-                WHEN 'COMPLETADO' THEN 3
-                WHEN 'CANCELADO' THEN 4
+
+                WHEN 'PENDIENTE'
+                    THEN 1
+
+                WHEN 'EN_PROCESO'
+                    THEN 2
+
+                WHEN 'COMPLETADO'
+                    THEN 3
+
+                WHEN 'CANCELADO'
+                    THEN 4
+
                 ELSE 5
+
             END,
 
             j.nombre_completo ASC
     ");
+
 
     $stmt->execute([
 
@@ -714,6 +1009,7 @@ function obtenerAsignacionesUsuario(
             $mes
 
     ]);
+
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -729,12 +1025,13 @@ function obtenerJovenesPendientesSinAsignar(
     PDO $pdo,
     int $anio,
     int $mes
-): array
-{
+): array {
+
     validarPeriodoAsignacionSeguimiento(
         $anio,
         $mes
     );
+
 
     $stmt = $pdo->prepare("
         SELECT
@@ -747,9 +1044,7 @@ function obtenerJovenesPendientesSinAsignar(
 
             j.genero,
 
-            j.estado_espiritual,
-
-            a.id AS asignacion_id
+            j.estado_espiritual
 
         FROM jovenes j
 
@@ -761,11 +1056,14 @@ function obtenerJovenesPendientesSinAsignar(
 
             AND a.mes = :mes
 
-        WHERE j.estado_actividad = 'ACTIVO'
+        WHERE
+
+            j.estado_actividad = 'ACTIVO'
 
         AND j.estado_espiritual = 'NUEVO'
 
         AND a.id IS NULL
+
 
         AND NOT EXISTS (
 
@@ -773,17 +1071,20 @@ function obtenerJovenesPendientesSinAsignar(
 
             FROM seguimientos s
 
-            WHERE s.joven_id = j.id
+            WHERE
 
-            AND MONTH(
-                s.fecha_contacto
-            ) = :mes_seguimiento
+                s.joven_id = j.id
 
-            AND YEAR(
-                s.fecha_contacto
-            ) = :anio_seguimiento
+                AND MONTH(
+                    s.fecha_contacto
+                ) = :mes_seguimiento
+
+                AND YEAR(
+                    s.fecha_contacto
+                ) = :anio_seguimiento
 
         )
+
 
         AND NOT EXISTS (
 
@@ -791,17 +1092,21 @@ function obtenerJovenesPendientesSinAsignar(
 
             FROM excepciones_seguimiento e
 
-            WHERE e.joven_id = j.id
+            WHERE
 
-            AND e.mes = :mes_excepcion
+                e.joven_id = j.id
 
-            AND e.anio = :anio_excepcion
+                AND e.mes = :mes_excepcion
+
+                AND e.anio = :anio_excepcion
 
         )
+
 
         ORDER BY
             j.nombre_completo ASC
     ");
+
 
     $stmt->execute([
 
@@ -825,6 +1130,7 @@ function obtenerJovenesPendientesSinAsignar(
 
     ]);
 
+
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
     );
@@ -839,18 +1145,20 @@ function cambiarEstadoAsignacionSeguimiento(
     PDO $pdo,
     int $id,
     string $estado
-): void
-{
+): void {
+
     $estado =
         validarEstadoAsignacionSeguimiento(
             $estado
         );
+
 
     $asignacion =
         obtenerAsignacionSeguimientoPorId(
             $pdo,
             $id
         );
+
 
     if (!$asignacion) {
 
@@ -861,11 +1169,23 @@ function cambiarEstadoAsignacionSeguimiento(
     }
 
 
+    /*
+     * Admin / líder / sublíder con permiso:
+     * pueden gestionar cualquier asignación.
+     *
+     * Usuario normal:
+     * solamente su propia asignación.
+     */
+
+    validarAccesoAsignacionSeguimiento(
+        $asignacion
+    );
+
+
     $fechaCompletado = null;
 
-    if (
-        $estado === 'COMPLETADO'
-    ) {
+
+    if ($estado === 'COMPLETADO') {
 
         $fechaCompletado =
             date('Y-m-d H:i:s');
@@ -873,31 +1193,90 @@ function cambiarEstadoAsignacionSeguimiento(
     }
 
 
-    $stmt = $pdo->prepare("
-        UPDATE asignaciones_seguimiento
+    $pdo->beginTransaction();
 
-        SET
 
-            estado = :estado,
+    try {
 
-            fecha_completado =
-                :fecha_completado
+        $stmt = $pdo->prepare("
+            UPDATE asignaciones_seguimiento
 
-        WHERE id = :id
-    ");
+            SET
 
-    $stmt->execute([
+                estado = :estado,
 
-        ':estado' =>
-            $estado,
+                fecha_completado = :fecha_completado
 
-        ':fecha_completado' =>
-            $fechaCompletado,
+            WHERE id = :id
+        ");
 
-        ':id' =>
-            $id
 
-    ]);
+        $stmt->execute([
+
+            ':estado' =>
+                $estado,
+
+            ':fecha_completado' =>
+                $fechaCompletado,
+
+            ':id' =>
+                $id
+
+        ]);
+
+
+        /*
+         * Actualizamos la información para notificación.
+         */
+
+        $asignacionActualizada =
+            obtenerAsignacionSeguimientoPorId(
+                $pdo,
+                $id
+            );
+
+
+        if (
+            !$asignacionActualizada
+        ) {
+
+            throw new Exception(
+                'No se pudo recuperar la asignación actualizada.'
+            );
+
+        }
+
+
+        /*
+         * Notificar solo cuando el estado genera
+         * una notificación relevante.
+         */
+
+        notificarCambioEstadoAsignacionSeguimiento(
+
+            $pdo,
+
+            $asignacionActualizada,
+
+            $estado
+
+        );
+
+
+        $pdo->commit();
+
+
+    } catch (Throwable $e) {
+
+        if ($pdo->inTransaction()) {
+
+            $pdo->rollBack();
+
+        }
+
+        throw $e;
+
+    }
 }
 
 
@@ -908,11 +1287,17 @@ function cambiarEstadoAsignacionSeguimiento(
 function cancelarAsignacionSeguimiento(
     PDO $pdo,
     int $id
-): void
-{
+): void {
+
+    /*
+     * Solo quien puede administrar asignaciones
+     * puede cancelarlas.
+     */
+
     exigirPermiso(
         'asignar_seguimientos'
     );
+
 
     cambiarEstadoAsignacionSeguimiento(
         $pdo,
@@ -929,8 +1314,8 @@ function cancelarAsignacionSeguimiento(
 function completarAsignacionSeguimiento(
     PDO $pdo,
     int $id
-): void
-{
+): void {
+
     cambiarEstadoAsignacionSeguimiento(
         $pdo,
         $id,
@@ -946,8 +1331,8 @@ function completarAsignacionSeguimiento(
 function iniciarAsignacionSeguimiento(
     PDO $pdo,
     int $id
-): void
-{
+): void {
+
     cambiarEstadoAsignacionSeguimiento(
         $pdo,
         $id,

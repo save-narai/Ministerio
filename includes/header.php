@@ -236,6 +236,11 @@ $extraCSS ??= '';
         src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
     </script>
 
+       <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
+    </script>
+
     <!-- ======================================================
        JAVASCRIPT ADICIONAL DEL MÓDULO
     ======================================================= -->
@@ -329,7 +334,7 @@ $extraCSS ??= '';
 
 <?php if ($mensaje = getFlash('error')): ?>
 
-    <div class="gx-alert gx-alert-danger">
+    <div class="gx-alert gx-alert-error">
 
         <div class="gx-alert-icon">
 

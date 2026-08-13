@@ -7,563 +7,529 @@
    VARIABLES
 ========================================================== */
 
-:root{
+:root {
 
-    --gx-alert-radius:22px;
+    --gx-alert-radius: 18px;
 
-    --gx-alert-padding:18px;
+    --gx-alert-padding: 16px;
 
-    --gx-alert-gap:16px;
+    --gx-alert-gap: 14px;
 
-    --gx-alert-width:390px;
-
-    --gx-alert-blur:18px;
+    --gx-alert-width: 390px;
 
     --gx-alert-shadow:
-        0 18px 45px rgba(15,23,42,.18);
+        0 14px 35px rgba(15, 23, 42, .16);
 
     --gx-alert-shadow-hover:
-        0 26px 60px rgba(15,23,42,.28);
+        0 18px 42px rgba(15, 23, 42, .22);
 
     --gx-alert-transition:
-        .35s cubic-bezier(.22,.61,.36,1);
+        .25s ease;
 
 }
+
 
 /* ==========================================================
-   CONTAINER
+   CONTENEDOR
 ========================================================== */
 
-.gx-alert-container{
+.gx-alert-container {
 
-    position:fixed;
+    position: fixed;
 
-    top:26px;
+    top: 26px;
+    right: 26px;
 
-    right:26px;
+    width: var(--gx-alert-width);
 
-    display:flex;
+    max-width: calc(100vw - 32px);
 
-    flex-direction:column;
+    display: flex;
 
-    gap:18px;
+    flex-direction: column;
 
-    width:var(--gx-alert-width);
+    gap: 14px;
 
-    max-width:calc(100vw - 32px);
+    z-index: 99999;
 
-    z-index:99999;
-
-    pointer-events:none;
+    pointer-events: none;
 
 }
+
 
 /* ==========================================================
-   ALERTA
+   ALERTA BASE
 ========================================================== */
 
-.gx-alert{
+.gx-alert {
 
-    position:relative;
+    --gx-color: #64748b;
 
-    overflow:hidden;
+    position: relative;
 
-    display:flex;
+    width: 100%;
 
-    align-items:center;
+    display: flex;
 
-    gap:var(--gx-alert-gap);
+    align-items: center;
 
-    width:100%;
+    gap: var(--gx-alert-gap);
 
-    padding:var(--gx-alert-padding);
+    padding: var(--gx-alert-padding);
 
-    border-radius:var(--gx-alert-radius);
+    border-radius: var(--gx-alert-radius);
 
-    border:1px solid rgba(255,255,255,.18);
+    border: 1px solid rgba(15, 23, 42, .08);
 
-    background:rgba(255,255,255,.82);
+    background: #ffffff;
 
-    backdrop-filter:blur(var(--gx-alert-blur));
+    box-shadow: var(--gx-alert-shadow);
 
-    -webkit-backdrop-filter:blur(var(--gx-alert-blur));
+    overflow: hidden;
 
-    box-shadow:var(--gx-alert-shadow);
+    pointer-events: auto;
 
-    transition:all var(--gx-alert-transition);
+    isolation: isolate;
 
-    pointer-events:auto;
+    transform: translateY(0);
 
-    isolation:isolate;
+    transition:
+        transform var(--gx-alert-transition),
+        box-shadow var(--gx-alert-transition),
+        border-color var(--gx-alert-transition);
 
-    animation:gxAlertShow .45s cubic-bezier(.22,.61,.36,1);
+    animation:
+        gxAlertShow .35s ease forwards;
 
 }
 
-/* ==========================================================
-   EFECTO SUPERIOR
-========================================================== */
-
-.gx-alert::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-
-    left:0;
-
-    width:100%;
-
-    height:5px;
-
-    opacity:.9;
-
-    background:linear-gradient(
-        90deg,
-        rgba(255,255,255,.90),
-        rgba(255,255,255,.25)
-    );
-
-}
-
-/* ==========================================================
-   BRILLO
-========================================================== */
-
-.gx-alert::after{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    background:
-        radial-gradient(
-            circle at top left,
-            rgba(255,255,255,.28),
-            transparent 55%
-        );
-
-    pointer-events:none;
-
-}
 
 /* ==========================================================
    HOVER
 ========================================================== */
 
-.gx-alert:hover{
+.gx-alert:hover {
 
-    transform:translateY(-4px) scale(1.015);
+    transform: translateY(-2px);
 
-    box-shadow:var(--gx-alert-shadow-hover);
+    box-shadow: var(--gx-alert-shadow-hover);
 
 }
+
+
+/* ==========================================================
+   BARRA SUPERIOR
+========================================================== */
+
+.gx-alert::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    height: 4px;
+
+    background: var(--gx-color);
+
+    opacity: 1;
+
+}
+
+
+/* ==========================================================
+   BRILLO SUTIL
+========================================================== */
+
+.gx-alert::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, .45),
+            transparent 45%
+        );
+
+    opacity: .35;
+
+}
+
 
 /* ==========================================================
    ICONO
 ========================================================== */
 
-.gx-alert-icon{
+.gx-alert-icon {
 
-    flex-shrink:0;
+    position: relative;
 
-    width:58px;
+    z-index: 2;
 
-    height:58px;
+    flex-shrink: 0;
 
-    display:flex;
+    width: 52px;
 
-    justify-content:center;
+    height: 52px;
 
-    align-items:center;
+    display: flex;
 
-    border-radius:18px;
+    align-items: center;
 
-    font-size:1.55rem;
+    justify-content: center;
 
-    color:#fff;
+    border-radius: 15px;
 
-    position:relative;
+    color: #ffffff;
 
-    overflow:hidden;
+    font-size: 1.35rem;
+
+    background: var(--gx-color);
+
+    box-shadow:
+        0 8px 20px color-mix(
+            in srgb,
+            var(--gx-color) 30%,
+            transparent
+        );
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
 
 }
 
-.gx-alert-icon::before{
 
-    content:"";
+.gx-alert-icon i {
 
-    position:absolute;
+    position: relative;
 
-    inset:0;
-
-    opacity:.18;
-
-    background:#fff;
+    z-index: 2;
 
 }
+
+
+/* ==========================================================
+   BRILLO DEL ICONO
+========================================================== */
+
+.gx-alert-icon::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, .28),
+            transparent 55%
+        );
+
+}
+
+
+/* ==========================================================
+   HOVER DEL ICONO
+========================================================== */
+
+.gx-alert:hover .gx-alert-icon {
+
+    transform: scale(1.04);
+
+}
+
 
 /* ==========================================================
    CONTENIDO
 ========================================================== */
 
-.gx-alert-content{
+.gx-alert-content {
 
-    flex:1;
+    position: relative;
 
-    min-width:0;
+    z-index: 2;
 
-}
+    flex: 1;
 
-.gx-alert-content h4{
-
-    margin:0 0 6px;
-
-    font-size:1rem;
-
-    font-weight:700;
-
-    letter-spacing:.2px;
-
-    color:var(--text);
+    min-width: 0;
 
 }
 
-.gx-alert-content p{
 
-    margin:0;
+.gx-alert-content h4 {
 
-    font-size:.92rem;
+    margin: 0 0 4px;
 
-    line-height:1.55;
+    color: #0f172a;
 
-    color:var(--text-light);
+    font-size: .82rem;
 
-    word-break:break-word;
+    font-weight: 750;
 
-}                                                                                                                                                                     /* ==========================================================
+    line-height: 1.2;
+
+    letter-spacing: .7px;
+
+    text-transform: uppercase;
+
+}
+
+
+.gx-alert-content p {
+
+    margin: 0;
+
+    color: #475569;
+
+    font-size: .92rem;
+
+    font-weight: 500;
+
+    line-height: 1.45;
+
+    word-break: break-word;
+
+}
+
+
+/* ==========================================================
    SUCCESS
 ========================================================== */
 
-.gx-alert-success{
+.gx-alert-success {
 
-    border-color:rgba(34,197,94,.18);
+    --gx-color: #16a34a;
 
-    background:linear-gradient(
-        135deg,
-        rgba(240,253,244,.96),
-        rgba(220,252,231,.88)
-    );
+    border-color: rgba(22, 163, 74, .20);
 
-}
-
-.gx-alert-success::before{
-
-    background:linear-gradient(
-        90deg,
-        #22c55e,
-        #16a34a,
-        #4ade80
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #f0fdf4,
+            #ffffff
+        );
 
 }
 
-.gx-alert-success .gx-alert-icon{
-
-    background:linear-gradient(
-        135deg,
-        #22c55e,
-        #16a34a
-    );
-
-    box-shadow:
-        0 12px 28px rgba(34,197,94,.35);
-
-}
 
 /* ==========================================================
    ERROR
 ========================================================== */
 
-.gx-alert-error{
+.gx-alert-error {
 
-    border-color:rgba(239,68,68,.18);
+    --gx-color: #dc2626;
 
-    background:linear-gradient(
-        135deg,
-        rgba(254,242,242,.96),
-        rgba(254,226,226,.88)
-    );
+    border-color: rgba(220, 38, 38, .20);
 
-}
-
-.gx-alert-error::before{
-
-    background:linear-gradient(
-        90deg,
-        #ef4444,
-        #dc2626,
-        #f87171
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #fef2f2,
+            #ffffff
+        );
 
 }
 
-.gx-alert-error .gx-alert-icon{
-
-    background:linear-gradient(
-        135deg,
-        #ef4444,
-        #dc2626
-    );
-
-    box-shadow:
-        0 12px 28px rgba(239,68,68,.35);
-
-}
 
 /* ==========================================================
    WARNING
 ========================================================== */
 
-.gx-alert-warning{
+.gx-alert-warning {
 
-    border-color:rgba(245,158,11,.18);
+    --gx-color: #d97706;
 
-    background:linear-gradient(
-        135deg,
-        rgba(255,251,235,.96),
-        rgba(254,243,199,.90)
-    );
+    border-color: rgba(217, 119, 6, .22);
 
-}
-
-.gx-alert-warning::before{
-
-    background:linear-gradient(
-        90deg,
-        #f59e0b,
-        #d97706,
-        #fbbf24
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #fffbeb,
+            #ffffff
+        );
 
 }
 
-.gx-alert-warning .gx-alert-icon{
-
-    background:linear-gradient(
-        135deg,
-        #f59e0b,
-        #d97706
-    );
-
-    box-shadow:
-        0 12px 28px rgba(245,158,11,.35);
-
-}
 
 /* ==========================================================
    INFO
 ========================================================== */
 
-.gx-alert-info{
+.gx-alert-info {
 
-    border-color:rgba(59,130,246,.18);
+    --gx-color: #2563eb;
 
-    background:linear-gradient(
-        135deg,
-        rgba(239,246,255,.96),
-        rgba(219,234,254,.90)
-    );
+    border-color: rgba(37, 99, 235, .20);
 
-}
-
-.gx-alert-info::before{
-
-    background:linear-gradient(
-        90deg,
-        #3b82f6,
-        #2563eb,
-        #60a5fa
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #ffffff
+        );
 
 }
 
-.gx-alert-info .gx-alert-icon{
-
-    background:linear-gradient(
-        135deg,
-        #3b82f6,
-        #2563eb
-    );
-
-    box-shadow:
-        0 12px 28px rgba(59,130,246,.35);
-
-}
 
 /* ==========================================================
    BOTÓN CERRAR
 ========================================================== */
 
-.gx-alert-close{
+.gx-alert-close {
 
-    width:38px;
+    position: relative;
 
-    height:38px;
+    z-index: 5;
 
-    border:none;
+    flex-shrink: 0;
 
-    outline:none;
+    width: 36px;
 
-    cursor:pointer;
+    height: 36px;
 
-    flex-shrink:0;
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
-    align-items:center;
+    justify-content: center;
 
-    justify-content:center;
+    padding: 0;
 
-    border-radius:12px;
+    border: 0;
 
-    background:rgba(255,255,255,.55);
+    border-radius: 10px;
 
-    color:#64748b;
+    background: rgba(15, 23, 42, .06);
 
-    transition:all .30s ease;
+    color: #64748b;
 
-}
+    cursor: pointer;
 
-.gx-alert-close:hover{
-
-    transform:rotate(90deg) scale(1.08);
-
-    background:#fff;
-
-    color:#1e293b;
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
 
 }
 
-.gx-alert-close i{
 
-    pointer-events:none;
+.gx-alert-close:hover {
+
+    background: rgba(15, 23, 42, .11);
+
+    color: #0f172a;
+
+    transform: scale(1.05);
 
 }
+
+
+.gx-alert-close:active {
+
+    transform: scale(.94);
+
+}
+
+
+.gx-alert-close:focus-visible {
+
+    outline: 3px solid
+        color-mix(
+            in srgb,
+            var(--gx-color) 35%,
+            transparent
+        );
+
+    outline-offset: 2px;
+
+}
+
+
+.gx-alert-close i {
+
+    pointer-events: none;
+
+}
+
 
 /* ==========================================================
    BARRA DE PROGRESO
 ========================================================== */
 
-.gx-alert-progress{
+.gx-alert-progress {
 
-    position:absolute;
+    position: absolute;
 
-    left:0;
+    left: 0;
+    bottom: 0;
 
-    bottom:0;
+    width: 100%;
 
-    width:100%;
+    height: 3px;
 
-    height:4px;
+    overflow: hidden;
 
-    overflow:hidden;
-
-    border-radius:0 0 22px 22px;
-
-    background:rgba(255,255,255,.28);
+    background: rgba(15, 23, 42, .06);
 
 }
 
-.gx-alert-progress::before{
 
-    content:"";
+.gx-alert-progress::before {
 
-    position:absolute;
+    content: "";
 
-    top:0;
-    left:0;
+    position: absolute;
 
-    width:var(--gx-progress, 100%);
+    top: 0;
+    left: 0;
 
-    height:100%;
+    width: var(--gx-progress, 100%);
 
-    transition:width .05s linear;
+    height: 100%;
 
-}
+    background: var(--gx-color);
 
-.gx-alert-success .gx-alert-progress::before{
-
-    background:linear-gradient(
-        90deg,
-        #22c55e,
-        #4ade80
-    );
+    transition: width .05s linear;
 
 }
 
-.gx-alert-error .gx-alert-progress::before{
 
-    background:linear-gradient(
-        90deg,
-        #ef4444,
-        #f87171
-    );
-
-}
-
-.gx-alert-warning .gx-alert-progress::before{
-
-    background:linear-gradient(
-        90deg,
-        #f59e0b,
-        #fbbf24
-    );
-
-}
-
-.gx-alert-info .gx-alert-progress::before{
-
-    background:linear-gradient(
-        90deg,
-        #3b82f6,
-        #60a5fa
-    );
-
-}                                                                                                                                                                      /* ==========================================================
-   ANIMACIONES
+/* ==========================================================
+   ANIMACIÓN DE ENTRADA
 ========================================================== */
 
-@keyframes gxAlertShow{
+@keyframes gxAlertShow {
 
-    0%{
+    from {
 
-        opacity:0;
+        opacity: 0;
 
         transform:
-            translateX(70px)
-            translateY(-10px)
-            scale(.92);
+            translateX(35px)
+            scale(.97);
 
     }
 
-    60%{
+    to {
 
-        opacity:1;
-
-        transform:
-            translateX(-6px)
-            scale(1.01);
-
-    }
-
-    100%{
-
-        opacity:1;
+        opacity: 1;
 
         transform:
             translateX(0)
@@ -573,521 +539,267 @@
 
 }
 
-@keyframes gxAlertHide{
-
-    to{
-
-        opacity:0;
-
-        transform:
-            translateX(90px)
-            scale(.90);
-
-    }
-
-}
-
-@keyframes gxProgress{
-
-    from{
-
-        transform:scaleX(1);
-
-        transform-origin:left;
-
-    }
-
-    to{
-
-        transform:scaleX(0);
-
-        transform-origin:left;
-
-    }
-
-}
-
-@keyframes gxGlow{
-
-    0%,100%{
-
-        filter:brightness(1);
-
-    }
-
-    50%{
-
-        filter:brightness(1.15);
-
-    }
-
-}
 
 /* ==========================================================
-   EFECTOS
+   ANIMACIÓN DE SALIDA
 ========================================================== */
 
-.gx-alert:hover .gx-alert-icon{
+@keyframes gxAlertHide {
 
-    transform:scale(1.08);
+    from {
+
+        opacity: 1;
+
+        transform:
+            translateX(0)
+            scale(1);
+
+    }
+
+    to {
+
+        opacity: 0;
+
+        transform:
+            translateX(35px)
+            scale(.96);
+
+    }
 
 }
 
-.gx-alert-icon{
-
-    transition:all .35s ease;
-
-    animation:gxGlow 3s ease infinite;
-
-}
-
-.gx-alert:hover{
-
-    backdrop-filter:blur(24px);
-
-}
 
 /* ==========================================================
    OCULTAR
 ========================================================== */
 
-.gx-alert.gx-hide{
+.gx-alert.gx-hide {
 
-    animation:gxAlertHide .35s ease forwards;
+    animation:
+        gxAlertHide .35s ease forwards;
+
+    pointer-events: none;
 
 }
+
 
 /* ==========================================================
    MODO OSCURO
 ========================================================== */
 
-.dark .gx-alert{
+.dark .gx-alert {
 
-    background:rgba(22,28,36,.88);
+    background: #161c24;
 
-    border-color:rgba(255,255,255,.08);
+    border-color: rgba(255, 255, 255, .08);
 
     box-shadow:
-
-        0 20px 45px rgba(0,0,0,.45);
-
-}
-
-.dark .gx-alert-content h4{
-
-    color:#ffffff;
+        0 18px 40px rgba(0, 0, 0, .38);
 
 }
 
-.dark .gx-alert-content p{
 
-    color:rgba(255,255,255,.78);
+.dark .gx-alert:hover {
 
-}
-
-.dark .gx-alert-close{
-
-    background:rgba(255,255,255,.08);
-
-    color:#e2e8f0;
+    box-shadow:
+        0 22px 48px rgba(0, 0, 0, .48);
 
 }
 
-.dark .gx-alert-close:hover{
 
-    background:rgba(255,255,255,.18);
+.dark .gx-alert-content h4 {
 
-}
-
-.dark .gx-alert-success{
-
-    background:linear-gradient(
-
-        135deg,
-
-        rgba(20,83,45,.96),
-
-        rgba(22,101,52,.88)
-
-    );
+    color: #f8fafc;
 
 }
 
-.dark .gx-alert-error{
 
-    background:linear-gradient(
+.dark .gx-alert-content p {
 
-        135deg,
-
-        rgba(127,29,29,.96),
-
-        rgba(153,27,27,.88)
-
-    );
+    color: #cbd5e1;
 
 }
 
-.dark .gx-alert-warning{
 
-    background:linear-gradient(
+.dark .gx-alert-close {
 
-        135deg,
+    background: rgba(255, 255, 255, .08);
 
-        rgba(120,53,15,.96),
-
-        rgba(146,64,14,.88)
-
-    );
+    color: #cbd5e1;
 
 }
 
-.dark .gx-alert-info{
 
-    background:linear-gradient(
+.dark .gx-alert-close:hover {
 
-        135deg,
+    background: rgba(255, 255, 255, .15);
 
-        rgba(30,64,175,.96),
-
-        rgba(29,78,216,.88)
-
-    );
+    color: #ffffff;
 
 }
+
+
+/* ==========================================================
+   DARK — SUCCESS
+========================================================== */
+
+.dark .gx-alert-success {
+
+    background:
+        linear-gradient(
+            135deg,
+            #102d1d,
+            #161c24
+        );
+
+}
+
+
+/* ==========================================================
+   DARK — ERROR
+========================================================== */
+
+.dark .gx-alert-error {
+
+    background:
+        linear-gradient(
+            135deg,
+            #351719,
+            #161c24
+        );
+
+}
+
+
+/* ==========================================================
+   DARK — WARNING
+========================================================== */
+
+.dark .gx-alert-warning {
+
+    background:
+        linear-gradient(
+            135deg,
+            #342512,
+            #161c24
+        );
+
+}
+
+
+/* ==========================================================
+   DARK — INFO
+========================================================== */
+
+.dark .gx-alert-info {
+
+    background:
+        linear-gradient(
+            135deg,
+            #15264a,
+            #161c24
+        );
+
+}
+
 
 /* ==========================================================
    RESPONSIVE
 ========================================================== */
 
-@media (max-width:768px){
+@media (max-width: 768px) {
 
-    .gx-alert-container{
+    .gx-alert-container {
 
-        top:18px;
+        top: 18px;
 
-        right:18px;
+        right: 18px;
+        left: 18px;
 
-        left:18px;
+        width: auto;
 
-        width:auto;
-
-        max-width:none;
-
-    }
-
-    .gx-alert{
-
-        padding:16px;
-
-    }
-
-    .gx-alert-icon{
-
-        width:52px;
-
-        height:52px;
-
-        font-size:1.35rem;
+        max-width: none;
 
     }
 
 }
 
-@media (max-width:480px){
 
-    .gx-alert{
+@media (max-width: 480px) {
 
-        gap:12px;
+    .gx-alert {
 
-        padding:14px;
+        gap: 10px;
 
-    }
-
-    .gx-alert-content h4{
-
-        font-size:.95rem;
+        padding: 14px;
 
     }
 
-    .gx-alert-content p{
 
-        font-size:.85rem;
+    .gx-alert-icon {
 
-    }
+        width: 46px;
+        height: 46px;
 
-    .gx-alert-close{
+        border-radius: 13px;
 
-        width:34px;
-
-        height:34px;
+        font-size: 1.2rem;
 
     }
 
-}                                                                                                                                                                                            /* ==========================================================
-   PREMIUM EFFECTS
-========================================================== */
 
-/* Halo de color detrás de la tarjeta */
+    .gx-alert-content h4 {
 
-.gx-alert{
-
-    isolation:isolate;
-
-}
-
-.gx-alert::before{
-
-    z-index:-2;
-
-}
-
-.gx-alert::after{
-
-    z-index:-1;
-
-}
-
-.gx-alert-success{
-
-    --gx-color:#22c55e;
-
-}
-
-.gx-alert-error{
-
-    --gx-color:#ef4444;
-
-}
-
-.gx-alert-warning{
-
-    --gx-color:#f59e0b;
-
-}
-
-.gx-alert-info{
-
-    --gx-color:#3b82f6;
-
-}
-
-.gx-alert{
-
-    box-shadow:
-
-        0 20px 45px rgba(15,23,42,.18),
-
-        0 0 0 1px rgba(255,255,255,.08),
-
-        0 0 35px color-mix(in srgb, var(--gx-color) 18%, transparent);
-
-}
-
-/* ==========================================================
-   REFLEJO SUPERIOR
-========================================================== */
-
-.gx-alert .gx-alert-shine{
-
-    position:absolute;
-
-    inset:0;
-
-    pointer-events:none;
-
-    overflow:hidden;
-
-    border-radius:inherit;
-
-}
-
-.gx-alert .gx-alert-shine::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:-140%;
-
-    left:-60%;
-
-    width:45%;
-
-    height:320%;
-
-    background:linear-gradient(
-
-        90deg,
-
-        transparent,
-
-        rgba(255,255,255,.45),
-
-        transparent
-
-    );
-
-    transform:rotate(28deg);
-
-    animation:gxShine 7s linear infinite;
-
-}
-
-/* ==========================================================
-   ICONO
-========================================================== */
-
-.gx-alert-icon{
-
-    position:relative;
-
-}
-
-.gx-alert-icon i{
-
-    position:relative;
-
-    z-index:2;
-
-}
-
-.gx-alert-icon::after{
-
-    content:"";
-
-    position:absolute;
-
-    inset:8px;
-
-    border-radius:12px;
-
-    background:rgba(255,255,255,.10);
-
-}
-
-/* ==========================================================
-   TEXTO
-========================================================== */
-
-.gx-alert-content h4{
-
-    text-transform:uppercase;
-
-    font-size:.82rem;
-
-    letter-spacing:1.2px;
-
-}
-
-.gx-alert-content p{
-
-    font-size:.94rem;
-
-    font-weight:500;
-
-}
-
-/* ==========================================================
-   HOVER
-========================================================== */
-
-.gx-alert{
-
-    cursor:default;
-
-}
-
-.gx-alert:hover{
-
-    transform:
-
-        translateY(-6px)
-
-        scale(1.02);
-
-}
-
-.gx-alert:hover .gx-alert-icon{
-
-    transform:
-
-        rotate(-8deg)
-
-        scale(1.10);
-
-}
-
-.gx-alert:hover .gx-alert-progress{
-
-    height:6px;
-
-}
-
-/* ==========================================================
-   CERRAR
-========================================================== */
-
-.gx-alert-close{
-
-    backdrop-filter:blur(8px);
-
-}
-
-.gx-alert-close:hover{
-
-    box-shadow:
-
-        0 10px 20px rgba(0,0,0,.18);
-
-}
-
-/* ==========================================================
-   SHINE
-========================================================== */
-
-@keyframes gxShine{
-
-    0%{
-
-        left:-70%;
+        font-size: .75rem;
 
     }
 
-    100%{
 
-        left:160%;
+    .gx-alert-content p {
+
+        font-size: .84rem;
+
+    }
+
+
+    .gx-alert-close {
+
+        width: 32px;
+        height: 32px;
 
     }
 
 }
+
 
 /* ==========================================================
    REDUCIR MOVIMIENTO
 ========================================================== */
 
-@media (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion: reduce) {
 
     .gx-alert,
+    .gx-alert *,
+    .gx-alert-icon {
 
-    .gx-alert *{
+        animation: none !important;
 
-        animation:none !important;
-
-        transition:none !important;
+        transition: none !important;
 
     }
 
 }
 
+
 /* ==========================================================
    IMPRESIÓN
 ========================================================== */
 
-@media print{
+@media print {
 
-    .gx-alert-container{
+    .gx-alert-container {
 
-        display:none !important;
+        display: none !important;
 
     }
 

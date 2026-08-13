@@ -19,12 +19,14 @@ generarCsrf();
 
 
 /* ==========================================================
-   PERMISOS
+   PERMISO
 ========================================================== */
 
 if (!tienePermiso('asignar_seguimientos')) {
 
-    header("Location: ../dashboard.php");
+    header(
+        "Location: " . BASE_URL . "/views/dashboard.php"
+    );
 
     exit;
 }
@@ -38,25 +40,25 @@ actualizarEstadoActividad($pdo);
 
 
 /* ==========================================================
-   PERÍODO SELECCIONADO
+   PERÍODO
 ========================================================== */
 
-$anioActual = (int) date('Y');
-$mesActual  = (int) date('m');
+$anioActual = (int)date('Y');
+$mesActual  = (int)date('m');
 
-$anio = (int) (
+$anio = (int)(
     $_GET['anio']
     ?? $anioActual
 );
 
-$mes = (int) (
+$mes = (int)(
     $_GET['mes']
     ?? $mesActual
 );
 
 
 /* ==========================================================
-   VALIDAR PERÍODO
+   VALIDAR AÑO
 ========================================================== */
 
 if (
@@ -65,8 +67,12 @@ if (
 ) {
 
     $anio = $anioActual;
-
 }
+
+
+/* ==========================================================
+   VALIDAR MES
+========================================================== */
 
 if (
     $mes < 1 ||
@@ -74,7 +80,6 @@ if (
 ) {
 
     $mes = $mesActual;
-
 }
 
 
@@ -125,11 +130,10 @@ $asignaciones =
 
 
 /* ==========================================================
-   USUARIOS DISPONIBLES PARA RECIBIR ASIGNACIONES
+   USUARIOS DISPONIBLES
 ========================================================== */
 
 $stmt = $pdo->prepare("
-
     SELECT
 
         u.id,
@@ -141,7 +145,7 @@ $stmt = $pdo->prepare("
     FROM usuarios u
 
     INNER JOIN roles r
-        ON u.rol_id = r.id
+        ON r.id = u.rol_id
 
     WHERE u.activo = 1
 
@@ -149,17 +153,18 @@ $stmt = $pdo->prepare("
 
     ORDER BY
         u.nombre ASC
-
 ");
 
 $stmt->execute();
 
 $usuariosDisponibles =
-    $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->fetchAll(
+        PDO::FETCH_ASSOC
+    );
 
 
 /* ==========================================================
-   ESTADÍSTICAS DE ASIGNACIONES
+   ESTADÍSTICAS
 ========================================================== */
 
 $totalPendientes =
@@ -168,28 +173,36 @@ $totalPendientes =
 $totalAsignados =
     count($asignaciones);
 
-$totalCompletados = 0;
+$totalPendientesAsignados = 0;
 
 $totalEnProceso = 0;
 
+$totalCompletados = 0;
+
 $totalCancelados = 0;
+
 
 foreach ($asignaciones as $asignacion) {
 
-    switch (
+    $estado =
         strtoupper(
             trim(
-                $asignacion['estado']
-                ?? ''
+                (string)(
+                    $asignacion['estado']
+                    ?? ''
+                )
             )
-        )
-    ) {
+        );
 
-        case 'COMPLETADO':
 
-            $totalCompletados++;
+    switch ($estado) {
+
+        case 'PENDIENTE':
+
+            $totalPendientesAsignados++;
 
             break;
+
 
         case 'EN_PROCESO':
 
@@ -197,11 +210,20 @@ foreach ($asignaciones as $asignacion) {
 
             break;
 
+
+        case 'COMPLETADO':
+
+            $totalCompletados++;
+
+            break;
+
+
         case 'CANCELADO':
 
             $totalCancelados++;
 
             break;
+
     }
 }
 
@@ -227,19 +249,13 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="page-header-left">
 
             <h1 class="page-title">
-
                 Asignaciones de seguimiento
-
             </h1>
 
-
             <p class="page-subtitle">
-
                 Distribuye los jóvenes pendientes entre los
                 usuarios responsables.
-
             </p>
-
 
             <span class="badge badge-info">
 
@@ -261,7 +277,7 @@ require_once __DIR__ . "/../../includes/header.php";
                 class="btn btn-back"
             >
 
-           
+                <i class="fa-solid fa-arrow-left"></i>
 
                 Volver a seguimientos
 
@@ -282,15 +298,11 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card danger">
 
             <span class="stat-number">
-
                 <?= $totalPendientes ?>
-
             </span>
 
             <span class="stat-label">
-
                 Pendientes sin asignar
-
             </span>
 
         </div>
@@ -299,15 +311,11 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card info">
 
             <span class="stat-number">
-
                 <?= $totalAsignados ?>
-
             </span>
 
             <span class="stat-label">
-
-                Asignaciones activas
-
+                Asignaciones
             </span>
 
         </div>
@@ -316,15 +324,11 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card warning">
 
             <span class="stat-number">
-
                 <?= $totalEnProceso ?>
-
             </span>
 
             <span class="stat-label">
-
                 En proceso
-
             </span>
 
         </div>
@@ -333,48 +337,34 @@ require_once __DIR__ . "/../../includes/header.php";
         <div class="stat-card success">
 
             <span class="stat-number">
-
                 <?= $totalCompletados ?>
-
             </span>
 
             <span class="stat-label">
-
                 Completados
-
             </span>
 
         </div>
 
-
     </section>
 
 
-    <br>
-
-
     <!-- =====================================================
-         FILTROS
+         FILTRO DE PERÍODO
     ====================================================== -->
 
-    <section class="gx-card gx-card--soft">
-
+    <section class="gx-card gx-card--soft asignaciones-card">
 
         <div class="gx-card__header">
 
             <div>
 
                 <h2>
-
                     Filtrar período
-
                 </h2>
 
-
                 <p>
-
-                    Selecciona el mes que deseas gestionar.
-
+                    Selecciona el mes y año que deseas gestionar.
                 </p>
 
             </div>
@@ -384,16 +374,16 @@ require_once __DIR__ . "/../../includes/header.php";
 
         <div class="gx-card__body">
 
-
             <form
                 method="GET"
                 action="<?= BASE_URL ?>/views/seguimientos/asignaciones.php"
                 class="form"
             >
 
-
                 <div class="form-grid">
 
+
+                    <!-- MES -->
 
                     <div class="form-group">
 
@@ -437,6 +427,8 @@ require_once __DIR__ . "/../../includes/header.php";
                     </div>
 
 
+                    <!-- AÑO -->
+
                     <div class="form-group">
 
                         <label
@@ -452,9 +444,9 @@ require_once __DIR__ . "/../../includes/header.php";
 
 
                         <input
+                            type="number"
                             id="anio"
                             name="anio"
-                            type="number"
                             class="form-input"
                             min="2000"
                             max="2100"
@@ -462,7 +454,6 @@ require_once __DIR__ . "/../../includes/header.php";
                         >
 
                     </div>
-
 
                 </div>
 
@@ -482,7 +473,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
                 </div>
 
-
             </form>
 
         </div>
@@ -490,32 +480,23 @@ require_once __DIR__ . "/../../includes/header.php";
     </section>
 
 
-    <br>
-
-
     <!-- =====================================================
-         JÓVENES PENDIENTES SIN ASIGNAR
+         JÓVENES PENDIENTES
     ====================================================== -->
 
     <section class="gx-card gx-card--soft asignaciones-card">
-
 
         <div class="gx-card__header">
 
             <div>
 
-                <h2 class="section-title">
-
+                <h2>
                     Jóvenes pendientes sin asignar
-
                 </h2>
 
-
-                <p class="section-subtitle">
-
-                    Selecciona uno o varios jóvenes y asígnalos
-                    a un usuario responsable.
-
+                <p>
+                    Selecciona uno o varios jóvenes para
+                    asignarlos a un usuario.
                 </p>
 
             </div>
@@ -533,8 +514,13 @@ require_once __DIR__ . "/../../includes/header.php";
                     action="<?= BASE_URL ?>/controllers/asignacionSeguimientoController.php"
                     method="POST"
                     id="formAsignarJovenes"
+                    class="form"
                 >
 
+
+                    <!-- =========================================
+                         CAMPOS OCULTOS
+                    ========================================== -->
 
                     <input
                         type="hidden"
@@ -568,30 +554,22 @@ require_once __DIR__ . "/../../includes/header.php";
                     >
 
 
-                    <!-- =================================================
-                         CONTENEDOR DE JÓVENES SELECCIONADOS
-                         Se rellena mediante JavaScript para que la
-                         selección sobreviva a la paginación de DataTables.
-                    ================================================== -->
-
-                    <div id="idsJovenesSeleccionados"></div>
-
-
-                    <!-- =================================================
+                    <!-- =========================================
                          CONTROLES
-                    ================================================== -->
+                    ========================================== -->
 
                     <div class="asignaciones-controles">
-
 
                         <div class="form-grid">
 
 
+                            <!-- USUARIO -->
+
                             <div class="form-group">
 
                                 <label
-                                    class="form-label"
                                     for="usuario_id"
+                                    class="form-label"
                                 >
 
                                     <i class="fa-solid fa-user-check"></i>
@@ -651,12 +629,11 @@ require_once __DIR__ . "/../../includes/header.php";
                             </div>
 
 
+                            <!-- SELECCIONAR TODOS -->
+
                             <div class="form-group">
 
-                                <label
-                                    class="form-label"
-                                    for="selectTodos"
-                                >
+                                <label class="form-label">
 
                                     <i class="fa-solid fa-list-check"></i>
 
@@ -671,7 +648,7 @@ require_once __DIR__ . "/../../includes/header.php";
                                     class="btn btn-outline"
                                 >
 
-                                    <i class="fa-solid fa-square-check"></i>
+                                    <i class="fa-solid fa-check-double"></i>
 
                                     Seleccionar todos
 
@@ -679,20 +656,21 @@ require_once __DIR__ . "/../../includes/header.php";
 
                             </div>
 
-
                         </div>
 
+
+                        <!-- OBSERVACIONES -->
 
                         <div class="form-group">
 
                             <label
-                                class="form-label"
                                 for="observaciones"
+                                class="form-label"
                             >
 
                                 <i class="fa-solid fa-comment-dots"></i>
 
-                                Observaciones de la asignación
+                                Observaciones
 
                             </label>
 
@@ -708,439 +686,256 @@ require_once __DIR__ . "/../../includes/header.php";
 
                         </div>
 
+                    </div>
+
+
+                    <div class="asignaciones-separador"></div>
+
+
+                    <!-- =========================================
+                         TABLA DE JÓVENES
+                    ========================================== -->
+
+                    <div class="asignaciones-tabla">
+
+                        <div class="table-responsive">
+
+                            <table
+                                id="tablaAsignaciones"
+                                class="table gx-table"
+                            >
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th
+                                            class="table-check-column"
+                                        >
+
+                                            <input
+                                                type="checkbox"
+                                                id="checkTodos"
+                                                class="table-check"
+                                                aria-label="Seleccionar todos los jóvenes"
+                                            >
+
+                                        </th>
+
+
+                                        <th>
+                                            Nombre
+                                        </th>
+
+
+                                        <th>
+                                            Género
+                                        </th>
+
+
+                                        <th>
+                                            Teléfono
+                                        </th>
+
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <?php foreach (
+                                        $jovenesPendientes
+                                        as $joven
+                                    ): ?>
+
+
+                                        <?php
+
+                                        $genero =
+                                            strtoupper(
+                                                trim(
+                                                    (string)(
+                                                        $joven['genero']
+                                                        ?? ''
+                                                    )
+                                                )
+                                            );
+
+
+                                        $estadoEspiritual =
+                                            strtoupper(
+                                                trim(
+                                                    (string)(
+                                                        $joven[
+                                                            'estado_espiritual'
+                                                        ]
+                                                        ?? 'NUEVO'
+                                                    )
+                                                )
+                                            );
+
+                                        ?>
+
+
+                                        <tr>
+
+
+                                            <!-- CHECK -->
+
+                                            <td
+                                                class="table-check-column"
+                                            >
+
+                                                <input
+                                                    type="checkbox"
+                                                    class="table-check check-joven"
+                                                    value="<?= (int)$joven['id'] ?>"
+                                                    aria-label="Seleccionar <?= e(
+                                                        $joven[
+                                                            'nombre_completo'
+                                                        ]
+                                                    ) ?>"
+                                                >
+
+                                            </td>
+
+
+                                            <!-- NOMBRE -->
+
+                                            <td>
+
+                                                <span
+                                                    class="seguimiento-nombre"
+                                                >
+
+                                                    <?= e(
+                                                        $joven[
+                                                            'nombre_completo'
+                                                        ]
+                                                    ) ?>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- GÉNERO -->
+
+                                            <td>
+
+                                                <?=
+                                                    $genero === 'F'
+                                                        ? 'Femenino'
+                                                        : (
+                                                            $genero === 'M'
+                                                                ? 'Masculino'
+                                                                : '—'
+                                                        )
+                                                ?>
+
+                                            </td>
+
+
+                                            <!-- TELÉFONO -->
+
+                                            <td>
+
+                                                <?= e(
+                                                    $joven['telefono']
+                                                    ?: 'Sin teléfono'
+                                                ) ?>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td>
+
+                                                <span
+                                                    class="badge badge-warning"
+                                                >
+
+                                                    <?= e(
+                                                        ucfirst(
+                                                            strtolower(
+                                                                $estadoEspiritual
+                                                            )
+                                                        )
+                                                    ) ?>
+
+                                                </span>
+
+                                            </td>
+
+
+                                        </tr>
+
+
+                                    <?php endforeach; ?>
+
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
 
                     </div>
 
 
-                    <br>
+                    <!-- =========================================
+                         ACCIÓN
+                    ========================================== -->
 
-<!-- =================================================
-     TABLA DE JÓVENES
-================================================== -->
+                    <div class="form-actions">
 
-<div class="asignaciones-tabla">
-
-    <div class="table-responsive">
-
-        <table
-            class="table gx-table"
-            id="tablaAsignaciones"
-        >
-
-            <thead>
-
-                <tr>
-
-                    <th class="table-check-column">
-
-                        <input
-                            type="checkbox"
-                            id="checkTodos"
-                            class="table-check"
-                            aria-label="Seleccionar todos los jóvenes"
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="btnAsignarSeleccionados"
                         >
 
-                    </th>
+                            <i class="fa-solid fa-user-plus"></i>
 
-                    <th>
-                        Nombre
-                    </th>
+                            Asignar seleccionados
 
-                    <th>
-                        Género
-                    </th>
+                        </button>
 
-                    <th>
-                        Teléfono
-                    </th>
+                    </div>
 
-                    <th>
-                        Estado
-                    </th>
 
-                </tr>
+                </form>
 
-            </thead>
-
-            <tbody>
-
-                <?php foreach (
-                    $jovenesPendientes
-                    as $joven
-                ): ?>
-
-                    <?php
-
-                    $genero =
-                        strtoupper(
-                            trim(
-                                $joven['genero'] ?? ''
-                            )
-                        );
-
-                    $estadoEspiritual =
-                        strtoupper(
-                            trim(
-                                $joven['estado_espiritual']
-                                ?? 'NUEVO'
-                            )
-                        );
-
-                    ?>
-
-                    <tr>
-
-                        <!-- CHECKBOX -->
-
-                        <td class="table-check-column">
-
-                            <input
-                                type="checkbox"
-                                class="check-joven table-check"
-                                name="joven_ids[]"
-                                value="<?= (int)$joven['id'] ?>"
-                                aria-label="Seleccionar <?= e(
-                                    $joven['nombre_completo']
-                                ) ?>"
-                            >
-
-                        </td>
-
-
-                        <!-- NOMBRE -->
-
-                        <td>
-
-                            <span class="seguimiento-nombre">
-
-                                <?= e(
-                                    $joven['nombre_completo']
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- GÉNERO -->
-
-                        <td>
-
-                            <?= $genero === 'F'
-                                ? 'Femenino'
-                                : (
-                                    $genero === 'M'
-                                        ? 'Masculino'
-                                        : '—'
-                                )
-                            ?>
-
-                        </td>
-
-
-                        <!-- TELÉFONO -->
-
-                        <td>
-
-                            <?= e(
-                                $joven['telefono']
-                                ?: 'Sin teléfono'
-                            ) ?>
-
-                        </td>
-
-
-                        <!-- ESTADO -->
-
-                        <td>
-
-                            <span class="badge badge-warning">
-
-                                <?= e(
-                                    ucfirst(
-                                        strtolower(
-                                            $estadoEspiritual
-                                        )
-                                    )
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                <?php endforeach; ?>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-
-<div class="form-actions">
-
-    <button
-        type="submit"
-        class="btn btn-primary"
-    >
-
-        <i class="fa-solid fa-user-plus"></i>
-
-        Asignar seleccionados
-
-    </button>
-
-</div>
-
-<!-- =================================================
-     TABLA DE ASIGNACIONES
-================================================== -->
-
-<div class="table-responsive">
-
-    <table
-        class="table gx-table"
-        id="tablaAsignacionesActuales"
-    >
-
-        <thead>
-
-            <tr>
-
-                <th class="table-check-column">
-
-                    <input
-                        type="checkbox"
-                        id="checkAsignaciones"
-                        class="table-check"
-                        aria-label="Seleccionar asignaciones"
-                    >
-
-                </th>
-
-                <th>
-                    Joven
-                </th>
-
-                <th>
-                    Responsable
-                </th>
-
-                <th>
-                    Estado
-                </th>
-
-                <th>
-                    Asignado por
-                </th>
-
-                <th>
-                    Fecha
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-
-            <?php foreach (
-                $asignaciones
-                as $asignacion
-            ): ?>
-
-                <?php
-
-                $estado =
-                    strtoupper(
-                        trim(
-                            $asignacion['estado']
-                            ?? ''
-                        )
-                    );
-
-                $estadoClase =
-                    match ($estado) {
-
-                        'PENDIENTE' =>
-                            'danger',
-
-                        'EN_PROCESO' =>
-                            'warning',
-
-                        'COMPLETADO' =>
-                            'success',
-
-                        'CANCELADO' =>
-                            'secondary',
-
-                        default =>
-                            'info'
-
-                    };
-
-                ?>
-
-                <tr
-                    class="<?= $estado === 'CANCELADO'
-                        ? 'asignacion-cancelada'
-                        : '' ?>"
-                >
-
-                    <!-- CHECKBOX -->
-
-                    <td class="table-check-column">
-
-                        <?php if (
-                            in_array(
-                                $estado,
-                                [
-                                    'PENDIENTE',
-                                    'EN_PROCESO'
-                                ],
-                                true
-                            )
-                        ): ?>
-
-                            <input
-                                type="checkbox"
-                                class="check-asignacion table-check"
-                                value="<?= (int)$asignacion['id'] ?>"
-                                aria-label="Seleccionar asignación de <?= e(
-                                    $asignacion['joven_nombre']
-                                ) ?>"
-                            >
-
-                        <?php else: ?>
-
-                            <span
-                                class="table-check-placeholder"
-                                aria-hidden="true"
-                            ></span>
-
-                        <?php endif; ?>
-
-                    </td>
-
-
-                    <!-- JOVEN -->
-
-                    <td>
-
-                        <span class="seguimiento-nombre">
-
-                            <?= e(
-                                $asignacion['joven_nombre']
-                            ) ?>
-
-                        </span>
-
-                    </td>
-
-
-                    <!-- RESPONSABLE -->
-
-                    <td>
-
-                        <?= e(
-                            $asignacion['usuario_nombre']
-                        ) ?>
-
-                    </td>
-
-
-                    <!-- ESTADO -->
-
-                    <td>
-
-                        <span
-                            class="badge badge-<?= e(
-                                $estadoClase
-                            ) ?>"
-                        >
-
-                            <?= e(
-                                ucfirst(
-                                    strtolower(
-                                        str_replace(
-                                            '_',
-                                            ' ',
-                                            $estado
-                                        )
-                                    )
-                                )
-                            ) ?>
-
-                        </span>
-
-                    </td>
-
-
-                    <!-- ASIGNADO POR -->
-
-                    <td>
-
-                        <?= e(
-                            $asignacion[
-                                'asignado_por_nombre'
-                            ]
-                        ) ?>
-
-                    </td>
-
-
-                    <!-- FECHA -->
-
-                    <td>
-
-                        <?= e(
-                            formatearFecha(
-                                $asignacion[
-                                    'fecha_asignacion'
-                                ]
-                            )
-                        ) ?>
-
-                    </td>
-
-                </tr>
-
-            <?php endforeach; ?>
-
-        </tbody>
-
-    </table>
-
-</div>
 
             <?php else: ?>
 
 
                 <div class="gx-empty">
 
-
-                    <i class="fa-solid fa-inbox"></i>
-
+                    <i class="fa-solid fa-circle-check"></i>
 
                     <h3>
-
-                        No hay asignaciones
-
+                        No hay jóvenes pendientes
                     </h3>
-
 
                     <p>
 
-                        Todavía no hay jóvenes asignados durante
-                        <?= e($meses[$mes] . ' ' . $anio) ?>.
+                        Todos los jóvenes del período
+                        <?= e(
+                            $meses[$mes] . ' ' . $anio
+                        ) ?>
+                        ya tienen una asignación,
+                        seguimiento o excepción.
 
                     </p>
-
 
                 </div>
 
@@ -1150,6 +945,391 @@ require_once __DIR__ . "/../../includes/header.php";
 
         </div>
 
+    </section>
+
+
+    <!-- =====================================================
+         ASIGNACIONES DEL PERÍODO
+    ====================================================== -->
+
+    <section
+        class="gx-card gx-card--soft asignaciones-card asignaciones-card--historial"
+    >
+
+        <div class="gx-card__header">
+
+            <div>
+
+                <h2>
+                    Asignaciones del período
+                </h2>
+
+                <p>
+                    Consulta y gestiona las asignaciones realizadas.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="gx-card__body">
+
+
+            <?php if (!empty($asignaciones)): ?>
+
+
+                <!-- =========================================
+                     TOOLBAR
+                ========================================== -->
+
+                <div class="asignaciones-toolbar">
+
+                    <div>
+
+                        <span class="asignaciones-seleccion-info">
+
+                            Selecciona asignaciones pendientes
+                            o en proceso para cancelarlas.
+
+                        </span>
+
+                    </div>
+
+
+                    <form
+                        action="<?= BASE_URL ?>/controllers/asignacionSeguimientoController.php"
+                        method="POST"
+                        id="formCancelarAsignaciones"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="<?= htmlspecialchars(
+                                $_SESSION['csrf_token'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                        >
+
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="cancelar_asignaciones"
+                        >
+
+
+                        <div id="idsCancelar"></div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                            id="btnCancelarSeleccionados"
+                            disabled
+                        >
+
+                            <i class="fa-solid fa-xmark"></i>
+
+                            Cancelar seleccionados
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <div class="asignaciones-separador"></div>
+
+
+                <!-- =========================================
+                     TABLA
+                ========================================== -->
+
+                <div class="asignaciones-tabla">
+
+                    <div class="table-responsive">
+
+                        <table
+                            id="tablaAsignacionesActuales"
+                            class="table gx-table"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th
+                                        class="table-check-column"
+                                    >
+
+                                        <input
+                                            type="checkbox"
+                                            id="checkAsignaciones"
+                                            class="table-check"
+                                            aria-label="Seleccionar asignaciones cancelables"
+                                        >
+
+                                    </th>
+
+
+                                    <th>
+                                        Joven
+                                    </th>
+
+
+                                    <th>
+                                        Responsable
+                                    </th>
+
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+
+                                    <th>
+                                        Asignado por
+                                    </th>
+
+
+                                    <th>
+                                        Fecha
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                                <?php foreach (
+                                    $asignaciones
+                                    as $asignacion
+                                ): ?>
+
+
+                                    <?php
+
+                                    $estado =
+                                        strtoupper(
+                                            trim(
+                                                (string)(
+                                                    $asignacion['estado']
+                                                    ?? ''
+                                                )
+                                            )
+                                        );
+
+
+                                    $estadoClase =
+                                        match ($estado) {
+
+                                            'PENDIENTE' =>
+                                                'danger',
+
+                                            'EN_PROCESO' =>
+                                                'warning',
+
+                                            'COMPLETADO' =>
+                                                'success',
+
+                                            'CANCELADO' =>
+                                                'secondary',
+
+                                            default =>
+                                                'info'
+
+                                        };
+
+
+                                    $puedeCancelar =
+                                        in_array(
+                                            $estado,
+                                            [
+                                                'PENDIENTE',
+                                                'EN_PROCESO'
+                                            ],
+                                            true
+                                        );
+
+                                    ?>
+
+
+                                    <tr
+                                        class="<?= $estado === 'CANCELADO'
+                                            ? 'asignacion-cancelada'
+                                            : '' ?>"
+                                    >
+
+
+                                        <!-- CHECK -->
+
+                                        <td
+                                            class="table-check-column"
+                                        >
+
+                                            <?php if (
+                                                $puedeCancelar
+                                            ): ?>
+
+                                                <input
+                                                    type="checkbox"
+                                                    class="table-check check-asignacion"
+                                                    value="<?= (int)$asignacion['id'] ?>"
+                                                    aria-label="Seleccionar asignación de <?= e(
+                                                        $asignacion[
+                                                            'joven_nombre'
+                                                        ]
+                                                    ) ?>"
+                                                >
+
+                                            <?php else: ?>
+
+                                                <span
+                                                    class="table-check-placeholder"
+                                                    aria-hidden="true"
+                                                ></span>
+
+                                            <?php endif; ?>
+
+                                        </td>
+
+
+                                        <!-- JOVEN -->
+
+                                        <td>
+
+                                            <span
+                                                class="seguimiento-nombre"
+                                            >
+
+                                                <?= e(
+                                                    $asignacion[
+                                                        'joven_nombre'
+                                                    ]
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- RESPONSABLE -->
+
+                                        <td>
+
+                                            <?= e(
+                                                $asignacion[
+                                                    'usuario_nombre'
+                                                ]
+                                            ) ?>
+
+                                        </td>
+
+
+                                        <!-- ESTADO -->
+
+                                        <td>
+
+                                            <span
+                                                class="badge badge-<?= e(
+                                                    $estadoClase
+                                                ) ?>"
+                                            >
+
+                                                <?= e(
+                                                    ucfirst(
+                                                        strtolower(
+                                                            str_replace(
+                                                                '_',
+                                                                ' ',
+                                                                $estado
+                                                            )
+                                                        )
+                                                    )
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- ASIGNADO POR -->
+
+                                        <td>
+
+                                            <?= e(
+                                                $asignacion[
+                                                    'asignado_por_nombre'
+                                                ]
+                                            ) ?>
+
+                                        </td>
+
+
+                                        <!-- FECHA -->
+
+                                        <td>
+
+                                            <?= e(
+                                                formatearFecha(
+                                                    $asignacion[
+                                                        'fecha_asignacion'
+                                                    ]
+                                                )
+                                            ) ?>
+
+                                        </td>
+
+
+                                    </tr>
+
+
+                                <?php endforeach; ?>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+            <?php else: ?>
+
+
+                <div class="gx-empty">
+
+                    <i class="fa-solid fa-inbox"></i>
+
+                    <h3>
+                        No hay asignaciones
+                    </h3>
+
+                    <p>
+
+                        Todavía no hay jóvenes asignados durante
+                        <?= e(
+                            $meses[$mes] . ' ' . $anio
+                        ) ?>.
+
+                    </p>
+
+                </div>
+
+
+            <?php endif; ?>
+
+
+        </div>
 
     </section>
 
@@ -1157,47 +1337,20 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        const tablaPendientes =
-            initDataTable(
-                "#tablaAsignaciones",
-                {
-                    searching: false
-                }
-            );
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
 
 
-        const tablaActuales =
-            initDataTable(
-                "#tablaAsignacionesActuales",
-                {
-                    searching: false
-                }
-            );
 
-
-        if (tablaPendientes) {
-
-            initSearch(
-                "buscadorAsignaciones",
-                tablaPendientes
-            );
-
-        }
-
-    }
-);
-
-</script>
+<script
+    src="<?= BASE_URL ?>/assets/js/modules/seguimientos/asignaciones.js?v=<?= filemtime(
+        __DIR__ . '/../../assets/js/modules/seguimientos/asignaciones.js'
+    ) ?>"
+></script>
 
 
 <?php
 
 require_once __DIR__ . "/../../includes/footer.php";
-
 ?>
