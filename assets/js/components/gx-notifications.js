@@ -1,355 +1,918 @@
 "use strict";
 
+/* ==========================================================
+   GX NOTIFICATIONS
+   ==========================================================
+   Este archivo administra ÚNICAMENTE las notificaciones
+   generales del sistema que aparecen en la campana del header.
+
+   NO administra:
+   - gx-alert
+   - mensajes flash
+   - alertas flotantes
+   - temporizadores de alertas
+
+   Eso queda separado en gx-alerts.js
+========================================================== */
+
 class GXNotifications {
 
     constructor() {
 
-        this.defaultDuration = 5000;
-        this.alerts = [];
+        /* ==================================================
+           REFERENCIAS
+        ================================================== */
+
+        this.container = null;
+        this.trigger = null;
+        this.menu = null;
+        this.badge = null;
+        this.list = null;
+
+
+        /* ==================================================
+           INICIALIZAR
+        ================================================== */
 
         this.init();
 
     }
 
+
     /* ======================================================
-       INICIALIZAR
+       INIT
     ====================================================== */
 
     init() {
 
-        this.alerts = [...document.querySelectorAll(".gx-alert")];
+        this.container =
+            document.getElementById(
+                "gxNotifications"
+            );
 
-        this.alerts.forEach(alert => this.prepare(alert));
+        this.trigger =
+            document.getElementById(
+                "gxNotificationsTrigger"
+            );
+
+        this.menu =
+            document.getElementById(
+                "gxNotificationsMenu"
+            );
+
+        this.badge =
+            document.getElementById(
+                "gxNotificationsBadge"
+            );
+
+        this.list =
+            document.getElementById(
+                "gxNotificationsList"
+            );
+
+
+        /*
+         * Si esta página no tiene campana,
+         * no hacemos nada.
+         */
+
+        if (
+            !this.container ||
+            !this.trigger ||
+            !this.menu
+        ) {
+
+            return;
+
+        }
+
+
+        this.bindEvents();
 
     }
 
+
     /* ======================================================
-       PREPARAR ALERTA
+       EVENTOS
     ====================================================== */
 
-    prepare(alert) {
+    bindEvents() {
 
-        if (!alert || alert.dataset.gxInitialized === "true") return;
+        /* ==================================================
+           ABRIR / CERRAR
+        ================================================== */
 
-        alert.dataset.gxInitialized = "true";
+        this.trigger.addEventListener(
+            "click",
+            event => {
 
-        const closeBtn = alert.querySelector(".gx-alert-close");
-        const progress = alert.querySelector(".gx-alert-progress");
+                event.preventDefault();
+                event.stopPropagation();
 
-        const duration = parseInt(
-            alert.dataset.duration || this.defaultDuration,
-            10
+                this.toggle();
+
+            }
         );
 
-        let remaining = duration;
-        let timer = null;
-        let start = Date.now();
-        let paused = false;
 
-        /* -----------------------------
-           Barra de progreso
-        ----------------------------- */
+        /* ==================================================
+           CLICK DENTRO DEL MENÚ
+        ================================================== */
 
-        const renderProgress = () => {
+        this.menu.addEventListener(
+            "click",
+            event => {
 
-            if (!progress) return;
+                event.stopPropagation();
 
-            const percentage = Math.max(
-                0,
-                (remaining / duration) * 100
+            }
+        );
+
+
+        /* ==================================================
+           CLICK AFUERA
+        ================================================== */
+
+        document.addEventListener(
+            "click",
+            () => {
+
+                this.close();
+
+            }
+        );
+
+
+        /* ==================================================
+           ESC
+        ================================================== */
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    this.close();
+
+                }
+
+            }
+        );
+
+
+        /* ==================================================
+           CLICK EN NOTIFICACIÓN
+        ================================================== */
+
+        if (this.list) {
+
+            this.list.addEventListener(
+                "click",
+                event => {
+
+                    const item =
+                        event.target.closest(
+                            ".gx-notifications__item"
+                        );
+
+
+                    if (!item) {
+
+                        return;
+
+                    }
+
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    this.handleNotification(
+                        item
+                    );
+
+                }
             );
 
-            progress.style.setProperty(
-                "--gx-progress",
-                `${percentage}%`
+        }
+
+    }
+
+
+    /* ======================================================
+       TOGGLE
+    ====================================================== */
+
+    toggle() {
+
+        if (
+            this.container.classList.contains(
+                "is-open"
+            )
+        ) {
+
+            this.close();
+
+        } else {
+
+            this.open();
+
+        }
+
+    }
+
+
+    /* ======================================================
+       OPEN
+    ====================================================== */
+
+    open() {
+
+        if (
+            !this.container ||
+            !this.trigger ||
+            !this.menu
+        ) {
+
+            return;
+
+        }
+
+
+        this.container.classList.add(
+            "is-open"
+        );
+
+
+        this.trigger.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+
+        this.menu.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+    }
+
+
+    /* ======================================================
+       CLOSE
+    ====================================================== */
+
+    close() {
+
+        if (
+            !this.container ||
+            !this.trigger ||
+            !this.menu
+        ) {
+
+            return;
+
+        }
+
+
+        this.container.classList.remove(
+            "is-open"
+        );
+
+
+        this.trigger.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+
+        this.menu.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    /* ======================================================
+       PROCESAR NOTIFICACIÓN
+    ====================================================== */
+
+    async handleNotification(
+        item
+    ) {
+
+        if (!item) {
+
+            return;
+
+        }
+
+
+        const id =
+            this.toInt(
+                item.dataset.notificacionId
             );
 
-        };
+        const tipo =
+            item.dataset.tipo || "";
 
-        /* -----------------------------
-           Iniciar temporizador
-        ----------------------------- */
+        const asignacionId =
+            this.toInt(
+                item.dataset.asignacionId
+            );
 
-        const startTimer = () => {
+        const jovenId =
+            this.toInt(
+                item.dataset.jovenId
+            );
 
-            clearTimeout(timer);
 
-            start = Date.now();
+        if (
+            id <= 0
+        ) {
 
-            timer = setTimeout(() => {
+            return;
 
-                remaining = 0;
-                renderProgress();
+        }
 
-                this.hide(alert);
 
-            }, remaining);
+        const resultado =
+            await this.markAsRead(
+                id
+            );
 
-        };
 
-        /* -----------------------------
-           Pausar
-        ----------------------------- */
+        /*
+         * Si el servidor rechaza la operación,
+         * dejamos la notificación intacta.
+         */
 
-        const pause = () => {
+        if (!resultado) {
 
-            if (paused) return;
+            return;
 
-            paused = true;
+        }
 
-            clearTimeout(timer);
 
-            remaining -= Date.now() - start;
+        this.removeItem(
+            item
+        );
 
-            remaining = Math.max(0, remaining);
 
-            renderProgress();
+        this.navigate({
 
-        };
+            tipo,
+            asignacionId,
+            jovenId
 
-        /* -----------------------------
-           Reanudar
-        ----------------------------- */
+        });
 
-        const resume = () => {
+    }
 
-            if (!paused) return;
 
-            paused = false;
+    /* ======================================================
+       MARCAR COMO LEÍDA
+    ====================================================== */
 
-            if (remaining <= 0) {
+    async markAsRead(
+        notificationId
+    ) {
 
-                this.hide(alert);
-                return;
+        if (
+            notificationId <= 0
+        ) {
+
+            return false;
+
+        }
+
+
+        const baseUrl =
+            window.BASE_URL || "";
+
+
+        const url =
+            `${baseUrl}/controllers/notificacionController.php`;
+
+
+        const csrfMeta =
+            document.querySelector(
+                'meta[name="csrf-token"]'
+            );
+
+
+        const csrfToken =
+            csrfMeta?.getAttribute(
+                "content"
+            ) || "";
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "action",
+            "marcar_leida"
+        );
+
+
+        formData.append(
+            "id",
+            String(notificationId)
+        );
+
+
+        /*
+         * Se envía CSRF si el header lo expone.
+         */
+
+        if (csrfToken !== "") {
+
+            formData.append(
+                "csrf_token",
+                csrfToken
+            );
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+
+                        method: "POST",
+
+                        body: formData,
+
+                        credentials: "same-origin",
+
+                        headers: {
+
+                            "X-Requested-With":
+                                "XMLHttpRequest",
+
+                            "Accept":
+                                "application/json"
+
+                        }
+
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    JSON.parse(
+                        text
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "El controller no devolvió JSON válido:",
+                    text
+                );
+
+                return false;
 
             }
 
-            startTimer();
 
-        };
+            if (
+                !response.ok
+            ) {
 
-        renderProgress();
-        startTimer();
+                console.error(
+                    "Error HTTP al marcar notificación:",
+                    response.status,
+                    data
+                );
 
-        /* -----------------------------
-           Hover
-        ----------------------------- */
+                return false;
 
-        alert.addEventListener("mouseenter", pause);
-        alert.addEventListener("mouseleave", resume);
+            }
 
-        /* -----------------------------
-           Botón cerrar
-        ----------------------------- */
 
-        if (closeBtn) {
+            if (
+                data?.success !== true
+            ) {
 
-            closeBtn.addEventListener("click", e => {
+                console.error(
+                    "El servidor rechazó la notificación:",
+                    data?.message
+                );
 
-                e.preventDefault();
-                e.stopPropagation();
+                return false;
 
-                clearTimeout(timer);
+            }
 
-                this.hide(alert);
 
-            });
+            const totalNoLeidas =
+                data?.total_no_leidas
+                ??
+                data?.data?.total_no_leidas
+                ??
+                0;
+
+
+            this.updateCounter(
+                totalNoLeidas
+            );
+
+
+            return true;
+
+
+        } catch (error) {
+
+            console.error(
+                "Error al marcar la notificación:",
+                error
+            );
+
+            return false;
 
         }
 
     }
 
+
     /* ======================================================
-       OCULTAR
+       QUITAR NOTIFICACIÓN
     ====================================================== */
 
-    hide(alert) {
+    removeItem(
+        item
+    ) {
 
-        if (!alert) return;
+        if (!item) {
+
+            return;
+
+        }
+
+
+        item.classList.add(
+            "gx-notifications__item--removing"
+        );
+
+
+        setTimeout(
+            () => {
+
+                item.remove();
+
+                this.refreshEmpty();
+
+            },
+            180
+        );
+
+    }
+
+
+    /* ======================================================
+       ESTADO VACÍO
+    ====================================================== */
+
+    refreshEmpty() {
+
+        if (!this.list) {
+
+            return;
+
+        }
+
+
+        const items =
+            this.list.querySelectorAll(
+                ".gx-notifications__item"
+            );
+
 
         if (
-            alert.classList.contains("gx-hide") ||
-            alert.dataset.gxRemoving === "true"
+            items.length > 0
         ) {
+
             return;
-        }
-
-        alert.dataset.gxRemoving = "true";
-        alert.classList.add("gx-hide");
-
-        setTimeout(() => {
-
-            this.remove(alert);
-
-        }, 350);
-
-    }
-
-    /* ======================================================
-       ELIMINAR
-    ====================================================== */
-
-    remove(alert) {
-
-        if (!alert) return;
-
-        alert.remove();
-
-        this.alerts = this.alerts.filter(a => a !== alert);
-
-        const container = document.querySelector(".gx-alert-container");
-
-        if (container && container.children.length === 0) {
-            container.remove();
-        }
-
-    }
-
-    /* ======================================================
-       ESCAPAR HTML
-    ====================================================== */
-
-    escapeHTML(text) {
-
-        const div = document.createElement("div");
-
-        div.textContent = text ?? "";
-
-        return div.innerHTML;
-
-    }
-
-    /* ======================================================
-       CREAR ALERTA
-    ====================================================== */
-
-    create(type, title, message, icon) {
-
-        let container = document.querySelector(".gx-alert-container");
-
-        if (!container) {
-
-            container = document.createElement("div");
-            container.className = "gx-alert-container";
-
-            document.body.appendChild(container);
 
         }
 
-        const safeTitle = this.escapeHTML(title);
-        const safeMessage = this.escapeHTML(message);
 
-        const alert = document.createElement("div");
+        if (
+            this.list.querySelector(
+                ".gx-notifications__empty"
+            )
+        ) {
 
-        alert.className = `gx-alert gx-alert-${type}`;
-        alert.dataset.duration = this.defaultDuration;
+            return;
 
-        alert.innerHTML = `
-            <div class="gx-alert-icon">
-                <i class="${icon}"></i>
-            </div>
+        }
 
-            <div class="gx-alert-content">
-                <h4>${safeTitle}</h4>
-                <p>${safeMessage}</p>
-            </div>
 
-            <button
-                type="button"
-                class="gx-alert-close"
-                aria-label="Cerrar notificación"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+        const empty =
+            document.createElement(
+                "div"
+            );
 
-            <div class="gx-alert-progress"></div>
-            <div class="gx-alert-shine"></div>
+
+        empty.className =
+            "gx-notifications__empty";
+
+
+        empty.innerHTML = `
+            <i class="fa-regular fa-bell-slash"></i>
+            <p>No tienes notificaciones nuevas.</p>
         `;
 
-        container.appendChild(alert);
 
-        this.alerts.push(alert);
-
-        this.prepare(alert);
+        this.list.appendChild(
+            empty
+        );
 
     }
+
 
     /* ======================================================
-       ATAJOS
+       ACTUALIZAR CONTADOR
     ====================================================== */
 
-    success(message) {
-        this.create(
-            "success",
-            "Éxito",
-            message,
-            "fa-solid fa-circle-check"
-        );
+    updateCounter(
+        total
+    ) {
+
+        let cantidad =
+            Number(total);
+
+
+        if (
+            !Number.isFinite(
+                cantidad
+            )
+        ) {
+
+            cantidad =
+                0;
+
+        }
+
+
+        cantidad =
+            Math.max(
+                0,
+                cantidad
+            );
+
+
+        /*
+         * BADGE
+         */
+
+        if (
+            cantidad <= 0
+        ) {
+
+            if (
+                this.badge
+            ) {
+
+                this.badge.remove();
+
+                this.badge = null;
+
+            }
+
+        } else {
+
+            if (
+                !this.badge &&
+                this.trigger
+            ) {
+
+                this.badge =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                this.badge.className =
+                    "gx-notifications__badge";
+
+
+                this.badge.id =
+                    "gxNotificationsBadge";
+
+
+                this.trigger.appendChild(
+                    this.badge
+                );
+
+            }
+
+
+            if (
+                this.badge
+            ) {
+
+                this.badge.textContent =
+                    String(cantidad);
+
+            }
+
+        }
+
+
+        /*
+         * CONTADOR DEL MENÚ
+         */
+
+        const counter =
+            this.container?.querySelector(
+                ".gx-notifications__header span"
+            );
+
+
+        if (
+            counter
+        ) {
+
+            counter.textContent =
+                `${cantidad} ${
+                    cantidad === 1
+                        ? "pendiente"
+                        : "pendientes"
+                }`;
+
+        }
+
     }
 
-    error(message) {
-        this.create(
-            "error",
-            "Error",
-            message,
-            "fa-solid fa-circle-xmark"
-        );
+
+    /* ======================================================
+       NAVEGACIÓN
+    ====================================================== */
+
+    navigate(
+        datos
+    ) {
+
+        if (!datos) {
+
+            return;
+
+        }
+
+
+        const baseUrl =
+            window.BASE_URL || "";
+
+
+        let url =
+            null;
+
+
+        switch (
+            datos.tipo
+        ) {
+
+            case "NUEVA_ASIGNACION":
+
+            case "ASIGNACION_EN_PROCESO":
+
+                url =
+                    `${baseUrl}/views/seguimientos/mis-seguimientos.php`;
+
+                break;
+
+
+            case "ASIGNACION_COMPLETADA":
+
+            case "ASIGNACION_CANCELADA":
+
+                url =
+                    `${baseUrl}/views/seguimientos/asignaciones.php`;
+
+                break;
+
+
+            default:
+
+                break;
+
+        }
+
+
+        if (url) {
+
+            window.location.href =
+                url;
+
+        }
+
     }
 
-    warning(message) {
-        this.create(
-            "warning",
-            "Advertencia",
-            message,
-            "fa-solid fa-triangle-exclamation"
-        );
-    }
 
-    info(message) {
-        this.create(
-            "info",
-            "Información",
-            message,
-            "fa-solid fa-circle-info"
-        );
+    /* ======================================================
+       UTILIDAD
+    ====================================================== */
+
+    toInt(
+        value
+    ) {
+
+        const number =
+            parseInt(
+                value || "0",
+                10
+            );
+
+
+        return Number.isNaN(
+            number
+        )
+            ? 0
+            : number;
+
     }
 
 }
+
 
 /* ==========================================================
    INSTANCIA GLOBAL
 ========================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    if (!window.gxNotifications) {
+        if (
+            !window.gxNotifications
+        ) {
 
-        window.gxNotifications = new GXNotifications();
+            window.gxNotifications =
+                new GXNotifications();
+
+        }
 
     }
+);
 
-});
 
 /* ==========================================================
-   API GLOBAL
+   API PÚBLICA
 ========================================================== */
 
-window.GXNotify = {
+window.GXNotificationsAPI = {
 
-    success(message) {
-        window.gxNotifications?.success(message);
+    open() {
+
+        window.gxNotifications?.open();
+
     },
 
-    error(message) {
-        window.gxNotifications?.error(message);
+
+    close() {
+
+        window.gxNotifications?.close();
+
     },
 
-    warning(message) {
-        window.gxNotifications?.warning(message);
+
+    toggle() {
+
+        window.gxNotifications?.toggle();
+
     },
 
-    info(message) {
-        window.gxNotifications?.info(message);
+
+    markAsRead(
+        id
+    ) {
+
+        return (
+            window.gxNotifications
+                ?.markAsRead(
+                    id
+                )
+        );
+
     }
 
 };

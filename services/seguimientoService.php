@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../middleware/permiso.php';
 require_once __DIR__ . '/jovenService.php';
+require_once __DIR__ . '/notificacionService.php';
+
 
 /*
 |--------------------------------------------------------------------------
@@ -12,25 +14,37 @@ require_once __DIR__ . '/jovenService.php';
 |
 | Gestiona:
 |
-| 1. Seguimientos reales.
-| 2. Historial unificado de seguimientos + excepciones.
-| 3. Resumen mensual.
-| 4. Jóvenes pendientes de seguimiento.
+| - Seguimientos reales.
+| - Historial de seguimientos + excepciones.
+| - Resumen del ciclo de seguimiento.
+| - Jóvenes pendientes de su ciclo inicial.
+| - Conexión entre seguimiento y asignación.
 |
-| IMPORTANTE:
+| REGLAS:
 |
-| Las excepciones de seguimiento tienen su propio service:
+| 1. Un joven puede tener múltiples seguimientos.
 |
-|   excepcionSeguimientoService.php
+| 2. La asignación pertenece a un período administrativo
+|    (año/mes).
 |
-| Este archivo puede CONSULTAR la tabla
-| excepciones_seguimiento para construir:
+| 3. El seguimiento puede tener cualquier fecha pasada
+|    válida; no tiene que coincidir con el mes de la asignación.
 |
-|   - historial
-|   - resumen
-|   - jóvenes sin seguimiento
+| 4. El ciclo inicial se considera cumplido cuando existe
+|    al menos un seguimiento FINALIZADO.
 |
-| Pero NO declara funciones PHP CRUD de excepciones.
+| 5. Un joven antiguo con su ciclo inicial ya FINALIZADO
+|    no vuelve automáticamente a "Sin seguimiento".
+|
+| 6. Si un joven ingresó en febrero y fue contactado en agosto,
+|    ese contacto FINALIZADO cuenta para el ciclo y para
+|    el consolidado de agosto.
+|
+| 7. Un joven puede recibir nuevos seguimientos posteriores
+|    sin perder los anteriores.
+|
+| 8. Las excepciones pertenecen al período administrativo
+|    seleccionado.
 |
 |--------------------------------------------------------------------------
 */
@@ -41,28 +55,36 @@ require_once __DIR__ . '/jovenService.php';
 ========================================================== */
 
 const MODALIDADES_SEGUIMIENTO = [
+
     'WHATSAPP',
     'LLAMADA',
     'VISITA',
     'MENSAJE'
+
 ];
 
+
 const ESTADOS_SEGUIMIENTO = [
+
     'PENDIENTE',
     'EN_PROCESO',
     'FINALIZADO'
+
 ];
 
 
 /* ==========================================================
-   VALIDAR FECHA DE CONTACTO
+   VALIDAR FECHA
 ========================================================== */
 
 function validarFechaSeguimiento(
     ?string $fecha
-): string
-{
-    $fecha = trim((string)$fecha);
+): string {
+
+    $fecha =
+        trim(
+            (string)$fecha
+        );
 
     if ($fecha === '') {
 
@@ -71,7 +93,10 @@ function validarFechaSeguimiento(
         );
     }
 
-    $timestamp = strtotime($fecha);
+    $timestamp =
+        strtotime(
+            $fecha
+        );
 
     if ($timestamp === false) {
 
@@ -80,12 +105,14 @@ function validarFechaSeguimiento(
         );
     }
 
-    $fechaNormalizada = date(
-        'Y-m-d',
-        $timestamp
-    );
+    $fechaNormalizada =
+        date(
+            'Y-m-d',
+            $timestamp
+        );
 
-    $hoy = date('Y-m-d');
+    $hoy =
+        date('Y-m-d');
 
     if ($fechaNormalizada > $hoy) {
 
@@ -104,11 +131,14 @@ function validarFechaSeguimiento(
 
 function validarModalidadSeguimiento(
     string $modalidad
-): string
-{
-    $modalidad = strtoupper(
-        trim($modalidad)
-    );
+): string {
+
+    $modalidad =
+        strtoupper(
+            trim(
+                $modalidad
+            )
+        );
 
     if (!in_array(
         $modalidad,
@@ -131,11 +161,14 @@ function validarModalidadSeguimiento(
 
 function validarEstadoSeguimiento(
     string $estado
-): string
-{
-    $estado = strtoupper(
-        trim($estado)
-    );
+): string {
+
+    $estado =
+        strtoupper(
+            trim(
+                $estado
+            )
+        );
 
     if (!in_array(
         $estado,
@@ -159,8 +192,8 @@ function validarEstadoSeguimiento(
 function validarResponsableSeguimiento(
     PDO $pdo,
     ?int $responsableId
-): ?int
-{
+): ?int {
+
     if (
         $responsableId === null ||
         $responsableId <= 0
@@ -169,12 +202,13 @@ function validarResponsableSeguimiento(
         return null;
     }
 
-    $stmt = $pdo->prepare("
-        SELECT id
-        FROM usuarios
-        WHERE id = :id
-        LIMIT 1
-    ");
+    $stmt =
+        $pdo->prepare("
+            SELECT id
+            FROM usuarios
+            WHERE id = :id
+            LIMIT 1
+        ");
 
     $stmt->execute([
         ':id' => $responsableId
@@ -197,18 +231,21 @@ function validarResponsableSeguimiento(
 
 function validarObservacionesSeguimiento(
     ?string $observaciones
-): ?string
-{
-    $observaciones = trim(
-        (string)$observaciones
-    );
+): ?string {
+
+    $observaciones =
+        trim(
+            (string)$observaciones
+        );
 
     if ($observaciones === '') {
 
         return null;
     }
 
-    if (mb_strlen($observaciones) > 2000) {
+    if (
+        mb_strlen($observaciones) > 2000
+    ) {
 
         throw new Exception(
             'Las observaciones son demasiado largas.'
@@ -220,14 +257,14 @@ function validarObservacionesSeguimiento(
 
 
 /* ==========================================================
-   VALIDAR JOVEN PARA SEGUIMIENTO
+   VALIDAR JOVEN
 ========================================================== */
 
 function validarJovenSeguimiento(
     PDO $pdo,
     int $jovenId
-): array
-{
+): array {
+
     if ($jovenId <= 0) {
 
         throw new Exception(
@@ -235,10 +272,11 @@ function validarJovenSeguimiento(
         );
     }
 
-    $joven = obtenerJovenPorId(
-        $pdo,
-        $jovenId
-    );
+    $joven =
+        obtenerJovenPorId(
+            $pdo,
+            $jovenId
+        );
 
     if (!$joven) {
 
@@ -252,22 +290,24 @@ function validarJovenSeguimiento(
 
 
 /* ==========================================================
-   PREPARAR DATOS DEL SEGUIMIENTO
+   PREPARAR DATOS
 ========================================================== */
 
 function prepararDatosSeguimiento(
     PDO $pdo,
     array $datos
-): array
-{
-    $jovenId = (int)(
-        $datos['joven_id'] ?? 0
-    );
+): array {
 
-    $joven = validarJovenSeguimiento(
-        $pdo,
-        $jovenId
-    );
+    $jovenId =
+        (int)(
+            $datos['joven_id'] ?? 0
+        );
+
+    $joven =
+        validarJovenSeguimiento(
+            $pdo,
+            $jovenId
+        );
 
     $fechaContacto =
         validarFechaSeguimiento(
@@ -287,13 +327,13 @@ function prepararDatosSeguimiento(
     $responsableId = null;
 
     if (
-        isset($datos['responsable_id']) &&
+        isset($datos['responsable_id'])
+        &&
         $datos['responsable_id'] !== ''
     ) {
 
-        $responsableId = (int)(
-            $datos['responsable_id']
-        );
+        $responsableId =
+            (int)$datos['responsable_id'];
     }
 
     $responsableId =
@@ -329,9 +369,320 @@ function prepararDatosSeguimiento(
 
         'observaciones' =>
             $observaciones
+
     ];
 }
 
+
+/* ==========================================================
+   OBTENER ASIGNACIÓN ACTIVA DEL USUARIO ACTUAL
+========================================================== */
+
+function obtenerAsignacionActivaParaUsuarioSeguimiento(
+    PDO $pdo,
+    int $jovenId
+): ?array {
+
+    if ($jovenId <= 0) {
+
+        return null;
+    }
+
+    $usuarioActual =
+        usuarioId();
+
+    if (
+        $usuarioActual === null ||
+        $usuarioActual <= 0
+    ) {
+
+        throw new Exception(
+            'No se pudo identificar al usuario actual.'
+        );
+    }
+
+    $stmt =
+        $pdo->prepare("
+            SELECT
+
+                a.id,
+                a.joven_id,
+                a.usuario_id,
+                a.asignado_por,
+                a.anio,
+                a.mes,
+                a.estado,
+
+                j.nombre_completo AS joven_nombre,
+
+                u.nombre AS responsable_nombre
+
+            FROM asignaciones_seguimiento a
+
+            INNER JOIN jovenes j
+                ON a.joven_id = j.id
+
+            LEFT JOIN usuarios u
+                ON a.usuario_id = u.id
+
+            WHERE a.joven_id = :joven_id
+
+            AND a.usuario_id = :usuario_id
+
+            AND a.estado IN (
+                'PENDIENTE',
+                'EN_PROCESO'
+            )
+
+            ORDER BY
+                a.anio DESC,
+                a.mes DESC,
+                a.id DESC
+
+            LIMIT 1
+        ");
+
+    $stmt->execute([
+
+        ':joven_id' =>
+            $jovenId,
+
+        ':usuario_id' =>
+            (int)$usuarioActual
+
+    ]);
+
+    return $stmt->fetch(
+        PDO::FETCH_ASSOC
+    ) ?: null;
+}
+
+
+/* ==========================================================
+   OBTENER ASIGNACIÓN ACTIVA DEL JOVEN
+========================================================== */
+
+function obtenerAsignacionActivaParaJoven(
+    PDO $pdo,
+    int $jovenId
+): ?array {
+
+    if ($jovenId <= 0) {
+
+        return null;
+    }
+
+    $stmt =
+        $pdo->prepare("
+            SELECT
+
+                a.id,
+                a.joven_id,
+                a.usuario_id,
+                a.asignado_por,
+                a.anio,
+                a.mes,
+                a.estado,
+
+                j.nombre_completo AS joven_nombre,
+
+                u.nombre AS responsable_nombre
+
+            FROM asignaciones_seguimiento a
+
+            INNER JOIN jovenes j
+                ON a.joven_id = j.id
+
+            LEFT JOIN usuarios u
+                ON a.usuario_id = u.id
+
+            WHERE a.joven_id = :joven_id
+
+            AND a.estado IN (
+                'PENDIENTE',
+                'EN_PROCESO'
+            )
+
+            ORDER BY
+                a.anio DESC,
+                a.mes DESC,
+                a.id DESC
+
+            LIMIT 1
+        ");
+
+    $stmt->execute([
+        ':joven_id' => $jovenId
+    ]);
+
+    return $stmt->fetch(
+        PDO::FETCH_ASSOC
+    ) ?: null;
+}
+
+
+/* ==========================================================
+   COMPLETAR ASIGNACIÓN DESDE SEGUIMIENTO
+========================================================== */
+
+function completarAsignacionDesdeSeguimiento(
+    PDO $pdo,
+    array $asignacion
+): void {
+
+    $asignacionId =
+        (int)(
+            $asignacion['id'] ?? 0
+        );
+
+    if ($asignacionId <= 0) {
+
+        throw new Exception(
+            'La asignación asociada al seguimiento no es válida.'
+        );
+    }
+
+    $stmt =
+        $pdo->prepare("
+            UPDATE asignaciones_seguimiento
+
+            SET
+
+                estado = 'COMPLETADO',
+
+                fecha_completado = NOW()
+
+            WHERE id = :id
+
+            AND estado IN (
+                'PENDIENTE',
+                'EN_PROCESO'
+            )
+        ");
+
+    $stmt->execute([
+        ':id' => $asignacionId
+    ]);
+
+    /*
+     * Recuperar asignación actualizada.
+     */
+
+    $stmt =
+        $pdo->prepare("
+            SELECT
+
+                a.id,
+                a.joven_id,
+                a.usuario_id,
+                a.asignado_por,
+                a.anio,
+                a.mes,
+                a.estado,
+
+                j.nombre_completo AS joven_nombre,
+
+                u.nombre AS responsable_nombre
+
+            FROM asignaciones_seguimiento a
+
+            INNER JOIN jovenes j
+                ON a.joven_id = j.id
+
+            LEFT JOIN usuarios u
+                ON a.usuario_id = u.id
+
+            WHERE a.id = :id
+
+            LIMIT 1
+        ");
+
+    $stmt->execute([
+        ':id' => $asignacionId
+    ]);
+
+    $actualizada =
+        $stmt->fetch(
+            PDO::FETCH_ASSOC
+        );
+
+    if (!$actualizada) {
+
+        throw new Exception(
+            'No se pudo recuperar la asignación completada.'
+        );
+    }
+
+    /*
+     * Notificar únicamente si la asignación
+     * realmente quedó en COMPLETADO.
+     */
+
+    if (
+        strtoupper(
+            trim(
+                (string)(
+                    $actualizada['estado'] ?? ''
+                )
+            )
+        ) !== 'COMPLETADO'
+    ) {
+
+        return;
+    }
+
+    $destinatario =
+        (int)(
+            $actualizada['asignado_por']
+            ?? 0
+        );
+
+    if ($destinatario <= 0) {
+
+        return;
+    }
+
+    $jovenNombre =
+        $actualizada['joven_nombre']
+        ?? 'este joven';
+
+    $responsableNombre =
+        $actualizada['responsable_nombre']
+        ?? 'el usuario responsable';
+
+    crearNotificacion(
+        $pdo,
+        [
+
+            'usuario_id' =>
+                $destinatario,
+
+            'tipo' =>
+                'ASIGNACION_COMPLETADA',
+
+            'titulo' =>
+                'Seguimiento completado',
+
+            'mensaje' =>
+                "El seguimiento de "
+                . $jovenNombre
+                . " fue completado por "
+                . $responsableNombre
+                . ".",
+
+
+            'joven_id' =>
+                (int)(
+                    $actualizada['joven_id']
+                    ?? 0
+                ),
+
+            'asignacion_id' =>
+                $asignacionId
+
+        ]
+    );
+}
 
 
 /* ==========================================================
@@ -341,20 +692,7 @@ function prepararDatosSeguimiento(
 function crearSeguimiento(
     PDO $pdo,
     array $datos
-): int
-{
-    /*
-    |--------------------------------------------------------------------------
-    | PERMISO
-    |--------------------------------------------------------------------------
-    |
-    | Un administrador/líder/sublíder puede gestionar seguimientos
-    | normalmente.
-    |
-    | Un usuario normal puede registrar solamente sus seguimientos
-    | asignados.
-    |
-    */
+): int {
 
     if (
         !tienePermiso('gestionar_seguimientos')
@@ -365,13 +703,7 @@ function crearSeguimiento(
         throw new Exception(
             'No tienes permiso para registrar seguimientos.'
         );
-
     }
-
-
-    /* ==========================================
-       PREPARAR Y VALIDAR DATOS
-    ========================================== */
 
     $datos =
         prepararDatosSeguimiento(
@@ -379,39 +711,102 @@ function crearSeguimiento(
             $datos
         );
 
+    $usuarioActual =
+        usuarioId();
 
-    /* ==========================================
-       TRANSACCIÓN
-    ========================================== */
+    if (
+        $usuarioActual === null ||
+        $usuarioActual <= 0
+    ) {
 
-    $pdo->beginTransaction();
+        throw new Exception(
+            'No se pudo identificar al usuario actual.'
+        );
+    }
+
+    $usuarioActual =
+        (int)$usuarioActual;
+
+    /*
+     * Buscar asignación activa.
+     *
+     * IMPORTANTE:
+     * La fecha del contacto NO determina
+     * cuál asignación completar.
+     */
+
+    $asignacion = null;
+
+    if (
+        !tienePermiso('gestionar_seguimientos')
+    ) {
+
+        $asignacion =
+            obtenerAsignacionActivaParaUsuarioSeguimiento(
+                $pdo,
+                $datos['jovenId']
+            );
+
+        if (!$asignacion) {
+
+            throw new Exception(
+                'Este joven no tiene una asignación activa para el usuario actual.'
+            );
+        }
+
+    } else {
+
+        $asignacion =
+            obtenerAsignacionActivaParaJoven(
+                $pdo,
+                $datos['jovenId']
+            );
+    }
+
+    $responsableFinal =
+        $datos['responsableId'];
+
+    if ($responsableFinal === null) {
+
+        $responsableFinal =
+            $usuarioActual;
+    }
+
+    $transaccionPropia =
+        !$pdo->inTransaction();
+
+    if ($transaccionPropia) {
+
+        $pdo->beginTransaction();
+    }
 
     try {
 
-        /* ==========================================
+        /* ==================================================
            INSERTAR SEGUIMIENTO
-        ========================================== */
+        ================================================== */
 
-        $stmt = $pdo->prepare("
-            INSERT INTO seguimientos
-            (
-                joven_id,
-                fecha_contacto,
-                modalidad_contacto,
-                estado_proceso,
-                responsable_id,
-                observaciones
-            )
-            VALUES
-            (
-                :joven_id,
-                :fecha_contacto,
-                :modalidad,
-                :estado,
-                :responsable_id,
-                :observaciones
-            )
-        ");
+        $stmt =
+            $pdo->prepare("
+                INSERT INTO seguimientos
+                (
+                    joven_id,
+                    fecha_contacto,
+                    modalidad_contacto,
+                    estado_proceso,
+                    responsable_id,
+                    observaciones
+                )
+                VALUES
+                (
+                    :joven_id,
+                    :fecha_contacto,
+                    :modalidad,
+                    :estado,
+                    :responsable_id,
+                    :observaciones
+                )
+            ");
 
         $stmt->execute([
 
@@ -428,132 +823,91 @@ function crearSeguimiento(
                 $datos['estado'],
 
             ':responsable_id' =>
-                $datos['responsableId'],
+                $responsableFinal,
 
             ':observaciones' =>
                 $datos['observaciones']
 
         ]);
 
-
-        /* ==========================================
-           ACTUALIZAR ACTIVIDAD DEL JOVEN
-        ========================================== */
-
-        $stmt = $pdo->prepare("
-            UPDATE jovenes
-            SET
-                ultima_actividad = NOW(),
-                estado_actividad = 'ACTIVO'
-            WHERE id = :id
-        ");
-
-        $stmt->execute([
-
-            ':id' =>
-                $datos['jovenId']
-
-        ]);
-
-
-        /* ==========================================
-           COMPLETAR ASIGNACIÓN DEL MISMO PERÍODO
-        ========================================== */
-
-        $anioSeguimiento =
-            (int)date(
-                'Y',
-                strtotime(
-                    $datos['fechaContacto']
-                )
-            );
-
-        $mesSeguimiento =
-            (int)date(
-                'm',
-                strtotime(
-                    $datos['fechaContacto']
-                )
-            );
-
-
-        $stmt = $pdo->prepare("
-            UPDATE asignaciones_seguimiento
-
-            SET
-                estado = 'COMPLETADO',
-                fecha_completado = NOW()
-
-            WHERE joven_id = :joven_id
-
-            AND anio = :anio
-
-            AND mes = :mes
-
-            AND estado IN (
-                'PENDIENTE',
-                'EN_PROCESO'
-            )
-        ");
-
-        $stmt->execute([
-
-            ':joven_id' =>
-                $datos['jovenId'],
-
-            ':anio' =>
-                $anioSeguimiento,
-
-            ':mes' =>
-                $mesSeguimiento
-
-        ]);
-
-
-        /* ==========================================
-           ID DEL SEGUIMIENTO
-        ========================================== */
-
         $seguimientoId =
             (int)$pdo->lastInsertId();
 
+        /* ==================================================
+           ACTUALIZAR ACTIVIDAD DEL JOVEN
+        ================================================== */
 
-        /* ==========================================
-           COMMIT
-        ========================================== */
+        $stmt =
+            $pdo->prepare("
+                UPDATE jovenes
 
-        $pdo->commit();
+                SET
+                    ultima_actividad = NOW(),
+                    estado_actividad = 'ACTIVO'
 
+                WHERE id = :id
+            ");
+
+        $stmt->execute([
+            ':id' =>
+                $datos['jovenId']
+        ]);
+
+        /* ==================================================
+           COMPLETAR ASIGNACIÓN
+           SOLO SI EL SEGUIMIENTO ES FINALIZADO
+        ================================================== */
+
+        if (
+            $datos['estado'] === 'FINALIZADO'
+            &&
+            $asignacion
+        ) {
+
+            completarAsignacionDesdeSeguimiento(
+                $pdo,
+                $asignacion
+            );
+        }
+
+        if ($transaccionPropia) {
+
+            $pdo->commit();
+        }
 
         return $seguimientoId;
 
-
     } catch (Throwable $e) {
 
-        if ($pdo->inTransaction()) {
+        if (
+            $transaccionPropia
+            &&
+            $pdo->inTransaction()
+        ) {
 
             $pdo->rollBack();
-
         }
 
         throw $e;
-
     }
 }
 
 
 /* ==========================================================
-   OBTENER HISTORIAL UNIFICADO DEL MES
+   HISTORIAL UNIFICADO DEL PERÍODO
 ========================================================== */
 
 function obtenerHistorialSeguimientosMes(
     PDO $pdo,
     ?int $anio = null,
     ?int $mes = null
-): array
-{
-    $anio ??= (int)date('Y');
-    $mes ??= (int)date('m');
+): array {
+
+    $anio ??=
+        (int)date('Y');
+
+    $mes ??=
+        (int)date('m');
 
     if (
         $anio <= 0 ||
@@ -564,135 +918,221 @@ function obtenerHistorialSeguimientosMes(
         return [];
     }
 
-    $stmt = $pdo->prepare("
-        SELECT
+    /*
+     * Solo una función para el historial.
+     *
+     * Mostramos:
+     *
+     * - El ÚLTIMO seguimiento FINALIZADO de cada joven
+     *   activo y en estado NUEVO que pertenezca al ciclo
+     *   actualmente administrado.
+     *
+     * - Las excepciones del período actual.
+     *
+     * Esto permite que un contacto de febrero siga visible
+     * en agosto si ese joven sigue formando parte del universo
+     * de seguimiento y ese fue su ciclo FINALIZADO.
+     */
 
-            s.id AS registro_id,
+    $stmt =
+        $pdo->prepare("
+            SELECT
 
-            s.id AS seguimiento_id,
+                s.id AS registro_id,
 
-            NULL AS excepcion_id,
+                s.id AS seguimiento_id,
 
-            s.joven_id,
+                NULL AS excepcion_id,
 
-            j.nombre_completo,
+                s.joven_id,
 
-            j.telefono,
+                j.nombre_completo,
 
-            j.genero,
+                j.telefono,
 
-            'SEGUIMIENTO' AS tipo_registro,
+                j.genero,
 
-            s.modalidad_contacto,
+                'SEGUIMIENTO' AS tipo_registro,
 
-            s.estado_proceso,
+                s.modalidad_contacto,
 
-            NULL AS excepcion_motivo,
+                s.estado_proceso,
 
-            s.observaciones,
+                NULL AS excepcion_motivo,
 
-            s.fecha_contacto AS fecha_registro,
+                s.observaciones,
 
-            s.fecha_contacto,
+                s.fecha_contacto AS fecha_registro,
 
-            u.nombre AS responsable_nombre,
+                s.fecha_contacto,
 
-            s.responsable_id,
+                u.nombre AS responsable_nombre,
 
-            NULL AS excepcion_anio,
+                s.responsable_id,
 
-            NULL AS excepcion_mes,
+                NULL AS excepcion_anio,
 
-            NULL AS excepcion_created_at
+                NULL AS excepcion_mes,
 
-        FROM seguimientos s
+                NULL AS excepcion_created_at
 
-        INNER JOIN jovenes j
-            ON s.joven_id = j.id
+            FROM seguimientos s
 
-        LEFT JOIN usuarios u
-            ON s.responsable_id = u.id
+            INNER JOIN jovenes j
+                ON s.joven_id = j.id
 
-        WHERE YEAR(s.fecha_contacto) = :anio_1
+            LEFT JOIN usuarios u
+                ON s.responsable_id = u.id
 
-        AND MONTH(s.fecha_contacto) = :mes_1
+            WHERE j.estado_actividad = 'ACTIVO'
+
+            AND j.estado_espiritual = 'NUEVO'
+
+            AND s.estado_proceso = 'FINALIZADO'
+
+            AND s.fecha_contacto IS NOT NULL
+
+            /*
+             * Solo mostramos el último FINALIZADO
+             * de cada joven.
+             */
+
+            AND s.id = (
+
+                SELECT s2.id
+
+                FROM seguimientos s2
+
+                WHERE s2.joven_id = s.joven_id
+
+                AND s2.estado_proceso = 'FINALIZADO'
+
+                AND s2.fecha_contacto IS NOT NULL
+
+                ORDER BY
+
+                    s2.fecha_contacto DESC,
+
+                    s2.id DESC
+
+                LIMIT 1
+            )
+
+            AND (
+
+                /*
+                 * Joven que ingresó en el período actual.
+                 */
+
+                (
+                    j.fecha_ingreso IS NOT NULL
+
+                    AND YEAR(j.fecha_ingreso) = :anio_cohorte
+
+                    AND MONTH(j.fecha_ingreso) = :mes_cohorte
+                )
+
+                OR
+
+                /*
+                 * Joven que todavía pertenece al ciclo
+                 * inicial porque nunca había completado
+                 * un seguimiento, aunque haya sido atendido
+                 * en el período actual.
+                 *
+                 * El propio seguimiento mostrado aquí ya
+                 * garantiza que hoy existe un FINALIZADO.
+                 * Por eso esta parte permite ver históricos
+                 * ya cumplidos y no los mezcla con pendientes.
+                 */
+
+                EXISTS (
+                    SELECT 1
+                    FROM seguimientos sc
+                    WHERE sc.joven_id = j.id
+                    AND sc.estado_proceso = 'FINALIZADO'
+                    AND sc.fecha_contacto IS NOT NULL
+                    AND sc.fecha_contacto <= CURDATE()
+                )
+            )
 
 
-        UNION ALL
+            UNION ALL
 
 
-        SELECT
+            SELECT
 
-            e.id AS registro_id,
+                e.id AS registro_id,
 
-            NULL AS seguimiento_id,
+                NULL AS seguimiento_id,
 
-            e.id AS excepcion_id,
+                e.id AS excepcion_id,
 
-            e.joven_id,
+                e.joven_id,
 
-            j.nombre_completo,
+                j.nombre_completo,
 
-            j.telefono,
+                j.telefono,
 
-            j.genero,
+                j.genero,
 
-            'EXCEPCION' AS tipo_registro,
+                'EXCEPCION' AS tipo_registro,
 
-            NULL AS modalidad_contacto,
+                NULL AS modalidad_contacto,
 
-            NULL AS estado_proceso,
+                NULL AS estado_proceso,
 
-            e.motivo AS excepcion_motivo,
+                e.motivo AS excepcion_motivo,
 
-            e.observaciones,
+                e.observaciones,
 
-            e.created_at AS fecha_registro,
+                e.created_at AS fecha_registro,
 
-            NULL AS fecha_contacto,
+                NULL AS fecha_contacto,
 
-            u.nombre AS responsable_nombre,
+                u.nombre AS responsable_nombre,
 
-            e.responsable_id,
+                e.responsable_id,
 
-            e.anio AS excepcion_anio,
+                e.anio AS excepcion_anio,
 
-            e.mes AS excepcion_mes,
+                e.mes AS excepcion_mes,
 
-            e.created_at AS excepcion_created_at
+                e.created_at AS excepcion_created_at
 
-        FROM excepciones_seguimiento e
+            FROM excepciones_seguimiento e
 
-        INNER JOIN jovenes j
-            ON e.joven_id = j.id
+            INNER JOIN jovenes j
+                ON e.joven_id = j.id
 
-        LEFT JOIN usuarios u
-            ON e.responsable_id = u.id
+            LEFT JOIN usuarios u
+                ON e.responsable_id = u.id
 
-        WHERE e.anio = :anio_2
+            WHERE e.anio = :anio_excepcion
 
-        AND e.mes = :mes_2
+            AND e.mes = :mes_excepcion
 
-        ORDER BY
+            ORDER BY
 
-            fecha_registro DESC,
+                fecha_registro DESC,
 
-            nombre_completo ASC
-    ");
+                nombre_completo ASC
+        ");
 
     $stmt->execute([
 
-        ':anio_1' =>
+        ':anio_cohorte' =>
             $anio,
 
-        ':mes_1' =>
+        ':mes_cohorte' =>
             $mes,
 
-        ':anio_2' =>
+        ':anio_excepcion' =>
             $anio,
 
-        ':mes_2' =>
+        ':mes_excepcion' =>
             $mes
+
     ]);
 
     return $stmt->fetchAll(
@@ -702,38 +1142,41 @@ function obtenerHistorialSeguimientosMes(
 
 
 /* ==========================================================
-   RESUMEN GENERAL DEL MES
+   RESUMEN GENERAL DEL PERÍODO
 ========================================================== */
 
 function obtenerResumenSeguimientosMes(
     ?PDO $pdoParam = null
-): array
-{
+): array {
+
     global $pdo;
 
-    $pdo = $pdoParam ?? $pdo;
+    $pdo =
+        $pdoParam
+        ?? $pdo;
 
-    $mesNumero = date('m');
+    $mesNumero =
+        (int)date('m');
 
-    $anio = date('Y');
-
+    $anio =
+        (int)date('Y');
 
     $meses = [
 
-        '01' => 'Enero',
-        '02' => 'Febrero',
-        '03' => 'Marzo',
-        '04' => 'Abril',
-        '05' => 'Mayo',
-        '06' => 'Junio',
-        '07' => 'Julio',
-        '08' => 'Agosto',
-        '09' => 'Septiembre',
-        '10' => 'Octubre',
-        '11' => 'Noviembre',
-        '12' => 'Diciembre'
-    ];
+        1  => 'Enero',
+        2  => 'Febrero',
+        3  => 'Marzo',
+        4  => 'Abril',
+        5  => 'Mayo',
+        6  => 'Junio',
+        7  => 'Julio',
+        8  => 'Agosto',
+        9  => 'Septiembre',
+        10 => 'Octubre',
+        11 => 'Noviembre',
+        12 => 'Diciembre'
 
+    ];
 
     $mesTexto =
         $meses[$mesNumero]
@@ -741,113 +1184,293 @@ function obtenerResumenSeguimientosMes(
         . $anio;
 
 
+    /* ======================================================
+       UNIVERSO ACTUAL DE SEGUIMIENTO
+    ====================================================== */
+
     /*
-    |--------------------------------------------------------------------------
-    | JÓVENES ACTIVOS QUE REQUIEREN SEGUIMIENTO
-    |--------------------------------------------------------------------------
-    */
+     * El universo NO son todos los jóvenes NUEVOS históricos.
+     *
+     * Entren:
+     *
+     * 1. Los que ingresaron este mes.
+     *
+     * 2. Los que todavía NO tienen ningún FINALIZADO.
+     *
+     * De esta manera, un joven que completó su ciclo en
+     * febrero no vuelve a aparecer como pendiente en agosto.
+     *
+     * Si ese joven estaba pendiente desde febrero y se
+     * contactó por primera vez en agosto, seguirá dentro
+     * del universo y quedará atendido.
+     */
 
-    $stmt = $pdo->query("
-        SELECT COUNT(*)
+    $stmt =
+        $pdo->query("
+            SELECT COUNT(*)
 
-        FROM jovenes j
+            FROM jovenes j
 
-        WHERE j.estado_actividad = 'ACTIVO'
+            WHERE j.estado_actividad = 'ACTIVO'
 
-        AND j.estado_espiritual = 'NUEVO'
+            AND j.estado_espiritual = 'NUEVO'
 
-        AND NOT EXISTS (
+            AND (
 
-            SELECT 1
+                (
+                    j.fecha_ingreso IS NOT NULL
 
-            FROM excepciones_seguimiento e
+                    AND YEAR(j.fecha_ingreso)
+                        = YEAR(CURDATE())
 
-            WHERE e.joven_id = j.id
+                    AND MONTH(j.fecha_ingreso)
+                        = MONTH(CURDATE())
+                )
 
-            AND e.anio = YEAR(CURDATE())
+                OR
 
-            AND e.mes = MONTH(CURDATE())
-        )
-    ");
+                NOT EXISTS (
+
+                    SELECT 1
+
+                    FROM seguimientos s
+
+                    WHERE s.joven_id = j.id
+
+                    AND s.estado_proceso = 'FINALIZADO'
+
+                    AND s.fecha_contacto IS NOT NULL
+                )
+
+            )
+
+            /*
+             * Si tiene excepción del período actual,
+             * sigue perteneciendo al universo, porque será
+             * contado en la categoría EXCEPCIÓN.
+             */
+        ");
 
     $totalActivos =
         (int)$stmt->fetchColumn();
 
 
+    /* ======================================================
+       CON SEGUIMIENTO
+    ====================================================== */
+
     /*
-    |--------------------------------------------------------------------------
-    | JÓVENES CON SEGUIMIENTO REAL
-    |--------------------------------------------------------------------------
-    */
+     * Se cuenta un joven si:
+     *
+     * - está dentro del universo actual, y
+     * - tiene un FINALIZADO.
+     *
+     * Para los jóvenes antiguos:
+     * solo entra al universo si no tenía FINALIZADO antes.
+     * Por eso, si fue contactado en agosto por primera vez,
+     * cuenta como atendido.
+     *
+     * Para los jóvenes que ingresaron este mes:
+     * cualquier FINALIZADO histórico válido cuenta.
+     */
 
-    $stmt = $pdo->query("
-        SELECT COUNT(DISTINCT s.joven_id)
+    $stmt =
+        $pdo->query("
+            SELECT COUNT(DISTINCT j.id)
 
-        FROM seguimientos s
+            FROM jovenes j
 
-        INNER JOIN jovenes j
-            ON s.joven_id = j.id
+            WHERE j.estado_actividad = 'ACTIVO'
 
-        WHERE YEAR(s.fecha_contacto)
-            = YEAR(CURDATE())
+            AND j.estado_espiritual = 'NUEVO'
 
-        AND MONTH(s.fecha_contacto)
-            = MONTH(CURDATE())
+            AND (
 
-        AND j.estado_actividad = 'ACTIVO'
+                /*
+                 * Cohorte del mes actual.
+                 */
 
-        AND j.estado_espiritual = 'NUEVO'
+                (
+                    j.fecha_ingreso IS NOT NULL
 
-        AND NOT EXISTS (
+                    AND YEAR(j.fecha_ingreso)
+                        = YEAR(CURDATE())
 
-            SELECT 1
+                    AND MONTH(j.fecha_ingreso)
+                        = MONTH(CURDATE())
 
-            FROM excepciones_seguimiento e
+                    AND EXISTS (
 
-            WHERE e.joven_id = s.joven_id
+                        SELECT 1
 
-            AND e.anio = YEAR(CURDATE())
+                        FROM seguimientos s1
 
-            AND e.mes = MONTH(CURDATE())
-        )
-    ");
+                        WHERE s1.joven_id = j.id
+
+                        AND s1.estado_proceso = 'FINALIZADO'
+
+                        AND s1.fecha_contacto IS NOT NULL
+                    )
+                )
+
+                OR
+
+                /*
+                 * Joven antiguo que todavía no había
+                 * completado su ciclo y fue atendido
+                 * durante el mes actual.
+                 */
+
+                (
+                    (
+                        j.fecha_ingreso IS NULL
+
+                        OR NOT (
+                            YEAR(j.fecha_ingreso)
+                                = YEAR(CURDATE())
+
+                            AND MONTH(j.fecha_ingreso)
+                                = MONTH(CURDATE())
+                        )
+                    )
+
+                    AND EXISTS (
+
+                        SELECT 1
+
+                        FROM seguimientos s2
+
+                        WHERE s2.joven_id = j.id
+
+                        AND s2.estado_proceso = 'FINALIZADO'
+
+                        AND s2.fecha_contacto IS NOT NULL
+
+                        AND YEAR(s2.fecha_contacto)
+                            = YEAR(CURDATE())
+
+                        AND MONTH(s2.fecha_contacto)
+                            = MONTH(CURDATE())
+
+                    )
+
+                    AND NOT EXISTS (
+
+                        SELECT 1
+
+                        FROM seguimientos s3
+
+                        WHERE s3.joven_id = j.id
+
+                        AND s3.estado_proceso = 'FINALIZADO'
+
+                        AND s3.fecha_contacto IS NOT NULL
+
+                        AND s3.fecha_contacto < DATE_FORMAT(
+                            CURDATE(),
+                            '%Y-%m-01'
+                        )
+                    )
+                )
+
+            )
+
+            /*
+             * Una excepción no debe duplicar un joven
+             * que ya tiene seguimiento finalizado.
+             */
+
+            AND NOT EXISTS (
+
+                SELECT 1
+
+                FROM excepciones_seguimiento e
+
+                WHERE e.joven_id = j.id
+
+                AND e.anio = YEAR(CURDATE())
+
+                AND e.mes = MONTH(CURDATE())
+
+            )
+        ");
 
     $totalConSeguimiento =
         (int)$stmt->fetchColumn();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL DE EXCEPCIONES
-    |--------------------------------------------------------------------------
-    */
+    /* ======================================================
+       EXCEPCIONES
+    ====================================================== */
 
-    $stmt = $pdo->query("
-        SELECT COUNT(*)
+    $stmt =
+        $pdo->query("
+            SELECT COUNT(DISTINCT e.joven_id)
 
-        FROM excepciones_seguimiento e
+            FROM excepciones_seguimiento e
 
-        INNER JOIN jovenes j
-            ON e.joven_id = j.id
+            INNER JOIN jovenes j
+                ON e.joven_id = j.id
 
-        WHERE e.anio = YEAR(CURDATE())
+            WHERE e.anio = YEAR(CURDATE())
 
-        AND e.mes = MONTH(CURDATE())
+            AND e.mes = MONTH(CURDATE())
 
-        AND j.estado_actividad = 'ACTIVO'
+            AND j.estado_actividad = 'ACTIVO'
 
-        AND j.estado_espiritual = 'NUEVO'
-    ");
+            AND j.estado_espiritual = 'NUEVO'
+
+            AND (
+
+                /*
+                 * Entró este mes.
+                 */
+
+                (
+                    j.fecha_ingreso IS NOT NULL
+
+                    AND YEAR(j.fecha_ingreso)
+                        = YEAR(CURDATE())
+
+                    AND MONTH(j.fecha_ingreso)
+                        = MONTH(CURDATE())
+                )
+
+                OR
+
+                /*
+                 * Nunca ha completado el ciclo.
+                 */
+
+                NOT EXISTS (
+
+                    SELECT 1
+
+                    FROM seguimientos s1
+
+                    WHERE s1.joven_id = j.id
+
+                    AND s1.estado_proceso = 'FINALIZADO'
+
+                    AND s1.fecha_contacto IS NOT NULL
+                )
+
+            )
+
+            /*
+             * Si ya tiene FINALIZADO antes de este mes,
+             * no debe contarse como excepción del ciclo inicial.
+             */
+
+        ");
 
     $totalExcepciones =
         (int)$stmt->fetchColumn();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SIN SEGUIMIENTO
-    |--------------------------------------------------------------------------
-    */
+    /* ======================================================
+       SIN SEGUIMIENTO
+    ====================================================== */
 
     $totalSinSeguimiento =
         max(
@@ -858,14 +1481,9 @@ function obtenerResumenSeguimientosMes(
         );
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | PORCENTAJE
-    |--------------------------------------------------------------------------
-    |
-    | Las excepciones justificadas no se consideran pendientes.
-    |
-    */
+    /* ======================================================
+       PORCENTAJE
+    ====================================================== */
 
     $totalAtendidos =
         $totalConSeguimiento
@@ -874,44 +1492,45 @@ function obtenerResumenSeguimientosMes(
 
     $porcentaje =
         $totalActivos > 0
+
             ? round(
                 (
-                    $totalAtendidos
-                    / $totalActivos
+                    $totalAtendidos /
+                    $totalActivos
                 ) * 100
             )
+
             : 0;
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SEMÁFORO
-    |--------------------------------------------------------------------------
-    */
+    /* ======================================================
+       SEMÁFORO
+    ====================================================== */
 
-    $color = 'danger';
+    $color =
+        'danger';
 
     if ($porcentaje >= 90) {
 
-        $color = 'ok';
+        $color =
+            'ok';
 
     } elseif ($porcentaje >= 70) {
 
-        $color = 'warning';
+        $color =
+            'warning';
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | HISTORIAL DEL MES
-    |--------------------------------------------------------------------------
-    */
+    /* ======================================================
+       HISTORIAL DEL PERÍODO
+    ====================================================== */
 
     $historialMes =
         obtenerHistorialSeguimientosMes(
             $pdo,
-            (int)$anio,
-            (int)$mesNumero
+            $anio,
+            $mesNumero
         );
 
 
@@ -943,64 +1562,52 @@ function obtenerResumenSeguimientosMes(
 
         'color' =>
             $color
+
     ];
 }
 
 
 /* ==========================================================
-   OBTENER SEGUIMIENTOS REALES POR JOVEN
+   SEGUIMIENTOS POR JOVEN
 ========================================================== */
-
-/*
-| IMPORTANTE:
-|
-| Esta función devuelve solamente seguimientos reales.
-|
-| Para obtener:
-|
-|   - seguimientos
-|   - excepciones
-|
-| debe utilizarse obtenerHistorialJoven().
-*/
 
 function obtenerSeguimientosPorJoven(
     PDO $pdo,
     int $jovenId
-): array
-{
+): array {
+
     if ($jovenId <= 0) {
 
         return [];
     }
 
-    $stmt = $pdo->prepare("
-        SELECT
+    $stmt =
+        $pdo->prepare("
+            SELECT
 
-            s.*,
+                s.*,
 
-            'SEGUIMIENTO' AS tipo_registro,
+                'SEGUIMIENTO' AS tipo_registro,
 
-            NULL AS excepcion_motivo,
+                NULL AS excepcion_motivo,
 
-            u.nombre AS responsable_nombre
+                u.nombre AS responsable_nombre
 
-        FROM seguimientos s
+            FROM seguimientos s
 
-        LEFT JOIN usuarios u
-            ON s.responsable_id = u.id
+            LEFT JOIN usuarios u
+                ON s.responsable_id = u.id
 
-        WHERE s.joven_id = :joven_id
+            WHERE s.joven_id = :joven_id
 
-        ORDER BY
+            ORDER BY
 
-            s.fecha_contacto DESC,
+                s.fecha_contacto DESC,
 
-            s.id DESC
-    ");
+                s.id DESC
+        ");
 
     $stmt->execute([
-
         ':joven_id' =>
             $jovenId
     ]);
@@ -1011,116 +1618,114 @@ function obtenerSeguimientosPorJoven(
 }
 
 
-
-
 /* ==========================================================
-   OBTENER HISTORIAL COMPLETO POR JOVEN
+   HISTORIAL COMPLETO POR JOVEN
 ========================================================== */
 
 function obtenerHistorialJoven(
     PDO $pdo,
     int $jovenId
-): array
-{
+): array {
+
     if ($jovenId <= 0) {
 
         return [];
     }
 
-    $stmt = $pdo->prepare("
-        SELECT
+    $stmt =
+        $pdo->prepare("
+            SELECT
 
-            s.id AS registro_id,
+                s.id AS registro_id,
 
-            s.id AS seguimiento_id,
+                s.id AS seguimiento_id,
 
-            s.joven_id,
+                s.joven_id,
 
-            'SEGUIMIENTO' AS tipo_registro,
+                'SEGUIMIENTO' AS tipo_registro,
 
-            s.modalidad_contacto,
+                s.modalidad_contacto,
 
-            s.estado_proceso,
+                s.estado_proceso,
 
-            s.observaciones,
+                s.observaciones,
 
-            s.fecha_contacto AS fecha_registro,
+                s.fecha_contacto AS fecha_registro,
 
-            s.fecha_contacto,
+                s.fecha_contacto,
 
-            s.responsable_id,
+                s.responsable_id,
 
-            u.nombre AS responsable_nombre,
+                u.nombre AS responsable_nombre,
 
-            NULL AS excepcion_id,
+                NULL AS excepcion_id,
 
-            NULL AS excepcion_motivo,
+                NULL AS excepcion_motivo,
 
-            NULL AS excepcion_anio,
+                NULL AS excepcion_anio,
 
-            NULL AS excepcion_mes,
+                NULL AS excepcion_mes,
 
-            NULL AS excepcion_created_at
+                NULL AS excepcion_created_at
 
-        FROM seguimientos s
+            FROM seguimientos s
 
-        LEFT JOIN usuarios u
-            ON s.responsable_id = u.id
+            LEFT JOIN usuarios u
+                ON s.responsable_id = u.id
 
-        WHERE s.joven_id = :joven_id_1
-
-
-        UNION ALL
+            WHERE s.joven_id = :joven_id_1
 
 
-        SELECT
-
-            e.id AS registro_id,
-
-            NULL AS seguimiento_id,
-
-            e.joven_id,
-
-            'EXCEPCION' AS tipo_registro,
-
-            NULL AS modalidad_contacto,
-
-            NULL AS estado_proceso,
-
-            e.observaciones,
-
-            e.created_at AS fecha_registro,
-
-            NULL AS fecha_contacto,
-
-            e.responsable_id,
-
-            u.nombre AS responsable_nombre,
-
-            e.id AS excepcion_id,
-
-            e.motivo AS excepcion_motivo,
-
-            e.anio AS excepcion_anio,
-
-            e.mes AS excepcion_mes,
-
-            e.created_at AS excepcion_created_at
-
-        FROM excepciones_seguimiento e
-
-        LEFT JOIN usuarios u
-            ON e.responsable_id = u.id
-
-        WHERE e.joven_id = :joven_id_2
+            UNION ALL
 
 
-        ORDER BY
+            SELECT
 
-            fecha_registro DESC,
+                e.id AS registro_id,
 
-            registro_id DESC
-    ");
+                NULL AS seguimiento_id,
+
+                e.joven_id,
+
+                'EXCEPCION' AS tipo_registro,
+
+                NULL AS modalidad_contacto,
+
+                NULL AS estado_proceso,
+
+                e.observaciones,
+
+                e.created_at AS fecha_registro,
+
+                NULL AS fecha_contacto,
+
+                e.responsable_id,
+
+                u.nombre AS responsable_nombre,
+
+                e.id AS excepcion_id,
+
+                e.motivo AS excepcion_motivo,
+
+                e.anio AS excepcion_anio,
+
+                e.mes AS excepcion_mes,
+
+                e.created_at AS excepcion_created_at
+
+            FROM excepciones_seguimiento e
+
+            LEFT JOIN usuarios u
+                ON e.responsable_id = u.id
+
+            WHERE e.joven_id = :joven_id_2
+
+            ORDER BY
+
+                fecha_registro DESC,
+
+                registro_id DESC
+        ");
 
     $stmt->execute([
 
@@ -1129,6 +1734,7 @@ function obtenerHistorialJoven(
 
         ':joven_id_2' =>
             $jovenId
+
     ]);
 
     return $stmt->fetchAll(
@@ -1138,14 +1744,14 @@ function obtenerHistorialJoven(
 
 
 /* ==========================================================
-   COMPATIBILIDAD CON FUNCIÓN ANTERIOR
+   COMPATIBILIDAD
 ========================================================== */
 
 function obtenerHistorialSeguimientoPorJoven(
     PDO $pdo,
     int $jovenId
-): array
-{
+): array {
+
     return obtenerHistorialJoven(
         $pdo,
         $jovenId
@@ -1154,35 +1760,54 @@ function obtenerHistorialSeguimientoPorJoven(
 
 
 /* ==========================================================
-   CONTAR SEGUIMIENTOS REALES DEL MES
+   COMPATIBILIDAD HISTORIAL COMPLETO
+========================================================== */
+
+function obtenerHistorialCompletoPorJoven(
+    PDO $pdo,
+    int $jovenId
+): array {
+
+    return obtenerHistorialJoven(
+        $pdo,
+        $jovenId
+    );
+}
+
+
+/* ==========================================================
+   CONTAR SEGUIMIENTOS FINALIZADOS
 ========================================================== */
 
 function contarSeguimientosMes(
     PDO $pdo,
     int $jovenId
-): int
-{
+): int {
+
     if ($jovenId <= 0) {
 
         return 0;
     }
 
-    $stmt = $pdo->prepare("
-        SELECT COUNT(*)
+    /*
+     * Se conserva el nombre de la función por compatibilidad.
+     * Devuelve todos los seguimientos FINALIZADOS del joven.
+     */
 
-        FROM seguimientos
+    $stmt =
+        $pdo->prepare("
+            SELECT COUNT(*)
 
-        WHERE joven_id = :id
+            FROM seguimientos
 
-        AND MONTH(fecha_contacto)
-            = MONTH(CURDATE())
+            WHERE joven_id = :id
 
-        AND YEAR(fecha_contacto)
-            = YEAR(CURDATE())
-    ");
+            AND estado_proceso = 'FINALIZADO'
+
+            AND fecha_contacto IS NOT NULL
+        ");
 
     $stmt->execute([
-
         ':id' =>
             $jovenId
     ]);
@@ -1195,75 +1820,113 @@ function contarSeguimientosMes(
    JÓVENES SIN SEGUIMIENTO
 ========================================================== */
 
-function obtenerJovenesSinSeguimiento(): array
-{
+function obtenerJovenesSinSeguimiento(): array {
+
     global $pdo;
 
-    $stmt = $pdo->prepare("
-        SELECT
+    /*
+     * SOLO APARECEN JÓVENES QUE:
+     *
+     * 1. Están activos y en estado NUEVO.
+     *
+     * 2. Entraron este mes, o nunca han completado
+     *    su ciclo inicial.
+     *
+     * 3. No tienen una excepción para el período actual.
+     *
+     * Un joven que completó su ciclo en febrero
+     * no vuelve a aparecer como pendiente en agosto.
+     */
 
-            j.id,
+    $stmt =
+        $pdo->prepare("
+            SELECT
 
-            j.nombre_completo,
+                j.id,
 
-            j.telefono,
+                j.nombre_completo,
 
-            j.genero,
+                j.telefono,
 
-            j.estado_espiritual
+                j.genero,
 
-        FROM jovenes j
+                j.estado_espiritual,
 
-        WHERE j.estado_actividad = 'ACTIVO'
+                j.fecha_ingreso
 
-        AND j.estado_espiritual = 'NUEVO'
+            FROM jovenes j
 
+            WHERE j.estado_actividad = 'ACTIVO'
 
-        /*
-        |--------------------------------------------------------------------------
-        | NO TIENE SEGUIMIENTO REAL ESTE MES
-        |--------------------------------------------------------------------------
-        */
+            AND j.estado_espiritual = 'NUEVO'
 
-        AND NOT EXISTS (
+            AND (
 
-            SELECT 1
+                (
+                    j.fecha_ingreso IS NOT NULL
 
-            FROM seguimientos s
+                    AND YEAR(j.fecha_ingreso)
+                        = YEAR(CURDATE())
 
-            WHERE s.joven_id = j.id
+                    AND MONTH(j.fecha_ingreso)
+                        = MONTH(CURDATE())
+                )
 
-            AND MONTH(s.fecha_contacto)
-                = MONTH(CURDATE())
+                OR
 
-            AND YEAR(s.fecha_contacto)
-                = YEAR(CURDATE())
-        )
+                NOT EXISTS (
 
+                    SELECT 1
 
-        /*
-        |--------------------------------------------------------------------------
-        | NO TIENE EXCEPCIÓN ESTE MES
-        |--------------------------------------------------------------------------
-        */
+                    FROM seguimientos s
 
-        AND NOT EXISTS (
+                    WHERE s.joven_id = j.id
 
-            SELECT 1
+                    AND s.estado_proceso = 'FINALIZADO'
 
-            FROM excepciones_seguimiento e
+                    AND s.fecha_contacto IS NOT NULL
 
-            WHERE e.joven_id = j.id
+                )
 
-            AND e.anio = YEAR(CURDATE())
+            )
 
-            AND e.mes = MONTH(CURDATE())
-        )
+            AND NOT EXISTS (
 
-        ORDER BY
+                SELECT 1
 
-            j.nombre_completo ASC
-    ");
+                FROM excepciones_seguimiento e
+
+                WHERE e.joven_id = j.id
+
+                AND e.anio = YEAR(CURDATE())
+
+                AND e.mes = MONTH(CURDATE())
+
+            )
+
+            ORDER BY
+
+                CASE
+
+                    WHEN
+                        j.fecha_ingreso IS NOT NULL
+
+                        AND YEAR(j.fecha_ingreso)
+                            = YEAR(CURDATE())
+
+                        AND MONTH(j.fecha_ingreso)
+                            = MONTH(CURDATE())
+
+                    THEN 0
+
+                    ELSE 1
+
+                END,
+
+                j.fecha_ingreso ASC,
+
+                j.nombre_completo ASC
+        ");
 
     $stmt->execute();
 
@@ -1280,39 +1943,39 @@ function obtenerJovenesSinSeguimiento(): array
 function obtenerSeguimientoPorId(
     PDO $pdo,
     int $id
-): ?array
-{
+): ?array {
+
     if ($id <= 0) {
 
         return null;
     }
 
-    $stmt = $pdo->prepare("
-        SELECT
+    $stmt =
+        $pdo->prepare("
+            SELECT
 
-            s.*,
+                s.*,
 
-            'SEGUIMIENTO' AS tipo_registro,
+                'SEGUIMIENTO' AS tipo_registro,
 
-            j.nombre_completo AS joven_nombre,
+                j.nombre_completo AS joven_nombre,
 
-            u.nombre AS responsable_nombre
+                u.nombre AS responsable_nombre
 
-        FROM seguimientos s
+            FROM seguimientos s
 
-        INNER JOIN jovenes j
-            ON s.joven_id = j.id
+            INNER JOIN jovenes j
+                ON s.joven_id = j.id
 
-        LEFT JOIN usuarios u
-            ON s.responsable_id = u.id
+            LEFT JOIN usuarios u
+                ON s.responsable_id = u.id
 
-        WHERE s.id = :id
+            WHERE s.id = :id
 
-        LIMIT 1
-    ");
+            LIMIT 1
+        ");
 
     $stmt->execute([
-
         ':id' =>
             $id
     ]);
@@ -1330,25 +1993,25 @@ function obtenerSeguimientoPorId(
 function existeSeguimiento(
     PDO $pdo,
     int $id
-): bool
-{
+): bool {
+
     if ($id <= 0) {
 
         return false;
     }
 
-    $stmt = $pdo->prepare("
-        SELECT id
+    $stmt =
+        $pdo->prepare("
+            SELECT id
 
-        FROM seguimientos
+            FROM seguimientos
 
-        WHERE id = :id
+            WHERE id = :id
 
-        LIMIT 1
-    ");
+            LIMIT 1
+        ");
 
     $stmt->execute([
-
         ':id' =>
             $id
     ]);
@@ -1364,8 +2027,8 @@ function existeSeguimiento(
 function validarSeguimiento(
     PDO $pdo,
     int $id
-): void
-{
+): void {
+
     if ($id <= 0) {
 
         throw new Exception(
@@ -1373,10 +2036,12 @@ function validarSeguimiento(
         );
     }
 
-    if (!existeSeguimiento(
-        $pdo,
-        $id
-    )) {
+    if (
+        !existeSeguimiento(
+            $pdo,
+            $id
+        )
+    ) {
 
         throw new Exception(
             'El seguimiento no existe.'
@@ -1392,8 +2057,8 @@ function validarSeguimiento(
 function eliminarSeguimiento(
     PDO $pdo,
     int $id
-): void
-{
+): void {
+
     exigirPermiso(
         'gestionar_seguimientos'
     );
@@ -1403,14 +2068,16 @@ function eliminarSeguimiento(
         $id
     );
 
-    $stmt = $pdo->prepare("
-        DELETE
-        FROM seguimientos
-        WHERE id = :id
-    ");
+    $stmt =
+        $pdo->prepare("
+            DELETE
+
+            FROM seguimientos
+
+            WHERE id = :id
+        ");
 
     $stmt->execute([
-
         ':id' =>
             $id
     ]);

@@ -1,324 +1,492 @@
-"use strict";
-
-
-/* ==========================================================
-   ASIGNACIONES DE SEGUIMIENTO
-   Control de selección y cancelación masiva
-========================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* =====================================================
+       UTILIDADES
+    ===================================================== */
 
-    /* ======================================================
-       ELEMENTOS
-    ====================================================== */
+    const dataTableDisponible =
+        typeof initDataTable === "function";
 
-    const formAsignar =
+
+
+    /* =====================================================
+       TABLA:
+       JÓVENES PENDIENTES
+    ===================================================== */
+
+    const tablaPendientes =
         document.getElementById(
-            "formAsignarJovenes"
+            "tablaAsignaciones"
         );
+
+    let dtPendientes = null;
+
+
+    if (
+        dataTableDisponible &&
+        tablaPendientes
+    ) {
+
+        dtPendientes =
+            initDataTable(
+                "#tablaAsignaciones",
+                {
+                    pageLength: 8,
+
+                    order: [
+                        [1, "asc"]
+                    ],
+
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            orderable: false,
+                            searchable: false
+                        }
+                    ]
+                }
+            );
+
+    }
+
+
+
+    /* =====================================================
+       TABLA:
+       ASIGNACIONES DEL PERÍODO
+    ===================================================== */
+
+    const tablaActuales =
+        document.getElementById(
+            "tablaAsignacionesActuales"
+        );
+
+    let dtActuales = null;
+
+
+    if (
+        dataTableDisponible &&
+        tablaActuales
+    ) {
+
+        dtActuales =
+            initDataTable(
+                "#tablaAsignacionesActuales",
+                {
+                    pageLength: 8,
+
+                    order: [
+                        [1, "asc"]
+                    ],
+
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            orderable: false,
+                            searchable: false
+                        },
+
+                        {
+                            targets: 6,
+                            orderable: false,
+                            searchable: false
+                        }
+                    ]
+                }
+            );
+
+    }
+
+
+
+    /* =====================================================
+       BUSCADOR
+       JÓVENES PENDIENTES
+    ===================================================== */
+
+    const buscador =
+        document.getElementById(
+            "buscarAsignaciones"
+        );
+
+
+    if (
+        buscador &&
+        dtPendientes
+    ) {
+
+        buscador.addEventListener(
+            "input",
+            () => {
+
+                dtPendientes
+                    .search(
+                        buscador.value
+                    )
+                    .draw();
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       SELECCIÓN:
+       JÓVENES PENDIENTES
+    ===================================================== */
 
     const checkTodos =
         document.getElementById(
             "checkTodos"
         );
 
-    const checksJovenes =
-        Array.from(
-            document.querySelectorAll(
-                ".check-joven"
-            )
-        );
-
-    const botonSeleccionarTodos =
+    const botonTodos =
         document.getElementById(
             "selectTodos"
         );
 
-    const botonAsignar =
-        document.getElementById(
-            "btnAsignarSeleccionados"
-        );
+
+    /*
+     * Guardamos las selecciones por ID.
+     * Esto permite mantenerlas aunque
+     * DataTables cambie de página.
+     */
+
+    const seleccionPendientes =
+        new Set();
 
 
-    const formCancelar =
-        document.getElementById(
-            "formCancelarAsignaciones"
-        );
 
-    const checkAsignaciones =
-        document.getElementById(
-            "checkAsignaciones"
-        );
+    function obtenerChecksPendientes() {
 
-    const checksAsignacion =
-        Array.from(
-            document.querySelectorAll(
-                ".check-asignacion"
-            )
-        );
+        if (!dtPendientes) {
 
-    const botonCancelar =
-        document.getElementById(
-            "btnCancelarSeleccionados"
-        );
+            return $();
 
-    const idsCancelar =
-        document.getElementById(
-            "idsCancelar"
-        );
-
-
-    /* ======================================================
-       UTILIDADES
-    ====================================================== */
-
-    function actualizarCheckGeneral(
-        checkPrincipal,
-        checks
-    ) {
-
-        if (!checkPrincipal) {
-            return;
         }
 
-
-        if (checks.length === 0) {
-
-            checkPrincipal.checked = false;
-
-            checkPrincipal.indeterminate = false;
-
-            return;
-        }
-
-
-        const marcados =
-            checks.filter(
-                check => check.checked
-            ).length;
-
-
-        checkPrincipal.checked =
-            marcados === checks.length;
-
-
-        checkPrincipal.indeterminate =
-            marcados > 0 &&
-            marcados < checks.length;
-    }
-
-
-    function marcarChecks(
-        checks,
-        valor
-    ) {
-
-        checks.forEach(
-            check => {
-
-                check.checked = valor;
-
-            }
-        );
-    }
-
-
-    function obtenerSeleccionados(
-        checks
-    ) {
-
-        return checks
-            .filter(
-                check => check.checked
-            )
-            .map(
-                check => check.value
-            )
-            .filter(
-                value => value !== ""
+        return dtPendientes
+            .rows()
+            .nodes()
+            .to$()
+            .find(
+                ".check-joven"
             );
-    }
-
-
-    /* ======================================================
-       TABLA SUPERIOR
-       SELECCIONAR JÓVENES
-    ====================================================== */
-
-    if (checkTodos) {
-
-        checkTodos.addEventListener(
-            "change",
-            () => {
-
-                marcarChecks(
-                    checksJovenes,
-                    checkTodos.checked
-                );
-
-
-                checkTodos.indeterminate =
-                    false;
-
-            }
-        );
 
     }
 
 
-    checksJovenes.forEach(
-        check => {
 
-            check.addEventListener(
-                "change",
-                () => {
+    function obtenerIdsPendientes() {
 
-                    actualizarCheckGeneral(
-                        checkTodos,
-                        checksJovenes
+        if (!dtPendientes) {
+
+            return [];
+
+        }
+
+        const ids = [];
+
+
+        dtPendientes
+            .rows()
+            .nodes()
+            .to$()
+            .find(
+                ".check-joven"
+            )
+            .each(
+                function () {
+
+                    ids.push(
+                        String(
+                            this.value
+                        )
                     );
 
                 }
+            );
+
+
+        return ids;
+
+    }
+
+
+
+    function aplicarSeleccionPendientes() {
+
+        const checks =
+            obtenerChecksPendientes();
+
+
+        checks.each(
+            function () {
+
+                const id =
+                    String(
+                        this.value
+                    );
+
+
+                this.checked =
+                    seleccionPendientes.has(
+                        id
+                    );
+
+            }
+        );
+
+
+        sincronizarCheckPendientes();
+
+    }
+
+
+
+    function sincronizarCheckPendientes() {
+
+        if (!checkTodos) {
+
+            return;
+
+        }
+
+
+        const ids =
+            obtenerIdsPendientes();
+
+
+        if (!ids.length) {
+
+            checkTodos.checked =
+                false;
+
+            return;
+
+        }
+
+
+        checkTodos.checked =
+            ids.every(
+                id =>
+                    seleccionPendientes.has(
+                        id
+                    )
+            );
+
+    }
+
+
+
+    function seleccionarTodosPendientes(
+        estado
+    ) {
+
+        const ids =
+            obtenerIdsPendientes();
+
+
+        ids.forEach(
+            id => {
+
+                if (estado) {
+
+                    seleccionPendientes.add(
+                        id
+                    );
+
+                } else {
+
+                    seleccionPendientes.delete(
+                        id
+                    );
+
+                }
+
+            }
+        );
+
+
+        aplicarSeleccionPendientes();
+
+    }
+
+
+
+    /*
+     * Check principal
+     */
+
+    checkTodos?.addEventListener(
+        "change",
+        () => {
+
+            seleccionarTodosPendientes(
+                checkTodos.checked
             );
 
         }
     );
 
 
-    /* ======================================================
-       BOTÓN "SELECCIONAR TODOS"
-    ====================================================== */
 
-    if (botonSeleccionarTodos) {
+    /*
+     * Botón seleccionar todos
+     */
 
-        botonSeleccionarTodos.addEventListener(
-            "click",
-            event => {
+    botonTodos?.addEventListener(
+        "click",
+        () => {
 
-                event.preventDefault();
-
-
-                if (checksJovenes.length === 0) {
-                    return;
-                }
+            const ids =
+                obtenerIdsPendientes();
 
 
-                const seleccionados =
-                    obtenerSeleccionados(
-                        checksJovenes
+            if (!ids.length) {
+
+                return;
+
+            }
+
+
+            const todosSeleccionados =
+                ids.every(
+                    id =>
+                        seleccionPendientes.has(
+                            id
+                        )
+                );
+
+
+            seleccionarTodosPendientes(
+                !todosSeleccionados
+            );
+
+        }
+    );
+
+
+
+    /*
+     * Check individual.
+     *
+     * Delegado porque DataTables
+     * reconstruye las filas.
+     */
+
+    $("#tablaAsignaciones tbody")
+        .on(
+            "change",
+            ".check-joven",
+            function () {
+
+                const id =
+                    String(
+                        this.value
                     );
 
 
-                const todosMarcados =
-                    seleccionados.length ===
-                    checksJovenes.length;
+                if (this.checked) {
+
+                    seleccionPendientes.add(
+                        id
+                    );
+
+                } else {
+
+                    seleccionPendientes.delete(
+                        id
+                    );
+
+                }
 
 
-                marcarChecks(
-                    checksJovenes,
-                    !todosMarcados
-                );
+                sincronizarCheckPendientes();
+
+            }
+        );
 
 
-                actualizarCheckGeneral(
-                    checkTodos,
-                    checksJovenes
-                );
 
+    /*
+     * Cada vez que DataTables
+     * redibuja la tabla,
+     * recuperamos las selecciones.
+     */
 
-                botonSeleccionarTodos.innerHTML =
-                    todosMarcados
+    if (dtPendientes) {
 
-                        ? `
-                            <i class="fa-solid fa-square-check"></i>
-                            Seleccionar todos
-                          `
+        dtPendientes.on(
+            "draw",
+            () => {
 
-                        : `
-                            <i class="fa-solid fa-square-minus"></i>
-                            Desmarcar todos
-                          `;
+                aplicarSeleccionPendientes();
+
             }
         );
 
     }
 
 
-    /* ======================================================
-       VALIDAR ASIGNACIÓN
-    ====================================================== */
 
-    if (formAsignar) {
+    /*
+     * Antes de enviar,
+     * eliminamos duplicados creados
+     * anteriormente y generamos
+     * nuevamente los hidden.
+     */
 
-        formAsignar.addEventListener(
+    const formularioAsignar =
+        document.getElementById(
+            "formAsignarJovenes"
+        );
+
+
+    if (formularioAsignar) {
+
+        formularioAsignar.addEventListener(
             "submit",
-            event => {
+            () => {
 
-                const seleccionados =
-                    obtenerSeleccionados(
-                        checksJovenes
-                    );
-
-
-                if (
-                    seleccionados.length === 0
-                ) {
-
-                    event.preventDefault();
-
-
-                    alert(
-                        "Selecciona al menos un joven para asignarlo."
-                    );
-
-                    return;
-
-                }
-
-
-                /*
-                 * Quitamos nombres antiguos para evitar
-                 * duplicados si el formulario vuelve a enviarse.
-                 */
-
-                formAsignar
+                formularioAsignar
                     .querySelectorAll(
-                        'input[data-generated="joven-id"]'
+                        ".js-joven-seleccionado"
                     )
                     .forEach(
-                        input => input.remove()
+                        input =>
+                            input.remove()
                     );
 
 
-                /*
-                 * Creamos los IDs seleccionados.
-                 *
-                 * No usamos los checkbox directamente
-                 * como campos del formulario.
-                 */
-
-                seleccionados.forEach(
-                    id => {
+                seleccionPendientes.forEach(
+                    jovenId => {
 
                         const input =
                             document.createElement(
                                 "input"
                             );
 
+
                         input.type =
                             "hidden";
+
 
                         input.name =
                             "joven_ids[]";
 
+
                         input.value =
-                            id;
+                            jovenId;
 
-                        input.dataset.generated =
-                            "joven-id";
 
-                        formAsignar.appendChild(
+                        input.className =
+                            "js-joven-seleccionado";
+
+
+                        formularioAsignar.appendChild(
                             input
                         );
 
@@ -331,201 +499,417 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ======================================================
-       TABLA INFERIOR
-       SELECCIÓN PARA CANCELAR
-    ====================================================== */
 
-    function actualizarCancelacion() {
+    /* =====================================================
+       SELECCIÓN:
+       ASIGNACIONES DEL PERÍODO
+    ===================================================== */
 
-        const seleccionados =
-            obtenerSeleccionados(
-                checksAsignacion
+    const checkTodasAsignaciones =
+        document.getElementById(
+            "checkTodasAsignaciones"
+        );
+
+    const botonTodasAsignaciones =
+        document.getElementById(
+            "selectTodasAsignaciones"
+        );
+
+    const contadorAsignaciones =
+        document.getElementById(
+            "contadorAsignacionesSeleccionadas"
+        );
+
+    const botonCancelarSeleccionadas =
+        document.getElementById(
+            "cancelarSeleccionadas"
+        );
+
+
+    /*
+     * Set principal.
+     *
+     * Aquí se guardarán los IDs
+     * realmente seleccionados.
+     */
+
+    const seleccionAsignaciones =
+        new Set();
+
+
+
+    function obtenerChecksAsignaciones() {
+
+        if (!dtActuales) {
+
+            return $();
+
+        }
+
+        return dtActuales
+            .rows()
+            .nodes()
+            .to$()
+            .find(
+                ".check-asignacion:not(:disabled)"
+            );
+
+    }
+
+
+
+    function obtenerIdsAsignaciones() {
+
+        if (!dtActuales) {
+
+            return [];
+
+        }
+
+        const ids = [];
+
+
+        dtActuales
+            .rows()
+            .nodes()
+            .to$()
+            .find(
+                ".check-asignacion:not(:disabled)"
+            )
+            .each(
+                function () {
+
+                    ids.push(
+                        String(
+                            this.value
+                        )
+                    );
+
+                }
             );
 
 
-        if (botonCancelar) {
+        return ids;
 
-            botonCancelar.disabled =
-                seleccionados.length === 0;
-
-        }
+    }
 
 
-        if (!idsCancelar) {
+
+    function actualizarChecksAsignaciones() {
+
+        const checks =
+            obtenerChecksAsignaciones();
+
+
+        checks.each(
+            function () {
+
+                const id =
+                    String(
+                        this.value
+                    );
+
+
+                this.checked =
+                    seleccionAsignaciones.has(
+                        id
+                    );
+
+            }
+        );
+
+
+        sincronizarCheckTodasAsignaciones();
+
+        actualizarContadorAsignaciones();
+
+    }
+
+
+
+    function sincronizarCheckTodasAsignaciones() {
+
+        if (
+            !checkTodasAsignaciones
+        ) {
+
             return;
+
         }
 
 
-        idsCancelar.innerHTML = "";
+        const ids =
+            obtenerIdsAsignaciones();
 
 
-        seleccionados.forEach(
+        if (!ids.length) {
+
+            checkTodasAsignaciones.checked =
+                false;
+
+            return;
+
+        }
+
+
+        checkTodasAsignaciones.checked =
+            ids.every(
+                id =>
+                    seleccionAsignaciones.has(
+                        id
+                    )
+            );
+
+    }
+
+
+
+    function actualizarContadorAsignaciones() {
+
+        const cantidad =
+            seleccionAsignaciones.size;
+
+
+        if (
+            contadorAsignaciones
+        ) {
+
+            contadorAsignaciones.textContent =
+                `${cantidad} seleccionadas`;
+
+        }
+
+
+        if (
+            botonCancelarSeleccionadas
+        ) {
+
+            botonCancelarSeleccionadas.disabled =
+                cantidad === 0;
+
+        }
+
+    }
+
+
+
+    function seleccionarTodasAsignaciones(
+        estado
+    ) {
+
+        const ids =
+            obtenerIdsAsignaciones();
+
+
+        ids.forEach(
             id => {
 
-                const input =
-                    document.createElement(
-                        "input"
+                if (estado) {
+
+                    seleccionAsignaciones.add(
+                        id
                     );
 
-                input.type =
-                    "hidden";
+                } else {
 
-                input.name =
-                    "asignacion_ids[]";
-
-                input.value =
-                    id;
-
-                input.dataset.generated =
-                    "asignacion-id";
-
-                idsCancelar.appendChild(
-                    input
-                );
-
-            }
-        );
-
-    }
-
-
-    /* ======================================================
-       CHECK GENERAL DE ASIGNACIONES
-    ====================================================== */
-
-    if (checkAsignaciones) {
-
-        checkAsignaciones.addEventListener(
-            "change",
-            () => {
-
-                marcarChecks(
-                    checksAsignacion,
-                    checkAsignaciones.checked
-                );
-
-
-                checkAsignaciones.indeterminate =
-                    false;
-
-
-                actualizarCancelacion();
-
-            }
-        );
-
-    }
-
-
-    checksAsignacion.forEach(
-        check => {
-
-            check.addEventListener(
-                "change",
-                () => {
-
-                    actualizarCheckGeneral(
-                        checkAsignaciones,
-                        checksAsignacion
+                    seleccionAsignaciones.delete(
+                        id
                     );
-
-
-                    actualizarCancelacion();
 
                 }
+
+            }
+        );
+
+
+        actualizarChecksAsignaciones();
+
+    }
+
+
+
+    /*
+     * Check principal
+     */
+
+    checkTodasAsignaciones?.addEventListener(
+        "change",
+        () => {
+
+            seleccionarTodasAsignaciones(
+                checkTodasAsignaciones.checked
             );
 
         }
     );
 
 
-    /* ======================================================
-       VALIDAR CANCELACIÓN
-    ====================================================== */
 
-    if (formCancelar) {
+    /*
+     * Botón seleccionar todos
+     */
 
-        formCancelar.addEventListener(
-            "submit",
-            event => {
+    botonTodasAsignaciones?.addEventListener(
+        "click",
+        () => {
 
-                const seleccionados =
-                    obtenerSeleccionados(
-                        checksAsignacion
+            const ids =
+                obtenerIdsAsignaciones();
+
+
+            if (!ids.length) {
+
+                return;
+
+            }
+
+
+            const todasSeleccionadas =
+                ids.every(
+                    id =>
+                        seleccionAsignaciones.has(
+                            id
+                        )
+                );
+
+
+            seleccionarTodasAsignaciones(
+                !todasSeleccionadas
+            );
+
+        }
+    );
+
+
+
+    /*
+     * Checkbox individual.
+     */
+
+    $("#tablaAsignacionesActuales tbody")
+        .on(
+            "change",
+            ".check-asignacion",
+            function () {
+
+                const id =
+                    String(
+                        this.value
                     );
 
 
+                if (this.checked) {
+
+                    seleccionAsignaciones.add(
+                        id
+                    );
+
+                } else {
+
+                    seleccionAsignaciones.delete(
+                        id
+                    );
+
+                }
+
+
+                sincronizarCheckTodasAsignaciones();
+
+                actualizarContadorAsignaciones();
+
+            }
+        );
+
+
+
+    /*
+     * Restaurar checks después
+     * de cada draw de DataTables.
+     */
+
+    if (dtActuales) {
+
+        dtActuales.on(
+            "draw",
+            () => {
+
+                actualizarChecksAsignaciones();
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       CANCELACIÓN MÚLTIPLE
+    ===================================================== */
+
+    const formularioCancelar =
+        document.getElementById(
+            "formCancelarAsignaciones"
+        );
+
+
+    if (formularioCancelar) {
+
+        formularioCancelar.addEventListener(
+            "submit",
+            event => {
+
                 if (
-                    seleccionados.length === 0
+                    seleccionAsignaciones.size === 0
                 ) {
 
                     event.preventDefault();
 
-
                     return;
 
                 }
 
 
-                /*
-                 * Confirmación antes de cancelar.
-                 */
-
-                const confirmar =
-                    window.confirm(
-                        seleccionados.length === 1
-
-                            ? "¿Deseas cancelar la asignación seleccionada?"
-
-                            : `¿Deseas cancelar las ${seleccionados.length} asignaciones seleccionadas?`
+                formularioCancelar
+                    .querySelectorAll(
+                        ".js-asignacion-seleccionada"
+                    )
+                    .forEach(
+                        input =>
+                            input.remove()
                     );
 
 
-                if (!confirmar) {
+                seleccionAsignaciones.forEach(
+                    asignacionId => {
 
-                    event.preventDefault();
-
-                    return;
-
-                }
-
-
-                /*
-                 * Sincronizar nuevamente los IDs
-                 * por seguridad.
-                 */
-
-                if (idsCancelar) {
-
-                    idsCancelar.innerHTML = "";
-
-
-                    seleccionados.forEach(
-                        id => {
-
-                            const input =
-                                document.createElement(
-                                    "input"
-                                );
-
-                            input.type =
-                                "hidden";
-
-                            input.name =
-                                "asignacion_ids[]";
-
-                            input.value =
-                                id;
-
-                            idsCancelar.appendChild(
-                                input
+                        const input =
+                            document.createElement(
+                                "input"
                             );
 
-                        }
-                    );
 
-                }
+                        input.type =
+                            "hidden";
+
+
+                        input.name =
+                            "ids[]";
+
+
+                        input.value =
+                            asignacionId;
+
+
+                        input.className =
+                            "js-asignacion-seleccionada";
+
+
+                        formularioCancelar.appendChild(
+                            input
+                        );
+
+                    }
+                );
 
             }
         );
@@ -533,17 +917,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ======================================================
+
+    /* =====================================================
+       CANCELACIÓN INDIVIDUAL
+    ===================================================== */
+
+    /*
+     * Delegamos el evento para que
+     * DataTables pueda reconstruir
+     * los botones sin perder el evento.
+     */
+
+    $("#tablaAsignacionesActuales tbody")
+        .on(
+            "click",
+            ".btn-cancelar-asignacion",
+            function () {
+
+                const id =
+                    this.dataset.id;
+
+
+                const input =
+                    document.getElementById(
+                        "cancelarAsignacionId"
+                    );
+
+
+                const formulario =
+                    document.getElementById(
+                        "formCancelarIndividual"
+                    );
+
+
+                if (
+                    !id ||
+                    !input ||
+                    !formulario
+                ) {
+
+                    return;
+
+                }
+
+
+                input.value =
+                    id;
+
+
+                formulario.submit();
+
+            }
+        );
+
+
+
+    /* =====================================================
        ESTADO INICIAL
-    ====================================================== */
+    ===================================================== */
 
-    actualizarCheckGeneral(
-        checkTodos,
-        checksJovenes
-    );
+    if (dtPendientes) {
+
+        aplicarSeleccionPendientes();
+
+    }
 
 
-    actualizarCancelacion();
+    if (dtActuales) {
+
+        actualizarChecksAsignaciones();
+
+    }
 
 
 });

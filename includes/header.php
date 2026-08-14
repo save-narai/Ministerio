@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
+
 /* ==========================================================
    BOOTSTRAP
 ========================================================== */
 
 require_once __DIR__ . '/../config/bootstrap.php';
+require_once __DIR__ . '/../services/notificacionService.php';
+require_once __DIR__ . '/../services/sessionService.php';
+
 
 /* ==========================================================
    CONFIGURACIÓN GLOBAL
@@ -14,17 +18,114 @@ require_once __DIR__ . '/../config/bootstrap.php';
 
 $config = $GLOBALS['config'];
 
-$tituloPagina ??= $config['nombre'] ?? 'Ministerio';
+$tituloPagina ??=
+    $config['nombre']
+    ?? 'Ministerio';
 
 $extraCSS ??= '';
 
+$extraJS ??= '';
+
+
+
+/* ==========================================================
+   CSRF PARA JAVASCRIPT
+========================================================== */
+
+$csrfToken =
+    $_SESSION['csrf_token']
+    ?? '';
+
+
+
+/* ==========================================================
+   NOTIFICACIONES DEL USUARIO ACTUAL
+========================================================== */
+
+$usuarioNotificaciones = null;
+
+$totalNotificaciones = 0;
+
+$notificaciones = [];
+
+
+try {
+
+    $usuarioNotificaciones =
+        usuarioId();
+
+
+    if (
+        $usuarioNotificaciones !== null
+        &&
+        $usuarioNotificaciones > 0
+    ) {
+
+        $usuarioNotificaciones =
+            (int)$usuarioNotificaciones;
+
+
+        $totalNotificaciones =
+            contarNotificacionesNoLeidas(
+                $pdo,
+                $usuarioNotificaciones
+            );
+
+
+        $notificaciones =
+            obtenerNotificacionesNoLeidas(
+                $pdo,
+                $usuarioNotificaciones,
+                8
+            );
+
+    }
+
+
+} catch (Throwable $e) {
+
+    /*
+     * El header nunca debe romperse
+     * por un problema con las notificaciones.
+     */
+
+    $usuarioNotificaciones = null;
+
+    $totalNotificaciones = 0;
+
+    $notificaciones = [];
+
+}
+
 ?>
+
+
+
+<!-- ==========================================================
+     VARIABLES GLOBALES PARA JAVASCRIPT
+========================================================== -->
+
+<script>
+
+    window.BASE_URL = <?= json_encode(
+        BASE_URL
+    ) ?>;
+
+    window.CSRF_TOKEN = <?= json_encode(
+        $csrfToken
+    ) ?>;
+
+</script>
+
+
 
 <!DOCTYPE html>
 
 <html lang="es">
 
+
 <head>
+
 
     <!-- ======================================================
        META
@@ -32,20 +133,35 @@ $extraCSS ??= '';
 
     <meta charset="UTF-8">
 
+
+    <meta
+        name="csrf-token"
+        content="<?= htmlspecialchars(
+            $csrfToken,
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
+    >
+
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
+
 
     <meta
         name="description"
         content="Sistema de Seguimiento Ministerial"
     >
 
+
     <meta
         name="author"
         content="Ministerio Remanente"
     >
+
+
 
     <!-- ======================================================
        TITLE
@@ -53,9 +169,15 @@ $extraCSS ??= '';
 
     <title>
 
-        <?= htmlspecialchars($tituloPagina) ?>
+        <?= htmlspecialchars(
+            $tituloPagina,
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>
 
     </title>
+
+
 
     <!-- ======================================================
        FAVICON
@@ -67,14 +189,20 @@ $extraCSS ??= '';
         href="<?= BASE_URL ?>/assets/img/favicon.png"
     >
 
+
+
     <!-- ======================================================
        APP CSS
     ======================================================= -->
 
     <link
         rel="stylesheet"
-        href="<?= BASE_URL ?>/assets/css/app.css?v=<?= filemtime(__DIR__ . '/../assets/css/app.css') ?>"
+        href="<?= BASE_URL ?>/assets/css/app.css?v=<?= filemtime(
+            __DIR__ . '/../assets/css/app.css'
+        ) ?>"
     >
+
+
 
     <!-- ======================================================
        FONT AWESOME
@@ -85,6 +213,8 @@ $extraCSS ??= '';
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     >
 
+
+
     <!-- ======================================================
        GOOGLE FONTS
     ======================================================= -->
@@ -94,16 +224,20 @@ $extraCSS ??= '';
         href="https://fonts.googleapis.com"
     >
 
+
     <link
         rel="preconnect"
         href="https://fonts.gstatic.com"
         crossorigin
     >
 
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
     >
+
+
 
     <!-- ======================================================
        DATATABLES CSS
@@ -114,10 +248,13 @@ $extraCSS ??= '';
         href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"
     >
 
+
     <link
         rel="stylesheet"
         href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"
     >
+
+
 
     <!-- ======================================================
        CSS ADICIONAL DEL MÓDULO
@@ -125,25 +262,38 @@ $extraCSS ??= '';
 
     <?= $extraCSS ?>
 
+
+
     <!-- ======================================================
-       TEMA (ANTES DE CARGAR LA PÁGINA)
+       TEMA
+       Se aplica antes de renderizar la página.
     ======================================================= -->
 
     <script>
 
         (() => {
 
-            const theme = localStorage.getItem('theme');
+            const theme =
+                localStorage.getItem(
+                    'theme'
+                );
 
-            if (theme === 'dark') {
 
-                document.documentElement.classList.add('dark');
+            if (
+                theme === 'dark'
+            ) {
+
+                document.documentElement
+                    .classList
+                    .add('dark');
 
             }
 
         })();
 
     </script>
+
+
 
     <!-- ======================================================
        JQUERY
@@ -154,6 +304,8 @@ $extraCSS ??= '';
         src="https://code.jquery.com/jquery-3.7.1.min.js">
     </script>
 
+
+
     <!-- ======================================================
        DATATABLES
     ======================================================= -->
@@ -163,35 +315,43 @@ $extraCSS ??= '';
         src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
     </script>
 
+
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js">
     </script>
+
 
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
     </script>
 
+
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">
     </script>
+
 
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">
     </script>
 
+
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js">
     </script>
 
+
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js">
     </script>
+
+
 
     <!-- ======================================================
        CHART.JS
@@ -202,6 +362,8 @@ $extraCSS ??= '';
         src="https://cdn.jsdelivr.net/npm/chart.js">
     </script>
 
+
+
     <!-- ======================================================
        COMPONENTES GLOBALES
     ======================================================= -->
@@ -211,264 +373,735 @@ $extraCSS ??= '';
         src="<?= BASE_URL ?>/assets/js/theme.js">
     </script>
 
+
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/datatable.js">
     </script>
+
 
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/datatable-export.js">
     </script>
 
+
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/search.js">
     </script>
+
 
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/filters.js">
     </script>
 
+
     <script
         defer
         src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
     </script>
 
-       <script
-        defer
-        src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-    </script>
+
+   <script
+    defer
+    src="<?= BASE_URL ?>/assets/js/components/gx-alerts.js">
+</script>
+
+<script
+    defer
+    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
+</script>
+
 
     <!-- ======================================================
        JAVASCRIPT ADICIONAL DEL MÓDULO
     ======================================================= -->
 
-    <?= $extraJS ?? '' ?>
+    <?= $extraJS ?>
+
 
 </head>
 
+
+
 <body>
 
-<!-- ======================================================
+
+<!-- ==========================================================
    APP
-====================================================== -->
+========================================================== -->
 
 <div class="app">
 
-    <!-- ==================================================
+
+    <!-- ======================================================
        SIDEBAR
-    =================================================== -->
+    ======================================================= -->
 
     <?php require_once __DIR__ . '/sidebar.php'; ?>
 
-    <!-- ==================================================
+
+
+    <!-- ======================================================
        CONTENIDO PRINCIPAL
-    =================================================== -->
+    ======================================================= -->
 
-<main class="main">
+    <main class="main">
 
-    <!-- ==============================================
-       TOPBAR
-    =============================================== -->
 
-    <header class="topbar topbar-minimal">
 
-        <div class="topbar-right">
+        <!-- ==================================================
+             TOPBAR
+        =================================================== -->
 
-            <button
-                type="button"
-                id="themeToggle"
-                class="theme-toggle"
-                aria-label="Cambiar tema"
-            >
+        <header class="topbar topbar-minimal">
 
-                <i class="fa-solid fa-moon"></i>
 
-            </button>
+            <div class="topbar-right">
+
+
+
+                <!-- ==================================================
+                     NOTIFICACIONES DEL USUARIO
+                =================================================== -->
+
+                <?php if (
+                    $usuarioNotificaciones !== null
+                ): ?>
+
+
+                    <div
+                        class="gx-notifications"
+                        id="gxNotifications"
+                    >
+
+
+                        <!-- ==================================================
+                             BOTÓN DE NOTIFICACIONES
+                        =================================================== -->
+
+                        <button
+                            type="button"
+                            class="gx-notifications__trigger"
+                            id="gxNotificationsTrigger"
+                            aria-label="Notificaciones"
+                            aria-expanded="false"
+                            aria-controls="gxNotificationsMenu"
+                        >
+
+
+                            <i
+                                class="fa-solid fa-bell"
+                            ></i>
+
+
+                            <?php if (
+                                $totalNotificaciones > 0
+                            ): ?>
+
+                                <span
+                                    class="gx-notifications__badge"
+                                    id="gxNotificationsBadge"
+                                >
+
+                                    <?= $totalNotificaciones ?>
+
+                                </span>
+
+                            <?php endif; ?>
+
+
+                        </button>
+
+
+
+                        <!-- ==================================================
+                             MENÚ DE NOTIFICACIONES
+                        =================================================== -->
+
+                        <div
+                            class="gx-notifications__menu"
+                            id="gxNotificationsMenu"
+                            aria-hidden="true"
+                        >
+
+
+                            <!-- ==================================================
+                                 HEADER DEL MENÚ
+                            =================================================== -->
+
+                            <div
+                                class="gx-notifications__header"
+                            >
+
+                                <div>
+
+                                    <h3>
+
+                                        Notificaciones
+
+                                    </h3>
+
+
+                                    <span>
+
+                                        <?= $totalNotificaciones ?>
+
+                                        <?= $totalNotificaciones === 1
+                                            ? 'pendiente'
+                                            : 'pendientes'
+                                        ?>
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- ==================================================
+                                 LISTA
+                            =================================================== -->
+
+                            <div
+                                class="gx-notifications__list"
+                                id="gxNotificationsList"
+                            >
+
+
+                                <?php if (
+                                    !empty(
+                                        $notificaciones
+                                    )
+                                ): ?>
+
+
+                                    <?php foreach (
+                                        $notificaciones
+                                        as $notificacion
+                                    ): ?>
+
+
+                                        <?php
+
+                                        $tipoNotificacion =
+                                            strtoupper(
+                                                trim(
+                                                    (string)(
+                                                        $notificacion[
+                                                            'tipo'
+                                                        ]
+                                                        ?? ''
+                                                    )
+                                                )
+                                            );
+
+
+                                        $iconoNotificacion =
+                                            match (
+                                                $tipoNotificacion
+                                            ) {
+
+                                                'NUEVA_ASIGNACION' =>
+                                                    'fa-user-plus',
+
+                                                'ASIGNACION_EN_PROCESO' =>
+                                                    'fa-play',
+
+                                                'ASIGNACION_COMPLETADA' =>
+                                                    'fa-circle-check',
+
+                                                'ASIGNACION_CANCELADA' =>
+                                                    'fa-circle-xmark',
+
+                                                default =>
+                                                    'fa-bell'
+
+                                            };
+
+                                        ?>
+
+
+                                        <button
+                                            type="button"
+                                            class="gx-notifications__item"
+                                            data-notificacion-id="<?= (int)(
+                                                $notificacion['id']
+                                                ?? 0
+                                            ) ?>"
+                                            data-tipo="<?= e(
+                                                $tipoNotificacion
+                                            ) ?>"
+                                            data-asignacion-id="<?= (int)(
+                                                $notificacion['asignacion_id']
+                                                ?? 0
+                                            ) ?>"
+                                            data-joven-id="<?= (int)(
+                                                $notificacion['joven_id']
+                                                ?? 0
+                                            ) ?>"
+                                        >
+
+
+                                            <!-- ==================================================
+                                                 ICONO
+                                            =================================================== -->
+
+                                            <span
+                                                class="gx-notifications__item-icon"
+                                            >
+
+                                                <i
+                                                    class="fa-solid <?= e(
+                                                        $iconoNotificacion
+                                                    ) ?>"
+                                                ></i>
+
+                                            </span>
+
+
+
+                                            <!-- ==================================================
+                                                 CONTENIDO
+                                            =================================================== -->
+
+                                            <span
+                                                class="gx-notifications__item-content"
+                                            >
+
+
+                                                <strong>
+
+                                                    <?= e(
+                                                        $notificacion[
+                                                            'titulo'
+                                                        ]
+                                                        ?? 'Notificación'
+                                                    ) ?>
+
+                                                </strong>
+
+
+                                                <span>
+
+                                                    <?= e(
+                                                        $notificacion[
+                                                            'mensaje'
+                                                        ]
+                                                        ?? ''
+                                                    ) ?>
+
+                                                </span>
+
+
+                                            </span>
+
+
+                                        </button>
+
+
+                                    <?php endforeach; ?>
+
+
+                                <?php else: ?>
+
+
+                                    <!-- ==================================================
+                                         ESTADO VACÍO
+                                    =================================================== -->
+
+                                    <div
+                                        class="gx-notifications__empty"
+                                    >
+
+                                        <i
+                                            class="fa-regular fa-bell-slash"
+                                        ></i>
+
+
+                                        <p>
+
+                                            No tienes
+                                            notificaciones nuevas.
+
+                                        </p>
+
+                                    </div>
+
+
+                                <?php endif; ?>
+
+
+                            </div>
+
+
+
+                            <!-- ==================================================
+                                 FOOTER
+                            =================================================== -->
+
+                            <div
+                                class="gx-notifications__footer"
+                            >
+
+                                <a
+                                    href="<?= BASE_URL ?>/views/notificaciones/index.php"
+                                >
+
+                                    Ver todas
+
+                                </a>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                <?php endif; ?>
+
+
+
+                <!-- ==================================================
+                     TEMA
+                =================================================== -->
+
+                <button
+                    type="button"
+                    id="themeToggle"
+                    class="theme-toggle"
+                    aria-label="Cambiar tema"
+                >
+
+                    <i
+                        class="fa-solid fa-moon"
+                    ></i>
+
+                </button>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- ==================================================
+             ALERTAS / MENSAJES DEL SISTEMA
+        =================================================== -->
+
+        <div class="gx-alert-container">
+
+
+            <!-- ==================================================
+                 SUCCESS
+            =================================================== -->
+
+            <?php if (
+                $mensaje = getFlash('success')
+            ): ?>
+
+                <div
+                    class="gx-alert gx-alert-success"
+                >
+
+                    <div
+                        class="gx-alert-icon"
+                    >
+
+                        <i
+                            class="fa-solid fa-circle-check"
+                        ></i>
+
+                    </div>
+
+
+                    <div
+                        class="gx-alert-content"
+                    >
+
+                        <h4>
+                            Éxito
+                        </h4>
+
+
+                        <p>
+                            <?= htmlspecialchars(
+                                $mensaje,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="gx-alert-close"
+                        aria-label="Cerrar"
+                    >
+
+                        <i
+                            class="fa-solid fa-xmark"
+                        ></i>
+
+                    </button>
+
+
+                    <div
+                        class="gx-alert-progress"
+                    ></div>
+
+
+                </div>
+
+            <?php endif; ?>
+
+
+
+            <!-- ==================================================
+                 ERROR
+            =================================================== -->
+
+            <?php if (
+                $mensaje = getFlash('error')
+            ): ?>
+
+                <div
+                    class="gx-alert gx-alert-error"
+                >
+
+                    <div
+                        class="gx-alert-icon"
+                    >
+
+                        <i
+                            class="fa-solid fa-circle-xmark"
+                        ></i>
+
+                    </div>
+
+
+                    <div
+                        class="gx-alert-content"
+                    >
+
+                        <h4>
+                            Error
+                        </h4>
+
+
+                        <p>
+                            <?= htmlspecialchars(
+                                $mensaje,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="gx-alert-close"
+                        aria-label="Cerrar"
+                    >
+
+                        <i
+                            class="fa-solid fa-xmark"
+                        ></i>
+
+                    </button>
+
+
+                    <div
+                        class="gx-alert-progress"
+                    ></div>
+
+
+                </div>
+
+            <?php endif; ?>
+
+
+
+            <!-- ==================================================
+                 WARNING
+            =================================================== -->
+
+            <?php if (
+                $mensaje = getFlash('warning')
+            ): ?>
+
+                <div
+                    class="gx-alert gx-alert-warning"
+                >
+
+                    <div
+                        class="gx-alert-icon"
+                    >
+
+                        <i
+                            class="fa-solid fa-triangle-exclamation"
+                        ></i>
+
+                    </div>
+
+
+                    <div
+                        class="gx-alert-content"
+                    >
+
+                        <h4>
+                            Advertencia
+                        </h4>
+
+
+                        <p>
+                            <?= htmlspecialchars(
+                                $mensaje,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="gx-alert-close"
+                        aria-label="Cerrar"
+                    >
+
+                        <i
+                            class="fa-solid fa-xmark"
+                        ></i>
+
+                    </button>
+
+
+                    <div
+                        class="gx-alert-progress"
+                    ></div>
+
+
+                </div>
+
+            <?php endif; ?>
+
+
+
+            <!-- ==================================================
+                 INFO
+            =================================================== -->
+
+            <?php if (
+                $mensaje = getFlash('info')
+            ): ?>
+
+                <div
+                    class="gx-alert gx-alert-info"
+                >
+
+                    <div
+                        class="gx-alert-icon"
+                    >
+
+                        <i
+                            class="fa-solid fa-circle-info"
+                        ></i>
+
+                    </div>
+
+
+                    <div
+                        class="gx-alert-content"
+                    >
+
+                        <h4>
+                            Información
+                        </h4>
+
+
+                        <p>
+                            <?= htmlspecialchars(
+                                $mensaje,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="gx-alert-close"
+                        aria-label="Cerrar"
+                    >
+
+                        <i
+                            class="fa-solid fa-xmark"
+                        ></i>
+
+                    </button>
+
+
+                    <div
+                        class="gx-alert-progress"
+                    ></div>
+
+
+                </div>
+
+            <?php endif; ?>
+
 
         </div>
 
-    </header>
-<!-- ==============================================
-   NOTIFICACIONES
-=============================================== -->
 
-<div class="gx-alert-container">
 
-<?php if ($mensaje = getFlash('success')): ?>
-
-    <div class="gx-alert gx-alert-success">
-
-        <div class="gx-alert-icon">
-
-            <i class="fa-solid fa-circle-check"></i>
-
-        </div>
-
-        <div class="gx-alert-content">
-
-            <h4>Éxito</h4>
-
-            <p><?= htmlspecialchars($mensaje) ?></p>
-
-        </div>
-
-        <button
-            type="button"
-            class="gx-alert-close"
-            aria-label="Cerrar"
-        >
-
-            <i class="fa-solid fa-xmark"></i>
-
-        </button>
-
-        <div class="gx-alert-progress"></div>
-
-    </div>
-
-<?php endif; ?>
-
-
-<?php if ($mensaje = getFlash('error')): ?>
-
-    <div class="gx-alert gx-alert-error">
-
-        <div class="gx-alert-icon">
-
-            <i class="fa-solid fa-circle-xmark"></i>
-
-        </div>
-
-        <div class="gx-alert-content">
-
-            <h4>Error</h4>
-
-            <p><?= htmlspecialchars($mensaje) ?></p>
-
-        </div>
-
-        <button
-            type="button"
-            class="gx-alert-close"
-            aria-label="Cerrar"
-        >
-
-            <i class="fa-solid fa-xmark"></i>
-
-        </button>
-
-        <div class="gx-alert-progress"></div>
-
-    </div>
-
-<?php endif; ?>
-
-
-<?php if ($mensaje = getFlash('warning')): ?>
-
-    <div class="gx-alert gx-alert-warning">
-
-        <div class="gx-alert-icon">
-
-            <i class="fa-solid fa-triangle-exclamation"></i>
-
-        </div>
-
-        <div class="gx-alert-content">
-
-            <h4>Advertencia</h4>
-
-            <p><?= htmlspecialchars($mensaje) ?></p>
-
-        </div>
-
-        <button
-            type="button"
-            class="gx-alert-close"
-            aria-label="Cerrar"
-        >
-
-            <i class="fa-solid fa-xmark"></i>
-
-        </button>
-
-        <div class="gx-alert-progress"></div>
-
-    </div>
-
-<?php endif; ?>
-
-
-<?php if ($mensaje = getFlash('info')): ?>
-
-    <div class="gx-alert gx-alert-info">
-
-        <div class="gx-alert-icon">
-
-            <i class="fa-solid fa-circle-info"></i>
-
-        </div>
-
-        <div class="gx-alert-content">
-
-            <h4>Información</h4>
-
-            <p><?= htmlspecialchars($mensaje) ?></p>
-
-        </div>
-
-        <button
-            type="button"
-            class="gx-alert-close"
-            aria-label="Cerrar"
-        >
-
-            <i class="fa-solid fa-xmark"></i>
-
-        </button>
-
-        <div class="gx-alert-progress"></div>
-
-    </div>
-
-<?php endif; ?>
-
-</div>
-
-            <!-- ==============================================
-               INICIO DEL CONTENIDO DE LA VISTA
-            =============================================== -->
-
-            <?php
-
-            /*
-            |--------------------------------------------------
-            | A partir de este punto comienza el contenido
-            | específico de cada módulo.
-            |
-            | Dashboard
-            | Usuarios
-            | Roles
-            | Jóvenes
-            | Reuniones
-            | Seguimientos
-            | Configuración
-            |
-            | El cierre de:
-            |
-            | </section>
-            | </main>
-            | </div>
-            | </body>
-            | </html>
-            |
-            | se encuentra en:
-            |
-            | includes/footer.php
-            |--------------------------------------------------
-            */
-
-            ?>
+        <!-- ======================================================
+             INICIO DEL CONTENIDO DE LA VISTA
+        ======================================================= -->
+
+        <?php
+
+        /*
+        |--------------------------------------------------
+        | A partir de este punto comienza el contenido
+        | específico de cada módulo.
+        |
+        | Dashboard
+        | Usuarios
+        | Roles
+        | Jóvenes
+        | Reuniones
+        | Seguimientos
+        | Configuración
+        |
+        | El cierre de:
+        |
+        | </section>
+        | </main>
+        | </div>
+        | </body>
+        | </html>
+        |
+        | se encuentra en:
+        |
+        | includes/footer.php
+        |--------------------------------------------------
+        */
+
+        ?>

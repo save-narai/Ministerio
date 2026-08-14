@@ -1,46 +1,297 @@
 <?php
 
 declare(strict_types=1);
+
 require_once __DIR__ . '/controller.php';
 require_once __DIR__ . '/../services/sessionService.php';
 require_once __DIR__ . '/../services/asignacionSeguimientoService.php';
 
+
+/* ==========================================================
+   INICIALIZAR
+========================================================== */
+
 controllerInit();
 
-$pdo = controllerPdo();
+$pdo =
+    controllerPdo();
 
-/*
-|--------------------------------------------------------------------------
-| CONTROLADOR DE ASIGNACIONES DE SEGUIMIENTO
-|--------------------------------------------------------------------------
-|
-| Gestiona:
-|
-| - Crear una asignación individual.
-| - Asignar varios jóvenes a un usuario.
-| - Iniciar una asignación.
-| - Completar una asignación.
-| - Cancelar una asignación.
-|
-*/
 
+/* ==========================================================
+   VALIDAR ASIGNACIÓN CANCELADA
+========================================================== */
+
+function validarAsignacionCanceladaParaEliminar(
+    PDO $pdo,
+    int $id
+): array {
+
+    if ($id <= 0) {
+
+        throw new Exception(
+            'Asignación inválida.'
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT
+
+            id,
+
+            joven_id,
+
+            estado
+
+        FROM asignaciones_seguimiento
+
+        WHERE id = :id
+
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+
+        ':id' =>
+            $id
+
+    ]);
+
+    $asignacion =
+        $stmt->fetch(
+            PDO::FETCH_ASSOC
+        );
+
+    if (!$asignacion) {
+
+        throw new Exception(
+            'La asignación no existe.'
+        );
+    }
+
+    $estado =
+        strtoupper(
+            trim(
+                (string)(
+                    $asignacion['estado']
+                    ?? ''
+                )
+            )
+        );
+
+    if ($estado !== 'CANCELADO') {
+
+        throw new Exception(
+            'Solo se pueden eliminar asignaciones canceladas.'
+        );
+    }
+
+    return $asignacion;
+}
+
+
+/* ==========================================================
+   ELIMINAR CANCELADA
+========================================================== */
+
+function eliminarAsignacionCancelada(
+    PDO $pdo,
+    int $id
+): void {
+
+    exigirPermiso(
+        'asignar_seguimientos'
+    );
+
+    validarAsignacionCanceladaParaEliminar(
+        $pdo,
+        $id
+    );
+
+    $transaccionPropia =
+        !$pdo->inTransaction();
+
+    if ($transaccionPropia) {
+
+        $pdo->beginTransaction();
+    }
+
+    try {
+
+        /*
+         * Primero eliminamos las notificaciones
+         * relacionadas con esta asignación.
+         */
+
+        $stmt = $pdo->prepare("
+            DELETE FROM notificaciones
+
+            WHERE asignacion_id = :asignacion_id
+        ");
+
+        $stmt->execute([
+
+            ':asignacion_id' =>
+                $id
+
+        ]);
+
+        /*
+         * Después eliminamos la asignación.
+         */
+
+        $stmt = $pdo->prepare("
+            DELETE FROM asignaciones_seguimiento
+
+            WHERE id = :id
+
+            AND estado = 'CANCELADO'
+        ");
+
+        $stmt->execute([
+
+            ':id' =>
+                $id
+
+        ]);
+
+        if (
+            $stmt->rowCount() === 0
+        ) {
+
+            throw new Exception(
+                'No se pudo eliminar la asignación cancelada.'
+            );
+        }
+
+        if ($transaccionPropia) {
+
+            $pdo->commit();
+        }
+
+    } catch (Throwable $e) {
+
+        if (
+            $transaccionPropia &&
+            $pdo->inTransaction()
+        ) {
+
+            $pdo->rollBack();
+        }
+
+        throw $e;
+    }
+}
+
+
+/* ==========================================================
+   ELIMINAR VARIAS CANCELADAS
+========================================================== */
+
+function eliminarAsignacionesCanceladas(
+    PDO $pdo,
+    array $ids
+): int {
+
+    exigirPermiso(
+        'asignar_seguimientos'
+    );
+
+    $ids =
+        array_values(
+
+            array_unique(
+
+                array_filter(
+
+                    array_map(
+                        'intval',
+                        $ids
+                    ),
+
+                    static fn ($id) =>
+                        $id > 0
+
+                )
+            )
+        );
+
+    if (empty($ids)) {
+
+        throw new Exception(
+            'Debes seleccionar al menos una asignación cancelada.'
+        );
+    }
+
+    $transaccionPropia =
+        !$pdo->inTransaction();
+
+    if ($transaccionPropia) {
+
+        $pdo->beginTransaction();
+    }
+
+    try {
+
+        $cantidad = 0;
+
+        foreach ($ids as $id) {
+
+            eliminarAsignacionCancelada(
+                $pdo,
+                $id
+            );
+
+            $cantidad++;
+        }
+
+        if ($transaccionPropia) {
+
+            $pdo->commit();
+        }
+
+        return $cantidad;
+
+    } catch (Throwable $e) {
+
+        if (
+            $transaccionPropia &&
+            $pdo->inTransaction()
+        ) {
+
+            $pdo->rollBack();
+        }
+
+        throw $e;
+    }
+}
+
+
+/* ==========================================================
+   CONTROLLER
+========================================================== */
 
 controllerRun(
 
     [
 
-        /* ==================================================
-           CREAR ASIGNACIÓN INDIVIDUAL
-        ================================================== */
+        /* ======================================================
+           ASIGNAR UN JOVEN
+        ====================================================== */
 
         'crear_asignacion' => function () use ($pdo) {
 
             $usuarioActual =
-                (int)(
-                    $_SESSION['usuario']['id']
-                    ?? $_SESSION['user_id']
-                    ?? 0
+                usuarioId();
+
+            if (
+                $usuarioActual === null ||
+                $usuarioActual <= 0
+            ) {
+
+                throw new Exception(
+                    'No se pudo identificar al usuario actual.'
                 );
+            }
 
             $jovenId =
                 (int)(
@@ -70,7 +321,6 @@ controllerRun(
                 $_POST['observaciones']
                 ?? null;
 
-
             crearAsignacionSeguimiento(
 
                 $pdo,
@@ -79,7 +329,7 @@ controllerRun(
 
                 $usuarioId,
 
-                $usuarioActual,
+                (int)$usuarioActual,
 
                 $anio,
 
@@ -89,201 +339,147 @@ controllerRun(
 
             );
 
-
             return controllerRedirect(
 
-                '../views/seguimientos/asignaciones.php',
+                '../views/seguimientos/asignaciones.php'
+                . '?anio='
+                . $anio
+                . '&mes='
+                . $mes,
 
                 'Asignación creada correctamente.'
 
             );
-
         },
 
 
-/* ==================================================
-   ASIGNAR VARIOS JÓVENES
-================================================== */
+        /* ======================================================
+           ASIGNAR VARIOS JÓVENES
+        ====================================================== */
 
-'asignar_jovenes' => function () use ($pdo) {
+        'asignar_jovenes' => function () use ($pdo) {
 
-    /* ==========================================
-       USUARIO ACTUAL
-    ========================================== */
+            $usuarioActual =
+                usuarioId();
 
-    $usuarioActual = usuarioId();
+            if (
+                $usuarioActual === null ||
+                $usuarioActual <= 0
+            ) {
 
-    if (
-        $usuarioActual === null ||
-        $usuarioActual <= 0
-    ) {
+                throw new Exception(
+                    'No se pudo identificar al usuario actual.'
+                );
+            }
 
-        throw new Exception(
-            'No se pudo identificar al usuario actual.'
-        );
+            $usuarioId =
+                (int)(
+                    $_POST['usuario_id']
+                    ?? 0
+                );
 
-    }
+            $anio =
+                (int)(
+                    $_POST['anio']
+                    ?? date('Y')
+                );
 
-    $usuarioActual = (int)$usuarioActual;
+            $mes =
+                (int)(
+                    $_POST['mes']
+                    ?? date('m')
+                );
 
+            $jovenes =
+                $_POST['joven_ids']
+                ?? [];
 
-    /* ==========================================
-       USUARIO RESPONSABLE
-    ========================================== */
+            if (!is_array($jovenes)) {
 
-    $usuarioId = (int)(
-        $_POST['usuario_id']
-        ?? 0
-    );
-
-
-    /* ==========================================
-       PERÍODO
-    ========================================== */
-
-    $anio = (int)(
-        $_POST['anio']
-        ?? date('Y')
-    );
-
-    $mes = (int)(
-        $_POST['mes']
-        ?? date('m')
-    );
-
-
-    /* ==========================================
-       JÓVENES SELECCIONADOS
-    ========================================== */
-
-    $jovenes =
-        $_POST['joven_ids']
-        ?? [];
-
-
-    if (!is_array($jovenes)) {
-
-        $jovenes = [
-
-            $jovenes
-
-        ];
-
-    }
-
-
-    
-
-
-    /* ==========================================
-       LIMPIAR IDS
-    ========================================== */
-
-    $jovenes = array_values(
-
-        array_unique(
-
-            array_filter(
-
-                array_map(
-                    'intval',
+                $jovenes = [
                     $jovenes
-                ),
+                ];
+            }
 
-                fn ($id) =>
-                    $id > 0
+            $jovenes =
+                array_values(
 
-            )
+                    array_unique(
 
-        )
+                        array_filter(
 
-    );
+                            array_map(
+                                'intval',
+                                $jovenes
+                            ),
 
+                            static fn ($id) =>
+                                $id > 0
 
-    /* ==========================================
-       VALIDAR SELECCIÓN
-    ========================================== */
+                        )
+                    )
+                );
 
-    if (empty($jovenes)) {
+            if (empty($jovenes)) {
 
-        throw new Exception(
-            'Debes seleccionar al menos un joven.'
-        );
+                throw new Exception(
+                    'Debes seleccionar al menos un joven.'
+                );
+            }
 
-    }
-
-
-    /* ==========================================
-       TRANSACCIÓN
-    ========================================== */
-
-    $pdo->beginTransaction();
-
-    try {
-
-        $cantidad = 0;
-
-
-        foreach ($jovenes as $jovenId) {
-
-            crearAsignacionSeguimiento(
-
-                $pdo,
-
-                $jovenId,
-
-                $usuarioId,
-
-                $usuarioActual,
-
-                $anio,
-
-                $mes,
-
+            $observaciones =
                 $_POST['observaciones']
-                    ?? null
+                ?? null;
+
+            $cantidad = 0;
+
+            foreach (
+                $jovenes as $jovenId
+            ) {
+
+                crearAsignacionSeguimiento(
+
+                    $pdo,
+
+                    $jovenId,
+
+                    $usuarioId,
+
+                    (int)$usuarioActual,
+
+                    $anio,
+
+                    $mes,
+
+                    $observaciones
+
+                );
+
+                $cantidad++;
+            }
+
+            return controllerRedirect(
+
+                '../views/seguimientos/asignaciones.php'
+                . '?anio='
+                . $anio
+                . '&mes='
+                . $mes,
+
+                $cantidad === 1
+
+                    ? 'Joven asignado correctamente.'
+
+                    : $cantidad
+                        . ' jóvenes asignados correctamente.'
 
             );
-
-            $cantidad++;
-
-        }
+        },
 
 
-        $pdo->commit();
-
-
-        return controllerRedirect(
-
-            '../views/seguimientos/asignaciones.php',
-
-            $cantidad === 1
-
-                ? 'Joven asignado correctamente.'
-
-                : $cantidad .
-                    ' jóvenes asignados correctamente.'
-
-        );
-
-
-    } catch (Throwable $e) {
-
-        if ($pdo->inTransaction()) {
-
-            $pdo->rollBack();
-
-        }
-
-        throw $e;
-
-    }
-
-},
-
-        /* ==================================================
+        /* ======================================================
            INICIAR ASIGNACIÓN
-        ================================================== */
+        ====================================================== */
 
         'iniciar_asignacion' => function () use ($pdo) {
 
@@ -293,15 +489,10 @@ controllerRun(
                     ?? 0
                 );
 
-
             iniciarAsignacionSeguimiento(
-
                 $pdo,
-
                 $id
-
             );
-
 
             return controllerRedirect(
 
@@ -310,46 +501,12 @@ controllerRun(
                 'Seguimiento marcado como en proceso.'
 
             );
-
         },
 
 
-        /* ==================================================
-           COMPLETAR ASIGNACIÓN
-        ================================================== */
-
-        'completar_asignacion' => function () use ($pdo) {
-
-            $id =
-                (int)(
-                    $_POST['id']
-                    ?? 0
-                );
-
-
-            completarAsignacionSeguimiento(
-
-                $pdo,
-
-                $id
-
-            );
-
-
-            return controllerRedirect(
-
-                '../views/seguimientos/mis-seguimientos.php',
-
-                'Asignación completada correctamente.'
-
-            );
-
-        },
-
-
-        /* ==================================================
-           CANCELAR ASIGNACIÓN
-        ================================================== */
+        /* ======================================================
+           CANCELAR UNA
+        ====================================================== */
 
         'cancelar_asignacion' => function () use ($pdo) {
 
@@ -359,15 +516,10 @@ controllerRun(
                     ?? 0
                 );
 
-
             cancelarAsignacionSeguimiento(
-
                 $pdo,
-
                 $id
-
             );
-
 
             return controllerRedirect(
 
@@ -376,51 +528,184 @@ controllerRun(
                 'Asignación cancelada correctamente.'
 
             );
-
         },
+
+
+        /* ======================================================
+           CANCELAR VARIAS
+        ====================================================== */
 
         'cancelar_asignaciones' => function () use ($pdo) {
 
-            $asignaciones = $_POST['asignacion_ids'] ?? [];
+            $ids =
+                $_POST['ids']
+                ?? [];
 
-            if (!is_array($asignaciones)) {
-                $asignaciones = [$asignaciones];
+            if (!is_array($ids)) {
+
+                $ids = [
+                    $ids
+                ];
             }
 
-            // Limpiar ids
-            $asignaciones = array_values(array_unique(array_filter(array_map('intval', $asignaciones), fn($id) => $id > 0)));
+            $ids =
+                array_values(
 
-            if (empty($asignaciones)) {
-                throw new Exception('Debes seleccionar al menos una asignación.');
-            }
+                    array_unique(
 
-            $pdo->beginTransaction();
+                        array_filter(
 
-            try {
-                $cantidad = 0;
+                            array_map(
+                                'intval',
+                                $ids
+                            ),
 
-                foreach ($asignaciones as $id) {
-                    cancelarAsignacionSeguimiento($pdo, $id);
-                    $cantidad++;
-                }
+                            static fn ($id) =>
+                                $id > 0
 
-                $pdo->commit();
-
-                return controllerRedirect(
-                    '../views/seguimientos/asignaciones.php',
-                    $cantidad === 1
-                        ? 'Asignación cancelada correctamente.'
-                        : $cantidad . ' asignación(es) cancelada(s) correctamente.'
+                        )
+                    )
                 );
 
-            } catch (Throwable $e) {
-                if ($pdo->inTransaction()) {
-                    $pdo->rollBack();
-                }
-                throw $e;
+            if (empty($ids)) {
+
+                throw new Exception(
+                    'Debes seleccionar al menos una asignación.'
+                );
             }
 
-        }
+            $cantidad = 0;
+
+            foreach ($ids as $id) {
+
+                cancelarAsignacionSeguimiento(
+                    $pdo,
+                    $id
+                );
+
+                $cantidad++;
+            }
+
+            return controllerRedirect(
+
+                '../views/seguimientos/asignaciones.php',
+
+                $cantidad === 1
+
+                    ? 'Asignación cancelada correctamente.'
+
+                    : $cantidad
+                        . ' asignaciones canceladas correctamente.'
+
+            );
+        },
+
+
+        /* ======================================================
+           ELIMINAR UNA CANCELADA
+        ====================================================== */
+
+        'eliminar_asignacion_cancelada' =>
+            function () use ($pdo) {
+
+                $id =
+                    (int)(
+                        $_POST['id']
+                        ?? 0
+                    );
+
+                $anio =
+                    (int)(
+                        $_POST['anio']
+                        ?? date('Y')
+                    );
+
+                $mes =
+                    (int)(
+                        $_POST['mes']
+                        ?? date('m')
+                    );
+
+                eliminarAsignacionCancelada(
+                    $pdo,
+                    $id
+                );
+
+                return controllerRedirect(
+
+                    '../views/seguimientos/asignaciones.php'
+                    . '?anio='
+                    . $anio
+                    . '&mes='
+                    . $mes,
+
+                    'Asignación cancelada eliminada correctamente.'
+
+                );
+            },
+
+
+        /* ======================================================
+           ELIMINAR VARIAS CANCELADAS
+        ====================================================== */
+
+        'eliminar_asignaciones_canceladas' =>
+            function () use ($pdo) {
+
+                $ids =
+                    $_POST['ids']
+                    ?? [];
+
+                $anio =
+                    (int)(
+                        $_POST['anio']
+                        ?? date('Y')
+                    );
+
+                $mes =
+                    (int)(
+                        $_POST['mes']
+                        ?? date('m')
+                    );
+
+                if (!is_array($ids)) {
+
+                    $ids = [
+                        $ids
+                    ];
+                }
+
+                $cantidad =
+                    eliminarAsignacionesCanceladas(
+                        $pdo,
+                        $ids
+                    );
+
+                return controllerRedirect(
+
+                    '../views/seguimientos/asignaciones.php'
+                    . '?anio='
+                    . $anio
+                    . '&mes='
+                    . $mes,
+
+                    $cantidad === 1
+
+                        ? 'Asignación cancelada eliminada correctamente.'
+
+                        : $cantidad
+                            . ' asignaciones canceladas eliminadas correctamente.'
+
+                );
+            }
+
+    ],
+
+    [
+
+        'redirect' =>
+            '../views/seguimientos/asignaciones.php'
 
     ]
+
 );

@@ -6991,266 +6991,387 @@ html.dark .seguimientos-page .gx-timeline__content .estado.excepcion {
   color: #f59e0b;
 }
 
-/* ==========================================================
-   ASIGNACIONES - ESTRUCTURA GENERAL
-========================================================== */
-.seguimientos-page {
-  /* ------------------------------------------------------
-     BLOQUES SEPARADOS
-  ------------------------------------------------------ */
+/* =========================================================
+   ASIGNACIONES DE SEGUIMIENTO
+========================================================= */
+.asignaciones-page {
+  /* =====================================================
+     HEADER
+  ===================================================== */
 }
-.seguimientos-page .asignaciones-card {
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
+.asignaciones-page .page-header {
+  align-items: center;
 }
-.seguimientos-page .asignaciones-card + .asignaciones-card {
-  margin-top: 28px;
+.asignaciones-page .page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.seguimientos-page .asignaciones-card--historial {
-  margin-top: 32px;
+.asignaciones-page {
+  /* =====================================================
+     FILTRO
+  ===================================================== */
 }
-.seguimientos-page {
-  /* ------------------------------------------------------
-     TABLA
-  ------------------------------------------------------ */
+.asignaciones-page .asignaciones-filtro-card {
+  border-radius: 24px;
 }
-.seguimientos-page .asignaciones-tabla,
-.seguimientos-page .asignaciones-tabla .table-responsive {
-  width: 100%;
+.asignaciones-page {
+  /* =====================================================
+     SECCIONES
+  ===================================================== */
 }
-.seguimientos-page .asignaciones-tabla .gx-table,
-.seguimientos-page #tablaAsignaciones,
-.seguimientos-page #tablaAsignacionesActuales {
-  width: 100%;
-  min-width: 900px;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+.asignaciones-page .asignaciones-section {
+  margin-bottom: 0;
 }
-.seguimientos-page {
-  /* ------------------------------------------------------
-     CABECERA
-  ------------------------------------------------------ */
+.asignaciones-page {
+  /* =====================================================
+     TARJETA FORMULARIO
+  ===================================================== */
 }
-.seguimientos-page #tablaAsignaciones thead th,
-.seguimientos-page #tablaAsignacionesActuales thead th {
-  padding: 16px 18px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  vertical-align: middle;
+.asignaciones-page .asignaciones-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
 }
-.seguimientos-page {
-  /* ------------------------------------------------------
-     FILAS
-  ------------------------------------------------------ */
+.asignaciones-page .asignaciones-form-card .section-header {
+  margin-bottom: 22px;
 }
-.seguimientos-page #tablaAsignaciones tbody td,
-.seguimientos-page #tablaAsignacionesActuales tbody td {
-  padding: 15px 18px;
-  vertical-align: middle;
-  font-size: 0.92rem;
-  line-height: 1.4;
+.asignaciones-page .asignaciones-form-card .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
-.seguimientos-page {
-  /* ======================================================
-     TABLA JÓVENES PENDIENTES
-  ====================================================== */
+.asignaciones-page {
+  /* =====================================================
+     TARJETA TABLA
+  ===================================================== */
 }
-.seguimientos-page #tablaAsignaciones th:nth-child(1),
-.seguimientos-page #tablaAsignaciones td:nth-child(1) {
-  width: 64px !important;
-  min-width: 64px !important;
-  max-width: 64px !important;
-  text-align: center;
+.asignaciones-page .asignaciones-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
-.seguimientos-page #tablaAsignaciones th:nth-child(2),
-.seguimientos-page #tablaAsignaciones td:nth-child(2) {
-  width: 38% !important;
-  text-align: left;
+.asignaciones-page {
+  /* =====================================================
+     TOOLBAR
+  ===================================================== */
 }
-.seguimientos-page #tablaAsignaciones th:nth-child(3),
-.seguimientos-page #tablaAsignaciones td:nth-child(3) {
-  width: 18% !important;
-  text-align: center;
+.asignaciones-page .asignaciones-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
-.seguimientos-page #tablaAsignaciones th:nth-child(4),
-.seguimientos-page #tablaAsignaciones td:nth-child(4) {
-  width: 25% !important;
-  text-align: center;
+.asignaciones-page .asignaciones-toolbar .search-wrapper {
+  flex: 1 1 280px;
+  min-width: 220px;
 }
-.seguimientos-page #tablaAsignaciones th:nth-child(5),
-.seguimientos-page #tablaAsignaciones td:nth-child(5) {
-  width: 18% !important;
-  text-align: center;
+.asignaciones-page {
+  /* =====================================================
+     TABLAS
+  ===================================================== */
 }
-.seguimientos-page {
-  /* ======================================================
-     TABLA ASIGNACIONES EXISTENTES
-  ====================================================== */
+.asignaciones-page #tablaAsignaciones,
+.asignaciones-page #tablaAsignacionesActuales {
+  width: 100% !important;
+  table-layout: auto;
 }
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(1),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(1) {
-  width: 64px !important;
-  min-width: 64px !important;
-  max-width: 64px !important;
-  text-align: center;
+.asignaciones-page {
+  /* =====================================================
+     CHECKBOX
+  ===================================================== */
 }
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(2),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(2) {
-  width: 32% !important;
-  text-align: left;
+.asignaciones-page #tablaAsignaciones th:first-child,
+.asignaciones-page #tablaAsignaciones td:first-child,
+.asignaciones-page #tablaAsignacionesActuales th:first-child,
+.asignaciones-page #tablaAsignacionesActuales td:first-child {
+  width: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+  text-align: center !important;
 }
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(3),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(3) {
-  width: 20% !important;
-  text-align: center;
+.asignaciones-page {
+  /* =====================================================
+     NOMBRES
+  ===================================================== */
 }
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(4),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(4) {
-  width: 16% !important;
-  text-align: center;
-}
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(5),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(5) {
-  width: 18% !important;
-  text-align: center;
-}
-.seguimientos-page #tablaAsignacionesActuales th:nth-child(6),
-.seguimientos-page #tablaAsignacionesActuales td:nth-child(6) {
-  width: 14% !important;
-  text-align: center;
-}
-.seguimientos-page {
-  /* ------------------------------------------------------
-     NOMBRE
-  ------------------------------------------------------ */
-}
-.seguimientos-page #tablaAsignaciones .seguimiento-nombre,
-.seguimientos-page #tablaAsignacionesActuales .seguimiento-nombre {
+.asignaciones-page #tablaAsignaciones .seguimiento-nombre,
+.asignaciones-page #tablaAsignacionesActuales .seguimiento-nombre {
   display: block;
-  font-size: 0.93rem;
-  font-weight: 700;
+  min-width: 180px;
   line-height: 1.35;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
-.seguimientos-page {
-  /* ======================================================
-     CHECKBOX
-  ====================================================== */
+.asignaciones-page {
+  /* =====================================================
+     CELDAS
+  ===================================================== */
 }
-.seguimientos-page .check-joven,
-.seguimientos-page .check-asignacion,
-.seguimientos-page #checkTodos,
-.seguimientos-page #checkAsignaciones {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  border-radius: 6px;
-  border: 1.5px solid #cbd5e1;
-  background: #ffffff;
-  display: inline-grid;
-  place-content: center;
-  cursor: pointer;
-  vertical-align: middle;
-  margin: 0;
-  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+.asignaciones-page #tablaAsignaciones td,
+.asignaciones-page #tablaAsignacionesActuales td {
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
-.seguimientos-page .check-joven::before,
-.seguimientos-page .check-asignacion::before,
-.seguimientos-page #checkTodos::before,
-.seguimientos-page #checkAsignaciones::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  transform: scale(0);
-  transition: transform 0.15s ease;
-  background: currentColor;
+.asignaciones-page {
+  /* =====================================================
+     ACCIÓN
+  ===================================================== */
 }
-.seguimientos-page .check-joven:checked,
-.seguimientos-page .check-asignacion:checked,
-.seguimientos-page #checkTodos:checked,
-.seguimientos-page #checkAsignaciones:checked {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #ffffff;
-  box-shadow: 0 5px 14px rgba(255, 95, 46, 0.2);
-}
-.seguimientos-page .check-joven:checked::before,
-.seguimientos-page .check-asignacion:checked::before,
-.seguimientos-page #checkTodos:checked::before,
-.seguimientos-page #checkAsignaciones:checked::before {
-  transform: scale(1);
-}
-.seguimientos-page .check-joven:hover,
-.seguimientos-page .check-asignacion:hover,
-.seguimientos-page #checkTodos:hover,
-.seguimientos-page #checkAsignaciones:hover {
-  border-color: var(--primary);
-  transform: scale(1.04);
-}
-.seguimientos-page {
-  /* ------------------------------------------------------
-     DARK MODE CHECKBOX
-  ------------------------------------------------------ */
-}
-html.dark .seguimientos-page .check-joven,
-html.dark .seguimientos-page .check-asignacion,
-html.dark .seguimientos-page #checkTodos,
-html.dark .seguimientos-page #checkAsignaciones {
-  background: #111827;
-  border-color: rgba(255, 255, 255, 0.18);
-}
-html.dark .seguimientos-page .check-joven:checked,
-html.dark .seguimientos-page .check-asignacion:checked,
-html.dark .seguimientos-page #checkTodos:checked,
-html.dark .seguimientos-page #checkAsignaciones:checked {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #07111f;
-}
-.seguimientos-page {
-  /* ------------------------------------------------------
-     CELDA DEL CHECKBOX
-  ------------------------------------------------------ */
-}
-.seguimientos-page #tablaAsignaciones td:first-child,
-.seguimientos-page #tablaAsignaciones th:first-child,
-.seguimientos-page #tablaAsignacionesActuales td:first-child,
-.seguimientos-page #tablaAsignacionesActuales th:first-child {
-  padding-left: 12px;
-  padding-right: 12px;
-  text-align: center;
-}
-.seguimientos-page {
-  /* ------------------------------------------------------
-     BADGES
-  ------------------------------------------------------ */
-}
-.seguimientos-page #tablaAsignaciones .badge,
-.seguimientos-page #tablaAsignacionesActuales .badge {
+.asignaciones-page #tablaAsignacionesActuales td:last-child {
   white-space: nowrap;
-  font-size: 0.75rem;
 }
-.seguimientos-page {
-  /* ------------------------------------------------------
-     RESPONSIVE
-  ------------------------------------------------------ */
+.asignaciones-page #tablaAsignacionesActuales .btn {
+  white-space: nowrap;
 }
-@media (max-width: 900px) {
-  .seguimientos-page #tablaAsignaciones,
-  .seguimientos-page #tablaAsignacionesActuales {
-    min-width: 850px;
-  }
+.asignaciones-page {
+  /* =====================================================
+     SELECCIÓN
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-seleccion-info {
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+.asignaciones-page {
+  /* =====================================================
+     ESTADO VACÍO
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-empty {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+.asignaciones-page .asignaciones-empty i {
+  font-size: 42px;
+  margin-bottom: 14px;
+  color: var(--primary);
+}
+.asignaciones-page .asignaciones-empty h3 {
+  margin: 0 0 8px;
+}
+.asignaciones-page .asignaciones-empty p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--text-soft);
+}
+.asignaciones-page {
+  /* =====================================================
+     DARK MODE
+  ===================================================== */
+}
+html.dark .asignaciones-page .asignaciones-form-card,
+html.dark .asignaciones-page .asignaciones-table-card,
+html.dark .asignaciones-page .asignaciones-empty {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
 }
 
+/* =========================================================
+   ASIGNACIONES — ESTRUCTURA VISUAL
+========================================================= */
+.asignaciones-page {
+  /* =====================================================
+     ENCABEZADO PRINCIPAL DE LA SECCIÓN
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-main-header {
+  margin-bottom: 22px;
+}
+.asignaciones-page .asignaciones-main-header .section-title {
+  margin: 0 0 7px;
+}
+.asignaciones-page .asignaciones-main-header .section-subtitle {
+  margin: 0;
+}
+.asignaciones-page {
+  /* =====================================================
+     TARJETAS INTERNAS
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-form-card,
+.asignaciones-page .asignaciones-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.asignaciones-page {
+  /* =====================================================
+     ENCABEZADOS INTERNOS
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.asignaciones-page .asignaciones-card-title {
+  margin: 0 0 7px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+.asignaciones-page .asignaciones-card-subtitle {
+  margin: 0;
+  max-width: 760px;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.asignaciones-page {
+  /* =====================================================
+     FORMULARIO
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+.asignaciones-page .asignaciones-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-color);
+}
+.asignaciones-page {
+  /* =====================================================
+     SEPARACIÓN ENTRE TARJETAS
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-section-gap {
+  height: 24px;
+}
+.asignaciones-page {
+  /* =====================================================
+     TOOLBAR DE SELECCIÓN
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-selection-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.asignaciones-page .asignaciones-selection-toolbar .search-wrapper {
+  flex: 1 1 320px;
+  min-width: 220px;
+}
+.asignaciones-page {
+  /* =====================================================
+     PIE DE TABLA
+  ===================================================== */
+}
+.asignaciones-page .asignaciones-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+.asignaciones-page .asignaciones-seleccion-info {
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.asignaciones-page {
+  /* =====================================================
+     TABLA
+  ===================================================== */
+}
+.asignaciones-page #tablaAsignaciones {
+  width: 100% !important;
+  table-layout: auto;
+}
+.asignaciones-page #tablaAsignaciones th:first-child,
+.asignaciones-page #tablaAsignaciones td:first-child {
+  width: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+}
+.asignaciones-page #tablaAsignaciones .seguimiento-nombre {
+  display: block;
+  min-width: 180px;
+  line-height: 1.35;
+}
+.asignaciones-page {
+  /* =====================================================
+     DARK MODE
+  ===================================================== */
+}
+html.dark .asignaciones-page .asignaciones-form-card,
+html.dark .asignaciones-page .asignaciones-table-card {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 850px) {
+  .asignaciones-page .asignaciones-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .asignaciones-page .asignaciones-form-actions {
+    justify-content: stretch;
+  }
+  .asignaciones-page .asignaciones-form-actions .btn {
+    width: 100%;
+  }
+  .asignaciones-page .asignaciones-selection-toolbar {
+    align-items: stretch;
+  }
+  .asignaciones-page .asignaciones-selection-toolbar .btn {
+    width: 100%;
+  }
+}
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 900px) {
+  .asignaciones-page .page-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .asignaciones-page .asignaciones-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .asignaciones-page .asignaciones-toolbar .search-wrapper {
+    width: 100%;
+  }
+}
 /* Usuarios */
 /* =========================================================
    PAGE

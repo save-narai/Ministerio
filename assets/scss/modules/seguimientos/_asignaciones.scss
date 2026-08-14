@@ -1,400 +1,701 @@
-/* ==========================================================
-   ASIGNACIONES - ESTRUCTURA GENERAL
-========================================================== */
+/* =========================================================
+   ASIGNACIONES DE SEGUIMIENTO
+========================================================= */
 
-.seguimientos-page {
+.asignaciones-page {
 
-    /* ------------------------------------------------------
-       BLOQUES SEPARADOS
-    ------------------------------------------------------ */
+    /* =====================================================
+       HEADER
+    ===================================================== */
 
-    .asignaciones-card {
-        width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-    }
+    .page-header {
 
-    .asignaciones-card + .asignaciones-card {
-        margin-top: 28px;
-    }
+        align-items: center;
 
-    .asignaciones-card--historial {
-        margin-top: 32px;
     }
 
 
-    /* ------------------------------------------------------
-       TABLA
-    ------------------------------------------------------ */
+    .page-header-right {
 
-    .asignaciones-tabla,
-    .asignaciones-tabla .table-responsive {
-        width: 100%;
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
     }
 
-    .asignaciones-tabla .gx-table,
+
+    /* =====================================================
+       FILTRO
+    ===================================================== */
+
+    .asignaciones-filtro-card {
+
+        border-radius: 24px;
+
+    }
+
+
+    /* =====================================================
+       SECCIONES
+    ===================================================== */
+
+    .asignaciones-section {
+
+        margin-bottom: 0;
+
+    }
+
+
+    /* =====================================================
+       TARJETA FORMULARIO
+    ===================================================== */
+
+    .asignaciones-form-card {
+
+        background: var(--surface);
+
+        border:
+            1px solid var(--border-color);
+
+        border-radius: 24px;
+
+        padding: 24px;
+
+        box-shadow: var(--shadow);
+
+    }
+
+
+    .asignaciones-form-card
+    .section-header {
+
+        margin-bottom: 22px;
+
+    }
+
+
+    .asignaciones-form-card
+    .form-actions {
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        margin-top: 20px;
+
+    }
+
+
+    /* =====================================================
+       TARJETA TABLA
+    ===================================================== */
+
+    .asignaciones-table-card {
+
+        background: var(--surface);
+
+        border:
+            1px solid var(--border-color);
+
+        border-radius: 24px;
+
+        padding: 24px;
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+
+    }
+
+
+    /* =====================================================
+       TOOLBAR
+    ===================================================== */
+
+    .asignaciones-toolbar {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 14px;
+
+        margin-bottom: 18px;
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .asignaciones-toolbar
+    .search-wrapper {
+
+        flex:
+            1 1 280px;
+
+        min-width: 220px;
+
+    }
+
+
+    /* =====================================================
+       TABLAS
+    ===================================================== */
+
     #tablaAsignaciones,
     #tablaAsignacionesActuales {
 
-        width: 100%;
+        width: 100% !important;
 
-        min-width: 900px;
+        table-layout: auto;
 
-        table-layout: fixed;
-
-        border-collapse: separate;
-
-        border-spacing: 0 10px;
     }
 
 
-    /* ------------------------------------------------------
-       CABECERA
-    ------------------------------------------------------ */
+    /* =====================================================
+       CHECKBOX
+    ===================================================== */
 
-    #tablaAsignaciones thead th,
-    #tablaAsignacionesActuales thead th {
+    #tablaAsignaciones
+    th:first-child,
 
-        padding: 16px 18px;
+    #tablaAsignaciones
+    td:first-child,
 
-        font-size: 0.80rem;
+    #tablaAsignacionesActuales
+    th:first-child,
 
-        font-weight: 800;
+    #tablaAsignacionesActuales
+    td:first-child {
 
-        letter-spacing: .04em;
+        width: 56px !important;
 
-        text-transform: uppercase;
+        min-width: 56px !important;
 
-        white-space: nowrap;
+        max-width: 56px !important;
 
-        vertical-align: middle;
+        text-align: center !important;
+
     }
 
 
-    /* ------------------------------------------------------
-       FILAS
-    ------------------------------------------------------ */
+    /* =====================================================
+       NOMBRES
+    ===================================================== */
 
-    #tablaAsignaciones tbody td,
-    #tablaAsignacionesActuales tbody td {
+    #tablaAsignaciones
+    .seguimiento-nombre,
 
-        padding: 15px 18px;
-
-        vertical-align: middle;
-
-        font-size: .92rem;
-
-        line-height: 1.4;
-    }
-
-
-    /* ======================================================
-       TABLA JÓVENES PENDIENTES
-    ====================================================== */
-
-    #tablaAsignaciones th:nth-child(1),
-    #tablaAsignaciones td:nth-child(1) {
-
-        width: 64px !important;
-
-        min-width: 64px !important;
-
-        max-width: 64px !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignaciones th:nth-child(2),
-    #tablaAsignaciones td:nth-child(2) {
-
-        width: 38% !important;
-
-        text-align: left;
-    }
-
-
-    #tablaAsignaciones th:nth-child(3),
-    #tablaAsignaciones td:nth-child(3) {
-
-        width: 18% !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignaciones th:nth-child(4),
-    #tablaAsignaciones td:nth-child(4) {
-
-        width: 25% !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignaciones th:nth-child(5),
-    #tablaAsignaciones td:nth-child(5) {
-
-        width: 18% !important;
-
-        text-align: center;
-    }
-
-
-    /* ======================================================
-       TABLA ASIGNACIONES EXISTENTES
-    ====================================================== */
-
-    #tablaAsignacionesActuales th:nth-child(1),
-    #tablaAsignacionesActuales td:nth-child(1) {
-
-        width: 64px !important;
-
-        min-width: 64px !important;
-
-        max-width: 64px !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignacionesActuales th:nth-child(2),
-    #tablaAsignacionesActuales td:nth-child(2) {
-
-        width: 32% !important;
-
-        text-align: left;
-    }
-
-
-    #tablaAsignacionesActuales th:nth-child(3),
-    #tablaAsignacionesActuales td:nth-child(3) {
-
-        width: 20% !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignacionesActuales th:nth-child(4),
-    #tablaAsignacionesActuales td:nth-child(4) {
-
-        width: 16% !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignacionesActuales th:nth-child(5),
-    #tablaAsignacionesActuales td:nth-child(5) {
-
-        width: 18% !important;
-
-        text-align: center;
-    }
-
-
-    #tablaAsignacionesActuales th:nth-child(6),
-    #tablaAsignacionesActuales td:nth-child(6) {
-
-        width: 14% !important;
-
-        text-align: center;
-    }
-
-
-    /* ------------------------------------------------------
-       NOMBRE
-    ------------------------------------------------------ */
-
-    #tablaAsignaciones .seguimiento-nombre,
-    #tablaAsignacionesActuales .seguimiento-nombre {
+    #tablaAsignacionesActuales
+    .seguimiento-nombre {
 
         display: block;
 
-        font-size: .93rem;
-
-        font-weight: 700;
+        min-width: 180px;
 
         line-height: 1.35;
 
         white-space: normal;
 
-        overflow-wrap: anywhere;
+        overflow-wrap: break-word;
+
+        word-break: normal;
+
     }
 
 
-    /* ======================================================
-       CHECKBOX
-    ====================================================== */
+    /* =====================================================
+       CELDAS
+    ===================================================== */
 
-    .check-joven,
-    .check-asignacion,
-    #checkTodos,
-    #checkAsignaciones {
+    #tablaAsignaciones td,
 
-        appearance: none;
+    #tablaAsignacionesActuales td {
 
-        -webkit-appearance: none;
+        padding-top: 16px;
 
-        width: 20px;
+        padding-bottom: 16px;
 
-        height: 20px;
-
-        min-width: 20px;
-
-        border-radius: 6px;
-
-        border: 1.5px solid #cbd5e1;
-
-        background: #ffffff;
-
-        display: inline-grid;
-
-        place-content: center;
-
-        cursor: pointer;
-
-        vertical-align: middle;
-
-        margin: 0;
-
-        transition:
-            background .18s ease,
-            border-color .18s ease,
-            box-shadow .18s ease,
-            transform .18s ease;
     }
 
 
-    .check-joven::before,
-    .check-asignacion::before,
-    #checkTodos::before,
-    #checkAsignaciones::before {
+    /* =====================================================
+       ACCIÓN
+    ===================================================== */
 
-        content: "";
-
-        width: 10px;
-
-        height: 10px;
-
-        border-radius: 3px;
-
-        transform: scale(0);
-
-        transition: transform .15s ease;
-
-        background: currentColor;
-    }
-
-
-    .check-joven:checked,
-    .check-asignacion:checked,
-    #checkTodos:checked,
-    #checkAsignaciones:checked {
-
-        background: var(--primary);
-
-        border-color: var(--primary);
-
-        color: #ffffff;
-
-        box-shadow:
-            0 5px 14px rgba(255, 95, 46, .20);
-    }
-
-
-    .check-joven:checked::before,
-    .check-asignacion:checked::before,
-    #checkTodos:checked::before,
-    #checkAsignaciones:checked::before {
-
-        transform: scale(1);
-    }
-
-
-    .check-joven:hover,
-    .check-asignacion:hover,
-    #checkTodos:hover,
-    #checkAsignaciones:hover {
-
-        border-color: var(--primary);
-
-        transform: scale(1.04);
-    }
-
-
-    /* ------------------------------------------------------
-       DARK MODE CHECKBOX
-    ------------------------------------------------------ */
-
-    html.dark & {
-
-        .check-joven,
-        .check-asignacion,
-        #checkTodos,
-        #checkAsignaciones {
-
-            background: #111827;
-
-            border-color:
-                rgba(255,255,255,.18);
-        }
-
-        .check-joven:checked,
-        .check-asignacion:checked,
-        #checkTodos:checked,
-        #checkAsignaciones:checked {
-
-            background: var(--primary);
-
-            border-color: var(--primary);
-
-            color: #07111f;
-        }
-    }
-
-
-    /* ------------------------------------------------------
-       CELDA DEL CHECKBOX
-    ------------------------------------------------------ */
-
-    #tablaAsignaciones td:first-child,
-    #tablaAsignaciones th:first-child,
-    #tablaAsignacionesActuales td:first-child,
-    #tablaAsignacionesActuales th:first-child {
-
-        padding-left: 12px;
-
-        padding-right: 12px;
-
-        text-align: center;
-    }
-
-
-    /* ------------------------------------------------------
-       BADGES
-    ------------------------------------------------------ */
-
-    #tablaAsignaciones .badge,
-    #tablaAsignacionesActuales .badge {
+    #tablaAsignacionesActuales
+    td:last-child {
 
         white-space: nowrap;
 
-        font-size: .75rem;
     }
 
 
-    /* ------------------------------------------------------
-       RESPONSIVE
-    ------------------------------------------------------ */
+    #tablaAsignacionesActuales
+    .btn {
 
-    @media (max-width: 900px) {
+        white-space: nowrap;
 
-        #tablaAsignaciones,
-        #tablaAsignacionesActuales {
+    }
 
-            min-width: 850px;
+
+    /* =====================================================
+       SELECCIÓN
+    ===================================================== */
+
+    .asignaciones-seleccion-info {
+
+        color: var(--text-soft);
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+    }
+
+
+    /* =====================================================
+       ESTADO VACÍO
+    ===================================================== */
+
+    .asignaciones-empty {
+
+        min-height: 220px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        text-align: center;
+
+        padding: 32px;
+
+        background: var(--surface);
+
+        border:
+            1px solid var(--border-color);
+
+        border-radius: 24px;
+
+        box-shadow: var(--shadow);
+
+    }
+
+
+    .asignaciones-empty i {
+
+        font-size: 42px;
+
+        margin-bottom: 14px;
+
+        color: var(--primary);
+
+    }
+
+
+    .asignaciones-empty h3 {
+
+        margin:
+            0 0 8px;
+
+    }
+
+
+    .asignaciones-empty p {
+
+        max-width: 620px;
+
+        margin: 0;
+
+        color: var(--text-soft);
+
+    }
+
+
+    /* =====================================================
+       DARK MODE
+    ===================================================== */
+
+    html.dark & {
+
+        .asignaciones-form-card,
+        .asignaciones-table-card,
+        .asignaciones-empty {
+
+            background: var(--surface);
+
+            border-color:
+                rgba(255,255,255,.06);
+
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.28);
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   ASIGNACIONES — ESTRUCTURA VISUAL
+========================================================= */
+
+.asignaciones-page {
+
+    /* =====================================================
+       ENCABEZADO PRINCIPAL DE LA SECCIÓN
+    ===================================================== */
+
+    .asignaciones-main-header {
+
+        margin-bottom: 22px;
+
+        .section-title {
+
+            margin: 0 0 7px;
+
+        }
+
+        .section-subtitle {
+
+            margin: 0;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TARJETAS INTERNAS
+    ===================================================== */
+
+    .asignaciones-form-card,
+    .asignaciones-table-card {
+
+        background: var(--surface);
+
+        border:
+            1px solid var(--border-color);
+
+        border-radius: 24px;
+
+        padding: 24px;
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+
+    }
+
+
+    /* =====================================================
+       ENCABEZADOS INTERNOS
+    ===================================================== */
+
+    .asignaciones-card-header {
+
+        display: flex;
+
+        align-items: flex-start;
+
+        justify-content: space-between;
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+
+    }
+
+
+    .asignaciones-card-title {
+
+        margin: 0 0 7px;
+
+        font-size: 20px;
+
+        font-weight: 800;
+
+        color: var(--text);
+
+    }
+
+
+    .asignaciones-card-subtitle {
+
+        margin: 0;
+
+        max-width: 760px;
+
+        color: var(--text-soft);
+
+        font-size: 13px;
+
+        line-height: 1.55;
+
+    }
+
+
+    /* =====================================================
+       FORMULARIO
+    ===================================================== */
+
+    .asignaciones-form-grid {
+
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: 22px;
+
+        align-items: start;
+
+    }
+
+
+    .asignaciones-form-actions {
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        margin-top: 24px;
+
+        padding-top: 18px;
+
+        border-top:
+            1px solid var(--border-color);
+
+    }
+
+
+    /* =====================================================
+       SEPARACIÓN ENTRE TARJETAS
+    ===================================================== */
+
+    .asignaciones-section-gap {
+
+        height: 24px;
+
+    }
+
+
+    /* =====================================================
+       TOOLBAR DE SELECCIÓN
+    ===================================================== */
+
+    .asignaciones-selection-toolbar {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 16px;
+
+        margin-bottom: 18px;
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .asignaciones-selection-toolbar
+    .search-wrapper {
+
+        flex: 1 1 320px;
+
+        min-width: 220px;
+
+    }
+
+
+    /* =====================================================
+       PIE DE TABLA
+    ===================================================== */
+
+    .asignaciones-table-footer {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        margin-top: 18px;
+
+        padding-top: 16px;
+
+        border-top:
+            1px solid var(--border-color);
+
+    }
+
+
+    .asignaciones-seleccion-info {
+
+        color: var(--text-soft);
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        line-height: 1.45;
+
+    }
+
+
+    /* =====================================================
+       TABLA
+    ===================================================== */
+
+    #tablaAsignaciones {
+
+        width: 100% !important;
+
+        table-layout: auto;
+
+    }
+
+
+    #tablaAsignaciones th:first-child,
+    #tablaAsignaciones td:first-child {
+
+        width: 56px !important;
+
+        min-width: 56px !important;
+
+        max-width: 56px !important;
+
+    }
+
+
+    #tablaAsignaciones
+    .seguimiento-nombre {
+
+        display: block;
+
+        min-width: 180px;
+
+        line-height: 1.35;
+
+    }
+
+
+    /* =====================================================
+       DARK MODE
+    ===================================================== */
+
+    html.dark & {
+
+        .asignaciones-form-card,
+        .asignaciones-table-card {
+
+            background: var(--surface);
+
+            border-color:
+                rgba(255,255,255,.06);
+
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.28);
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .asignaciones-page {
+
+        .asignaciones-form-grid {
+
+            grid-template-columns: 1fr;
+
+        }
+
+
+        .asignaciones-form-actions {
+
+            justify-content: stretch;
+
+        }
+
+
+        .asignaciones-form-actions
+        .btn {
+
+            width: 100%;
+
+        }
+
+
+        .asignaciones-selection-toolbar {
+
+            align-items: stretch;
+
+        }
+
+
+        .asignaciones-selection-toolbar
+        .btn {
+
+            width: 100%;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .asignaciones-page {
+
+        .page-header-right {
+
+            width: 100%;
+
+            justify-content: flex-start;
+
+        }
+
+
+        .asignaciones-toolbar {
+
+            align-items: stretch;
+
+            flex-direction: column;
+
+        }
+
+
+        .asignaciones-toolbar
+        .search-wrapper {
+
+            width: 100%;
+
         }
 
     }

@@ -25,9 +25,13 @@ declare(strict_types=1);
 
 if (!defined('CONTROLLER_CORE')) {
 
-    define('CONTROLLER_CORE', true);
+    define(
+        'CONTROLLER_CORE',
+        true
+    );
 
 }
+
 
 /* ==========================================================
    INICIALIZAR CONTROLADOR
@@ -35,10 +39,17 @@ if (!defined('CONTROLLER_CORE')) {
 
 require_once __DIR__ . '/../config/bootstrap.php';
 
+
 function controllerInit(): void
 {
-    // Compatibilidad.
+    /*
+     * Función de compatibilidad.
+     *
+     * El bootstrap ya inicializa
+     * el entorno principal.
+     */
 }
+
 
 /* ==========================================================
    VALIDAR REQUEST
@@ -49,10 +60,15 @@ function controllerRequireMethod(
 ): void {
 
     $requestMethod = strtoupper(
-        $_SERVER['REQUEST_METHOD'] ?? ''
+        $_SERVER['REQUEST_METHOD']
+        ?? ''
     );
 
-    if ($requestMethod !== strtoupper($method)) {
+
+    if (
+        $requestMethod !==
+        strtoupper($method)
+    ) {
 
         throw new Exception(
             'Acceso inválido.'
@@ -62,13 +78,16 @@ function controllerRequireMethod(
 
 }
 
+
 /* ==========================================================
    VALIDAR CSRF
 ========================================================== */
+
 function controllerValidateCsrf(): void
 {
     validarCsrf();
 }
+
 
 /* ==========================================================
    OBTENER ACTION
@@ -80,7 +99,7 @@ function controllerAction(): string
 
         trim(
 
-            (string) (
+            (string)(
 
                 $_POST['action']
 
@@ -99,15 +118,20 @@ function controllerAction(): string
     );
 }
 
+
 /* ==========================================================
    VALIDAR ACTION
 ========================================================== */
 
 function controllerRequireAction(): string
 {
-    $action = controllerAction();
+    $action =
+        controllerAction();
 
-    if ($action === '') {
+
+    if (
+        $action === ''
+    ) {
 
         throw new Exception(
             'Acción no especificada.'
@@ -115,8 +139,10 @@ function controllerRequireAction(): string
 
     }
 
+
     return $action;
 }
+
 
 /* ==========================================================
    EXIGIR PERMISO
@@ -126,7 +152,9 @@ function controllerRequirePermission(
     string $permission
 ): void {
 
-    if (trim($permission) === '') {
+    if (
+        trim($permission) === ''
+    ) {
 
         throw new InvalidArgumentException(
             'Permiso inválido.'
@@ -134,7 +162,10 @@ function controllerRequirePermission(
 
     }
 
-    if (!tienePermiso($permission)) {
+
+    if (
+        !tienePermiso($permission)
+    ) {
 
         throw new RuntimeException(
             'Acceso denegado.'
@@ -144,6 +175,7 @@ function controllerRequirePermission(
 
 }
 
+
 /* ==========================================================
    OBTENER CONEXIÓN PDO
 ========================================================== */
@@ -152,13 +184,18 @@ function controllerPdo(): PDO
 {
     static $connection = null;
 
-    if ($connection instanceof PDO) {
+
+    if (
+        $connection instanceof PDO
+    ) {
 
         return $connection;
 
     }
 
+
     global $pdo;
+
 
     if (
 
@@ -176,10 +213,14 @@ function controllerPdo(): PDO
 
     }
 
-    $connection = $pdo;
+
+    $connection =
+        $pdo;
+
 
     return $connection;
 }
+
 
 /* ==========================================================
    EJECUTAR CALLBACK
@@ -193,23 +234,27 @@ function controllerExecute(
 
 }
 
+
 /* ==========================================================
    RESPUESTA EXITOSA
 ========================================================== */
 
 function controllerSuccess(
-    string $message = 'Operación realizada correctamente.'
+    string $message =
+        'Operación realizada correctamente.'
 ): array {
 
     return [
 
-        'type' => 'success',
+        'type' =>
+            'success',
 
-        'message' => $message
+        'message' =>
+            $message
 
     ];
-
 }
+
 
 /* ==========================================================
    RESPUESTA DE ERROR
@@ -221,13 +266,15 @@ function controllerError(
 
     return [
 
-        'type' => 'error',
+        'type' =>
+            'error',
 
-        'message' => $message
+        'message' =>
+            $message
 
     ];
-
 }
+
 
 /* ==========================================================
    RESPUESTA CON REDIRECCIÓN
@@ -245,24 +292,146 @@ function controllerRedirect(
 
     return [
 
-        'redirect' => $redirect,
+        'redirect' =>
+            $redirect,
 
-        'type' => $type,
+        'type' =>
+            $type,
 
-        'message' => $message
+        'message' =>
+            $message
 
     ];
+}
 
-}                                                                                                                         /* ==========================================================
+
+/* ==========================================================
+   DETECTAR PETICIÓN JSON / AJAX
+========================================================== */
+
+function controllerIsJsonRequest(): bool
+{
+    $requestedWith =
+        strtolower(
+
+            trim(
+
+                $_SERVER[
+                    'HTTP_X_REQUESTED_WITH'
+                ]
+                ?? ''
+
+            )
+
+        );
+
+
+    $accept =
+        strtolower(
+
+            $_SERVER['HTTP_ACCEPT']
+            ?? ''
+
+        );
+
+
+    return (
+
+        $requestedWith ===
+        'xmlhttprequest'
+
+    )
+
+    ||
+
+    str_contains(
+
+        $accept,
+
+        'application/json'
+
+    );
+}
+
+
+/* ==========================================================
+   RESPUESTA JSON
+========================================================== */
+
+function controllerJson(
+
+    bool $success,
+
+    string $message = '',
+
+    array $data = []
+
+): never {
+
+    if (
+        !headers_sent()
+    ) {
+
+        http_response_code(
+
+            $success
+                ? 200
+                : 400
+
+        );
+
+
+        header(
+            'Content-Type: application/json; charset=utf-8'
+        );
+
+    }
+
+
+    echo json_encode(
+
+        array_merge(
+
+            [
+
+                'success' =>
+                    $success,
+
+                'message' =>
+                    $message
+
+            ],
+
+            $data
+
+        ),
+
+        JSON_UNESCAPED_UNICODE
+        |
+        JSON_UNESCAPED_SLASHES
+
+    );
+
+
+    exit;
+}
+
+
+/* ==========================================================
    EJECUTAR CONTROLLER
 ========================================================== */
 
 function controllerRun(
+
     array $actions,
+
     array $options = []
+
 ): void {
 
-    if (empty($actions)) {
+    if (
+        empty($actions)
+    ) {
 
         throw new LogicException(
             'No existen acciones registradas.'
@@ -270,22 +439,29 @@ function controllerRun(
 
     }
 
-    $redirect = $options['redirect']
+
+    $redirect =
+        $options['redirect']
         ?? '../index.php';
 
-    $method = strtoupper(
 
-        $options['method']
-        ?? 'POST'
+    $method =
+        strtoupper(
 
-    );
+            $options['method']
+            ?? 'POST'
 
-    $csrf = (bool) (
+        );
 
-        $options['csrf']
-        ?? true
 
-    );
+    $csrf =
+        (bool)(
+
+            $options['csrf']
+            ?? true
+
+        );
+
 
     try {
 
@@ -293,78 +469,129 @@ function controllerRun(
            VALIDAR REQUEST
         ====================================== */
 
-        controllerRequireMethod($method);
+        controllerRequireMethod(
+            $method
+        );
+
 
         /* ======================================
            VALIDAR CSRF
         ====================================== */
 
-        if ($csrf) {
+        if (
+            $csrf
+        ) {
 
             controllerValidateCsrf();
 
         }
 
+
         /* ======================================
            OBTENER ACTION
         ====================================== */
 
-        $action = controllerRequireAction();
+        $action =
+            controllerRequireAction();
+
 
         /* ======================================
            VALIDAR ACTION
         ====================================== */
 
-        if (!isset($actions[$action])) {
+        if (
+            !isset(
+                $actions[$action]
+            )
+        ) {
 
             throw new Exception(
+
                 "La acción '{$action}' no existe."
+
             );
 
         }
+
 
         /* ======================================
            EJECUTAR ACCIÓN
         ====================================== */
 
-        $response = controllerExecute(
-            $actions[$action]
-        );
+        $response =
+            controllerExecute(
+
+                $actions[$action]
+
+            );
+
 
         /* ======================================
            PROCESAR RESPUESTA
         ====================================== */
 
         controllerResponse(
+
             $response,
+
             $redirect
-        );
-
-    }
-
-    catch (PDOException $e) {
-
-        controllerRollback();
-
-        controllerLog($e);
-
-        redirect(
-
-            $redirect,
-
-            'error',
-
-            'Ocurrió un error interno del sistema.'
 
         );
 
     }
+
+
+    /* ======================================================
+       ERROR PDO
+    ====================================================== */
+
+catch (PDOException $e) {
+
+    controllerRollback();
+
+    controllerLog($e);
+
+    if (controllerIsJsonRequest()) {
+
+        controllerJson(
+            false,
+            $e->getMessage()
+        );
+
+    }
+
+    redirect(
+        $redirect,
+        'error',
+        $e->getMessage()
+    );
+}
+
+    /* ======================================================
+       ERROR GENERAL
+    ====================================================== */
 
     catch (Throwable $e) {
 
         controllerRollback();
 
         controllerLog($e);
+
+
+        if (
+            controllerIsJsonRequest()
+        ) {
+
+            controllerJson(
+
+                false,
+
+                $e->getMessage()
+
+            );
+
+        }
+
 
         redirect(
 
@@ -380,6 +607,7 @@ function controllerRun(
 
 }
 
+
 /* ==========================================================
    RESPUESTA DEL CONTROLLER
 ========================================================== */
@@ -392,7 +620,125 @@ function controllerResponse(
 
 ): void {
 
-    if ($response === null) {
+
+    /* ======================================================
+       RESPUESTA JSON / AJAX
+    ====================================================== */
+
+    if (
+        controllerIsJsonRequest()
+    ) {
+
+
+        /* --------------------------------------------------
+           ARRAY
+        -------------------------------------------------- */
+
+        if (
+            is_array($response)
+        ) {
+
+            controllerJson(
+
+                true,
+
+                $response['message']
+                    ??
+                    'Operación realizada correctamente.',
+
+                $response['data']
+                    ??
+                    []
+
+            );
+
+        }
+
+
+        /* --------------------------------------------------
+           TRUE
+        -------------------------------------------------- */
+
+        if (
+            $response === true
+        ) {
+
+            controllerJson(
+
+                true,
+
+                'Operación realizada correctamente.'
+
+            );
+
+        }
+
+
+        /* --------------------------------------------------
+           FALSE
+        -------------------------------------------------- */
+
+        if (
+            $response === false
+        ) {
+
+            controllerJson(
+
+                false,
+
+                'La operación no pudo completarse.'
+
+            );
+
+        }
+
+
+        /* --------------------------------------------------
+           STRING
+        -------------------------------------------------- */
+
+        if (
+            is_string($response)
+        ) {
+
+            controllerJson(
+
+                true,
+
+                $response
+
+            );
+
+        }
+
+
+        /* --------------------------------------------------
+           NULL / DEFAULT
+        -------------------------------------------------- */
+
+        controllerJson(
+
+            true,
+
+            'Operación realizada correctamente.'
+
+        );
+
+    }
+
+
+    /* ======================================================
+       RESPUESTA NORMAL DEL SISTEMA
+    ====================================================== */
+
+
+    /* ------------------------------------------------------
+       NULL
+    ------------------------------------------------------ */
+
+    if (
+        $response === null
+    ) {
 
         redirect(
 
@@ -408,7 +754,14 @@ function controllerResponse(
 
     }
 
-    if ($response === true) {
+
+    /* ------------------------------------------------------
+       TRUE
+    ------------------------------------------------------ */
+
+    if (
+        $response === true
+    ) {
 
         redirect(
 
@@ -424,15 +777,31 @@ function controllerResponse(
 
     }
 
-    if ($response === false) {
+
+    /* ------------------------------------------------------
+       FALSE
+    ------------------------------------------------------ */
+
+    if (
+        $response === false
+    ) {
 
         throw new Exception(
+
             'La operación no pudo completarse.'
+
         );
 
     }
 
-    if (is_string($response)) {
+
+    /* ------------------------------------------------------
+       STRING
+    ------------------------------------------------------ */
+
+    if (
+        is_string($response)
+    ) {
 
         redirect(
 
@@ -448,18 +817,28 @@ function controllerResponse(
 
     }
 
-    if (is_array($response)) {
+
+    /* ------------------------------------------------------
+       ARRAY
+    ------------------------------------------------------ */
+
+    if (
+        is_array($response)
+    ) {
 
         redirect(
 
             $response['redirect']
-                ?? $defaultRedirect,
+                ??
+                $defaultRedirect,
 
             $response['type']
-                ?? 'success',
+                ??
+                'success',
 
             $response['message']
-                ?? 'Operación realizada correctamente.'
+                ??
+                'Operación realizada correctamente.'
 
         );
 
@@ -467,17 +846,28 @@ function controllerResponse(
 
     }
 
+
+    /* ------------------------------------------------------
+       RESPUESTA INVÁLIDA
+    ------------------------------------------------------ */
+
     throw new Exception(
+
         'El Controller devolvió una respuesta no válida.'
+
     );
 
-}                                                                                                                                    /* ==========================================================
+}
+
+
+/* ==========================================================
    ROLLBACK AUTOMÁTICO
 ========================================================== */
 
 function controllerRollback(): void
 {
     global $pdo;
+
 
     if (
 
@@ -493,13 +883,17 @@ function controllerRollback(): void
 
     }
 
-    if ($pdo->inTransaction()) {
+
+    if (
+        $pdo->inTransaction()
+    ) {
 
         $pdo->rollBack();
 
     }
 
 }
+
 
 /* ==========================================================
    LOG DE ERRORES
@@ -509,15 +903,24 @@ function controllerLog(
     Throwable $e
 ): void {
 
-    $usuario = $_SESSION['usuario']['id']
+    $usuario =
+        $_SESSION['usuario']['id']
         ?? 'Invitado';
 
-    $action = $_POST['action']
-        ?? $_GET['action']
-        ?? '-';
 
-    $ip = $_SERVER['REMOTE_ADDR']
-        ?? 'Desconocida';
+    $action =
+        $_POST['action']
+        ??
+        $_GET['action']
+        ??
+        '-';
+
+
+    $ip =
+        $_SERVER['REMOTE_ADDR']
+        ??
+        'Desconocida';
+
 
     error_log(
 
@@ -525,7 +928,9 @@ function controllerLog(
 
             '[%s] %s | Usuario: %s | Acción: %s | IP: %s | Archivo: %s | Línea: %d | %s',
 
-            date('Y-m-d H:i:s'),
+            date(
+                'Y-m-d H:i:s'
+            ),
 
             get_class($e),
 
@@ -535,7 +940,9 @@ function controllerLog(
 
             $ip,
 
-            basename($e->getFile()),
+            basename(
+                $e->getFile()
+            ),
 
             $e->getLine(),
 
@@ -544,6 +951,7 @@ function controllerLog(
         )
 
     );
+
 
     if (
 
