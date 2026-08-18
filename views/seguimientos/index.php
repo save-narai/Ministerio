@@ -925,24 +925,68 @@ require_once __DIR__ . "/../../includes/header.php";
                                         <!-- =============================
                                              EDITAR EXCEPCIÓN
                                         ============================== -->
+<?php if ($esExcepcion): ?>
 
-                                        <?php if ($esExcepcion): ?>
+    <button
+        type="button"
+        class="btn btn-sm btn-warning btn-editar-excepcion"
+        data-id="<?= (int)$registro['excepcion_id'] ?>"
+        data-joven-id="<?= (int)$registro['joven_id'] ?>"
+        data-joven-nombre="<?= e(
+            $registro['nombre_completo']
+        ) ?>"
+    >
 
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-warning btn-editar-excepcion"
-                                                data-id="<?= (int)$registro['excepcion_id'] ?>"
-                                                data-joven-id="<?= (int)$registro['joven_id'] ?>"
-                                                data-joven-nombre="<?= e(
-                                                    $registro['nombre_completo']
-                                                ) ?>"
-                                            >
 
-                                                Editar
+        Editar
 
-                                            </button>
+    </button>
 
-                                        <?php endif; ?>
+
+    <form
+        action="../../controllers/excepcionSeguimientoController.php"
+        method="POST"
+        style="display:inline;"
+        onsubmit="return confirm(
+            '¿Quieres eliminar esta excepción? El joven volverá a aparecer como pendiente.'
+        );"
+    >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= htmlspecialchars(
+                $_SESSION['csrf_token'],
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>"
+        >
+
+        <input
+            type="hidden"
+            name="action"
+            value="eliminar_excepcion_seguimiento"
+        >
+
+        <input
+            type="hidden"
+            name="id"
+            value="<?= (int)$registro['excepcion_id'] ?>"
+        >
+
+        <button
+            type="submit"
+            class="btn btn-sm btn-danger"
+        >
+
+
+            Quitar excepción
+
+        </button>
+
+    </form>
+
+<?php endif; ?>
 
                                     </div>
 
@@ -1186,7 +1230,7 @@ require_once __DIR__ . "/../../includes/header.php";
                             class="btn btn-primary"
                         >
 
-                            <i class="fa-solid fa-check"></i>
+                     
 
                             Registrar excepción
 
@@ -1221,12 +1265,6 @@ require_once __DIR__ . "/../../includes/header.php";
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/seguimientos/excepciones.js"
-></script>
-
-
-<script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js"
 ></script>
 
 

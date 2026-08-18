@@ -131,16 +131,12 @@ require_once __DIR__ . "/../../includes/header.php";
          FORMULARIO
     ====================================== -->
 
-   <form
-
+<form
+    id="formEditarJoven"
     class="form"
-
     action="<?= BASE_URL ?>/controllers/jovenController.php"
-
     method="POST"
-
     autocomplete="off"
-
 >
 
     <input
@@ -249,75 +245,82 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
-            <!-- TELÉFONO -->
+         <!-- TELÉFONO -->
 
-            <div class="form-group">
+<div class="form-group">
 
-                <label class="form-label">
+    <label
+        class="form-label"
+        for="telefono"
+    >
 
-                    Teléfono
+        Teléfono
 
-                </label>
+    </label>
 
-                <input
 
-                    class="form-input"
+    <input
 
-                    type="tel"
+        class="form-input"
 
-                    name="telefono"
+        type="tel"
 
-                    id="telefono"
+        name="telefono"
 
-                    maxlength="10"
+        id="telefono"
 
-                    inputmode="numeric"
+        maxlength="10"
 
-                    autocomplete="off"
+        inputmode="numeric"
 
-                    value="<?= htmlspecialchars($joven['telefono'] ?? '') ?>"
+        autocomplete="off"
 
-                    <?= empty($joven['telefono']) ? 'disabled' : '' ?>
+        value="<?= htmlspecialchars(
+            $joven['telefono'] ?? '',
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
 
-                >
+    >
 
-                <small
 
-                    id="telefonoError"
+    <small
+        id="telefonoError"
+        class="telefono-error"
+    ></small>
 
-                    class="telefono-error"
 
-                ></small>
+    <div class="check-wrapper">
 
-                <div class="check-wrapper">
+        <label class="check-custom">
 
-                    <label class="check-custom">
+            <input
 
-                        <input
+                type="checkbox"
 
-                            type="checkbox"
+                id="sinTelefono"
 
-                            id="sinTelefono"
+                name="sinTelefono"
 
-                            name="sinTelefono"
+                value="1"
 
-                            <?= empty($joven['telefono']) ? 'checked' : '' ?>
+                <?= empty($joven['telefono'])
+                    ? 'checked'
+                    : '' ?>
 
-                        >
+            >
 
-                        <span class="checkmark"></span>
+            <span class="checkmark"></span>
 
-                        <span>
+            <span>
+                No tiene teléfono
+            </span>
 
-                            No tiene teléfono
+        </label>
 
-                        </span>
+    </div>
 
-                    </label>
-
-                </div>
-
-            </div>
+</div>
 
             <!-- FECHA DE INGRESO -->
 

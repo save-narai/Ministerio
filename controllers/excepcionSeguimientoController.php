@@ -24,49 +24,62 @@ if (
     ) === 'obtener_excepcion_seguimiento'
 ) {
 
-    header('Content-Type: application/json; charset=utf-8');
+    header(
+        'Content-Type: application/json; charset=utf-8'
+    );
 
     try {
 
-        if (!tienePermiso('gestionar_seguimientos')) {
+        if (
+            !tienePermiso(
+                'gestionar_seguimientos'
+            )
+        ) {
 
             http_response_code(403);
 
             echo json_encode([
 
-                'success' => false,
+                'success' =>
+                    false,
 
-                'message' => 'No tienes permiso para consultar esta excepción.'
+                'message' =>
+                    'No tienes permiso para consultar esta excepción.'
 
             ]);
 
             exit;
-
         }
 
 
-        $pdo = controllerPdo();
+        $pdo =
+            controllerPdo();
 
 
-        $id = (int)(
-            $_GET['id'] ?? 0
-        );
+        $id =
+            (int)(
+                $_GET['id']
+                ?? 0
+            );
 
 
-        if ($id <= 0) {
+        if (
+            $id <= 0
+        ) {
 
             http_response_code(400);
 
             echo json_encode([
 
-                'success' => false,
+                'success' =>
+                    false,
 
-                'message' => 'ID de excepción inválido.'
+                'message' =>
+                    'ID de excepción inválido.'
 
             ]);
 
             exit;
-
         }
 
 
@@ -77,42 +90,52 @@ if (
             );
 
 
-        if (!$excepcion) {
+        if (
+            !$excepcion
+        ) {
 
             http_response_code(404);
 
             echo json_encode([
 
-                'success' => false,
+                'success' =>
+                    false,
 
-                'message' => 'La excepción no existe.'
+                'message' =>
+                    'La excepción no existe.'
 
             ]);
 
             exit;
-
         }
 
 
         echo json_encode([
 
-            'success' => true,
+            'success' =>
+                true,
 
-            'data' => $excepcion
+            'data' =>
+                $excepcion
 
         ]);
 
         exit;
 
+
     } catch (Throwable $e) {
 
-        controllerLog($e);
+        controllerLog(
+            $e
+        );
+
 
         http_response_code(500);
 
         echo json_encode([
 
-            'success' => false,
+            'success' =>
+                false,
 
             'message' =>
                 'No se pudo consultar la excepción.'
@@ -120,9 +143,7 @@ if (
         ]);
 
         exit;
-
     }
-
 }
 
 
@@ -130,7 +151,9 @@ if (
    CONTROLLER NORMAL
 ========================================================== */
 
-$pdo = controllerPdo();
+$pdo =
+    controllerPdo();
+
 
 controllerRun(
 
@@ -140,97 +163,121 @@ controllerRun(
            CREAR EXCEPCIÓN DE SEGUIMIENTO
         ================================================== */
 
-        'crear_excepcion_seguimiento' => function () use ($pdo) {
+        'crear_excepcion_seguimiento' =>
+            function () use ($pdo) {
 
-            $datos = $_POST;
+                $datos =
+                    $_POST;
 
-            $datos['anio'] =
-                (int)date('Y');
 
-            $datos['mes'] =
-                (int)date('m');
+                $datos['anio'] =
+                    (int)date('Y');
 
-            crearExcepcionSeguimiento(
-                $pdo,
-                $datos
-            );
 
-            return controllerRedirect(
+                $datos['mes'] =
+                    (int)date('m');
 
-                '../views/seguimientos/index.php',
 
-                'Excepción de seguimiento registrada correctamente.'
+                crearExcepcionSeguimiento(
+                    $pdo,
+                    $datos
+                );
 
-            );
 
-        },
+                return controllerRedirect(
+
+                    '../views/seguimientos/index.php',
+
+                    'Excepción de seguimiento registrada correctamente.'
+
+                );
+            },
 
 
         /* ==================================================
            ACTUALIZAR EXCEPCIÓN DE SEGUIMIENTO
         ================================================== */
 
-        'actualizar_excepcion_seguimiento' => function () use ($pdo) {
+        'actualizar_excepcion_seguimiento' =>
+            function () use ($pdo) {
 
-            $id = (int)(
-                $_POST['id'] ?? 0
-            );
+                $id =
+                    (int)(
+                        $_POST['id']
+                        ?? 0
+                    );
 
-            $datos = $_POST;
 
-            $datos['anio'] =
-                (int)(
-                    $_POST['anio']
-                    ?? date('Y')
+                $datos =
+                    $_POST;
+
+
+                $datos['anio'] =
+                    (int)(
+                        $_POST['anio']
+                        ?? date('Y')
+                    );
+
+
+                $datos['mes'] =
+                    (int)(
+                        $_POST['mes']
+                        ?? date('m')
+                    );
+
+
+                actualizarExcepcionSeguimiento(
+
+                    $pdo,
+
+                    $id,
+
+                    $datos
+
                 );
 
-            $datos['mes'] =
-                (int)(
-                    $_POST['mes']
-                    ?? date('m')
+
+                return controllerRedirect(
+
+                    '../views/seguimientos/index.php',
+
+                    'Excepción de seguimiento actualizada correctamente.'
+
                 );
-
-            actualizarExcepcionSeguimiento(
-                $pdo,
-                $id,
-                $datos
-            );
-
-            return controllerRedirect(
-
-                '../views/seguimientos/index.php',
-
-                'Excepción de seguimiento actualizada correctamente.'
-
-            );
-
-        },
+            },
 
 
         /* ==================================================
            ELIMINAR EXCEPCIÓN DE SEGUIMIENTO
         ================================================== */
 
-        'eliminar_excepcion_seguimiento' => function () use ($pdo) {
+        'eliminar_excepcion_seguimiento' =>
+            function () use ($pdo) {
 
-            $id = (int)(
-                $_POST['id'] ?? 0
-            );
+                $id =
+                    (int)(
+                        $_POST['id']
+                        ?? 0
+                    );
 
-            eliminarExcepcionSeguimiento(
-                $pdo,
-                $id
-            );
 
-            return controllerRedirect(
+                eliminarExcepcionSeguimiento(
 
-                '../views/seguimientos/index.php',
+                    $pdo,
 
-                'Excepción de seguimiento eliminada correctamente.'
+                    $id
 
-            );
+                );
 
-        }
+
+                return controllerRedirect(
+
+                    '../views/seguimientos/index.php',
+
+                    'Excepción eliminada correctamente.'
+
+                );
+            }
 
     ],
 

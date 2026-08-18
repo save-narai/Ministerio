@@ -243,13 +243,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 </div>
 
-<script
 
-    defer
-
-    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-
-</script>
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/dashboard/dashboard.js"></script>
 

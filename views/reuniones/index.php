@@ -471,13 +471,7 @@ require_once "../../includes/header.php";
 
 </div>
 
-<script
 
-    defer
-
-    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-
-</script>
 
 <script
     src="<?= BASE_URL ?>/assets/js/modulos/reuniones/index.js">

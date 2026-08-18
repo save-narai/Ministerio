@@ -3,31 +3,16 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/sessionService.php';
+require_once __DIR__ . '/constanciaNotificacionService.php';
+
 
 /*
 |--------------------------------------------------------------------------
-| Notificación Service
+| NOTIFICACIÓN SERVICE
 |--------------------------------------------------------------------------
 |
-| Servicio centralizado para la gestión de notificaciones del sistema.
+| Servicio centralizado para la gestión de notificaciones.
 |
-| Responsabilidades:
-|
-| • Crear notificaciones.
-| • Obtener notificaciones de un usuario.
-| • Contar notificaciones no leídas.
-| • Marcar una notificación como leída.
-| • Marcar todas como leídas.
-| • Obtener una notificación específica.
-| • Eliminar notificaciones.
-|
-| IMPORTANTE:
-|
-| Este servicio NO contiene lógica HTML.
-| Este servicio NO realiza redirecciones.
-| Este servicio trabaja únicamente con datos y persistencia.
-|
-|--------------------------------------------------------------------------
 */
 
 
@@ -38,14 +23,11 @@ require_once __DIR__ . '/sessionService.php';
 const TIPOS_NOTIFICACION = [
 
     'NUEVA_ASIGNACION',
-
     'ASIGNACION_EN_PROCESO',
-
     'ASIGNACION_COMPLETADA',
-
     'ASIGNACION_CANCELADA',
-
-    'RECORDATORIO_SEGUIMIENTO'
+    'RECORDATORIO_SEGUIMIENTO',
+    'NOTIFICACION_LEIDA'
 
 ];
 
@@ -56,18 +38,17 @@ const TIPOS_NOTIFICACION = [
 
 function validarTipoNotificacion(
     string $tipo
-): string
-{
-    $tipo = strtoupper(
-        trim($tipo)
-    );
+): string {
 
-    if (!in_array(
-        $tipo,
-        TIPOS_NOTIFICACION,
-        true
-    )) {
+    $tipo = strtoupper(trim($tipo));
 
+    if (
+        !in_array(
+            $tipo,
+            TIPOS_NOTIFICACION,
+            true
+        )
+    ) {
         throw new Exception(
             'El tipo de notificación no es válido.'
         );
@@ -84,10 +65,9 @@ function validarTipoNotificacion(
 function validarUsuarioNotificacion(
     PDO $pdo,
     int $usuarioId
-): void
-{
-    if ($usuarioId <= 0) {
+): void {
 
+    if ($usuarioId <= 0) {
         throw new Exception(
             'Usuario de notificación inválido.'
         );
@@ -102,14 +82,10 @@ function validarUsuarioNotificacion(
     ");
 
     $stmt->execute([
-
-        ':id' =>
-            $usuarioId
-
+        ':id' => $usuarioId
     ]);
 
     if (!$stmt->fetchColumn()) {
-
         throw new Exception(
             'El usuario de la notificación no existe o está inactivo.'
         );
@@ -124,13 +100,12 @@ function validarUsuarioNotificacion(
 function validarJovenNotificacion(
     PDO $pdo,
     ?int $jovenId
-): ?int
-{
+): ?int {
+
     if (
         $jovenId === null ||
         $jovenId <= 0
     ) {
-
         return null;
     }
 
@@ -142,14 +117,10 @@ function validarJovenNotificacion(
     ");
 
     $stmt->execute([
-
-        ':id' =>
-            $jovenId
-
+        ':id' => $jovenId
     ]);
 
     if (!$stmt->fetchColumn()) {
-
         throw new Exception(
             'El joven asociado a la notificación no existe.'
         );
@@ -166,13 +137,12 @@ function validarJovenNotificacion(
 function validarAsignacionNotificacion(
     PDO $pdo,
     ?int $asignacionId
-): ?int
-{
+): ?int {
+
     if (
         $asignacionId === null ||
         $asignacionId <= 0
     ) {
-
         return null;
     }
 
@@ -184,14 +154,10 @@ function validarAsignacionNotificacion(
     ");
 
     $stmt->execute([
-
-        ':id' =>
-            $asignacionId
-
+        ':id' => $asignacionId
     ]);
 
     if (!$stmt->fetchColumn()) {
-
         throw new Exception(
             'La asignación asociada a la notificación no existe.'
         );
@@ -207,21 +173,17 @@ function validarAsignacionNotificacion(
 
 function validarTituloNotificacion(
     string $titulo
-): string
-{
-    $titulo = trim(
-        $titulo
-    );
+): string {
+
+    $titulo = trim($titulo);
 
     if ($titulo === '') {
-
         throw new Exception(
             'El título de la notificación es obligatorio.'
         );
     }
 
     if (mb_strlen($titulo) > 150) {
-
         throw new Exception(
             'El título de la notificación es demasiado largo.'
         );
@@ -237,21 +199,17 @@ function validarTituloNotificacion(
 
 function validarMensajeNotificacion(
     string $mensaje
-): string
-{
-    $mensaje = trim(
-        $mensaje
-    );
+): string {
+
+    $mensaje = trim($mensaje);
 
     if ($mensaje === '') {
-
         throw new Exception(
             'El mensaje de la notificación es obligatorio.'
         );
     }
 
     if (mb_strlen($mensaje) > 5000) {
-
         throw new Exception(
             'El mensaje de la notificación es demasiado largo.'
         );
@@ -268,79 +226,82 @@ function validarMensajeNotificacion(
 function crearNotificacion(
     PDO $pdo,
     array $datos
-): int
-{
+): int {
+
     $usuarioId = (int)(
-        $datos['usuario_id']
-        ?? 0
+        $datos['usuario_id'] ?? 0
     );
 
-    $tipo =
-        validarTipoNotificacion(
-            $datos['tipo']
-            ?? ''
-        );
+    $tipo = validarTipoNotificacion(
+        (string)(
+            $datos['tipo'] ?? ''
+        )
+    );
 
-    $titulo =
-        validarTituloNotificacion(
-            (string)(
-                $datos['titulo']
-                ?? ''
-            )
-        );
+    $titulo = validarTituloNotificacion(
+        (string)(
+            $datos['titulo'] ?? ''
+        )
+    );
 
-    $mensaje =
-        validarMensajeNotificacion(
-            (string)(
-                $datos['mensaje']
-                ?? ''
-            )
-        );
+    $mensaje = validarMensajeNotificacion(
+        (string)(
+            $datos['mensaje'] ?? ''
+        )
+    );
 
+
+    /* ------------------------------------------------------
+       JOVEN
+    ------------------------------------------------------ */
 
     $jovenId = null;
 
     if (
-        isset($datos['joven_id'])
-        &&
+        isset($datos['joven_id']) &&
         $datos['joven_id'] !== ''
     ) {
-
-        $jovenId =
-            (int)$datos['joven_id'];
+        $jovenId = (int)$datos['joven_id'];
     }
 
-    $jovenId =
-        validarJovenNotificacion(
-            $pdo,
-            $jovenId
-        );
+    $jovenId = validarJovenNotificacion(
+        $pdo,
+        $jovenId
+    );
 
+
+    /* ------------------------------------------------------
+       ASIGNACIÓN
+    ------------------------------------------------------ */
 
     $asignacionId = null;
 
     if (
-        isset($datos['asignacion_id'])
-        &&
+        isset($datos['asignacion_id']) &&
         $datos['asignacion_id'] !== ''
     ) {
-
-        $asignacionId =
-            (int)$datos['asignacion_id'];
+        $asignacionId = (int)$datos['asignacion_id'];
     }
 
-    $asignacionId =
-        validarAsignacionNotificacion(
-            $pdo,
-            $asignacionId
-        );
+    $asignacionId = validarAsignacionNotificacion(
+        $pdo,
+        $asignacionId
+    );
 
+
+    /* ------------------------------------------------------
+       USUARIO
+    ------------------------------------------------------ */
 
     validarUsuarioNotificacion(
         $pdo,
         $usuarioId
     );
 
+
+    /* ------------------------------------------------------
+       INSERTAR
+    ------------------------------------------------------ */
 
     $stmt = $pdo->prepare("
         INSERT INTO notificaciones
@@ -354,6 +315,7 @@ function crearNotificacion(
             leida,
             fecha_lectura
         )
+
         VALUES
         (
             :usuario_id,
@@ -369,26 +331,19 @@ function crearNotificacion(
 
     $stmt->execute([
 
-        ':usuario_id' =>
-            $usuarioId,
+        ':usuario_id' => $usuarioId,
 
-        ':tipo' =>
-            $tipo,
+        ':tipo' => $tipo,
 
-        ':titulo' =>
-            $titulo,
+        ':titulo' => $titulo,
 
-        ':mensaje' =>
-            $mensaje,
+        ':mensaje' => $mensaje,
 
-        ':joven_id' =>
-            $jovenId,
+        ':joven_id' => $jovenId,
 
-        ':asignacion_id' =>
-            $asignacionId
+        ':asignacion_id' => $asignacionId
 
     ]);
-
 
     return (int)$pdo->lastInsertId();
 }
@@ -402,13 +357,11 @@ function obtenerNotificacionPorId(
     PDO $pdo,
     int $id,
     ?int $usuarioId = null
-): ?array
-{
-    if ($id <= 0) {
+): ?array {
 
+    if ($id <= 0) {
         return null;
     }
-
 
     $sql = "
         SELECT
@@ -419,7 +372,11 @@ function obtenerNotificacionPorId(
 
             a.estado AS asignacion_estado,
 
-            u.nombre AS usuario_nombre
+            a.asignado_por,
+
+            u.nombre AS usuario_nombre,
+
+            ap.nombre AS asignado_por_nombre
 
         FROM notificaciones n
 
@@ -432,24 +389,19 @@ function obtenerNotificacionPorId(
         LEFT JOIN usuarios u
             ON n.usuario_id = u.id
 
+        LEFT JOIN usuarios ap
+            ON a.asignado_por = ap.id
+
         WHERE n.id = :id
     ";
 
-
     $params = [
-
-        ':id' =>
-            $id
-
+        ':id' => $id
     ];
 
-
-    if (
-        $usuarioId !== null
-    ) {
+    if ($usuarioId !== null) {
 
         if ($usuarioId <= 0) {
-
             return null;
         }
 
@@ -457,25 +409,16 @@ function obtenerNotificacionPorId(
             AND n.usuario_id = :usuario_id
         ";
 
-        $params[':usuario_id'] =
-            $usuarioId;
+        $params[':usuario_id'] = $usuarioId;
     }
-
 
     $sql .= "
         LIMIT 1
     ";
 
+    $stmt = $pdo->prepare($sql);
 
-    $stmt =
-        $pdo->prepare(
-            $sql
-        );
-
-    $stmt->execute(
-        $params
-    );
-
+    $stmt->execute($params);
 
     return $stmt->fetch(
         PDO::FETCH_ASSOC
@@ -492,13 +435,12 @@ function obtenerNotificacionesUsuario(
     int $usuarioId,
     int $limite = 20,
     int $offset = 0
-): array
-{
+): array {
+
     validarUsuarioNotificacion(
         $pdo,
         $usuarioId
     );
-
 
     $limite = max(
         1,
@@ -508,12 +450,10 @@ function obtenerNotificacionesUsuario(
         )
     );
 
-
     $offset = max(
         0,
         $offset
     );
-
 
     $stmt = $pdo->prepare("
         SELECT
@@ -522,7 +462,11 @@ function obtenerNotificacionesUsuario(
 
             j.nombre_completo AS joven_nombre,
 
-            a.estado AS asignacion_estado
+            a.estado AS asignacion_estado,
+
+            a.asignado_por,
+
+            ap.nombre AS asignado_por_nombre
 
         FROM notificaciones n
 
@@ -531,6 +475,9 @@ function obtenerNotificacionesUsuario(
 
         LEFT JOIN asignaciones_seguimiento a
             ON n.asignacion_id = a.id
+
+        LEFT JOIN usuarios ap
+            ON a.asignado_por = ap.id
 
         WHERE n.usuario_id = :usuario_id
 
@@ -543,16 +490,13 @@ function obtenerNotificacionesUsuario(
             n.id DESC
 
         LIMIT {$limite}
+
         OFFSET {$offset}
     ");
 
     $stmt->execute([
-
-        ':usuario_id' =>
-            $usuarioId
-
+        ':usuario_id' => $usuarioId
     ]);
-
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -568,13 +512,12 @@ function obtenerNotificacionesNoLeidas(
     PDO $pdo,
     int $usuarioId,
     int $limite = 20
-): array
-{
+): array {
+
     validarUsuarioNotificacion(
         $pdo,
         $usuarioId
     );
-
 
     $limite = max(
         1,
@@ -584,7 +527,6 @@ function obtenerNotificacionesNoLeidas(
         )
     );
 
-
     $stmt = $pdo->prepare("
         SELECT
 
@@ -592,7 +534,11 @@ function obtenerNotificacionesNoLeidas(
 
             j.nombre_completo AS joven_nombre,
 
-            a.estado AS asignacion_estado
+            a.estado AS asignacion_estado,
+
+            a.asignado_por,
+
+            ap.nombre AS asignado_por_nombre
 
         FROM notificaciones n
 
@@ -601,6 +547,9 @@ function obtenerNotificacionesNoLeidas(
 
         LEFT JOIN asignaciones_seguimiento a
             ON n.asignacion_id = a.id
+
+        LEFT JOIN usuarios ap
+            ON a.asignado_por = ap.id
 
         WHERE n.usuario_id = :usuario_id
 
@@ -616,12 +565,8 @@ function obtenerNotificacionesNoLeidas(
     ");
 
     $stmt->execute([
-
-        ':usuario_id' =>
-            $usuarioId
-
+        ':usuario_id' => $usuarioId
     ]);
-
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -636,13 +581,11 @@ function obtenerNotificacionesNoLeidas(
 function contarNotificacionesNoLeidas(
     PDO $pdo,
     int $usuarioId
-): int
-{
-    if ($usuarioId <= 0) {
+): int {
 
+    if ($usuarioId <= 0) {
         return 0;
     }
-
 
     $stmt = $pdo->prepare("
         SELECT COUNT(*)
@@ -655,14 +598,161 @@ function contarNotificacionesNoLeidas(
     ");
 
     $stmt->execute([
+        ':usuario_id' => $usuarioId
+    ]);
+
+    return (int)$stmt->fetchColumn();
+}
+
+
+/* ==========================================================
+   REGISTRAR CONSTANCIA DE LECTURA
+========================================================== */
+
+function registrarConstanciaLecturaNotificacion(
+    PDO $pdo,
+    array $notificacion,
+    int $usuarioLector
+): void {
+
+    if ($usuarioLector <= 0) {
+        return;
+    }
+
+    $asignacionId = (int)(
+        $notificacion['asignacion_id'] ?? 0
+    );
+
+    if ($asignacionId <= 0) {
+        return;
+    }
+
+    $asignadoPor = (int)(
+        $notificacion['asignado_por'] ?? 0
+    );
+
+    if ($asignadoPor <= 0) {
+        return;
+    }
+
+    if ($asignadoPor === $usuarioLector) {
+        return;
+    }
+
+    $tipoOriginal = strtoupper(
+        trim(
+            (string)(
+                $notificacion['tipo'] ?? ''
+            )
+        )
+    );
+
+    if (
+        $tipoOriginal === 'NOTIFICACION_LEIDA'
+    ) {
+        return;
+    }
+
+    $nombreLector = 'El usuario';
+
+    $stmt = $pdo->prepare("
+        SELECT nombre
+        FROM usuarios
+        WHERE id = :id
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        ':id' => $usuarioLector
+    ]);
+
+    $nombreLectorDb = $stmt->fetchColumn();
+
+    if (
+        $nombreLectorDb !== false &&
+        $nombreLectorDb !== null &&
+        trim((string)$nombreLectorDb) !== ''
+    ) {
+        $nombreLector = (string)$nombreLectorDb;
+    }
+
+    $jovenNombre = trim(
+        (string)(
+            $notificacion['joven_nombre'] ?? ''
+        )
+    );
+
+    if ($jovenNombre === '') {
+        $jovenNombre = 'el joven';
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT id
+
+        FROM notificaciones
+
+        WHERE usuario_id = :usuario_id
+
+        AND asignacion_id = :asignacion_id
+
+        AND tipo = 'NOTIFICACION_LEIDA'
+
+        AND mensaje LIKE :mensaje
+
+        LIMIT 1
+    ");
+
+    $mensajeBusqueda =
+        '%' .
+        $nombreLector .
+        '%';
+
+    $stmt->execute([
 
         ':usuario_id' =>
-            $usuarioId
+            $asignadoPor,
+
+        ':asignacion_id' =>
+            $asignacionId,
+
+        ':mensaje' =>
+            $mensajeBusqueda
 
     ]);
 
+    if ($stmt->fetchColumn()) {
+        return;
+    }
 
-    return (int)$stmt->fetchColumn();
+    crearNotificacion(
+        $pdo,
+        [
+
+            'usuario_id' =>
+                $asignadoPor,
+
+            'tipo' =>
+                'NOTIFICACION_LEIDA',
+
+            'titulo' =>
+                'Notificación leída',
+
+            'mensaje' =>
+                $nombreLector .
+                ' leyó la notificación de asignación de ' .
+                $jovenNombre .
+                '.',
+
+            'joven_id' =>
+                (int)(
+                    $notificacion['joven_id'] ?? 0
+                ),
+
+            'asignacion_id' =>
+                $asignacionId
+
+        ]
+    );
 }
 
 
@@ -674,47 +764,156 @@ function marcarNotificacionLeida(
     PDO $pdo,
     int $id,
     int $usuarioId
-): void
-{
+): void {
+
     if (
         $id <= 0 ||
         $usuarioId <= 0
     ) {
-
         throw new Exception(
             'Notificación inválida.'
         );
     }
 
-
-    $notificacion =
-        obtenerNotificacionPorId(
-            $pdo,
-            $id,
-            $usuarioId
-        );
-
+    $notificacion = obtenerNotificacionPorId(
+        $pdo,
+        $id,
+        $usuarioId
+    );
 
     if (!$notificacion) {
-
         throw new Exception(
             'La notificación no existe o no pertenece al usuario actual.'
         );
     }
 
+    if (
+        (int)(
+            $notificacion['leida'] ?? 0
+        ) === 1
+    ) {
+        return;
+    }
+
+    $transaccionPropia =
+        !$pdo->inTransaction();
+
+    if ($transaccionPropia) {
+        $pdo->beginTransaction();
+    }
+
+    try {
+
+        $stmt = $pdo->prepare("
+            UPDATE notificaciones
+
+            SET
+
+                leida = 1,
+
+                fecha_lectura = NOW()
+
+            WHERE id = :id
+
+            AND usuario_id = :usuario_id
+
+            AND leida = 0
+
+            LIMIT 1
+        ");
+
+        $stmt->execute([
+
+            ':id' =>
+                $id,
+
+            ':usuario_id' =>
+                $usuarioId
+
+        ]);
+
+        if (
+            $stmt->rowCount() > 0
+        ) {
+
+            registrarConstanciaLecturaNotificacion(
+                $pdo,
+                $notificacion,
+                $usuarioId
+            );
+        }
+
+        if ($transaccionPropia) {
+            $pdo->commit();
+        }
+
+    } catch (Throwable $e) {
+
+        if (
+            $transaccionPropia &&
+            $pdo->inTransaction()
+        ) {
+            $pdo->rollBack();
+        }
+
+        throw $e;
+    }
+}
+
+
+/* ==========================================================
+   MARCAR COMO NO LEÍDA
+========================================================== */
+
+function marcarNotificacionNoLeida(
+    PDO $pdo,
+    int $id,
+    int $usuarioId
+): void {
+
+    if (
+        $id <= 0 ||
+        $usuarioId <= 0
+    ) {
+        throw new Exception(
+            'Notificación inválida.'
+        );
+    }
+
+    $notificacion = obtenerNotificacionPorId(
+        $pdo,
+        $id,
+        $usuarioId
+    );
+
+    if (!$notificacion) {
+        throw new Exception(
+            'La notificación no existe o no pertenece al usuario actual.'
+        );
+    }
+
+    if (
+        (int)(
+            $notificacion['leida'] ?? 0
+        ) === 0
+    ) {
+        return;
+    }
 
     $stmt = $pdo->prepare("
         UPDATE notificaciones
 
         SET
 
-            leida = 1,
+            leida = 0,
 
-            fecha_lectura = NOW()
+            fecha_lectura = NULL
 
         WHERE id = :id
 
         AND usuario_id = :usuario_id
+
+        AND leida = 1
 
         LIMIT 1
     ");
@@ -738,36 +937,109 @@ function marcarNotificacionLeida(
 function marcarTodasNotificacionesLeidas(
     PDO $pdo,
     int $usuarioId
-): void
-{
-    if ($usuarioId <= 0) {
+): void {
 
+    if ($usuarioId <= 0) {
         throw new Exception(
             'Usuario inválido.'
         );
     }
 
+    $pendientes =
+        obtenerNotificacionesNoLeidas(
+            $pdo,
+            $usuarioId,
+            100
+        );
+
+    $transaccionPropia =
+        !$pdo->inTransaction();
+
+    if ($transaccionPropia) {
+        $pdo->beginTransaction();
+    }
+
+    try {
+
+        $stmt = $pdo->prepare("
+            UPDATE notificaciones
+
+            SET
+
+                leida = 1,
+
+                fecha_lectura = NOW()
+
+            WHERE usuario_id = :usuario_id
+
+            AND leida = 0
+        ");
+
+        $stmt->execute([
+            ':usuario_id' => $usuarioId
+        ]);
+
+        foreach ($pendientes as $notificacion) {
+
+            registrarConstanciaLecturaNotificacion(
+                $pdo,
+                $notificacion,
+                $usuarioId
+            );
+        }
+
+        if ($transaccionPropia) {
+            $pdo->commit();
+        }
+
+    } catch (Throwable $e) {
+
+        if (
+            $transaccionPropia &&
+            $pdo->inTransaction()
+        ) {
+            $pdo->rollBack();
+        }
+
+        throw $e;
+    }
+}
+
+
+/* ==========================================================
+   MARCAR TODAS COMO NO LEÍDAS
+========================================================== */
+
+function marcarTodasNotificacionesNoLeidas(
+    PDO $pdo,
+    int $usuarioId
+): int {
+
+    if ($usuarioId <= 0) {
+        throw new Exception(
+            'Usuario inválido.'
+        );
+    }
 
     $stmt = $pdo->prepare("
         UPDATE notificaciones
 
         SET
 
-            leida = 1,
+            leida = 0,
 
-            fecha_lectura = NOW()
+            fecha_lectura = NULL
 
         WHERE usuario_id = :usuario_id
 
-        AND leida = 0
+        AND leida = 1
     ");
 
     $stmt->execute([
-
-        ':usuario_id' =>
-            $usuarioId
-
+        ':usuario_id' => $usuarioId
     ]);
+
+    return $stmt->rowCount();
 }
 
 
@@ -779,18 +1051,16 @@ function eliminarNotificacion(
     PDO $pdo,
     int $id,
     int $usuarioId
-): void
-{
+): void {
+
     if (
         $id <= 0 ||
         $usuarioId <= 0
     ) {
-
         throw new Exception(
             'Notificación inválida.'
         );
     }
-
 
     $stmt = $pdo->prepare("
         DELETE FROM notificaciones
@@ -812,15 +1082,120 @@ function eliminarNotificacion(
 
     ]);
 
-
     if (
         $stmt->rowCount() === 0
     ) {
-
         throw new Exception(
             'La notificación no existe o no pertenece al usuario actual.'
         );
     }
+}
+
+
+/* ==========================================================
+   ELIMINAR TODAS LAS NOTIFICACIONES LEÍDAS
+========================================================== */
+
+function eliminarNotificacionesLeidas(
+    PDO $pdo,
+    int $usuarioId
+): int {
+
+    if ($usuarioId <= 0) {
+        throw new Exception(
+            'Usuario inválido.'
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        DELETE FROM notificaciones
+
+        WHERE usuario_id = :usuario_id
+
+        AND leida = 1
+    ");
+
+    $stmt->execute([
+        ':usuario_id' => $usuarioId
+    ]);
+
+    return $stmt->rowCount();
+}
+
+
+/* ==========================================================
+   ELIMINAR NOTIFICACIONES LEÍDAS ANTIGUAS
+========================================================== */
+
+function eliminarNotificacionesLeidasAntesDe(
+    PDO $pdo,
+    int $usuarioId,
+    int $dias = 30
+): int {
+
+    if ($usuarioId <= 0) {
+        throw new Exception(
+            'Usuario inválido.'
+        );
+    }
+
+    $dias = max(
+        1,
+        min(
+            $dias,
+            3650
+        )
+    );
+
+    $stmt = $pdo->prepare("
+        DELETE FROM notificaciones
+
+        WHERE usuario_id = :usuario_id
+
+        AND leida = 1
+
+        AND created_at < DATE_SUB(
+            NOW(),
+            INTERVAL {$dias} DAY
+        )
+    ");
+
+    $stmt->execute([
+        ':usuario_id' => $usuarioId
+    ]);
+
+    return $stmt->rowCount();
+}
+
+
+/* ==========================================================
+   ELIMINAR CANCELACIONES ANTIGUAS
+========================================================== */
+
+function eliminarNotificacionesCanceladas(
+    PDO $pdo,
+    int $usuarioId
+): int {
+
+    if ($usuarioId <= 0) {
+        throw new Exception(
+            'Usuario inválido.'
+        );
+    }
+
+    $stmt = $pdo->prepare("
+        DELETE FROM notificaciones
+
+        WHERE usuario_id = :usuario_id
+
+        AND tipo = 'ASIGNACION_CANCELADA'
+    ");
+
+    $stmt->execute([
+        ':usuario_id' => $usuarioId
+    ]);
+
+    return $stmt->rowCount();
 }
 
 
@@ -836,12 +1211,10 @@ function obtenerUsuarioActualNotificaciones(): int
         $usuarioId === null ||
         $usuarioId <= 0
     ) {
-
         throw new Exception(
             'No se pudo identificar al usuario actual.'
         );
     }
-
 
     return (int)$usuarioId;
 }

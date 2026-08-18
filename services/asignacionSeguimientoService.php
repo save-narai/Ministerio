@@ -198,8 +198,13 @@ function validarPeriodoAsignacionSeguimiento(
         );
     }
 
+    /*
+     * 0 = TODOS LOS MESES
+     * 1 - 12 = mes específico
+     */
+
     if (
-        $mes < 1 ||
+        $mes < 0 ||
         $mes > 12
     ) {
 
@@ -290,6 +295,10 @@ function obtenerAsignacionSeguimientoPeriodo(
         return null;
     }
 
+    if ($mes === 0) {
+        return null;
+    }
+
     validarPeriodoAsignacionSeguimiento(
         $anio,
         $mes
@@ -357,6 +366,10 @@ function obtenerAsignacionActivaSeguimiento(
 
     if ($jovenId <= 0) {
 
+        return null;
+    }
+
+    if ($mes === 0) {
         return null;
     }
 
@@ -492,10 +505,6 @@ function existeAsignacionSeguimiento(
 function validarAccesoAsignacionSeguimiento(
     array $asignacion
 ): void {
-
-    /*
-     * Administración puede gestionar cualquier asignación.
-     */
 
     if (tienePermiso('asignar_seguimientos')) {
 
@@ -655,11 +664,6 @@ function notificarCambioEstadoAsignacionSeguimiento(
             ?? 0
         );
 
-    /*
-     * La notificación administrativa va
-     * a quien realizó la asignación.
-     */
-
     $destinatario =
         (int)(
             $asignacion['asignado_por']
@@ -753,9 +757,8 @@ function notificarCambioEstadoAsignacionSeguimiento(
 }
 
 
-
 /* ==========================================================
-   OBTENER ÚLTIMO SEGUIMIENTO FINALIZADO DEL JOVEN
+   OBTENER ÚLTIMO SEGUIMIENTO FINALIZADO
 ========================================================== */
 
 function obtenerUltimoSeguimientoFinalizado(
@@ -817,6 +820,7 @@ function obtenerUltimoSeguimientoFinalizado(
     ) ?: null;
 }
 
+
 /* ==========================================================
    CREAR ASIGNACIÓN
 ========================================================== */
@@ -840,6 +844,13 @@ function crearAsignacionSeguimiento(
         $mes
     );
 
+    if ($mes === 0) {
+
+        throw new Exception(
+            'Debes seleccionar un mes específico para crear una asignación.'
+        );
+    }
+
     validarJovenAsignacionSeguimiento(
         $pdo,
         $jovenId
@@ -855,10 +866,6 @@ function crearAsignacionSeguimiento(
         $asignadoPor
     );
 
-
-    /* ======================================================
-       OBSERVACIONES
-    ====================================================== */
 
     $observaciones =
         trim(
@@ -883,10 +890,6 @@ function crearAsignacionSeguimiento(
         );
     }
 
-
-    /* ======================================================
-       VERIFICAR SI YA EXISTE ASIGNACIÓN
-    ====================================================== */
 
     $stmt = $pdo->prepare("
         SELECT
@@ -933,32 +936,12 @@ function crearAsignacionSeguimiento(
     }
 
 
-    /* ======================================================
-       BUSCAR SEGUIMIENTO HISTÓRICO FINALIZADO
-    ====================================================== */
-
     $seguimientoFinalizado =
         obtenerUltimoSeguimientoFinalizado(
             $pdo,
             $jovenId
         );
 
-
-    /*
-     * REGLA:
-     *
-     * Si el joven ya fue contactado y el seguimiento
-     * quedó FINALIZADO, una asignación nueva no debe
-     * volver a comenzar como PENDIENTE.
-     *
-     * Ejemplo:
-     *
-     * Seguimiento:
-     *   16/02/2026 → FINALIZADO
-     *
-     * Nueva asignación:
-     *   Agosto 2026 → COMPLETADO
-     */
 
     $estadoInicial =
         $seguimientoFinalizado
@@ -972,10 +955,6 @@ function crearAsignacionSeguimiento(
             : null;
 
 
-    /* ======================================================
-       TRANSACCIÓN
-    ====================================================== */
-
     $transaccionPropia =
         !$pdo->inTransaction();
 
@@ -987,10 +966,6 @@ function crearAsignacionSeguimiento(
 
 
     try {
-
-        /* ==================================================
-           INSERTAR ASIGNACIÓN
-        ================================================== */
 
         $stmt = $pdo->prepare("
             INSERT INTO asignaciones_seguimiento
@@ -1051,10 +1026,6 @@ function crearAsignacionSeguimiento(
             (int)$pdo->lastInsertId();
 
 
-        /* ==================================================
-           RECUPERAR ASIGNACIÓN
-        ================================================== */
-
         $asignacion =
             obtenerAsignacionSeguimientoPorId(
                 $pdo,
@@ -1070,22 +1041,6 @@ function crearAsignacionSeguimiento(
         }
 
 
-        /* ==================================================
-           NOTIFICACIÓN
-        ================================================== */
-
-        /*
-         * Solo notificamos como NUEVA ASIGNACIÓN
-         * cuando realmente queda pendiente.
-         *
-         * Si ya estaba completada por un seguimiento
-         * histórico, no tiene sentido decir:
-         *
-         * "Te asignaron..."
-         *
-         * cuando el trabajo ya estaba realizado.
-         */
-
         if (
             $estadoInicial === 'PENDIENTE'
         ) {
@@ -1096,11 +1051,6 @@ function crearAsignacionSeguimiento(
             );
         }
 
-
-        /*
-         * Si nació COMPLETADA, notificamos al responsable
-         * de la asignación que ya existía un seguimiento.
-         */
 
         if (
             $estadoInicial === 'COMPLETADO'
@@ -1113,10 +1063,6 @@ function crearAsignacionSeguimiento(
             );
         }
 
-
-        /* ==================================================
-           COMMIT
-        ================================================== */
 
         if ($transaccionPropia) {
 
@@ -1143,7 +1089,7 @@ function crearAsignacionSeguimiento(
 
 
 /* ==========================================================
-   SINCRONIZAR ASIGNACIÓN CON HISTORIAL DE SEGUIMIENTO
+   SINCRONIZAR ASIGNACIÓN
 ========================================================== */
 
 function sincronizarAsignacionConSeguimiento(
@@ -1174,10 +1120,6 @@ function sincronizarAsignacionConSeguimiento(
     }
 
 
-    /*
-     * Solo corregimos asignaciones activas.
-     */
-
     $estadoActual =
         strtoupper(
             trim(
@@ -1202,10 +1144,6 @@ function sincronizarAsignacionConSeguimiento(
     }
 
 
-    /*
-     * Buscar cualquier seguimiento FINALIZADO.
-     */
-
     $seguimientoFinalizado =
         obtenerUltimoSeguimientoFinalizado(
             $pdo,
@@ -1218,10 +1156,6 @@ function sincronizarAsignacionConSeguimiento(
         return;
     }
 
-
-    /*
-     * Completar asignación.
-     */
 
     $stmt = $pdo->prepare("
         UPDATE asignaciones_seguimiento
@@ -1240,7 +1174,6 @@ function sincronizarAsignacionConSeguimiento(
         )
     ");
 
-
     $stmt->execute([
 
         ':id' =>
@@ -1248,10 +1181,6 @@ function sincronizarAsignacionConSeguimiento(
 
     ]);
 
-
-    /*
-     * Recuperar la asignación actualizada.
-     */
 
     $actualizada =
         obtenerAsignacionSeguimientoPorId(
@@ -1268,10 +1197,6 @@ function sincronizarAsignacionConSeguimiento(
     }
 
 
-    /*
-     * Notificar solamente si realmente cambió.
-     */
-
     if (
         $stmt->rowCount() > 0
     ) {
@@ -1284,8 +1209,9 @@ function sincronizarAsignacionConSeguimiento(
     }
 }
 
+
 /* ==========================================================
-   OBTENER ASIGNACIONES DEL MES
+   OBTENER ASIGNACIONES DEL PERÍODO
 ========================================================== */
 
 function obtenerAsignacionesSeguimientoMes(
@@ -1299,7 +1225,9 @@ function obtenerAsignacionesSeguimientoMes(
         $mes
     );
 
-    $stmt = $pdo->prepare("
+
+    $sql = "
+
         SELECT
 
             a.*,
@@ -1336,9 +1264,35 @@ function obtenerAsignacionesSeguimientoMes(
 
         WHERE a.anio = :anio
 
-        AND a.mes = :mes
+    ";
+
+
+    $params = [
+
+        ':anio' =>
+            $anio
+
+    ];
+
+
+    if ($mes > 0) {
+
+        $sql .= "
+            AND a.mes = :mes
+        ";
+
+        $params[':mes'] =
+            $mes;
+    }
+
+
+    $sql .= "
 
         ORDER BY
+
+            a.anio DESC,
+
+            a.mes DESC,
 
             CASE a.estado
 
@@ -1351,20 +1305,28 @@ function obtenerAsignacionesSeguimientoMes(
                 WHEN 'COMPLETADO'
                     THEN 3
 
-                ELSE 4
+                WHEN 'CANCELADO'
+                    THEN 4
+
+                ELSE 5
 
             END,
 
             j.nombre_completo ASC
-    ");
 
-    $stmt->execute([
+    ";
 
-        ':anio' => $anio,
 
-        ':mes' => $mes
+    $stmt =
+        $pdo->prepare(
+            $sql
+        );
 
-    ]);
+
+    $stmt->execute(
+        $params
+    );
+
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -1388,67 +1350,133 @@ function obtenerAsignacionesUsuario(
         $mes
     );
 
-    validarUsuarioAsignacionSeguimiento(
-        $pdo,
-        $usuarioId
+    if ($mes === 0) {
+
+        $sql = "
+            SELECT
+
+                a.*,
+
+                j.nombre_completo AS joven_nombre,
+
+                j.telefono AS joven_telefono,
+
+                j.genero AS joven_genero,
+
+                j.estado_espiritual
+
+            FROM asignaciones_seguimiento a
+
+            INNER JOIN jovenes j
+                ON a.joven_id = j.id
+
+            WHERE a.usuario_id = :usuario_id
+
+            AND a.anio = :anio
+
+            ORDER BY
+
+                a.mes DESC,
+
+                CASE a.estado
+
+                    WHEN 'PENDIENTE'
+                        THEN 1
+
+                    WHEN 'EN_PROCESO'
+                        THEN 2
+
+                    WHEN 'COMPLETADO'
+                        THEN 3
+
+                    ELSE 4
+
+                END,
+
+                j.nombre_completo ASC
+        ";
+
+        $params = [
+
+            ':usuario_id' =>
+                $usuarioId,
+
+            ':anio' =>
+                $anio
+
+        ];
+
+    } else {
+
+        $sql = "
+            SELECT
+
+                a.*,
+
+                j.nombre_completo AS joven_nombre,
+
+                j.telefono AS joven_telefono,
+
+                j.genero AS joven_genero,
+
+                j.estado_espiritual
+
+            FROM asignaciones_seguimiento a
+
+            INNER JOIN jovenes j
+                ON a.joven_id = j.id
+
+            WHERE a.usuario_id = :usuario_id
+
+            AND a.anio = :anio
+
+            AND a.mes = :mes
+
+            ORDER BY
+
+                CASE a.estado
+
+                    WHEN 'PENDIENTE'
+                        THEN 1
+
+                    WHEN 'EN_PROCESO'
+                        THEN 2
+
+                    WHEN 'COMPLETADO'
+                        THEN 3
+
+                    ELSE 4
+
+                END,
+
+                j.nombre_completo ASC
+        ";
+
+        $params = [
+
+            ':usuario_id' =>
+                $usuarioId,
+
+            ':anio' =>
+                $anio,
+
+            ':mes' =>
+                $mes
+
+        ];
+    }
+
+
+    $stmt =
+        $pdo->prepare(
+            $sql
+        );
+
+
+    $stmt->execute(
+        $params
     );
 
-    $stmt = $pdo->prepare("
-        SELECT
-
-            a.*,
-
-            j.nombre_completo AS joven_nombre,
-
-            j.telefono AS joven_telefono,
-
-            j.genero AS joven_genero,
-
-            j.estado_espiritual
-
-        FROM asignaciones_seguimiento a
-
-        INNER JOIN jovenes j
-            ON a.joven_id = j.id
-
-        WHERE a.usuario_id = :usuario_id
-
-        AND a.anio = :anio
-
-        AND a.mes = :mes
-
-        ORDER BY
-
-            CASE a.estado
-
-                WHEN 'PENDIENTE'
-                    THEN 1
-
-                WHEN 'EN_PROCESO'
-                    THEN 2
-
-                WHEN 'COMPLETADO'
-                    THEN 3
-
-                ELSE 4
-
-            END,
-
-            j.nombre_completo ASC
-    ");
-
-    $stmt->execute([
-
-        ':usuario_id' =>
-            $usuarioId,
-
-        ':anio' =>
-            $anio,
-
-        ':mes' =>
-            $mes
-
-    ]);
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -1471,7 +1499,24 @@ function obtenerJovenesPendientesSinAsignar(
         $mes
     );
 
-    $stmt = $pdo->prepare("
+
+    /*
+     * ======================================================
+     * MISMA BASE QUE SEGUIMIENTOS
+     * ======================================================
+     *
+     * Activos + NUEVO
+     *
+     * Y además:
+     *
+     * - ingresaron este mes
+     *   O
+     * - nunca tienen FINALIZADO histórico.
+     */
+
+
+    $sql = "
+
         SELECT
 
             j.id,
@@ -1482,63 +1527,60 @@ function obtenerJovenesPendientesSinAsignar(
 
             j.genero,
 
-            j.estado_espiritual
+            j.estado_espiritual,
+
+            j.fecha_ingreso
 
         FROM jovenes j
 
         WHERE
+
             j.estado_actividad = 'ACTIVO'
 
         AND j.estado_espiritual = 'NUEVO'
 
+        AND (
+
+            (
+
+                j.fecha_ingreso IS NOT NULL
+
+                AND YEAR(j.fecha_ingreso) = YEAR(CURDATE())
+
+                AND MONTH(j.fecha_ingreso) = MONTH(CURDATE())
+
+            )
+
+            OR
+
+            NOT EXISTS (
+
+                SELECT 1
+
+                FROM seguimientos s
+
+                WHERE s.joven_id = j.id
+
+                AND s.estado_proceso = 'FINALIZADO'
+
+                AND s.fecha_contacto IS NOT NULL
+
+            )
+
+        )
+
 
         /*
-         * Si el joven tiene un seguimiento
-         * FINALIZADO en cualquier fecha,
-         * ya no debe aparecer como pendiente.
+         * ==================================================
+         * ASIGNACIONES
+         * ==================================================
          *
-         * El mes de la asignación NO depende
-         * del mes en que ocurrió el contacto.
-         */
-
-        AND NOT EXISTS (
-
-            SELECT 1
-
-            FROM seguimientos s
-
-            WHERE s.joven_id = j.id
-
-            AND s.estado_proceso = 'FINALIZADO'
-
-            AND s.fecha_contacto IS NOT NULL
-        )
-
-
-        /*
-         * Las excepciones sí continúan siendo
-         * dependientes del período seleccionado.
-         */
-
-        AND NOT EXISTS (
-
-            SELECT 1
-
-            FROM excepciones_seguimiento e
-
-            WHERE e.joven_id = j.id
-
-            AND e.mes = :mes_exc
-
-            AND e.anio = :anio_exc
-
-        )
-
-
-        /*
-         * Tampoco debe aparecer si ya tiene una
-         * asignación pendiente o en proceso para
-         * el período seleccionado.
+         * mes = 0:
+         *     no debe existir asignación en ningún mes
+         *     del año seleccionado.
+         *
+         * mes > 0:
+         *     no debe existir asignación en ese mes.
          */
 
         AND NOT EXISTS (
@@ -1551,26 +1593,80 @@ function obtenerJovenesPendientesSinAsignar(
 
             AND a.anio = :anio_asig
 
-            AND a.mes = :mes_asig
-
-            AND a.estado IN (
-                'PENDIENTE',
-                'EN_PROCESO'
+            AND (
+                :mes_asig = 0
+                OR a.mes = :mes_asig
             )
 
         )
 
+    ";
+
+
+    /*
+     * ======================================================
+     * EXCEPCIONES
+     * ======================================================
+     *
+     * Solo para un mes específico.
+     */
+
+    if ($mes > 0) {
+
+        $sql .= "
+
+            AND NOT EXISTS (
+
+                SELECT 1
+
+                FROM excepciones_seguimiento e
+
+                WHERE e.joven_id = j.id
+
+                AND e.anio = :anio_exc
+
+                AND e.mes = :mes_exc
+
+            )
+
+        ";
+    }
+
+
+    $sql .= "
+
         ORDER BY
+
+            CASE
+
+                WHEN
+
+                    j.fecha_ingreso IS NOT NULL
+
+                    AND YEAR(j.fecha_ingreso) = YEAR(CURDATE())
+
+                    AND MONTH(j.fecha_ingreso) = MONTH(CURDATE())
+
+                THEN 0
+
+                ELSE 1
+
+            END,
+
+            j.fecha_ingreso ASC,
+
             j.nombre_completo ASC
-    ");
 
-    $stmt->execute([
+    ";
 
-        ':mes_exc' =>
-            $mes,
 
-        ':anio_exc' =>
-            $anio,
+    $stmt =
+        $pdo->prepare(
+            $sql
+        );
+
+
+    $params = [
 
         ':anio_asig' =>
             $anio,
@@ -1578,7 +1674,23 @@ function obtenerJovenesPendientesSinAsignar(
         ':mes_asig' =>
             $mes
 
-    ]);
+    ];
+
+
+    if ($mes > 0) {
+
+        $params[':anio_exc'] =
+            $anio;
+
+        $params[':mes_exc'] =
+            $mes;
+    }
+
+
+    $stmt->execute(
+        $params
+    );
+
 
     return $stmt->fetchAll(
         PDO::FETCH_ASSOC
@@ -1629,20 +1741,6 @@ function cambiarEstadoAsignacionSeguimiento(
         );
 
 
-    /*
-     * COMPLETADO NO se permite aquí.
-     *
-     * Se produce exclusivamente desde
-     * seguimientoService.php cuando el
-     * seguimiento llega a FINALIZADO.
-     *
-     * CANCELADO tampoco se permite aquí.
-     *
-     * La cancelación elimina directamente
-     * la asignación mediante
-     * cancelarAsignacionSeguimiento().
-     */
-
     $transiciones = [
 
         'PENDIENTE' => [
@@ -1671,15 +1769,15 @@ function cambiarEstadoAsignacionSeguimiento(
     }
 
 
-    $fechaCompletado = null;
-
     $transaccionPropia =
         !$pdo->inTransaction();
+
 
     if ($transaccionPropia) {
 
         $pdo->beginTransaction();
     }
+
 
     try {
 
@@ -1687,19 +1785,19 @@ function cambiarEstadoAsignacionSeguimiento(
             UPDATE asignaciones_seguimiento
 
             SET
+
                 estado = :estado,
-                fecha_completado = :fecha_completado
+
+                fecha_completado = NULL
 
             WHERE id = :id
         ");
+
 
         $stmt->execute([
 
             ':estado' =>
                 $estado,
-
-            ':fecha_completado' =>
-                $fechaCompletado,
 
             ':id' =>
                 $id
@@ -1712,6 +1810,7 @@ function cambiarEstadoAsignacionSeguimiento(
                 $pdo,
                 $id
             );
+
 
         if (!$asignacionActualizada) {
 
@@ -1732,6 +1831,7 @@ function cambiarEstadoAsignacionSeguimiento(
 
             $pdo->commit();
         }
+
 
     } catch (Throwable $e) {
 
@@ -1776,6 +1876,7 @@ function cancelarAsignacionSeguimiento(
             $id
         );
 
+
     if (!$asignacion) {
 
         throw new Exception(
@@ -1795,11 +1896,6 @@ function cancelarAsignacionSeguimiento(
         );
 
 
-    /*
-     * Solo se pueden cancelar asignaciones
-     * que todavía están pendientes o en proceso.
-     */
-
     if (!in_array(
         $estadoActual,
         [
@@ -1818,6 +1914,7 @@ function cancelarAsignacionSeguimiento(
     $transaccionPropia =
         !$pdo->inTransaction();
 
+
     if ($transaccionPropia) {
 
         $pdo->beginTransaction();
@@ -1827,16 +1924,13 @@ function cancelarAsignacionSeguimiento(
     try {
 
         /*
-         * Eliminar las notificaciones asociadas
-         * a esta asignación.
-         *
-         * Esto se hace antes de eliminar la
-         * asignación para evitar conflictos con
-         * posibles claves foráneas.
+         * Eliminar notificaciones relacionadas
+         * antes de eliminar la asignación.
          */
 
         $stmt = $pdo->prepare("
             DELETE FROM notificaciones
+
             WHERE asignacion_id = :asignacion_id
         ");
 
@@ -1846,10 +1940,9 @@ function cancelarAsignacionSeguimiento(
 
 
         /*
-         * Eliminar la asignación.
-         *
-         * Ya no existe CANCELADO como estado
-         * persistente.
+         * Cancelación:
+         * la asignación desaparece y vuelve
+         * al estado SIN ASIGNAR.
          */
 
         $stmt = $pdo->prepare("
@@ -1876,14 +1969,11 @@ function cancelarAsignacionSeguimiento(
         }
 
 
-        /*
-         * No se genera notificación de cancelación.
-         */
-
         if ($transaccionPropia) {
 
             $pdo->commit();
         }
+
 
     } catch (Throwable $e) {
 

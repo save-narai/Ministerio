@@ -13,15 +13,20 @@ require_once __DIR__ . '/../services/asignacionSeguimientoService.php';
 
 controllerInit();
 
-$pdo =
-    controllerPdo();
+$pdo = controllerPdo();
 
 
 /* ==========================================================
-   VALIDAR ASIGNACIÓN CANCELADA
+   OBTENER PERÍODO DE UNA ASIGNACIÓN
 ========================================================== */
 
-function validarAsignacionCanceladaParaEliminar(
+/*
+ * Se utiliza para que, después de cancelar,
+ * el sistema regrese exactamente al mismo
+ * año/mes que estaba consultando el usuario.
+ */
+
+function obtenerPeriodoAsignacionParaRedirect(
     PDO $pdo,
     int $id
 ): array {
@@ -35,17 +40,10 @@ function validarAsignacionCanceladaParaEliminar(
 
     $stmt = $pdo->prepare("
         SELECT
-
-            id,
-
-            joven_id,
-
-            estado
-
+            anio,
+            mes
         FROM asignaciones_seguimiento
-
         WHERE id = :id
-
         LIMIT 1
     ");
 
@@ -68,201 +66,39 @@ function validarAsignacionCanceladaParaEliminar(
         );
     }
 
-    $estado =
-        strtoupper(
-            trim(
-                (string)(
-                    $asignacion['estado']
-                    ?? ''
-                )
-            )
+    $anio =
+        (int)(
+            $asignacion['anio']
+            ?? 0
         );
 
-    if ($estado !== 'CANCELADO') {
+    $mes =
+        (int)(
+            $asignacion['mes']
+            ?? 0
+        );
+
+    if (
+        $anio < 2000 ||
+        $anio > 2100 ||
+        $mes < 1 ||
+        $mes > 12
+    ) {
 
         throw new Exception(
-            'Solo se pueden eliminar asignaciones canceladas.'
+            'El período de la asignación no es válido.'
         );
     }
 
-    return $asignacion;
-}
+    return [
 
+        'anio' =>
+            $anio,
 
-/* ==========================================================
-   ELIMINAR CANCELADA
-========================================================== */
+        'mes' =>
+            $mes
 
-function eliminarAsignacionCancelada(
-    PDO $pdo,
-    int $id
-): void {
-
-    exigirPermiso(
-        'asignar_seguimientos'
-    );
-
-    validarAsignacionCanceladaParaEliminar(
-        $pdo,
-        $id
-    );
-
-    $transaccionPropia =
-        !$pdo->inTransaction();
-
-    if ($transaccionPropia) {
-
-        $pdo->beginTransaction();
-    }
-
-    try {
-
-        /*
-         * Primero eliminamos las notificaciones
-         * relacionadas con esta asignación.
-         */
-
-        $stmt = $pdo->prepare("
-            DELETE FROM notificaciones
-
-            WHERE asignacion_id = :asignacion_id
-        ");
-
-        $stmt->execute([
-
-            ':asignacion_id' =>
-                $id
-
-        ]);
-
-        /*
-         * Después eliminamos la asignación.
-         */
-
-        $stmt = $pdo->prepare("
-            DELETE FROM asignaciones_seguimiento
-
-            WHERE id = :id
-
-            AND estado = 'CANCELADO'
-        ");
-
-        $stmt->execute([
-
-            ':id' =>
-                $id
-
-        ]);
-
-        if (
-            $stmt->rowCount() === 0
-        ) {
-
-            throw new Exception(
-                'No se pudo eliminar la asignación cancelada.'
-            );
-        }
-
-        if ($transaccionPropia) {
-
-            $pdo->commit();
-        }
-
-    } catch (Throwable $e) {
-
-        if (
-            $transaccionPropia &&
-            $pdo->inTransaction()
-        ) {
-
-            $pdo->rollBack();
-        }
-
-        throw $e;
-    }
-}
-
-
-/* ==========================================================
-   ELIMINAR VARIAS CANCELADAS
-========================================================== */
-
-function eliminarAsignacionesCanceladas(
-    PDO $pdo,
-    array $ids
-): int {
-
-    exigirPermiso(
-        'asignar_seguimientos'
-    );
-
-    $ids =
-        array_values(
-
-            array_unique(
-
-                array_filter(
-
-                    array_map(
-                        'intval',
-                        $ids
-                    ),
-
-                    static fn ($id) =>
-                        $id > 0
-
-                )
-            )
-        );
-
-    if (empty($ids)) {
-
-        throw new Exception(
-            'Debes seleccionar al menos una asignación cancelada.'
-        );
-    }
-
-    $transaccionPropia =
-        !$pdo->inTransaction();
-
-    if ($transaccionPropia) {
-
-        $pdo->beginTransaction();
-    }
-
-    try {
-
-        $cantidad = 0;
-
-        foreach ($ids as $id) {
-
-            eliminarAsignacionCancelada(
-                $pdo,
-                $id
-            );
-
-            $cantidad++;
-        }
-
-        if ($transaccionPropia) {
-
-            $pdo->commit();
-        }
-
-        return $cantidad;
-
-    } catch (Throwable $e) {
-
-        if (
-            $transaccionPropia &&
-            $pdo->inTransaction()
-        ) {
-
-            $pdo->rollBack();
-        }
-
-        throw $e;
-    }
+    ];
 }
 
 
@@ -321,6 +157,7 @@ controllerRun(
                 $_POST['observaciones']
                 ?? null;
 
+
             crearAsignacionSeguimiento(
 
                 $pdo,
@@ -338,6 +175,7 @@ controllerRun(
                 $observaciones
 
             );
+
 
             return controllerRedirect(
 
@@ -394,12 +232,14 @@ controllerRun(
                 $_POST['joven_ids']
                 ?? [];
 
+
             if (!is_array($jovenes)) {
 
                 $jovenes = [
                     $jovenes
                 ];
             }
+
 
             $jovenes =
                 array_values(
@@ -417,8 +257,11 @@ controllerRun(
                                 $id > 0
 
                         )
+
                     )
+
                 );
+
 
             if (empty($jovenes)) {
 
@@ -427,11 +270,14 @@ controllerRun(
                 );
             }
 
+
             $observaciones =
                 $_POST['observaciones']
                 ?? null;
 
+
             $cantidad = 0;
+
 
             foreach (
                 $jovenes as $jovenId
@@ -457,6 +303,7 @@ controllerRun(
 
                 $cantidad++;
             }
+
 
             return controllerRedirect(
 
@@ -489,10 +336,12 @@ controllerRun(
                     ?? 0
                 );
 
+
             iniciarAsignacionSeguimiento(
                 $pdo,
                 $id
             );
+
 
             return controllerRedirect(
 
@@ -516,14 +365,38 @@ controllerRun(
                     ?? 0
                 );
 
+
+            /*
+             * Antes de cancelar obtenemos el período real
+             * de esa asignación.
+             */
+
+            $periodo =
+                obtenerPeriodoAsignacionParaRedirect(
+                    $pdo,
+                    $id
+                );
+
+
+            /*
+             * Cancelar elimina la asignación.
+             * El joven vuelve automáticamente
+             * a "Pendientes sin asignar".
+             */
+
             cancelarAsignacionSeguimiento(
                 $pdo,
                 $id
             );
 
+
             return controllerRedirect(
 
-                '../views/seguimientos/asignaciones.php',
+                '../views/seguimientos/asignaciones.php'
+                . '?anio='
+                . $periodo['anio']
+                . '&mes='
+                . $periodo['mes'],
 
                 'Asignación cancelada correctamente.'
 
@@ -541,12 +414,14 @@ controllerRun(
                 $_POST['ids']
                 ?? [];
 
+
             if (!is_array($ids)) {
 
                 $ids = [
                     $ids
                 ];
             }
+
 
             $ids =
                 array_values(
@@ -564,8 +439,11 @@ controllerRun(
                                 $id > 0
 
                         )
+
                     )
+
                 );
+
 
             if (empty($ids)) {
 
@@ -574,21 +452,51 @@ controllerRun(
                 );
             }
 
+
+            /*
+             * Todas las asignaciones seleccionadas
+             * pertenecen al mismo período porque
+             * provienen de la misma tabla filtrada.
+             *
+             * Tomamos el período de la primera.
+             */
+
+            $periodo =
+                obtenerPeriodoAsignacionParaRedirect(
+
+                    $pdo,
+
+                    $ids[0]
+
+                );
+
+
             $cantidad = 0;
 
-            foreach ($ids as $id) {
+
+            foreach (
+                $ids as $id
+            ) {
 
                 cancelarAsignacionSeguimiento(
+
                     $pdo,
+
                     $id
+
                 );
 
                 $cantidad++;
             }
 
+
             return controllerRedirect(
 
-                '../views/seguimientos/asignaciones.php',
+                '../views/seguimientos/asignaciones.php'
+                . '?anio='
+                . $periodo['anio']
+                . '&mes='
+                . $periodo['mes'],
 
                 $cantidad === 1
 
@@ -598,106 +506,7 @@ controllerRun(
                         . ' asignaciones canceladas correctamente.'
 
             );
-        },
-
-
-        /* ======================================================
-           ELIMINAR UNA CANCELADA
-        ====================================================== */
-
-        'eliminar_asignacion_cancelada' =>
-            function () use ($pdo) {
-
-                $id =
-                    (int)(
-                        $_POST['id']
-                        ?? 0
-                    );
-
-                $anio =
-                    (int)(
-                        $_POST['anio']
-                        ?? date('Y')
-                    );
-
-                $mes =
-                    (int)(
-                        $_POST['mes']
-                        ?? date('m')
-                    );
-
-                eliminarAsignacionCancelada(
-                    $pdo,
-                    $id
-                );
-
-                return controllerRedirect(
-
-                    '../views/seguimientos/asignaciones.php'
-                    . '?anio='
-                    . $anio
-                    . '&mes='
-                    . $mes,
-
-                    'Asignación cancelada eliminada correctamente.'
-
-                );
-            },
-
-
-        /* ======================================================
-           ELIMINAR VARIAS CANCELADAS
-        ====================================================== */
-
-        'eliminar_asignaciones_canceladas' =>
-            function () use ($pdo) {
-
-                $ids =
-                    $_POST['ids']
-                    ?? [];
-
-                $anio =
-                    (int)(
-                        $_POST['anio']
-                        ?? date('Y')
-                    );
-
-                $mes =
-                    (int)(
-                        $_POST['mes']
-                        ?? date('m')
-                    );
-
-                if (!is_array($ids)) {
-
-                    $ids = [
-                        $ids
-                    ];
-                }
-
-                $cantidad =
-                    eliminarAsignacionesCanceladas(
-                        $pdo,
-                        $ids
-                    );
-
-                return controllerRedirect(
-
-                    '../views/seguimientos/asignaciones.php'
-                    . '?anio='
-                    . $anio
-                    . '&mes='
-                    . $mes,
-
-                    $cantidad === 1
-
-                        ? 'Asignación cancelada eliminada correctamente.'
-
-                        : $cantidad
-                            . ' asignaciones canceladas eliminadas correctamente.'
-
-                );
-            }
+        }
 
     ],
 

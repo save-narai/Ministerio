@@ -1,13 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const form = document.getElementById("formEditarJoven");
+    const form =
+        document.getElementById("formEditarJoven");
 
-    if (!form) return;
+    if (!form) {
+        return;
+    }
 
-    const fecha = document.getElementById("fecha");
-    const edad = document.getElementById("edad");
-    const telefono = document.getElementById("telefono");
-    const sinTelefono = document.getElementById("sinTelefono");
+
+    const fecha =
+        document.getElementById("fecha");
+
+    const edad =
+        document.getElementById("edad");
+
+    const telefono =
+        document.getElementById("telefono");
+
+    const sinTelefono =
+        document.getElementById("sinTelefono");
+
 
     /* ===========================================
        TOAST
@@ -25,11 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /* ===========================================
        FECHA / EDAD
     =========================================== */
 
     function sincronizarEdad() {
+
+        if (!fecha || !edad) {
+            return;
+        }
+
 
         if (fecha.value) {
 
@@ -41,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
             edad.disabled = false;
 
         }
+
 
         if (edad.value) {
 
@@ -55,11 +74,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    fecha.addEventListener("change", sincronizarEdad);
 
-    edad.addEventListener("input", sincronizarEdad);
+    if (fecha) {
+
+        fecha.addEventListener(
+            "change",
+            sincronizarEdad
+        );
+
+    }
+
+
+    if (edad) {
+
+        edad.addEventListener(
+            "input",
+            sincronizarEdad
+        );
+
+    }
+
 
     sincronizarEdad();
+
 
     /* ===========================================
        TELÉFONO
@@ -67,52 +104,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function actualizarTelefono() {
 
-        telefono.disabled = sinTelefono.checked;
+        if (!telefono || !sinTelefono) {
+            return;
+        }
+
 
         if (sinTelefono.checked) {
 
             telefono.value = "";
 
+            telefono.disabled = true;
+
+            telefono.removeAttribute("required");
+
+        } else {
+
+            telefono.disabled = false;
+
         }
 
     }
 
-    sinTelefono.addEventListener(
-        "change",
-        actualizarTelefono
-    );
+
+    if (sinTelefono) {
+
+        sinTelefono.addEventListener(
+            "change",
+            actualizarTelefono
+        );
+
+    }
+
 
     actualizarTelefono();
 
+
     /* ===========================================
-       VALIDACIÓN
+       VALIDACIÓN DEL TELÉFONO
     =========================================== */
 
-    if (typeof initPhoneValidation === "function") {
+    if (
+        typeof initPhoneValidation ===
+        "function"
+    ) {
 
         initPhoneValidation();
 
     }
 
+
     /* ===========================================
        EVITAR DOBLE SUBMIT
     =========================================== */
 
-    form.addEventListener("submit", () => {
+    form.addEventListener(
+        "submit",
+        () => {
 
-        const boton = form.querySelector(
-            'button[type="submit"]'
-        );
+            const boton =
+                form.querySelector(
+                    'button[type="submit"]'
+                );
 
-        if (!boton) return;
 
-        boton.disabled = true;
+            if (!boton) {
+                return;
+            }
 
-        boton.innerHTML = `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Guardando...
-        `;
 
-    });
+            /*
+             * Si está marcado "No tiene teléfono",
+             * mantenemos el campo bloqueado.
+             *
+             * El backend deberá interpretar
+             * sinTelefono=1 como teléfono NULL.
+             */
+
+            boton.disabled = true;
+
+            boton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Guardando...
+            `;
+
+        }
+    );
 
 });

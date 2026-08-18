@@ -699,13 +699,7 @@ window.USUARIOS_CONFIG = {
      MÓDULO USUARIOS
 ========================================================== -->
 
-<script
 
-    defer
-
-    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-
-</script>
 <script
 
     src="<?= BASE_URL ?>/assets/js/modulos/usuarios/index.js"

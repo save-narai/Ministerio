@@ -16,7 +16,7 @@ require_once __DIR__ . '/../services/sessionService.php';
    CONFIGURACIÓN GLOBAL
 ========================================================== */
 
-$config = $GLOBALS['config'];
+$config = $GLOBALS['config'] ?? [];
 
 $tituloPagina ??=
     $config['nombre']
@@ -27,7 +27,6 @@ $extraCSS ??= '';
 $extraJS ??= '';
 
 
-
 /* ==========================================================
    CSRF PARA JAVASCRIPT
 ========================================================== */
@@ -35,7 +34,6 @@ $extraJS ??= '';
 $csrfToken =
     $_SESSION['csrf_token']
     ?? '';
-
 
 
 /* ==========================================================
@@ -54,7 +52,6 @@ try {
     $usuarioNotificaciones =
         usuarioId();
 
-
     if (
         $usuarioNotificaciones !== null
         &&
@@ -65,12 +62,19 @@ try {
             (int)$usuarioNotificaciones;
 
 
-        $totalNotificaciones =
-            contarNotificacionesNoLeidas(
-                $pdo,
-                $usuarioNotificaciones
-            );
+        /*
+         * Eliminar residuos de cancelaciones antiguas.
+         */
 
+        eliminarNotificacionesCanceladas(
+            $pdo,
+            $usuarioNotificaciones
+        );
+
+
+        /*
+         * Obtener notificaciones no leídas.
+         */
 
         $notificaciones =
             obtenerNotificacionesNoLeidas(
@@ -79,14 +83,50 @@ try {
                 8
             );
 
-    }
 
+        /*
+         * No mostrar cancelaciones antiguas.
+         * Se filtran antes del contador para que
+         * el número coincida con lo visible.
+         */
+
+        $notificaciones =
+            array_values(
+                array_filter(
+                    $notificaciones,
+                    static function (array $notificacion): bool {
+
+                        $tipo =
+                            strtoupper(
+                                trim(
+                                    (string)(
+                                        $notificacion['tipo']
+                                        ?? ''
+                                    )
+                                )
+                            );
+
+                        return $tipo !== 'ASIGNACION_CANCELADA';
+                    }
+                )
+            );
+
+
+        /*
+         * Contador real de notificaciones visibles.
+         */
+
+        $totalNotificaciones =
+            count(
+                $notificaciones
+            );
+    }
 
 } catch (Throwable $e) {
 
     /*
      * El header nunca debe romperse
-     * por un problema con las notificaciones.
+     * por problemas de notificaciones.
      */
 
     $usuarioNotificaciones = null;
@@ -94,11 +134,9 @@ try {
     $totalNotificaciones = 0;
 
     $notificaciones = [];
-
 }
 
 ?>
-
 
 
 <!-- ==========================================================
@@ -107,16 +145,17 @@ try {
 
 <script>
 
-    window.BASE_URL = <?= json_encode(
-        BASE_URL
-    ) ?>;
+    window.BASE_URL =
+        <?= json_encode(
+            BASE_URL
+        ) ?>;
 
-    window.CSRF_TOKEN = <?= json_encode(
-        $csrfToken
-    ) ?>;
+    window.CSRF_TOKEN =
+        <?= json_encode(
+            $csrfToken
+        ) ?>;
 
 </script>
-
 
 
 <!DOCTYPE html>
@@ -162,21 +201,17 @@ try {
     >
 
 
-
     <!-- ======================================================
        TITLE
     ======================================================= -->
 
     <title>
-
         <?= htmlspecialchars(
             $tituloPagina,
             ENT_QUOTES,
             'UTF-8'
         ) ?>
-
     </title>
-
 
 
     <!-- ======================================================
@@ -188,7 +223,6 @@ try {
         type="image/png"
         href="<?= BASE_URL ?>/assets/img/favicon.png"
     >
-
 
 
     <!-- ======================================================
@@ -203,7 +237,6 @@ try {
     >
 
 
-
     <!-- ======================================================
        FONT AWESOME
     ======================================================= -->
@@ -212,7 +245,6 @@ try {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     >
-
 
 
     <!-- ======================================================
@@ -224,19 +256,16 @@ try {
         href="https://fonts.googleapis.com"
     >
 
-
     <link
         rel="preconnect"
         href="https://fonts.gstatic.com"
         crossorigin
     >
 
-
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
     >
-
 
 
     <!-- ======================================================
@@ -248,12 +277,10 @@ try {
         href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"
     >
 
-
     <link
         rel="stylesheet"
         href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"
     >
-
 
 
     <!-- ======================================================
@@ -263,10 +290,8 @@ try {
     <?= $extraCSS ?>
 
 
-
     <!-- ======================================================
        TEMA
-       Se aplica antes de renderizar la página.
     ======================================================= -->
 
     <script>
@@ -277,7 +302,6 @@ try {
                 localStorage.getItem(
                     'theme'
                 );
-
 
             if (
                 theme === 'dark'
@@ -294,7 +318,6 @@ try {
     </script>
 
 
-
     <!-- ======================================================
        JQUERY
     ======================================================= -->
@@ -303,7 +326,6 @@ try {
         defer
         src="https://code.jquery.com/jquery-3.7.1.min.js">
     </script>
-
 
 
     <!-- ======================================================
@@ -315,42 +337,35 @@ try {
         src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
     </script>
 
-
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js">
     </script>
-
 
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
     </script>
 
-
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">
     </script>
-
 
     <script
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">
     </script>
 
-
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js">
     </script>
 
-
     <script
         defer
         src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js">
     </script>
-
 
 
     <!-- ======================================================
@@ -363,56 +378,81 @@ try {
     </script>
 
 
-
     <!-- ======================================================
        COMPONENTES GLOBALES
     ======================================================= -->
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/theme.js">
+        src="<?= BASE_URL ?>/assets/js/theme.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/theme.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/theme.js'
+        ) : time() ?>">
     </script>
-
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/datatable.js">
+        src="<?= BASE_URL ?>/assets/js/components/datatable.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/datatable.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/datatable.js'
+        ) : time() ?>">
     </script>
-
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/datatable-export.js">
+        src="<?= BASE_URL ?>/assets/js/components/datatable-export.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/datatable-export.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/datatable-export.js'
+        ) : time() ?>">
     </script>
-
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/search.js">
+        src="<?= BASE_URL ?>/assets/js/components/search.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/search.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/search.js'
+        ) : time() ?>">
     </script>
-
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/filters.js">
+        src="<?= BASE_URL ?>/assets/js/components/filters.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/filters.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/filters.js'
+        ) : time() ?>">
     </script>
-
 
     <script
         defer
-        src="<?= BASE_URL ?>/assets/js/components/phone-validation.js">
+        src="<?= BASE_URL ?>/assets/js/components/phone-validation.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/phone-validation.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/phone-validation.js'
+        ) : time() ?>">
     </script>
 
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/gx-alerts.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/gx-alerts.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/gx-alerts.js'
+        ) : time() ?>">
+    </script>
 
-   <script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/gx-alerts.js">
-</script>
-
-<script
-    defer
-    src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js">
-</script>
+    <script
+        defer
+        src="<?= BASE_URL ?>/assets/js/components/gx-notifications.js?v=<?= file_exists(
+            __DIR__ . '/../assets/js/components/gx-notifications.js'
+        ) ? filemtime(
+            __DIR__ . '/../assets/js/components/gx-notifications.js'
+        ) : time() ?>">
+    </script>
 
 
     <!-- ======================================================
@@ -423,7 +463,6 @@ try {
 
 
 </head>
-
 
 
 <body>
@@ -443,13 +482,11 @@ try {
     <?php require_once __DIR__ . '/sidebar.php'; ?>
 
 
-
     <!-- ======================================================
        CONTENIDO PRINCIPAL
     ======================================================= -->
 
     <main class="main">
-
 
 
         <!-- ==================================================
@@ -458,68 +495,44 @@ try {
 
         <header class="topbar topbar-minimal">
 
-
             <div class="topbar-right">
 
 
+<!-- ==================================================
+     NOTIFICACIONES
+=================================================== -->
 
-                <!-- ==================================================
-                     NOTIFICACIONES DEL USUARIO
-                =================================================== -->
+<?php if (
+    $usuarioNotificaciones !== null
+): ?>
 
-                <?php if (
-                    $usuarioNotificaciones !== null
-                ): ?>
+    <div
+        class="gx-notifications"
+        id="gxNotifications"
+    >
 
+        <a
+            href="<?= BASE_URL ?>/views/notificaciones/index.php"
+            class="gx-notifications__trigger"
+            id="gxNotificationsTrigger"
+            aria-label="Notificaciones"
+        >
 
-                    <div
-                        class="gx-notifications"
-                        id="gxNotifications"
-                    >
+            <i class="fa-solid fa-bell"></i>
 
+            <span
+                class="gx-notifications__badge"
+                id="gxNotificationsBadge"
+                <?= $totalNotificaciones <= 0 ? 'hidden' : '' ?>
+            >
+                <?= $totalNotificaciones ?>
+            </span>
 
-                        <!-- ==================================================
-                             BOTÓN DE NOTIFICACIONES
-                        =================================================== -->
-
-                        <button
-                            type="button"
-                            class="gx-notifications__trigger"
-                            id="gxNotificationsTrigger"
-                            aria-label="Notificaciones"
-                            aria-expanded="false"
-                            aria-controls="gxNotificationsMenu"
-                        >
-
-
-                            <i
-                                class="fa-solid fa-bell"
-                            ></i>
+        </a>
 
 
-                            <?php if (
-                                $totalNotificaciones > 0
-                            ): ?>
-
-                                <span
-                                    class="gx-notifications__badge"
-                                    id="gxNotificationsBadge"
-                                >
-
-                                    <?= $totalNotificaciones ?>
-
-                                </span>
-
-                            <?php endif; ?>
-
-
-                        </button>
-
-
-
-                        <!-- ==================================================
-                             MENÚ DE NOTIFICACIONES
-                        =================================================== -->
+      
+                        <!-- MENÚ -->
 
                         <div
                             class="gx-notifications__menu"
@@ -528,9 +541,7 @@ try {
                         >
 
 
-                            <!-- ==================================================
-                                 HEADER DEL MENÚ
-                            =================================================== -->
+                            <!-- HEADER -->
 
                             <div
                                 class="gx-notifications__header"
@@ -539,32 +550,39 @@ try {
                                 <div>
 
                                     <h3>
-
                                         Notificaciones
-
                                     </h3>
 
-
-                                    <span>
+                                    <span
+                                        id="gxNotificationsCountText"
+                                    >
 
                                         <?= $totalNotificaciones ?>
 
                                         <?= $totalNotificaciones === 1
                                             ? 'pendiente'
-                                            : 'pendientes'
-                                        ?>
+                                            : 'pendientes' ?>
 
                                     </span>
 
                                 </div>
 
+
+                                <button
+                                    type="button"
+                                    class="gx-notifications__close"
+                                    id="gxNotificationsClose"
+                                    aria-label="Cerrar notificaciones"
+                                >
+
+                                    <i class="fa-solid fa-xmark"></i>
+
+                                </button>
+
                             </div>
 
 
-
-                            <!-- ==================================================
-                                 LISTA
-                            =================================================== -->
+                            <!-- LISTA -->
 
                             <div
                                 class="gx-notifications__list"
@@ -573,9 +591,7 @@ try {
 
 
                                 <?php if (
-                                    !empty(
-                                        $notificaciones
-                                    )
+                                    !empty($notificaciones)
                                 ): ?>
 
 
@@ -584,20 +600,25 @@ try {
                                         as $notificacion
                                     ): ?>
 
-
                                         <?php
 
                                         $tipoNotificacion =
                                             strtoupper(
                                                 trim(
                                                     (string)(
-                                                        $notificacion[
-                                                            'tipo'
-                                                        ]
+                                                        $notificacion['tipo']
                                                         ?? ''
                                                     )
                                                 )
                                             );
+
+
+                                        if (
+                                            $tipoNotificacion ===
+                                            'ASIGNACION_CANCELADA'
+                                        ) {
+                                            continue;
+                                        }
 
 
                                         $iconoNotificacion =
@@ -614,12 +635,33 @@ try {
                                                 'ASIGNACION_COMPLETADA' =>
                                                     'fa-circle-check',
 
-                                                'ASIGNACION_CANCELADA' =>
-                                                    'fa-circle-xmark',
+                                                'RECORDATORIO_SEGUIMIENTO' =>
+                                                    'fa-bell',
 
                                                 default =>
                                                     'fa-bell'
+                                            };
 
+
+                                        $claseTipo =
+                                            match (
+                                                $tipoNotificacion
+                                            ) {
+
+                                                'NUEVA_ASIGNACION' =>
+                                                    'nueva',
+
+                                                'ASIGNACION_EN_PROCESO' =>
+                                                    'proceso',
+
+                                                'ASIGNACION_COMPLETADA' =>
+                                                    'completada',
+
+                                                'RECORDATORIO_SEGUIMIENTO' =>
+                                                    'recordatorio',
+
+                                                default =>
+                                                    'general'
                                             };
 
                                         ?>
@@ -635,23 +677,26 @@ try {
                                             data-tipo="<?= e(
                                                 $tipoNotificacion
                                             ) ?>"
-                                            data-asignacion-id="<?= (int)(
-                                                $notificacion['asignacion_id']
-                                                ?? 0
-                                            ) ?>"
                                             data-joven-id="<?= (int)(
                                                 $notificacion['joven_id']
+                                                ?? 0
+                                            ) ?>"
+                                            data-asignacion-id="<?= (int)(
+                                                $notificacion['asignacion_id']
                                                 ?? 0
                                             ) ?>"
                                         >
 
 
-                                            <!-- ==================================================
-                                                 ICONO
-                                            =================================================== -->
+                                            <!-- ICONO -->
 
                                             <span
-                                                class="gx-notifications__item-icon"
+                                                class="
+                                                    gx-notifications__item-icon
+                                                    gx-notifications__item-icon--<?= e(
+                                                        $claseTipo
+                                                    )
+                                                ?>"
                                             >
 
                                                 <i
@@ -663,41 +708,38 @@ try {
                                             </span>
 
 
-
-                                            <!-- ==================================================
-                                                 CONTENIDO
-                                            =================================================== -->
+                                            <!-- TEXTO -->
 
                                             <span
                                                 class="gx-notifications__item-content"
                                             >
 
-
                                                 <strong>
 
                                                     <?= e(
-                                                        $notificacion[
-                                                            'titulo'
-                                                        ]
+                                                        $notificacion['titulo']
                                                         ?? 'Notificación'
                                                     ) ?>
 
                                                 </strong>
 
-
                                                 <span>
 
                                                     <?= e(
-                                                        $notificacion[
-                                                            'mensaje'
-                                                        ]
+                                                        $notificacion['mensaje']
                                                         ?? ''
                                                     ) ?>
 
                                                 </span>
 
-
                                             </span>
+
+
+                                            <!-- ESTADO -->
+
+                                            <span
+                                                class="gx-notifications__item-dot"
+                                            ></span>
 
 
                                         </button>
@@ -706,42 +748,46 @@ try {
                                     <?php endforeach; ?>
 
 
-                                <?php else: ?>
+                                <?php endif; ?>
 
 
-                                    <!-- ==================================================
-                                         ESTADO VACÍO
-                                    =================================================== -->
+                                <!-- VACÍO -->
 
-                                    <div
-                                        class="gx-notifications__empty"
+                                <div
+                                    class="gx-notifications__empty"
+                                    id="gxNotificationsEmpty"
+                                    <?= !empty($notificaciones)
+                                        ? 'hidden'
+                                        : '' ?>
+                                >
+
+                                    <span
+                                        class="gx-notifications__empty-icon"
                                     >
 
                                         <i
                                             class="fa-regular fa-bell-slash"
                                         ></i>
 
-
-                                        <p>
-
-                                            No tienes
-                                            notificaciones nuevas.
-
-                                        </p>
-
-                                    </div>
+                                    </span>
 
 
-                                <?php endif; ?>
+                                    <strong>
+                                        Todo al día
+                                    </strong>
+
+
+                                    <p>
+                                        No tienes notificaciones pendientes.
+                                    </p>
+
+                                </div>
 
 
                             </div>
 
 
-
-                            <!-- ==================================================
-                                 FOOTER
-                            =================================================== -->
+                            <!-- FOOTER -->
 
                             <div
                                 class="gx-notifications__footer"
@@ -753,6 +799,10 @@ try {
 
                                     Ver todas
 
+                                    <i
+                                        class="fa-solid fa-arrow-right"
+                                    ></i>
+
                                 </a>
 
                             </div>
@@ -760,12 +810,9 @@ try {
 
                         </div>
 
-
                     </div>
 
-
                 <?php endif; ?>
-
 
 
                 <!-- ==================================================
@@ -788,21 +835,17 @@ try {
 
             </div>
 
-
         </header>
-
 
 
         <!-- ==================================================
              ALERTAS / MENSAJES DEL SISTEMA
-        =================================================== -->
+        ================================================== -->
 
         <div class="gx-alert-container">
 
 
-            <!-- ==================================================
-                 SUCCESS
-            =================================================== -->
+            <!-- SUCCESS -->
 
             <?php if (
                 $mensaje = getFlash('success')
@@ -860,16 +903,12 @@ try {
                         class="gx-alert-progress"
                     ></div>
 
-
                 </div>
 
             <?php endif; ?>
 
 
-
-            <!-- ==================================================
-                 ERROR
-            =================================================== -->
+            <!-- ERROR -->
 
             <?php if (
                 $mensaje = getFlash('error')
@@ -927,16 +966,12 @@ try {
                         class="gx-alert-progress"
                     ></div>
 
-
                 </div>
 
             <?php endif; ?>
 
 
-
-            <!-- ==================================================
-                 WARNING
-            =================================================== -->
+            <!-- WARNING -->
 
             <?php if (
                 $mensaje = getFlash('warning')
@@ -994,16 +1029,12 @@ try {
                         class="gx-alert-progress"
                     ></div>
 
-
                 </div>
 
             <?php endif; ?>
 
 
-
-            <!-- ==================================================
-                 INFO
-            =================================================== -->
+            <!-- INFO -->
 
             <?php if (
                 $mensaje = getFlash('info')
@@ -1061,14 +1092,12 @@ try {
                         class="gx-alert-progress"
                     ></div>
 
-
                 </div>
 
             <?php endif; ?>
 
 
         </div>
-
 
 
         <!-- ======================================================
@@ -1078,9 +1107,10 @@ try {
         <?php
 
         /*
-        |--------------------------------------------------
-        | A partir de este punto comienza el contenido
-        | específico de cada módulo.
+        |--------------------------------------------------------------------------
+        | A partir de este punto comienza el contenido específico
+        | de cada módulo.
+        |--------------------------------------------------------------------------
         |
         | Dashboard
         | Usuarios
@@ -1101,7 +1131,7 @@ try {
         | se encuentra en:
         |
         | includes/footer.php
-        |--------------------------------------------------
+        |--------------------------------------------------------------------------
         */
 
         ?>
