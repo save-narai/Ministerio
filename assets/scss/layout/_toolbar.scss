@@ -60,3 +60,68 @@
 
     flex-wrap:wrap;
 }
+
+/* =====================================================
+   TOPBAR (header de la app)
+
+   Contenedor real usado por includes/header.php.
+   Antes no tenía estilos: el botón de notificaciones
+   quedaba en flujo normal mientras #themeToggle estaba
+   con position:fixed, así que en ciertos anchos de
+   pantalla ambos terminaban superpuestos. Ahora los dos
+   viven dentro del mismo contenedor flex, con espacio
+   propio y sin coordenadas fijas.
+===================================================== */
+
+.topbar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    width:100%;
+
+    margin-bottom:20px;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+}
+
+/* =====================================================
+   TOPBAR RIGHT
+===================================================== */
+
+.topbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    min-width:0;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:480px){
+
+    .topbar{
+
+        gap:10px;
+    }
+
+    .topbar-right{
+
+        gap:8px;
+    }
+}

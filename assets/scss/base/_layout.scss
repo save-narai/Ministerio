@@ -80,27 +80,32 @@ body{
 
 /* =====================================================
    THEME BUTTON
+
+   Antes usaba position:fixed (clavado en la esquina de
+   la ventana), lo que lo hacía chocar con la campana de
+   notificaciones en varios anchos de pantalla. Ahora es
+   un elemento flex más dentro de ".topbar-right", del
+   mismo tamaño que ".gx-notifications__trigger" para
+   que ambos queden alineados y con su propio espacio.
 ===================================================== */
 
 #themeToggle{
 
-    position: fixed;
+    position: relative;
 
-    top: 18px;
+    flex: 0 0 auto;
 
-    right: 18px;
+    width: 42px;
 
-    width: 46px;
-
-    height: 46px;
+    height: 42px;
 
     border: none;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
     cursor: pointer;
 
-    z-index: 1000;
+    z-index: 2;
 
     background: var(--container);
 
@@ -108,7 +113,7 @@ body{
 
     box-shadow: var(--shadow);
 
-    display: flex;
+    display: inline-flex;
 
     align-items: center;
 

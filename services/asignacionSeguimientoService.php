@@ -296,6 +296,7 @@ function obtenerAsignacionSeguimientoPeriodo(
     }
 
     if ($mes === 0) {
+
         return null;
     }
 
@@ -370,6 +371,7 @@ function obtenerAsignacionActivaSeguimiento(
     }
 
     if ($mes === 0) {
+
         return null;
     }
 
@@ -685,7 +687,9 @@ function notificarCambioEstadoAsignacionSeguimiento(
     }
 
     $tipo = null;
+
     $titulo = null;
+
     $mensaje = null;
 
     switch ($estado) {
@@ -704,6 +708,7 @@ function notificarCambioEstadoAsignacionSeguimiento(
                 . " fue iniciado.";
 
             break;
+
 
         case 'COMPLETADO':
 
@@ -1350,6 +1355,7 @@ function obtenerAsignacionesUsuario(
         $mes
     );
 
+
     if ($mes === 0) {
 
         $sql = "
@@ -1593,23 +1599,44 @@ function obtenerJovenesPendientesSinAsignar(
 
             AND a.anio = :anio_asig
 
-            AND (
-                :mes_asig = 0
-                OR a.mes = :mes_asig
-            )
-
-        )
-
     ";
 
 
     /*
-     * ======================================================
-     * EXCEPCIONES
-     * ======================================================
+     * Cuando se consulta un mes específico,
+     * agregamos el filtro del mes.
      *
-     * Solo para un mes específico.
+     * Cuando mes = 0, no agregamos este filtro,
+     * por lo que cualquier asignación del año
+     * excluye al joven.
      */
+
+    if ($mes > 0) {
+
+        $sql .= "
+
+            AND a.mes = :mes_asig
+
+        ";
+
+    }
+
+
+    $sql .= "
+
+        )
+
+
+        /*
+         * ==================================================
+         * EXCEPCIONES
+         * ==================================================
+         *
+         * Solo para un mes específico.
+         */
+
+    ";
+
 
     if ($mes > 0) {
 
@@ -1630,6 +1657,7 @@ function obtenerJovenesPendientesSinAsignar(
             )
 
         ";
+
     }
 
 
@@ -1666,18 +1694,24 @@ function obtenerJovenesPendientesSinAsignar(
         );
 
 
+    /*
+     * ======================================================
+     * PARÁMETROS
+     * ======================================================
+     */
+
     $params = [
 
         ':anio_asig' =>
-            $anio,
-
-        ':mes_asig' =>
-            $mes
+            $anio
 
     ];
 
 
     if ($mes > 0) {
+
+        $params[':mes_asig'] =
+            $mes;
 
         $params[':anio_exc'] =
             $anio;

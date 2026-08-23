@@ -1,0 +1,79 @@
+/* =====================================================
+   BREAKPOINTS
+   Escala común de referencia para todo el proyecto.
+   Los archivos existentes con @media propios se migran
+   progresivamente a estos mixins; no es obligatorio que
+   coincidan siempre con estos valores exactos si el
+   layout necesita un punto de quiebre distinto.
+===================================================== */
+
+$bp-xs:   400px;  /* móviles pequeños                */
+$bp-sm:   576px;  /* móviles grandes                 */
+$bp-md:   768px;  /* tablets / móviles en horizontal  */
+$bp-lg:   992px;  /* tablets grandes / laptops chicas */
+$bp-xl:   1200px; /* laptops / escritorio             */
+$bp-xxl:  1440px; /* monitores grandes                */
+
+/* =====================================================
+   MIXIN: down
+   Aplica el bloque cuando el ancho es MENOR o igual
+   al breakpoint indicado (mobile-first friendly: se usa
+   para ir "estrechando" progresivamente el layout).
+
+   Uso:
+   .card{
+       width: 33.33%;
+
+       @include down(md){
+           width: 50%;
+       }
+
+       @include down(sm){
+           width: 100%;
+       }
+   }
+===================================================== */
+
+@mixin down($size){
+
+    @if $size == xs {
+        @media (max-width:#{$bp-xs}){ @content; }
+    } @else if $size == sm {
+        @media (max-width:#{$bp-sm}){ @content; }
+    } @else if $size == md {
+        @media (max-width:#{$bp-md}){ @content; }
+    } @else if $size == lg {
+        @media (max-width:#{$bp-lg}){ @content; }
+    } @else if $size == xl {
+        @media (max-width:#{$bp-xl}){ @content; }
+    } @else if $size == xxl {
+        @media (max-width:#{$bp-xxl}){ @content; }
+    } @else {
+        @media (max-width:#{$size}){ @content; }
+    }
+}
+
+/* =====================================================
+   MIXIN: up
+   Aplica el bloque cuando el ancho es MAYOR al
+   breakpoint indicado.
+===================================================== */
+
+@mixin up($size){
+
+    @if $size == xs {
+        @media (min-width:#{$bp-xs + 1}){ @content; }
+    } @else if $size == sm {
+        @media (min-width:#{$bp-sm + 1}){ @content; }
+    } @else if $size == md {
+        @media (min-width:#{$bp-md + 1}){ @content; }
+    } @else if $size == lg {
+        @media (min-width:#{$bp-lg + 1}){ @content; }
+    } @else if $size == xl {
+        @media (min-width:#{$bp-xl + 1}){ @content; }
+    } @else if $size == xxl {
+        @media (min-width:#{$bp-xxl + 1}){ @content; }
+    } @else {
+        @media (min-width:#{$size}){ @content; }
+    }
+}

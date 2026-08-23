@@ -8,7 +8,13 @@
 
     width:100%;
 
+    max-width:100%;
+
     overflow-x:auto;
+
+    overflow-y:hidden;
+
+    -webkit-overflow-scrolling:touch;
 
     border-radius:28px;
 }
@@ -861,13 +867,21 @@ html.dark .table-check:checked {
 
 /* =========================================================
    RESPONSIVE
+
+   La tabla conserva un ancho mínimo legible y se
+   desplaza horizontalmente DENTRO de su contenedor
+   (.table-wrapper / .table-responsive), nunca la
+   página completa. En pantallas más pequeñas se reduce
+   progresivamente el padding y la tipografía para que
+   el scroll sea más corto sin volver el contenido
+   ilegible.
 ========================================================= */
 
 @media(max-width:768px){
 
     .table{
 
-        min-width:980px;
+        min-width:900px;
     }
 
     .table th,
@@ -879,6 +893,57 @@ html.dark .table-check:checked {
     .table-actions{
 
         flex-wrap:nowrap;
+    }
+}
+
+@media(max-width:480px){
+
+    .table{
+
+        min-width:760px;
+    }
+
+    .table thead th{
+
+        font-size:11px;
+
+        padding:0 14px;
+    }
+
+    .table th,
+    .table td{
+
+        padding:13px 14px;
+
+        font-size:13px;
+    }
+
+    .btn-icon{
+
+        width:38px;
+
+        height:38px;
+    }
+}
+
+@media(max-width:360px){
+
+    .table{
+
+        min-width:660px;
+    }
+
+    .table th,
+    .table td{
+
+        padding:11px 12px;
+
+        font-size:12.5px;
+    }
+
+    .table-actions{
+
+        gap:8px;
     }
 }
 

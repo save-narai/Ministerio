@@ -180,13 +180,53 @@
 
 /* =====================================================
    TABLE WRAPPER
+
+   Contenedor responsive compartido por todas las
+   tablas del sistema. ".table-responsive" es el alias
+   utilizado en varios módulos (usuarios, seguimientos,
+   roles); antes no tenía estilos propios, por lo que
+   las tablas se salían del viewport y desplazaban toda
+   la página en lugar de desplazarse ellas mismas.
 ===================================================== */
 
-.table-wrapper{
+.table-wrapper,
+.table-responsive{
+
+    position:relative;
 
     width:100%;
 
+    max-width:100%;
+
     overflow-x:auto;
+
+    overflow-y:hidden;
+
+    -webkit-overflow-scrolling:touch;
+
+    scrollbar-gutter:stable;
+}
+
+/* Barra de scroll fina y discreta (soporte WebKit) */
+
+.table-wrapper::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar{
+
+    height:8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb{
+
+    background:rgba(15,23,42,.18);
+
+    border-radius:999px;
+}
+
+html.dark .table-wrapper::-webkit-scrollbar-thumb,
+html.dark .table-responsive::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.18);
 }
 
 /* =====================================================
