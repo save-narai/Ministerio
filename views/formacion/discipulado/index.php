@@ -219,6 +219,23 @@ require_once __DIR__ . '/../../../includes/header.php';
                                             Editar
                                         </a>
 
+                                        <form
+                                            action="<?= BASE_URL ?>/controllers/discipuladoCicloController.php"
+                                            method="POST"
+                                            onsubmit="return confirm('<?= $estado === 'CANCELADO' ? '¿Reactivar este ciclo?' : '¿Eliminar (cancelar) este ciclo? Las clases, participantes y asistencia registrados se conservan, solo deja de aparecer como activo.' ?>');"
+                                        >
+                                            <?= csrfField() ?>
+                                            <input type="hidden" name="action" value="cambiar_estado_ciclo_discipulado">
+                                            <input type="hidden" name="id" value="<?= $cicloId ?>">
+                                            <?php if ($estado === 'CANCELADO'): ?>
+                                                <input type="hidden" name="estado" value="ACTIVO">
+                                                <button type="submit" class="btn btn-primary btn-sm">Reactivar</button>
+                                            <?php else: ?>
+                                                <input type="hidden" name="estado" value="CANCELADO">
+                                                <button type="submit" class="btn btn-back btn-sm">Eliminar</button>
+                                            <?php endif; ?>
+                                        </form>
+
                                     </div>
 
                                 </td>

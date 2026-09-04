@@ -95,16 +95,13 @@ require_once __DIR__ . "/../../../../includes/header.php";
                 href="../asistencia.php?ciclo_id=<?= (int)$cicloId ?>"
                 class="btn btn-back"
             >
-           
+                <i class="fa-solid fa-arrow-left"></i>
                 Volver a asistencia
             </a>
 
         </div>
 
     </div>
-
-    <br>
-     <br>
 
     <!-- =====================================
          INFORMACIÓN
@@ -146,7 +143,6 @@ require_once __DIR__ . "/../../../../includes/header.php";
             </form>
         </div>
     </div>
-
 
     <!-- =====================================
          RESUMEN
@@ -199,8 +195,6 @@ require_once __DIR__ . "/../../../../includes/header.php";
             <?= (int)$alerta['recuperaciones'] ?> recuperación(es) registrada(s).
         <?php endif; ?>
     </p>
-    
-     <br>
 
     <!-- =====================================
          PENDIENTES
@@ -245,9 +239,6 @@ require_once __DIR__ . "/../../../../includes/header.php";
             </ul>
         </div>
     <?php endif; ?>
-
-<br>
-     <br>
 
     <!-- =====================================
          OBSERVACIONES

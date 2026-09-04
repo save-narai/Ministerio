@@ -49,14 +49,6 @@ if (!$ciclo) {
 $resumen = obtenerResumenCicloDiscipulado($pdo, $cicloId);
 $clases = obtenerClasesDiscipulado($pdo, $cicloId);
 $eventos = obtenerEventosDiscipulado($pdo, $cicloId);
-$jovenesDisponibles = obtenerJovenesDisponiblesParaInscripcionDiscipulado($pdo, $cicloId);
-
-$usuarios = $pdo->query("
-    SELECT id, nombre
-    FROM usuarios
-    WHERE activo = 1
-    ORDER BY nombre ASC
-")->fetchAll(PDO::FETCH_ASSOC);
 
 $clasesCompletadas = count(array_filter($clases, fn (array $c) => ($c['estado'] ?? '') === 'REALIZADA'));
 $totalClasesCiclo = count($clases);
@@ -233,53 +225,9 @@ require_once __DIR__ . "/../../../includes/header.php";
             </div>
         <?php endif; ?>
 
-        <!-- Inscribir joven (inline, sin cambiar de página) -->
-        <details style="margin-top:12px">
-            <summary class="btn btn-primary btn-sm">+ Inscribir joven</summary>
-            <form action="<?= BASE_URL ?>/controllers/discipuladoInscripcionController.php" method="POST" class="form" style="margin-top:10px">
-                <?= csrfField() ?>
-                <input type="hidden" name="action" value="inscribir_joven_discipulado">
-                <input type="hidden" name="ciclo_id" value="<?= (int)$cicloId ?>">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Joven</label>
-                        <select name="joven_id" class="form-select" required>
-                            <option value="">Seleccione...</option>
-                            <?php foreach ($jovenesDisponibles as $j): ?>
-                                <option value="<?= (int)$j['id'] ?>"><?= htmlspecialchars($j['nombre_completo']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Modalidad principal</label>
-                        <select name="modalidad_principal" class="form-select" required>
-                            <option value="PRESENCIAL">Presencial</option>
-                            <option value="VIRTUAL">Virtual</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Responsable (opcional)</label>
-                        <select name="responsable_id" class="form-select">
-                            <option value="">Sin asignar</option>
-                            <?php foreach ($usuarios as $u): ?>
-                                <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['nombre']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Fecha de inscripción</label>
-                        <input class="form-input" type="date" name="fecha_inscripcion" value="<?= date('Y-m-d') ?>">
-                    </div>
-                    <div class="form-group form-group-full">
-                        <label class="form-label">Observación inicial (opcional)</label>
-                        <textarea class="form-textarea" name="observacion" rows="2"></textarea>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Inscribir</button>
-                </div>
-            </form>
-        </details>
+        <div style="margin-top:12px">
+            <a href="participantes/inscribir.php?ciclo_id=<?= (int)$cicloId ?>" class="btn btn-primary btn-sm">+ Inscribir joven</a>
+        </div>
 
         <script src="<?= BASE_URL ?>/assets/js/modulos/discipulado-matriz.js" defer></script>
     </div>

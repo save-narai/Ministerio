@@ -106,9 +106,6 @@ require_once __DIR__ . "/../../../includes/header.php";
 
     </div>
 
-
-<br>
-
     <!-- =====================================
          TABLA DE ASISTENCIA
          (checkboxes con autoguardado — sin recargar la página)
