@@ -398,7 +398,18 @@ function controllerJson(
                     $success,
 
                 'message' =>
-                    $message
+                    $message,
+
+                // El token CSRF ya fue regenerado por
+                // validarCsrf() antes de llegar aquí. Se
+                // reenvía para que el JavaScript actualice
+                // window.CSRF_TOKEN y la siguiente petición
+                // AJAX de la misma página no falle por token
+                // desactualizado.
+                'csrf_token' =>
+                    function_exists('generarCsrf')
+                        ? generarCsrf()
+                        : ($_SESSION['csrf_token'] ?? null),
 
             ],
 

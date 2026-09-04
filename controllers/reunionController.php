@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/controller.php';
 require_once __DIR__ . '/../services/reunionService.php';
+require_once __DIR__ . '/../services/discipuladoService.php';
 
 controllerInit();
 
@@ -15,7 +16,17 @@ controllerRun(
 
         'crear_reunion' => function () use ($pdo) {
 
-            crearReunion(
+            /* --------------------------------------------------
+               FASE 7: se reemplaza la llamada directa a
+               crearReunion() por crearReunionDiscipulado(),
+               que reutiliza crearReunion() TAL CUAL por dentro
+               y además vincula ciclo/clase cuando el tipo es
+               Discipulado. Para cualquier otro tipo de
+               reunión, el comportamiento es exactamente el
+               mismo que antes.
+            -------------------------------------------------- */
+
+            crearReunionDiscipulado(
                 $pdo,
                 $_POST
             );
@@ -28,7 +39,7 @@ controllerRun(
 
         'actualizar_reunion' => function () use ($pdo) {
 
-            actualizarReunion(
+            actualizarReunionDiscipulado(
                 $pdo,
                 $_POST
             );

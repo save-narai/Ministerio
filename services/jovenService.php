@@ -289,7 +289,7 @@ function validarNombreJoven(
     string $nombre
 ): string
 {
-    $nombre = trim($nombre);
+    $nombre = normalizarNombrePersona($nombre);
 
     if ($nombre === '') {
 

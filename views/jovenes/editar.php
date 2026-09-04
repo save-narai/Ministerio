@@ -604,6 +604,7 @@ window.toastType = <?= json_encode(
      JAVASCRIPT
 ===================================== -->
 
+<script src="<?= BASE_URL ?>/assets/js/components/normalizar-nombre.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/modulos/jovenes/editar.js"></script>
 
 <?php

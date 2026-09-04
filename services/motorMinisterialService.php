@@ -262,7 +262,7 @@ function ejecutarMotorMinisterial(
    PIPELINE DE ASISTENCIA
 ========================================================== */
 
-function procesarAsistenciaMinisterial(
+function procesarAsistenciaMinisterialLegacy(
     PDO $pdo,
     array $contexto
 ): void {

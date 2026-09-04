@@ -37,11 +37,16 @@ function limpiarTexto(string $texto): string
    VALIDAR NOMBRE
 ====================================================== */
 
+function normalizarNombrePersona(string $nombre): string
+{
+    $nombre = preg_replace('/\s+/u', ' ', trim($nombre)) ?? '';
+
+    return $nombre === '' ? '' : mb_convert_case(mb_strtolower($nombre, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+}
+
 function validarNombre(string $nombre): array
 {
-    $nombre = trim($nombre);
-
-    $nombre = preg_replace('/\s+/', ' ', $nombre);
+    $nombre = normalizarNombrePersona($nombre);
 
     if (!preg_match('/^[\p{L}\'\- ]+$/u', $nombre)) {
 
@@ -58,12 +63,6 @@ function validarNombre(string $nombre): array
             "Nombre demasiado corto"
         ];
     }
-
-    $nombre = mb_convert_case(
-        $nombre,
-        MB_CASE_TITLE,
-        'UTF-8'
-    );
 
     return [
         true,

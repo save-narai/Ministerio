@@ -57,6 +57,22 @@ require_once __DIR__ . '/../middleware/permiso.php';
         <?php endif; ?>
 
 
+        <?php if (tienePermiso('gestionar_reuniones')): ?>
+
+        <a
+            class="<?= menuActivo('/formacion/') ?>"
+            href="<?= BASE_URL ?>/views/formacion/discipulado/index.php"
+        >
+
+            <i class="fa-solid fa-graduation-cap"></i>
+
+            <span>Formación</span>
+
+        </a>
+
+        <?php endif; ?>
+
+
         <?php if (tienePermiso('gestionar_seguimientos')): ?>
 
         <a

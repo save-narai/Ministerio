@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!form) return;
 
+    inicializarNormalizacionNombre(form);
+
     const fecha = document.getElementById("fecha");
     const edad = document.getElementById("edad");
     const telefono = document.getElementById("telefono");

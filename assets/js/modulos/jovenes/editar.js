@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    inicializarNormalizacionNombre(form);
+
 
     const fecha =
         document.getElementById("fecha");

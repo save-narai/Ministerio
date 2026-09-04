@@ -4,10 +4,37 @@ require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../services/reunionService.php";
+require_once __DIR__ . "/../../services/discipuladoService.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
     header("Location: ../dashboard.php");
     exit;
+}
+
+/* =====================================
+   CICLOS ACTIVOS + SUS CLASES (FASE 7)
+
+   Se arma un mapa ciclo_id => [clases] en PHP y se imprime
+   como JSON para que el select de "Clase" se filtre en el
+   navegador según el ciclo elegido, sin necesidad de peticiones
+   AJAX (no existe ese patrón en el resto del proyecto).
+===================================== */
+
+$ciclosActivosDiscipulado = obtenerCiclosDiscipulado($pdo, ['estado' => 'ACTIVO']);
+
+$clasesPorCicloDiscipulado = [];
+
+foreach ($ciclosActivosDiscipulado as $cicloActivo) {
+
+    $clasesPorCicloDiscipulado[(int)$cicloActivo['id']] =
+        array_map(
+            fn (array $c) => [
+                'id' => (int)$c['id'],
+                'nombre' => 'Clase ' . $c['numero_orden'] . ' — ' . $c['nombre']
+            ],
+            obtenerClasesDiscipulado($pdo, (int)$cicloActivo['id'])
+        );
+
 }
 
 require_once __DIR__ . "/../../includes/header.php";
@@ -138,6 +165,99 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- =====================================
+                 DISCIPULADO: CICLO + CLASE + MODALIDAD
+                 (FASE 7 — solo visible si tipo = DISCIPULADO)
+            ===================================== -->
+
+            <div
+                class="form-group"
+                id="grupoCicloDiscipulado"
+                style="display:none;"
+            >
+
+                <label class="form-label">
+                    Ciclo de discipulado (opcional)
+                </label>
+
+                <select
+                    class="form-select"
+                    name="ciclo_id"
+                    id="cicloDiscipulado"
+                >
+
+                    <option value="">Sin asociar a un ciclo</option>
+
+                    <?php foreach ($ciclosActivosDiscipulado as $cicloActivo): ?>
+
+                        <option value="<?= (int)$cicloActivo['id'] ?>">
+                            <?= htmlspecialchars($cicloActivo['nombre']) ?>
+                        </option>
+
+                    <?php endforeach; ?>
+
+                </select>
+
+                <small>
+                    Si no seleccionas un ciclo, esta reunión no afectará el progreso de discipulado de nadie.
+                </small>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoClaseDiscipulado"
+                style="display:none;"
+            >
+
+                <label class="form-label">
+                    Clase de ese ciclo
+                </label>
+
+                <select
+                    class="form-select"
+                    name="clase_id"
+                    id="claseDiscipulado"
+                >
+                    <option value="">Selecciona primero un ciclo</option>
+                </select>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoModalidadDiscipulado"
+                style="display:none;"
+            >
+
+                <label class="form-label">
+                    Modalidad de la reunión
+                </label>
+
+                <select
+                    class="form-select"
+                    name="modalidad_reunion"
+                    id="modalidadDiscipulado"
+                >
+                    <option value="PRESENCIAL">Presencial</option>
+                    <option value="VIRTUAL">Virtual</option>
+                </select>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoRecuperacionDiscipulado"
+                style="display:none;"
+            >
+
+                <label class="form-label">
+                    <input type="checkbox" name="es_recuperacion" value="1" id="esRecuperacionDiscipulado">
+                    Esta reunión es una recuperación
+                </label>
+
+            </div>
+
         </div>
 
                 <div class="form-actions">
@@ -161,6 +281,10 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
+<script>
+    const clasesPorCicloDiscipulado = <?= json_encode($clasesPorCicloDiscipulado, JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/crear.js"></script>
 

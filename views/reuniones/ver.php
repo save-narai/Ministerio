@@ -3,6 +3,7 @@
 require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
+require_once __DIR__ . "/../../services/discipuladoService.php";
 
 
 /* =========================================================
@@ -48,6 +49,27 @@ if (!$reunion) {
 
     die("No existe");
 }
+
+
+/* =========================================================
+   VÍNCULO CON DISCIPULADO (FASE 7)
+
+   Solo existe si esta reunión fue creada/editada con
+   tipo = Discipulado y se le asoció ciclo + clase. Si no
+   existe vínculo, esta reunión no afecta el progreso de
+   discipulado (aunque sea de tipo Discipulado).
+========================================================= */
+
+$vinculoDiscipulado = obtenerVinculoReunionDiscipulado($pdo, $reunion_id);
+
+$asistentesSinInscripcionDiscipulado =
+    $vinculoDiscipulado
+        ? obtenerAsistentesSinInscripcionDiscipulado(
+            $pdo,
+            $reunion_id,
+            (int)$vinculoDiscipulado['ciclo_id']
+        )
+        : [];
 
 
 /* =========================================================
@@ -581,6 +603,38 @@ require_once __DIR__ . "/../../includes/header.php";
 </div>
 
 
+
+<?php if ($vinculoDiscipulado): ?>
+
+    <div class="page-section">
+
+        <p>
+            <strong>Discipulado:</strong>
+            Ciclo "<?= htmlspecialchars($vinculoDiscipulado['ciclo_nombre']) ?>" ·
+            Clase <?= (int)$vinculoDiscipulado['numero_orden'] ?> — <?= htmlspecialchars($vinculoDiscipulado['clase_nombre']) ?> ·
+            Modalidad <?= htmlspecialchars($vinculoDiscipulado['modalidad']) ?>
+            <?php if ($vinculoDiscipulado['es_recuperacion']): ?>
+                · <span class="badge badge-warning">Recuperación</span>
+            <?php endif; ?>
+            <br>
+            <a href="<?= BASE_URL ?>/views/formacion/discipulado/ver.php?ciclo_id=<?= (int)$vinculoDiscipulado['ciclo_id'] ?>">
+                Ver ciclo de discipulado
+            </a>
+        </p>
+
+        <?php if (!empty($asistentesSinInscripcionDiscipulado)): ?>
+
+            <p>
+                <span class="badge badge-warning">Aviso</span>
+                <?= count($asistentesSinInscripcionDiscipulado) ?> joven(es) asistieron pero no tienen una inscripción activa en este ciclo de discipulado, así que no se registró progreso para ellos (su asistencia general sí quedó guardada):
+                <?= htmlspecialchars(implode(', ', array_column($asistentesSinInscripcionDiscipulado, 'nombre_completo'))) ?>
+            </p>
+
+        <?php endif; ?>
+
+    </div>
+
+<?php endif; ?>
 
 <!-- =========================================================
      BUSCADOR

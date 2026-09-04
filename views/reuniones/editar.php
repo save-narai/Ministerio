@@ -4,6 +4,7 @@ require_once __DIR__ . "/../../middleware/auth.php";
 require_once __DIR__ . "/../../middleware/permiso.php";
 require_once __DIR__ . "/../../config/conexion.php";
 require_once __DIR__ . "/../../services/reunionService.php";
+require_once __DIR__ . "/../../services/discipuladoService.php";
 
 if (!tienePermiso('gestionar_reuniones')) {
 
@@ -50,6 +51,48 @@ $esPersonalizado = !in_array(
     ],
     true
 );
+
+/* =====================================
+   VÍNCULO DE DISCIPULADO ACTUAL (FASE 7)
+===================================== */
+
+$vinculoActual = obtenerVinculoReunionDiscipulado($pdo, $id);
+
+$ciclosActivosDiscipulado = obtenerCiclosDiscipulado($pdo, ['estado' => 'ACTIVO']);
+
+/* Si el vínculo actual apunta a un ciclo que ya no está
+   ACTIVO (por ejemplo, se finalizó después de crear la
+   reunión), se agrega igual a la lista para no perder la
+   selección existente al editar. */
+
+if (
+    $vinculoActual
+    &&
+    !in_array((int)$vinculoActual['ciclo_id'], array_column($ciclosActivosDiscipulado, 'id'), true)
+) {
+
+    $cicloDelVinculo = obtenerCicloDiscipuladoPorId($pdo, (int)$vinculoActual['ciclo_id']);
+
+    if ($cicloDelVinculo) {
+        $ciclosActivosDiscipulado[] = $cicloDelVinculo;
+    }
+
+}
+
+$clasesPorCicloDiscipulado = [];
+
+foreach ($ciclosActivosDiscipulado as $cicloActivo) {
+
+    $clasesPorCicloDiscipulado[(int)$cicloActivo['id']] =
+        array_map(
+            fn (array $c) => [
+                'id' => (int)$c['id'],
+                'nombre' => 'Clase ' . $c['numero_orden'] . ' — ' . $c['nombre']
+            ],
+            obtenerClasesDiscipulado($pdo, (int)$cicloActivo['id'])
+        );
+
+}
 
 require_once __DIR__ . "/../../includes/header.php";
 
@@ -200,6 +243,129 @@ require_once __DIR__ . "/../../includes/header.php";
 
             </div>
 
+            <!-- =====================================
+                 DISCIPULADO: CICLO + CLASE + MODALIDAD
+                 (FASE 7 — solo visible si tipo = DISCIPULADO)
+            ===================================== -->
+
+            <div
+                class="form-group"
+                id="grupoCicloDiscipulado"
+                style="<?= $esPersonalizado === false && $reunion['tipo'] === 'Discipulado' ? '' : 'display:none;' ?>"
+            >
+
+                <label class="form-label">
+                    Ciclo de discipulado (opcional)
+                </label>
+
+                <select
+                    class="form-select"
+                    name="ciclo_id"
+                    id="cicloDiscipulado"
+                >
+
+                    <option value="">Sin asociar a un ciclo</option>
+
+                    <?php foreach ($ciclosActivosDiscipulado as $cicloActivo): ?>
+
+                        <option
+                            value="<?= (int)$cicloActivo['id'] ?>"
+                            <?= $vinculoActual && (int)$vinculoActual['ciclo_id'] === (int)$cicloActivo['id'] ? 'selected' : '' ?>
+                        >
+                            <?= htmlspecialchars($cicloActivo['nombre']) ?>
+                        </option>
+
+                    <?php endforeach; ?>
+
+                </select>
+
+                <small>
+                    Si no seleccionas un ciclo, esta reunión no afectará el progreso de discipulado de nadie.
+                </small>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoClaseDiscipulado"
+                style="<?= $esPersonalizado === false && $reunion['tipo'] === 'Discipulado' ? '' : 'display:none;' ?>"
+            >
+
+                <label class="form-label">
+                    Clase de ese ciclo
+                </label>
+
+                <select
+                    class="form-select"
+                    name="clase_id"
+                    id="claseDiscipulado"
+                >
+
+                    <?php if ($vinculoActual): ?>
+
+                        <option value="">Sin clase asociada</option>
+
+                        <?php foreach (($clasesPorCicloDiscipulado[(int)$vinculoActual['ciclo_id']] ?? []) as $clase): ?>
+
+                            <option
+                                value="<?= (int)$clase['id'] ?>"
+                                <?= (int)$clase['id'] === (int)$vinculoActual['clase_id'] ? 'selected' : '' ?>
+                            >
+                                <?= htmlspecialchars($clase['nombre']) ?>
+                            </option>
+
+                        <?php endforeach; ?>
+
+                    <?php else: ?>
+
+                        <option value="">Selecciona primero un ciclo</option>
+
+                    <?php endif; ?>
+
+                </select>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoModalidadDiscipulado"
+                style="<?= $esPersonalizado === false && $reunion['tipo'] === 'Discipulado' ? '' : 'display:none;' ?>"
+            >
+
+                <label class="form-label">
+                    Modalidad de la reunión
+                </label>
+
+                <select
+                    class="form-select"
+                    name="modalidad_reunion"
+                    id="modalidadDiscipulado"
+                >
+                    <option value="PRESENCIAL" <?= (!$vinculoActual || $vinculoActual['modalidad'] === 'PRESENCIAL') ? 'selected' : '' ?>>Presencial</option>
+                    <option value="VIRTUAL" <?= ($vinculoActual && $vinculoActual['modalidad'] === 'VIRTUAL') ? 'selected' : '' ?>>Virtual</option>
+                </select>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="grupoRecuperacionDiscipulado"
+                style="<?= $esPersonalizado === false && $reunion['tipo'] === 'Discipulado' ? '' : 'display:none;' ?>"
+            >
+
+                <label class="form-label">
+                    <input
+                        type="checkbox"
+                        name="es_recuperacion"
+                        value="1"
+                        id="esRecuperacionDiscipulado"
+                        <?= ($vinculoActual && (int)$vinculoActual['es_recuperacion'] === 1) ? 'checked' : '' ?>
+                    >
+                    Esta reunión es una recuperación
+                </label>
+
+            </div>
+
         </div>
 
                 <div class="form-actions">
@@ -228,6 +394,10 @@ require_once __DIR__ . "/../../includes/header.php";
     </form>
 
 </div>
+
+<script>
+    const clasesPorCicloDiscipulado = <?= json_encode($clasesPorCicloDiscipulado, JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <script src="<?= BASE_URL ?>/assets/js/modulos/reuniones/editar.js"></script>
 

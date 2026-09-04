@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/conexion.php';
-require_once __DIR__ . '/../services/SessionService.php';
+require_once __DIR__ . '/../services/sessionService.php';
 
 
 /* ==========================================================

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/SessionService.php';
+require_once __DIR__ . '/sessionService.php';
 require_once __DIR__ . '/usuarioService.php';
 
 /* ==========================================================

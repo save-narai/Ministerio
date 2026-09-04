@@ -488,3 +488,17 @@ html.dark select{
 
     border:1px solid #00e5ff !important;
 }
+
+/* =========================================================
+   FORM HINT
+========================================================= */
+
+.form-hint {
+
+    margin: 0;
+
+    color: var(--text-soft);
+
+    font-size: var(--text-xs);
+
+}
