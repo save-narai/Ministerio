@@ -1,8 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 /* =========================================================
    DASHBOARD COMPLETO
+   ---------------------------------------------------------
+   Esta capa NO calcula actividad/riesgo por su cuenta.
+   Reutiliza actividadService.php (fuente central de verdad
+   para actividad/riesgo, ver Fase 5 del prompt maestro) y
+   asignacionSeguimientoService.php (fuente central para
+   seguimiento pendiente de jóvenes nuevos, Fase 6/14).
 ========================================================= */
+
+require_once __DIR__ . '/actividadService.php';
+require_once __DIR__ . '/asignacionSeguimientoService.php';
 
 function obtenerDashboardData(PDO $pdo): array
 {
@@ -22,7 +33,26 @@ function obtenerDashboardData(PDO $pdo): array
     $resumen["antiguos"] =
         $nuevos["antiguos"];
 
-    $alertas = obtenerAlertas($pdo);
+    // Distribución por estado_espiritual (congregantes, discipulado, etc.)
+    // usa las mismas 5 categorías ya definidas en jovenService.php
+    // (ESTADOS_ESPIRITUALES), no se inventa ninguna nueva.
+    $resumen["porEstadoEspiritual"] =
+        obtenerDistribucionEstadoEspiritual($pdo);
+
+    // Actividad/riesgo: se reutiliza actividadService.php tal cual
+    // (Conectado / Observación / Riesgo / Alto Riesgo), en vez de la
+    // lógica propia que tenía este archivo antes (ver informe de la
+    // Fase 2 - Etapa 1 para el detalle de la duplicación encontrada).
+    $conexion = resumenConexionMinisterial($pdo);
+
+    // Seguimiento pendiente (jóvenes NUEVOS sin nadie asignado este
+    // mes): se reutiliza asignacionSeguimientoService.php, la misma
+    // función que ya usa views/seguimientos/asignaciones.php.
+    $seguimientoPendiente = obtenerJovenesPendientesSinAsignar(
+        $pdo,
+        (int) date('Y'),
+        (int) date('n')
+    );
 
     return [
 
@@ -35,14 +65,32 @@ function obtenerDashboardData(PDO $pdo): array
             "estado" => []
         ],
 
+        // Se conservan estas 3 claves (mismo nombre y mismo criterio
+        // de combinación que antes: alertas = riesgo + alto) para no
+        // romper la vista actual, que ya las consume. Lo único que
+        // cambió es la FUENTE del número: ahora sale de
+        // actividadService en vez de una copia local del cálculo.
         "alertas" =>
-            $alertas["total"],
+            $conexion["riesgo"] + $conexion["alto"],
 
         "riesgo" =>
-            $alertas["riesgo"],
+            $conexion["riesgo"],
 
         "alto" =>
-            $alertas["alto"]
+            $conexion["alto"],
+
+        // Nuevo, todavía sin usar en la vista (eso es la Etapa 2):
+        // se deja disponible aquí para que el rediseño del dashboard
+        // pueda tomarlo, ya con la fuente correcta y sin duplicar
+        // ninguna consulta.
+        "conectados" =>
+            $conexion["conectados"],
+
+        "observacion" =>
+            $conexion["observacion"],
+
+        "seguimientoPendiente" =>
+            count($seguimientoPendiente)
     ];
 }
 
@@ -207,148 +255,41 @@ function obtenerNuevosAntiguos(
 
 
 /* =========================================================
-   ALERTAS
+   DISTRIBUCION POR ESTADO ESPIRITUAL
+   ---------------------------------------------------------
+   Reutiliza las mismas 5 categorias ya definidas en
+   jovenService.php (ESTADOS_ESPIRITUALES): NUEVO,
+   CONGREGANTE, DISCIPULADO, SERVIDOR, LIDER. No se agrega
+   ninguna categoria ni columna nueva.
 ========================================================= */
 
-function obtenerAlertas(
+function obtenerDistribucionEstadoEspiritual(
     PDO $pdo
 ): array {
 
     $stmt = $pdo->prepare("
-
         SELECT
 
-            j.id,
+            estado_espiritual,
+            COUNT(*) as total
 
-            SUM(
-                CASE
+        FROM jovenes
 
-                    WHEN MONTH(r.fecha)
-                    = MONTH(CURDATE())
+        WHERE estado_actividad != 'ELIMINADO'
 
-                    AND YEAR(r.fecha)
-                    = YEAR(CURDATE())
-
-                    AND a.asistio = 1
-
-                    THEN 1
-
-                    ELSE 0
-
-                END
-
-            ) as mes0,
-
-            SUM(
-                CASE
-
-                    WHEN MONTH(r.fecha)
-                    = MONTH(
-                        DATE_SUB(
-                            CURDATE(),
-                            INTERVAL 1 MONTH
-                        )
-                    )
-
-                    AND YEAR(r.fecha)
-                    = YEAR(
-                        DATE_SUB(
-                            CURDATE(),
-                            INTERVAL 1 MONTH
-                        )
-                    )
-
-                    AND a.asistio = 1
-
-                    THEN 1
-
-                    ELSE 0
-
-                END
-
-            ) as mes1,
-
-            SUM(
-                CASE
-
-                    WHEN MONTH(r.fecha)
-                    = MONTH(
-                        DATE_SUB(
-                            CURDATE(),
-                            INTERVAL 2 MONTH
-                        )
-                    )
-
-                    AND YEAR(r.fecha)
-                    = YEAR(
-                        DATE_SUB(
-                            CURDATE(),
-                            INTERVAL 2 MONTH
-                        )
-                    )
-
-                    AND a.asistio = 1
-
-                    THEN 1
-
-                    ELSE 0
-
-                END
-
-            ) as mes2
-
-        FROM jovenes j
-
-        LEFT JOIN asistencia a
-
-            ON a.joven_id = j.id
-
-        LEFT JOIN reuniones r
-
-            ON r.id = a.reunion_id
-
-        WHERE j.estado_actividad != 'ELIMINADO'
-
-        GROUP BY j.id
+        GROUP BY estado_espiritual
     ");
 
     $stmt->execute();
 
-    $data =
-        $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $riesgo = 0;
-
-    $alto = 0;
-
-    foreach ($data as $joven) {
-
-        $mes0 = $joven["mes0"];
-        $mes1 = $joven["mes1"];
-        $mes2 = $joven["mes2"];
-
-        if (
-            $mes1 <= 1 &&
-            $mes2 <= 1
-        ) {
-
-            $alto++;
-
-        } elseif ($mes0 <= 1) {
-
-            $riesgo++;
-        }
-    }
+    $filas = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
     return [
 
-        "total" =>
-            $riesgo + $alto,
-
-        "riesgo" =>
-            $riesgo,
-
-        "alto" =>
-            $alto
+        "nuevo" => (int)($filas["NUEVO"] ?? 0),
+        "congregante" => (int)($filas["CONGREGANTE"] ?? 0),
+        "discipulado" => (int)($filas["DISCIPULADO"] ?? 0),
+        "servidor" => (int)($filas["SERVIDOR"] ?? 0),
+        "lider" => (int)($filas["LIDER"] ?? 0)
     ];
 }
